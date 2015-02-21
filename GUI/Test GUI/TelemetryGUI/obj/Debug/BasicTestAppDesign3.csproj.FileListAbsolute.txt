@@ -1,0 +1,9 @@
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\bin\Debug\BasicTestAppDesign3.exe.config
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\bin\Debug\BasicTestAppDesign3.exe
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\bin\Debug\BasicTestAppDesign3.pdb
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\obj\Debug\BasicTestAppDesign3.csprojResolveAssemblyReference.cache
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\obj\Debug\BasicTestAppDesign3.Form1.resources
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\obj\Debug\BasicTestAppDesign3.Properties.Resources.resources
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\obj\Debug\BasicTestAppDesign3.csproj.GenerateResource.Cache
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\obj\Debug\BasicTestAppDesign3.exe
+C:\Users\Matt\AppData\Local\Temporary Projects\BasicTestAppDesign3\obj\Debug\BasicTestAppDesign3.pdb

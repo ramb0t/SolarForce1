@@ -1,0 +1,1 @@
+C:\Users\Matt\Documents\Visual Studio 2013\Projects\TelemetryGUI\TelemetryGUI\bin\Debug\TelemetryGUI.exe.config
