@@ -41,6 +41,8 @@ while(1)
 
 	}
 
+	rx_status = 0xff; // reset
+
     // we have a message now!!
 	// check if valid?
 	if (message.data[0] == 0x04 && message.data[1]==0xf3)
