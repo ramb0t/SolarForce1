@@ -18,6 +18,13 @@ namespace BasicTestAppDesign3
         public dataOnlyScreen()
         {
             InitializeComponent();
+            
+        }
+
+        private graphScreen newGraphScreenObject()
+        {
+            graphScreen gactive = new graphScreen();
+            return gactive;                 //returns a form object to use if it isn't loaded already
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -42,18 +49,29 @@ namespace BasicTestAppDesign3
 
         private void dataOnlyScreen_Load(object sender, EventArgs e)
         {
+            graphScreen gactive = newGraphScreenObject();
             //set up DB logging etc.
+        }
+
+        public bool getMenuitemStatus()           //alloows other form to modify this data
+        {
+            return graphPageIsOpenInBackgroundToolStripMenuItem.Visible;
+        }
+
+        public void setMenuItemStatus(bool menu)           //alloows other form to modify this data
+        {
+            graphPageIsOpenInBackgroundToolStripMenuItem.Visible=menu;
         }
 
         private void dataOnlyScreen_FormClosing(object sender, FormClosingEventArgs e)
         {
             switch(e.CloseReason)               //warns user when quitting app, will also close graphing window
-            { 
-                case CloseReason.UserClosing:  if(MessageBox.Show("This will quit the iKlwa Telemetry System. If the Real-Time Graph page is still open, this will also close. Are you sure?", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.No)
-                {
-                    e.Cancel=true;          //stops app from closing
-                }
-            break;
+            {
+                case CloseReason.UserClosing: if (MessageBox.Show("This will quit the iKlwa Telemetry System. If the Real-Time Graph page is still open, this will also close. Are you sure?", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.No)
+                    {
+                        e.Cancel = true;          //stops app from closing
+                    }
+                    break;
             }
          }
 
@@ -61,19 +79,13 @@ namespace BasicTestAppDesign3
 
         private void realTimeGraphsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            graphScreen gactive = new graphScreen();                            //attempting to allow only one graphing instance at once...broken??
-            if (gactive.Visible==true)
-            {
-                graphPageIsOpenInBackgroundToolStripMenuItem.Visible = true;
-
-            }
-            else if (gactive.Visible==false)
-            {
-                graphScreen gscreen = new graphScreen();
-                gscreen.Show();
-            }
-            //this.WindowState = FormWindowState.Minimized;       //minimised current view (must leave running to log data!)
-            //this.Visible = false;
+                if (graphPageIsOpenInBackgroundToolStripMenuItem.Visible == false)
+                {
+                    graphScreen gactive = newGraphScreenObject();
+                    graphPageIsOpenInBackgroundToolStripMenuItem.Visible = true;
+                    gactive.ShowDialog();                                           //uses modal dialog; can't interact with data screen until graph screen is closed.
+                }
+                               
         }
 
        

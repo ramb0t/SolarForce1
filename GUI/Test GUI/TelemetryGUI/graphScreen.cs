@@ -16,17 +16,17 @@ namespace BasicTestAppDesign3
     
     public partial class graphScreen : Form
     {
-        //private bool graphScreenIsOpen = false;                   //can't get visibility across forms yet need to sheck this
+        private bool graphScreenIsOpen = false;                   //can't get visibility across forms yet need to sheck this
 
-        //public bool getGraphScreenActive()
-        //{
-        //    return graphScreenIsOpen;
-        //}
+        public bool getGraphScreenActive()
+        {
+            return graphScreenIsOpen;
+        }
 
-        //public void setGraphScreenActive(bool status)
-        //{
-        //    graphScreenIsOpen = status;
-        //}
+        public void setGraphScreenActive(bool status)
+        {
+            graphScreenIsOpen = status;
+        }
 
         public graphScreen()
         {
@@ -56,8 +56,12 @@ namespace BasicTestAppDesign3
                     {
                         e.Cancel = true;          //stops app from closing
                     }
+                   else if (MessageBox.Show("Return to data-only screen?", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        dataOnlyScreen menuVis = new dataOnlyScreen();
+                        menuVis.setMenuItemStatus(false);
+                    }
                  break;
-                default: this.Dispose(true); break;
             }
             
         }
@@ -65,7 +69,6 @@ namespace BasicTestAppDesign3
         private void toolStripMenuItem7_Click(object sender, EventArgs e)
         {
             this.Close();
-            this.Dispose(true);
             //OR this.WindowState = FormWindowState.Minimized;       //minimised current view?? not suree if we should close or just minimise?
                         
         }
