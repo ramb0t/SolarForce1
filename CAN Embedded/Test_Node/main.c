@@ -26,17 +26,17 @@ Please refer to LICENSE file for licensing information.
 #include "TWI_LCD/lcdpcf8574/lcdpcf8574.h"
 
 #define UART_BAUD_RATE 9600
-//#include "TWI_LCD/uart/uart.h"
+#include "TWI_LCD/uart/uart.h"
 
 int main(void)
 {
 	//init uart
-	//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
+	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 
     sei();
 
     //init lcd
-    lcd_init(LCD_DISP_ON_BLINK);
+    lcd_init(LCD_DISP_ON);
 
     //lcd go home
     lcd_home();
@@ -59,8 +59,8 @@ int main(void)
     		lcd_puts(buf);
     		line++;
     		line %= 2;
-        	//uart_puts(buf);
-        	//uart_puts("\r\n");
+        	uart_puts(buf);
+        	uart_puts("\r\n");
     		_delay_ms(500);
     	}
     }
