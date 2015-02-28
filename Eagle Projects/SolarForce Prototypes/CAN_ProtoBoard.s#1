@@ -15107,7 +15107,7 @@ Grid 5.00 mm&lt;p&gt;
 <parts>
 <part name="U1" library="SparkFun-DigitalIC" deviceset="MCP2551" device=""/>
 <part name="U$1" library="RobThePyro" deviceset="MCP2515" device="SO"/>
-<part name="Q1" library="crystal" deviceset="CRYSTAL" device="HC49S"/>
+<part name="Q1" library="crystal" deviceset="CRYSTAL" device="HC49S" value="16MHz"/>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="C1" library="resistor" deviceset="C-EU" device="C0805K" value="22pF"/>

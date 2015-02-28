@@ -161,6 +161,10 @@
 <text x="9.9" y="0.65" size="1.016" layer="25">5V</text>
 <text x="30.5" y="0.65" size="1.016" layer="25">5V</text>
 <text x="16.25" y="5.4" size="0.8128" layer="25" rot="R90">INT</text>
+<text x="18.75" y="5.35" size="0.8128" layer="25" rot="R90">SCK</text>
+<text x="21.3" y="5.45" size="0.8128" layer="25" rot="R90">SI</text>
+<text x="23.85" y="5.5" size="0.8128" layer="25" rot="R90">SO</text>
+<text x="26.35" y="5.55" size="0.8128" layer="25" rot="R90">CS</text>
 </plain>
 <libraries>
 <library name="resistor">

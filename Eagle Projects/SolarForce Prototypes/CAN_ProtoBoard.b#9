@@ -1911,7 +1911,7 @@ design rules under a new name.</description>
 <element name="R7" library="resistor" package="R0805" value="120E" x="41.402" y="36.449"/>
 <element name="JP6" library="pinhead" package="1X01" value="" x="29.845" y="15.113"/>
 <element name="JP7" library="pinhead" package="1X01" value="" x="29.845" y="19.558"/>
-<element name="JP8" library="pinhead" package="1X01" value="" x="11.049" y="14.859"/>
+<element name="JP8" library="pinhead" package="1X01" value="" x="9.271" y="14.986"/>
 <element name="X1" library="con-wago-500" package="W237-103" value="" x="42.418" y="46.228">
 <attribute name="OC_NEWARK" value="18M7116" x="42.418" y="46.228" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="237-103" x="42.418" y="46.228" size="1.778" layer="27" display="off"/>
@@ -1923,12 +1923,12 @@ design rules under a new name.</description>
 <element name="C5" library="resistor" package="C0805K" value="560pF" x="45.593" y="30.861" rot="R90"/>
 <element name="C6" library="resistor" package="C0805K" value="560pF" x="32.639" y="37.592" rot="R90"/>
 <element name="JP9" library="pinhead" package="1X01" value="" x="41.91" y="26.543"/>
-<element name="JP10" library="pinhead" package="1X01" value="" x="-28.575" y="-27.686"/>
-<element name="JP11" library="pinhead" package="1X01" value="" x="-28.575" y="-32.639"/>
-<element name="JP12" library="pinhead" package="1X01" value="" x="-28.575" y="-37.592"/>
-<element name="JP13" library="pinhead" package="1X01" value="" x="-28.575" y="-42.545"/>
-<element name="JP14" library="pinhead" package="1X01" value="" x="-28.575" y="-47.498"/>
-<element name="JP15" library="pinhead" package="1X01" value="" x="-28.575" y="-52.451"/>
+<element name="JP10" library="pinhead" package="1X01" value="" x="15.24" y="8.763"/>
+<element name="JP11" library="pinhead" package="1X01" value="" x="12.7" y="8.763"/>
+<element name="JP12" library="pinhead" package="1X01" value="" x="11.811" y="14.986"/>
+<element name="JP13" library="pinhead" package="1X01" value="" x="11.811" y="17.526"/>
+<element name="JP14" library="pinhead" package="1X01" value="" x="11.938" y="20.066"/>
+<element name="JP15" library="pinhead" package="1X01" value="" x="14.351" y="14.986"/>
 </elements>
 <signals>
 <signal name="RXCAN">
@@ -2112,8 +2112,8 @@ design rules under a new name.</description>
 <wire x1="18.288" y1="13.843" x2="11.176" y2="13.843" width="0.3048" layer="1"/>
 <wire x1="11.176" y1="13.843" x2="9.618" y2="13.843" width="0.3048" layer="1"/>
 <wire x1="9.618" y1="13.843" x2="8.509" y2="12.734" width="0.3048" layer="1"/>
-<wire x1="11.049" y1="14.859" x2="11.049" y2="13.97" width="0.3048" layer="1"/>
-<wire x1="11.049" y1="13.97" x2="11.176" y2="13.843" width="0.3048" layer="1"/>
+<wire x1="9.271" y1="14.986" x2="9.271" y2="13.843" width="0.3048" layer="1"/>
+<wire x1="9.271" y1="13.843" x2="9.618" y2="13.843" width="0.3048" layer="1"/>
 </signal>
 <signal name="N$5">
 <contactref element="U$1" pad="19"/>
@@ -2285,32 +2285,32 @@ design rules under a new name.</description>
 <signal name="TX0RTS">
 <contactref element="U$1" pad="4"/>
 <contactref element="JP12" pad="1"/>
-<wire x1="21.0316" y1="18.177" x2="-28.575" y2="-37.592" width="0" layer="19" extent="1-1"/>
+<wire x1="21.0316" y1="18.177" x2="11.811" y2="14.986" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="TX1RTS">
 <contactref element="U$1" pad="5"/>
 <contactref element="JP13" pad="1"/>
-<wire x1="20.3712" y1="18.177" x2="-28.575" y2="-42.545" width="0" layer="19" extent="1-1"/>
+<wire x1="20.3712" y1="18.177" x2="11.811" y2="17.526" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="TX2RTS">
 <contactref element="U$1" pad="7"/>
 <contactref element="JP14" pad="1"/>
-<wire x1="19.0504" y1="18.177" x2="-28.575" y2="-47.498" width="0" layer="19" extent="1-1"/>
+<wire x1="19.0504" y1="18.177" x2="11.938" y2="20.066" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="RX0BF">
 <contactref element="U$1" pad="12"/>
 <contactref element="JP10" pad="1"/>
-<wire x1="17.7296" y1="12.335" x2="-28.575" y2="-27.686" width="0" layer="19" extent="1-1"/>
+<wire x1="17.7296" y1="12.335" x2="15.24" y2="8.763" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="RX1BF">
 <contactref element="U$1" pad="11"/>
 <contactref element="JP11" pad="1"/>
-<wire x1="17.0692" y1="12.335" x2="-28.575" y2="-32.639" width="0" layer="19" extent="1-1"/>
+<wire x1="17.0692" y1="12.335" x2="12.7" y2="8.763" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CLKOUT">
 <contactref element="U$1" pad="3"/>
 <contactref element="JP15" pad="1"/>
-<wire x1="21.692" y1="18.177" x2="-28.575" y2="-52.451" width="0" layer="19" extent="1-1"/>
+<wire x1="21.692" y1="18.177" x2="14.351" y2="14.986" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>

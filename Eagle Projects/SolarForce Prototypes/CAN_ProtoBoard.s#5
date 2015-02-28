@@ -9764,6 +9764,12 @@ Grid 5.00 mm&lt;p&gt;
 <part name="JP7" library="pinhead" deviceset="PINHD-1X1" device=""/>
 <part name="JP8" library="pinhead" deviceset="PINHD-1X1" device=""/>
 <part name="X1" library="con-wago-500" deviceset="W237-103" device=""/>
+<part name="R8" library="resistor" deviceset="R-US_" device="R0805" value="100E"/>
+<part name="R9" library="resistor" deviceset="R-US_" device="R0805" value="100E"/>
+<part name="C5" library="resistor" deviceset="C-EU" device="C0805K" value="560pF"/>
+<part name="C6" library="resistor" deviceset="C-EU" device="C0805K" value="560pF"/>
+<part name="GND8" library="supply1" deviceset="GND" device=""/>
+<part name="JP9" library="pinhead" deviceset="PINHD-1X1" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -9813,6 +9819,12 @@ Grid 5.00 mm&lt;p&gt;
 <instance part="X1" gate="-1" x="162.56" y="5.08" rot="R90"/>
 <instance part="X1" gate="-2" x="167.64" y="5.08" rot="R90"/>
 <instance part="X1" gate="-3" x="172.72" y="5.08" rot="R90"/>
+<instance part="R8" gate="G$1" x="218.44" y="55.88" rot="R90"/>
+<instance part="R9" gate="G$1" x="223.52" y="55.88" rot="R90"/>
+<instance part="C5" gate="G$1" x="218.44" y="43.18" rot="R180"/>
+<instance part="C6" gate="G$1" x="223.52" y="43.18" rot="R180"/>
+<instance part="GND8" gate="1" x="220.98" y="35.56"/>
+<instance part="JP9" gate="G$1" x="208.28" y="43.18" rot="R270"/>
 </instances>
 <busses>
 </busses>
@@ -9989,6 +10001,16 @@ Grid 5.00 mm&lt;p&gt;
 <wire x1="172.72" y1="10.16" x2="172.72" y2="17.78" width="0.1524" layer="91"/>
 <label x="172.72" y="20.32" size="1.778" layer="95" rot="R90"/>
 </segment>
+<segment>
+<pinref part="C6" gate="G$1" pin="1"/>
+<pinref part="GND8" gate="1" pin="GND"/>
+<wire x1="223.52" y1="40.64" x2="223.52" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="223.52" y1="38.1" x2="220.98" y2="38.1" width="0.1524" layer="91"/>
+<pinref part="C5" gate="G$1" pin="1"/>
+<wire x1="220.98" y1="38.1" x2="218.44" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="38.1" x2="218.44" y2="40.64" width="0.1524" layer="91"/>
+<junction x="220.98" y="38.1"/>
+</segment>
 </net>
 <net name="N$1" class="0">
 <segment>
@@ -10129,13 +10151,17 @@ Grid 5.00 mm&lt;p&gt;
 <net name="CANH" class="0">
 <segment>
 <pinref part="U1" gate="MCP2551" pin="CANH"/>
-<wire x1="215.9" y1="71.12" x2="226.06" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="71.12" x2="223.52" y2="71.12" width="0.1524" layer="91"/>
 <label x="228.6" y="71.12" size="1.778" layer="95"/>
+<wire x1="223.52" y1="71.12" x2="226.06" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="71.12" x2="226.06" y2="76.2" width="0.1524" layer="91"/>
 <pinref part="SJ1" gate="1" pin="1"/>
 <wire x1="226.06" y1="76.2" x2="236.22" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="71.12" x2="228.6" y2="71.12" width="0.1524" layer="91"/>
 <junction x="226.06" y="71.12"/>
+<pinref part="R9" gate="G$1" pin="2"/>
+<wire x1="223.52" y1="60.96" x2="223.52" y2="71.12" width="0.1524" layer="91"/>
+<junction x="223.52" y="71.12"/>
 </segment>
 <segment>
 <pinref part="JP1" gate="G$1" pin="3"/>
@@ -10156,13 +10182,17 @@ Grid 5.00 mm&lt;p&gt;
 <net name="CANL" class="0">
 <segment>
 <pinref part="U1" gate="MCP2551" pin="CANL"/>
-<wire x1="215.9" y1="68.58" x2="226.06" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="68.58" x2="218.44" y2="68.58" width="0.1524" layer="91"/>
 <label x="228.6" y="68.58" size="1.778" layer="95"/>
 <pinref part="R7" gate="G$1" pin="2"/>
+<wire x1="218.44" y1="68.58" x2="226.06" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="236.22" y1="63.5" x2="226.06" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="63.5" x2="226.06" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="68.58" x2="228.6" y2="68.58" width="0.1524" layer="91"/>
 <junction x="226.06" y="68.58"/>
+<pinref part="R8" gate="G$1" pin="2"/>
+<wire x1="218.44" y1="60.96" x2="218.44" y2="68.58" width="0.1524" layer="91"/>
+<junction x="218.44" y="68.58"/>
 </segment>
 <segment>
 <pinref part="JP1" gate="G$1" pin="5"/>
@@ -10250,6 +10280,29 @@ Grid 5.00 mm&lt;p&gt;
 <wire x1="248.92" y1="76.2" x2="248.92" y2="63.5" width="0.1524" layer="91"/>
 <pinref part="R7" gate="G$1" pin="1"/>
 <wire x1="248.92" y1="63.5" x2="246.38" y2="63.5" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$10" class="0">
+<segment>
+<pinref part="U1" gate="MCP2551" pin="VREF"/>
+<wire x1="215.9" y1="66.04" x2="215.9" y2="60.96" width="0.1524" layer="91"/>
+<pinref part="JP9" gate="G$1" pin="1"/>
+<wire x1="215.9" y1="60.96" x2="208.28" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="208.28" y1="60.96" x2="208.28" y2="45.72" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$11" class="0">
+<segment>
+<pinref part="R8" gate="G$1" pin="1"/>
+<pinref part="C5" gate="G$1" pin="2"/>
+<wire x1="218.44" y1="50.8" x2="218.44" y2="48.26" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="R9" gate="G$1" pin="1"/>
+<pinref part="C6" gate="G$1" pin="2"/>
+<wire x1="223.52" y1="50.8" x2="223.52" y2="48.26" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

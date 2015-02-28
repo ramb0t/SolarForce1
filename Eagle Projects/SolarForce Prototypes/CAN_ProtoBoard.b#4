@@ -143,6 +143,12 @@
 <wire x1="50" y1="50" x2="50" y2="0" width="0" layer="20"/>
 <wire x1="50" y1="0" x2="0" y2="0" width="0" layer="20"/>
 <hole x="47.071" y="2.714" drill="3.2"/>
+<text x="3.15" y="28.7" size="0.8128" layer="25" rot="R90">K</text>
+<text x="2.9" y="26.2" size="0.8128" layer="25" rot="R90">L</text>
+<text x="2.95" y="22.75" size="0.8128" layer="25" rot="R90">GND</text>
+<text x="2.95" y="13.95" size="0.8128" layer="25" rot="R90">GND</text>
+<text x="3.3" y="20.35" size="0.8128" layer="25" rot="R180">J+</text>
+<text x="1.85" y="17" size="0.8128" layer="25">J-</text>
 </plain>
 <libraries>
 <library name="resistor">
@@ -1733,14 +1739,7 @@ Grid 5.00 mm&lt;p&gt;
 <class number="0" name="default" width="0" drill="0">
 </class>
 </classes>
-<designrules name="default">
-<description language="de">&lt;b&gt;EAGLE Design Rules&lt;/b&gt;
-&lt;p&gt;
-Die Standard-Design-Rules sind so gewählt, dass sie für 
-die meisten Anwendungen passen. Sollte ihre Platine 
-besondere Anforderungen haben, treffen Sie die erforderlichen
-Einstellungen hier und speichern die Design Rules unter 
-einem neuen Namen ab.</description>
+<designrules name="SparkFun">
 <description language="en">&lt;b&gt;EAGLE Design Rules&lt;/b&gt;
 &lt;p&gt;
 The default Design Rules have been set to cover
@@ -1762,11 +1761,11 @@ design rules under a new name.</description>
 <param name="mdSmdSmd" value="8mil"/>
 <param name="mdViaViaSameLayer" value="8mil"/>
 <param name="mnLayersViaInSmd" value="2"/>
-<param name="mdCopperDimension" value="40mil"/>
+<param name="mdCopperDimension" value="10mil"/>
 <param name="mdDrill" value="8mil"/>
 <param name="mdSmdStop" value="0mil"/>
-<param name="msWidth" value="10mil"/>
-<param name="msDrill" value="24mil"/>
+<param name="msWidth" value="8mil"/>
+<param name="msDrill" value="20mil"/>
 <param name="msMicroVia" value="9.99mm"/>
 <param name="msBlindViaRatio" value="0.5"/>
 <param name="rvPadTop" value="0.25"/>
@@ -1776,15 +1775,15 @@ design rules under a new name.</description>
 <param name="rvViaInner" value="0.25"/>
 <param name="rvMicroViaOuter" value="0.25"/>
 <param name="rvMicroViaInner" value="0.25"/>
-<param name="rlMinPadTop" value="10mil"/>
+<param name="rlMinPadTop" value="12mil"/>
 <param name="rlMaxPadTop" value="20mil"/>
 <param name="rlMinPadInner" value="10mil"/>
 <param name="rlMaxPadInner" value="20mil"/>
-<param name="rlMinPadBottom" value="10mil"/>
+<param name="rlMinPadBottom" value="12mil"/>
 <param name="rlMaxPadBottom" value="20mil"/>
-<param name="rlMinViaOuter" value="8mil"/>
+<param name="rlMinViaOuter" value="10mil"/>
 <param name="rlMaxViaOuter" value="20mil"/>
-<param name="rlMinViaInner" value="8mil"/>
+<param name="rlMinViaInner" value="10mil"/>
 <param name="rlMaxViaInner" value="20mil"/>
 <param name="rlMinMicroViaOuter" value="4mil"/>
 <param name="rlMaxMicroViaOuter" value="20mil"/>
@@ -1801,7 +1800,7 @@ design rules under a new name.</description>
 <param name="mlMaxStopFrame" value="4mil"/>
 <param name="mlMinCreamFrame" value="0mil"/>
 <param name="mlMaxCreamFrame" value="0mil"/>
-<param name="mlViaStopLimit" value="0mil"/>
+<param name="mlViaStopLimit" value="25mil"/>
 <param name="srRoundness" value="0"/>
 <param name="srMinRoundness" value="0mil"/>
 <param name="srMaxRoundness" value="0mil"/>
@@ -1913,61 +1912,159 @@ design rules under a new name.</description>
 </pass>
 </autorouter>
 <elements>
-<element name="C1" library="resistor" package="C0805K" value="22pF" x="15.367" y="29.21" rot="R270"/>
-<element name="C2" library="resistor" package="C0805K" value="22pF" x="20.193" y="29.21" rot="R270"/>
-<element name="C3" library="resistor" package="C0805K" value="100nF" x="36.83" y="17.272" rot="R180"/>
-<element name="C4" library="resistor" package="C0805K" value="100nF" x="26.035" y="9.525" rot="R270"/>
-<element name="LED1" library="led" package="CHIPLED_0805" value="PWR" x="6.096" y="11.684"/>
-<element name="LED2" library="led" package="CHIPLED_0805" value="RX" x="24.765" y="26.543" rot="R180"/>
-<element name="LED3" library="led" package="CHIPLED_0805" value="TX" x="27.813" y="26.416" rot="R180"/>
-<element name="LED4" library="led" package="CHIPLED_0805" value="INT" x="8.509" y="11.684"/>
-<element name="Q1" library="crystal" package="HC49/S" value="" x="17.78" y="24.13" rot="R180">
+<element name="C1" library="resistor" package="C0805K" value="22pF" x="15.367" y="29.21" smashed="yes" rot="R270">
+<attribute name="NAME" x="16.242" y="30.21" size="0.8128" layer="25" rot="R270"/>
+</element>
+<element name="C2" library="resistor" package="C0805K" value="22pF" x="20.193" y="29.21" smashed="yes" rot="R270">
+<attribute name="NAME" x="21.068" y="30.21" size="0.8128" layer="25" rot="R270"/>
+</element>
+<element name="C3" library="resistor" package="C0805K" value="100nF" x="36.83" y="17.272" smashed="yes" rot="R180">
+<attribute name="NAME" x="37.93" y="16.047" size="0.8128" layer="25" rot="R180"/>
+</element>
+<element name="C4" library="resistor" package="C0805K" value="100nF" x="26.035" y="9.525" smashed="yes" rot="R270">
+<attribute name="NAME" x="27.11" y="10.125" size="0.8128" layer="25" rot="R270"/>
+</element>
+<element name="LED1" library="led" package="CHIPLED_0805" value="PWR" x="6.096" y="11.684" smashed="yes">
+<attribute name="VALUE" x="1.814" y="9.964" size="1.27" layer="27"/>
+</element>
+<element name="LED2" library="led" package="CHIPLED_0805" value="RX" x="24.765" y="26.543" smashed="yes" rot="R180">
+<attribute name="VALUE" x="23.125" y="27.463" size="0.8128" layer="27" rot="R270"/>
+</element>
+<element name="LED3" library="led" package="CHIPLED_0805" value="TX" x="27.813" y="26.416" smashed="yes" rot="R180">
+<attribute name="VALUE" x="26.273" y="27.336" size="0.8128" layer="27" rot="R270"/>
+</element>
+<element name="LED4" library="led" package="CHIPLED_0805" value="INT" x="8.509" y="11.684" smashed="yes">
+<attribute name="VALUE" x="9.464" y="10.101" size="1.27" layer="27"/>
+</element>
+<element name="Q1" library="crystal" package="HC49/S" value="16MHz" x="17.78" y="24.13" smashed="yes" rot="R180">
 <attribute name="OC_NEWARK" value="unknown" x="17.78" y="24.13" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="" x="17.78" y="24.13" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MF" value="" x="17.78" y="24.13" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_FARNELL" value="1667008" x="17.78" y="24.13" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="NAME" x="12.71" y="26.413" size="0.8128" layer="25" ratio="10" rot="R180"/>
+<attribute name="VALUE" x="11.183" y="25.46" size="0.8128" layer="25" ratio="10" rot="R270"/>
 </element>
-<element name="R1" library="resistor" package="R0805" value="" x="31.75" y="24.13" rot="R270"/>
-<element name="R2" library="resistor" package="R0805" value="" x="6.096" y="7.747" rot="R270"/>
-<element name="R3" library="resistor" package="R0805" value="1k" x="24.765" y="30.988" rot="R90"/>
-<element name="R4" library="resistor" package="R0805" value="1k" x="27.813" y="30.988" rot="R90"/>
-<element name="R5" library="resistor" package="R0805" value="10k" x="26.035" y="13.462" rot="R270"/>
-<element name="R6" library="resistor" package="R0805" value="1k" x="8.509" y="7.747" rot="R270"/>
-<element name="U$1" library="RobThePyro" package="TSSOP20" value="MCP2515SO" x="20.32" y="15.24" rot="R270"/>
-<element name="U1" library="SparkFun-DigitalIC" package="SO08" value="MCP2551" x="36.83" y="24.13">
+<element name="R1" library="resistor" package="R0805" value="" x="31.75" y="24.13" smashed="yes" rot="R270">
+<attribute name="NAME" x="33.07" y="25.315" size="0.8128" layer="25" rot="R270"/>
+<attribute name="VALUE" x="29.21" y="24.765" size="1.27" layer="27" rot="R270"/>
+</element>
+<element name="R2" library="resistor" package="R0805" value="" x="6.096" y="7.747" smashed="yes" rot="R270">
+<attribute name="NAME" x="2.266" y="8.532" size="0.8128" layer="25" rot="R270"/>
+<attribute name="VALUE" x="3.556" y="8.382" size="1.27" layer="27" rot="R270"/>
+</element>
+<element name="R3" library="resistor" package="R0805" value="1k" x="24.765" y="30.988" smashed="yes" rot="R90">
+<attribute name="NAME" x="23.495" y="30.353" size="0.8128" layer="25" rot="R90"/>
+</element>
+<element name="R4" library="resistor" package="R0805" value="1k" x="27.813" y="30.988" smashed="yes" rot="R90">
+<attribute name="NAME" x="26.543" y="30.353" size="0.8128" layer="25" rot="R90"/>
+</element>
+<element name="R5" library="resistor" package="R0805" value="10k" x="26.035" y="13.462" smashed="yes" rot="R270">
+<attribute name="NAME" x="27.255" y="13.597" size="0.8128" layer="25" rot="R270"/>
+</element>
+<element name="R6" library="resistor" package="R0805" value="1k" x="8.509" y="7.747" smashed="yes" rot="R270">
+<attribute name="NAME" x="3.779" y="8.532" size="0.8128" layer="25" rot="R270"/>
+</element>
+<element name="U$1" library="RobThePyro" package="TSSOP20" value="MCP2515SO" x="20.32" y="15.24" smashed="yes" rot="R270">
+<attribute name="NAME" x="21.494" y="15.2608" size="0.8128" layer="25"/>
+<attribute name="VALUE" x="24.6196" y="12.994" size="0.8128" layer="27" rot="R90"/>
+</element>
+<element name="U1" library="SparkFun-DigitalIC" package="SO08" value="MCP2551" x="36.83" y="24.13" smashed="yes">
 <attribute name="PROD_ID" value="IC-09907" x="36.83" y="24.13" size="1.778" layer="27" display="off"/>
+<attribute name="VALUE" x="40.355" y="20.66" size="0.8128" layer="27" rot="R90"/>
+<attribute name="NAME" x="37.61" y="24.48" size="0.8128" layer="25"/>
 </element>
-<element name="DB9M" library="SparkFun-Connectors" package="DB9_MALE" value="" x="15.367" y="40.386">
+<element name="DB9M" library="SparkFun-Connectors" package="DB9_MALE" value="" x="15.367" y="40.386" smashed="yes">
 <attribute name="PROD_ID" value="CONN-09904" x="15.367" y="40.386" size="1.778" layer="27" display="off"/>
+<attribute name="NAME" x="14.572" y="43.006" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="14.677" y="43.801" size="0.4064" layer="27" ratio="10"/>
 </element>
-<element name="IO" library="pinhead" package="1X10" value="" x="19.685" y="3.556"/>
-<element name="CAN" library="pinhead" package="1X04" value="" x="36.83" y="32.639" rot="R180"/>
-<element name="KLINE" library="pinhead" package="1X03" value="" x="5.334" y="26.289" rot="R90"/>
-<element name="JLINE" library="pinhead" package="1X03" value="" x="5.334" y="17.399" rot="R90"/>
-<element name="SJ1" library="SparkFun-Retired" package="SJ_2S-TRACE" value="Term" x="37.973" y="36.449"/>
-<element name="R7" library="resistor" package="R0805" value="120E" x="41.402" y="36.449"/>
-<element name="RX" library="pinhead" package="1X01" value="" x="29.845" y="15.113"/>
-<element name="TX" library="pinhead" package="1X01" value="" x="29.845" y="19.558"/>
-<element name="!INT" library="pinhead" package="1X01" value="" x="9.271" y="14.986"/>
-<element name="CANSCREW" library="con-wago-500" package="W237-103" value="" x="42.418" y="46.228">
+<element name="IO" library="pinhead" package="1X10" value="" x="19.685" y="3.556" smashed="yes">
+<attribute name="VALUE" x="6.985" y="0.381" size="1.27" layer="27"/>
+</element>
+<element name="CAN" library="pinhead" package="1X04" value="" x="36.83" y="32.639" smashed="yes" rot="R180">
+<attribute name="VALUE" x="41.91" y="35.814" size="1.27" layer="27" rot="R180"/>
+</element>
+<element name="KLINE" library="pinhead" package="1X03" value="" x="5.334" y="26.289" smashed="yes" rot="R90">
+<attribute name="NAME" x="8.4552" y="24.9028" size="0.8128" layer="25" ratio="10" rot="R90"/>
+<attribute name="VALUE" x="8.509" y="22.479" size="1.27" layer="27" rot="R90"/>
+</element>
+<element name="JLINE" library="pinhead" package="1X03" value="" x="5.334" y="17.399" smashed="yes" rot="R90">
+<attribute name="NAME" x="8.2552" y="17.9128" size="0.8128" layer="25" ratio="10" rot="R90"/>
+<attribute name="VALUE" x="8.509" y="13.589" size="1.27" layer="27" rot="R90"/>
+</element>
+<element name="SJ1" library="SparkFun-Retired" package="SJ_2S-TRACE" value="Term" x="37.973" y="36.449" smashed="yes">
+<attribute name="VALUE" x="36.1205" y="34.548" size="0.8128" layer="27"/>
+</element>
+<element name="R7" library="resistor" package="R0805" value="120E" x="41.402" y="36.449" smashed="yes">
+<attribute name="NAME" x="41.767" y="34.569" size="0.8128" layer="25"/>
+</element>
+<element name="RX" library="pinhead" package="1X01" value="" x="29.845" y="15.113" smashed="yes">
+<attribute name="NAME" x="28.6488" y="16.6418" size="1.27" layer="25" ratio="10"/>
+<attribute name="VALUE" x="28.575" y="11.938" size="1.27" layer="27"/>
+</element>
+<element name="TX" library="pinhead" package="1X01" value="" x="29.845" y="19.558" smashed="yes">
+<attribute name="NAME" x="28.4988" y="21.1868" size="1.27" layer="25" ratio="10"/>
+<attribute name="VALUE" x="28.575" y="16.383" size="1.27" layer="27"/>
+</element>
+<element name="!INT" library="pinhead" package="1X01" value="" x="9.271" y="14.986" smashed="yes">
+<attribute name="NAME" x="9.6352" y="16.6748" size="0.8128" layer="25" ratio="10" rot="R90"/>
+<attribute name="VALUE" x="8.001" y="11.811" size="1.27" layer="27"/>
+</element>
+<element name="CANSCREW" library="con-wago-500" package="W237-103" value="" x="42.418" y="46.228" smashed="yes">
 <attribute name="OC_NEWARK" value="18M7116" x="42.418" y="46.228" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="237-103" x="42.418" y="46.228" size="1.778" layer="27" display="off"/>
 <attribute name="MF" value="" x="42.418" y="46.228" size="1.778" layer="27" display="off"/>
 <attribute name="OC_FARNELL" value="unknown" x="42.418" y="46.228" size="1.778" layer="27" display="off"/>
+<attribute name="VALUE" x="37.1132" y="41.2804" size="1.27" layer="27" ratio="10"/>
 </element>
-<element name="R8" library="resistor" package="R0805" value="100E" x="45.593" y="35.306" rot="R90"/>
-<element name="R9" library="resistor" package="R0805" value="100E" x="32.639" y="41.783" rot="R90"/>
-<element name="C5" library="resistor" package="C0805K" value="560pF" x="45.593" y="30.861" rot="R90"/>
-<element name="C6" library="resistor" package="C0805K" value="560pF" x="32.639" y="37.592" rot="R90"/>
-<element name="VREF" library="pinhead" package="1X01" value="" x="41.91" y="26.543"/>
-<element name="RX0BF" library="pinhead" package="1X01" value="" x="15.24" y="8.763"/>
-<element name="RX1BF" library="pinhead" package="1X01" value="" x="12.7" y="8.763"/>
-<element name="TX0RTS" library="pinhead" package="1X01" value="" x="11.811" y="14.986"/>
-<element name="TX1RTS" library="pinhead" package="1X01" value="" x="11.811" y="17.526"/>
-<element name="TX2RTS" library="pinhead" package="1X01" value="" x="11.811" y="20.066"/>
-<element name="CLKOUT" library="pinhead" package="1X01" value="" x="21.082" y="20.193"/>
-<element name="C11" library="resistor" package="PANASONIC_D" value="100uF" x="31.95" y="9.45"/>
-<element name="VBAT" library="pinhead" package="1X01" value="" x="5.6" y="33.9"/>
+<element name="R8" library="resistor" package="R0805" value="100E" x="45.593" y="35.306" smashed="yes" rot="R90">
+<attribute name="NAME" x="44.323" y="34.671" size="0.8128" layer="25" rot="R90"/>
+</element>
+<element name="R9" library="resistor" package="R0805" value="100E" x="32.639" y="41.783" smashed="yes" rot="R90">
+<attribute name="NAME" x="32.869" y="44.248" size="0.8128" layer="25" rot="R90"/>
+</element>
+<element name="C5" library="resistor" package="C0805K" value="560pF" x="45.593" y="30.861" smashed="yes" rot="R90">
+<attribute name="NAME" x="44.718" y="29.861" size="0.8128" layer="25" rot="R90"/>
+</element>
+<element name="C6" library="resistor" package="C0805K" value="560pF" x="32.639" y="37.592" smashed="yes" rot="R90">
+<attribute name="NAME" x="31.614" y="35.792" size="0.8128" layer="25" rot="R90"/>
+</element>
+<element name="VREF" library="pinhead" package="1X01" value="" x="41.91" y="26.543" smashed="yes">
+<attribute name="NAME" x="40.5638" y="28.3718" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="40.64" y="23.368" size="1.27" layer="27"/>
+</element>
+<element name="RX0BF" library="pinhead" package="1X01" value="" x="15.24" y="8.763" smashed="yes">
+<attribute name="NAME" x="15.6082" y="10.2938" size="0.8128" layer="25" ratio="10" rot="R90"/>
+<attribute name="VALUE" x="13.97" y="5.588" size="1.27" layer="27"/>
+</element>
+<element name="RX1BF" library="pinhead" package="1X01" value="" x="12.7" y="8.763" smashed="yes">
+<attribute name="NAME" x="14.3582" y="10.3038" size="0.8128" layer="25" ratio="10" rot="R90"/>
+<attribute name="VALUE" x="11.43" y="5.588" size="1.27" layer="27"/>
+</element>
+<element name="TX0RTS" library="pinhead" package="1X01" value="" x="11.811" y="14.986" smashed="yes">
+<attribute name="NAME" x="14.1852" y="14.4648" size="0.8128" layer="25" ratio="10" rot="R90"/>
+<attribute name="VALUE" x="10.541" y="11.811" size="1.27" layer="27"/>
+</element>
+<element name="TX1RTS" library="pinhead" package="1X01" value="" x="11.811" y="17.526" smashed="yes">
+<attribute name="NAME" x="13.5148" y="19.6048" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="10.541" y="14.351" size="1.27" layer="27"/>
+</element>
+<element name="TX2RTS" library="pinhead" package="1X01" value="" x="11.811" y="20.066" smashed="yes">
+<attribute name="NAME" x="13.5148" y="20.6448" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="10.541" y="16.891" size="1.27" layer="27"/>
+</element>
+<element name="CLKOUT" library="pinhead" package="1X01" value="" x="21.082" y="20.193" smashed="yes">
+<attribute name="NAME" x="22.6358" y="19.9718" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="19.812" y="17.018" size="1.27" layer="27"/>
+</element>
+<element name="C11" library="resistor" package="PANASONIC_D" value="100uF" x="31.95" y="9.45" smashed="yes">
+<attribute name="NAME" x="30.2" y="10.45" size="0.8128" layer="25"/>
+<attribute name="VALUE" x="30.2" y="7.475" size="0.8128" layer="27"/>
+</element>
+<element name="VBAT" library="pinhead" package="1X01" value="" x="5.6" y="33.9" smashed="yes">
+<attribute name="NAME" x="4.2538" y="35.7788" size="0.8128" layer="25" ratio="10"/>
+<attribute name="VALUE" x="4.33" y="30.725" size="1.27" layer="27"/>
+</element>
 </elements>
 <signals>
 <signal name="RXCAN">
@@ -2002,9 +2099,7 @@ design rules under a new name.</description>
 <wire x1="34.925" y1="19.685" x2="34.925" y2="21.5138" width="0.4064" layer="1"/>
 <wire x1="29.845" y1="19.558" x2="29.845" y2="18.431" width="0.4064" layer="1"/>
 <wire x1="29.845" y1="18.431" x2="30.099" y2="18.177" width="0.4064" layer="1"/>
-<wire x1="27.813" y1="25.366" x2="27.813" y2="22.86" width="0.4064" layer="1"/>
-<wire x1="27.813" y1="20.828" x2="27.813" y2="22.86" width="0.4064" layer="1"/>
-<wire x1="27.813" y1="20.828" x2="27.813" y2="18.177" width="0.4064" layer="1"/>
+<wire x1="27.813" y1="25.366" x2="27.813" y2="18.177" width="0.4064" layer="1"/>
 </signal>
 <signal name="+5V">
 <contactref element="U$1" pad="20"/>
@@ -2154,11 +2249,13 @@ design rules under a new name.</description>
 <wire x1="15.875" y1="6.096" x2="15.875" y2="3.556" width="0.3048" layer="1"/>
 <wire x1="18.39" y1="12.329" x2="18.39" y2="13.741" width="0.3048" layer="1"/>
 <wire x1="18.39" y1="13.741" x2="18.288" y2="13.843" width="0.3048" layer="1"/>
-<wire x1="18.288" y1="13.843" x2="11.176" y2="13.843" width="0.3048" layer="1"/>
-<wire x1="11.176" y1="13.843" x2="9.618" y2="13.843" width="0.3048" layer="1"/>
 <wire x1="9.618" y1="13.843" x2="8.509" y2="12.734" width="0.3048" layer="1"/>
 <wire x1="9.271" y1="14.986" x2="9.271" y2="13.843" width="0.3048" layer="1"/>
 <wire x1="9.271" y1="13.843" x2="9.618" y2="13.843" width="0.3048" layer="1"/>
+<wire x1="18.288" y1="13.843" x2="16.643" y2="13.843" width="0.3048" layer="1"/>
+<wire x1="16.643" y1="13.843" x2="15.95" y2="13.15" width="0.3048" layer="1"/>
+<wire x1="15.95" y1="13.15" x2="10.311" y2="13.15" width="0.3048" layer="1"/>
+<wire x1="10.311" y1="13.15" x2="9.618" y2="13.843" width="0.3048" layer="1"/>
 </signal>
 <signal name="N$5">
 <contactref element="U$1" pad="19"/>
@@ -2378,6 +2475,13 @@ design rules under a new name.</description>
 <wire x1="21.667" y1="19.608" x2="21.082" y2="20.193" width="0.3048" layer="1"/>
 </signal>
 </signals>
+<errors>
+<approved hash="19,1,bf885311264ece81"/>
+<approved hash="19,1,8f6e2c3c1282d854"/>
+<approved hash="19,1,38fe9bac45600b7b"/>
+<approved hash="19,1,18a9c815cfef76d7"/>
+<approved hash="19,1,6a2c9069e1371f24"/>
+</errors>
 </board>
 </drawing>
 </eagle>

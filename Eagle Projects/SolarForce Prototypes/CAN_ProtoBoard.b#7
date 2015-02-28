@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.005" unitdist="inch" unit="mm" style="lines" multiple="1" display="no" altdistance="0.5" altunitdist="mm" altunit="mm"/>
+<grid distance="0.05" unitdist="mm" unit="mm" style="lines" multiple="1" display="no" altdistance="0.5" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -2285,18 +2285,18 @@ design rules under a new name.</description>
 <signal name="TX0RTS">
 <contactref element="U$1" pad="4"/>
 <contactref element="JP12" pad="1"/>
-<wire x1="21.0316" y1="18.177" x2="21.082" y2="18.1266" width="0.3048" layer="1"/>
-<wire x1="21.082" y1="18.1266" x2="21.082" y2="15.621" width="0.3048" layer="1"/>
-<wire x1="21.082" y1="15.621" x2="20.447" y2="14.986" width="0.3048" layer="1"/>
-<wire x1="20.447" y1="14.986" x2="11.811" y2="14.986" width="0.3048" layer="1"/>
+<wire x1="21.0316" y1="18.177" x2="21.032" y2="18.1266" width="0.3048" layer="1"/>
+<wire x1="21.032" y1="18.1266" x2="21.032" y2="15.621" width="0.3048" layer="1"/>
+<wire x1="21.032" y1="15.621" x2="20.397" y2="14.986" width="0.3048" layer="1"/>
+<wire x1="20.397" y1="14.986" x2="11.811" y2="14.986" width="0.3048" layer="1"/>
 </signal>
 <signal name="TX1RTS">
 <contactref element="U$1" pad="5"/>
 <contactref element="JP13" pad="1"/>
-<wire x1="20.3712" y1="18.177" x2="20.32" y2="18.1258" width="0.3048" layer="1"/>
-<wire x1="20.32" y1="18.1258" x2="20.32" y2="16.002" width="0.3048" layer="1"/>
-<wire x1="20.32" y1="16.002" x2="20.066" y2="15.748" width="0.3048" layer="1"/>
-<wire x1="20.066" y1="15.748" x2="14.478" y2="15.748" width="0.3048" layer="1"/>
+<wire x1="20.3712" y1="18.177" x2="20.37" y2="18.1258" width="0.3048" layer="1"/>
+<wire x1="20.37" y1="18.1258" x2="20.37" y2="16.002" width="0.3048" layer="1"/>
+<wire x1="20.37" y1="16.002" x2="20.116" y2="15.748" width="0.3048" layer="1"/>
+<wire x1="20.116" y1="15.748" x2="14.478" y2="15.748" width="0.3048" layer="1"/>
 <wire x1="14.478" y1="15.748" x2="12.7" y2="17.526" width="0.3048" layer="1"/>
 <wire x1="12.7" y1="17.526" x2="11.811" y2="17.526" width="0.3048" layer="1"/>
 </signal>
@@ -2311,19 +2311,21 @@ design rules under a new name.</description>
 <signal name="RX0BF">
 <contactref element="U$1" pad="12"/>
 <contactref element="JP10" pad="1"/>
-<wire x1="15.24" y1="8.763" x2="17.7296" y2="12.335" width="0" layer="19" extent="1-1"/>
+<wire x1="17.7296" y1="12.335" x2="17.7296" y2="11.2526" width="0.3048" layer="1"/>
+<wire x1="17.7296" y1="11.2526" x2="15.24" y2="8.763" width="0.3048" layer="1"/>
 </signal>
 <signal name="RX1BF">
 <contactref element="U$1" pad="11"/>
 <contactref element="JP11" pad="1"/>
-<wire x1="12.7" y1="8.763" x2="17.0692" y2="12.335" width="0" layer="19" extent="1-1"/>
+<wire x1="17.0692" y1="12.335" x2="16.272" y2="12.335" width="0.3048" layer="1"/>
+<wire x1="16.272" y1="12.335" x2="12.7" y2="8.763" width="0.3048" layer="1"/>
 </signal>
 <signal name="CLKOUT">
 <contactref element="U$1" pad="3"/>
 <contactref element="JP15" pad="1"/>
-<wire x1="21.692" y1="18.177" x2="21.717" y2="18.202" width="0.3048" layer="1"/>
-<wire x1="21.717" y1="18.202" x2="21.717" y2="19.558" width="0.3048" layer="1"/>
-<wire x1="21.717" y1="19.558" x2="21.082" y2="20.193" width="0.3048" layer="1"/>
+<wire x1="21.692" y1="18.177" x2="21.667" y2="18.202" width="0.3048" layer="1"/>
+<wire x1="21.667" y1="18.202" x2="21.667" y2="19.608" width="0.3048" layer="1"/>
+<wire x1="21.667" y1="19.608" x2="21.082" y2="20.193" width="0.3048" layer="1"/>
 </signal>
 </signals>
 </board>
