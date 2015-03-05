@@ -55,6 +55,7 @@ namespace DatabaseFiddling
                 Console.WriteLine("XML Database already exists."); //indicate file already exists in console
             }
             xml_file = XElement.Load(filename); //load XML file
+            file_name = filename;
             return exists; //return flag indicating if XML file exists or not
         }
 
@@ -63,9 +64,10 @@ namespace DatabaseFiddling
             Console.WriteLine("Trying to create element...");
             try
             {
-                XElement newX = new XElement(root, new XElement(label, value), new XElement("Time", DateTime.Now));
+                XElement newX = new XElement("Packet", new XElement(label, value), new XElement("Time", DateTime.Now));
                 xml_file.Add(newX);
                 Console.WriteLine("Node Addition Code Executed...\n"+newX);
+                xml_file.Save(file_name, SaveOptions.OmitDuplicateNamespaces);
 
             }
             catch (Exception ex)
