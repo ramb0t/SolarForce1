@@ -14,7 +14,9 @@ namespace DatabaseFiddling
         static void Main(string[] args)
         {
             Database db = new Database("xmlTrialDb.xml");
+            db.setNodeLabel("ErrorPacket");
             db.addData("OutputCurrent", 7);
+            db.setNodeLabel("Data Packet");
             db.addData("InclineX", 25);
             Console.ReadKey();
         }
@@ -32,6 +34,7 @@ namespace DatabaseFiddling
 
         private XElement xml_file; //XElement object to be used for creating nodes
         private string file_name; //address of XML database
+        private string node_label; //label associated to each node of database
 
         //Constructors
         public Database(String filename)
@@ -64,13 +67,33 @@ namespace DatabaseFiddling
             Console.WriteLine("Trying to create element...");
             try
             {
-                xml_file.Add(new XElement("Packet", new XElement(label, value), new XElement("Time", DateTime.Now))); //add node
+                xml_file.Add(new XElement(node_label, new XElement(label, value), new XElement("Time", DateTime.Now))); //add node
                 xml_file.Save(file_name, SaveOptions.OmitDuplicateNamespaces); //save changes
             }
             catch (Exception ex) //adding new node may return exception if structure of XML file is breached
             {
                 Console.WriteLine("Error: " + ex + "\n\nNode not created."); //display error message
             }
+        }
+
+        //get the root node label
+        public string getNodeLabel()
+        { return node_label; }
+
+        //set the root node label
+        public void setNodeLabel(string label)
+        {
+            bool acceptable = true; //flag indicating acceptability
+            try
+            {
+                XElement x = new XElement(label); //attempt creating XElement object with specified node
+            }
+            catch (System.Xml.XmlException inv) //if invalid string entered, XmlException is thrown
+            {
+                acceptable = false; //set acceptability flag to false
+                Console.WriteLine(inv+"\n\nInvalid input - setting to default.");
+            }
+            node_label = acceptable ? label : "Level_1"; //set node_label to "Level_1" by default 
         }
     }
 }
