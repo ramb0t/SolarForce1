@@ -15,9 +15,9 @@ namespace DatabaseFiddling
         {
             Database db = new Database("xmlTrialDb.xml");
             db.setNodeLabel("Packet");
-            db.addData("OutputCurrent", 12, "Type", "Good");
+            db.addData("OutputCurrent", 12, "Type", "Data");
             db.setNodeLabel("Packet");
-            db.addData("BMS", "ADC exploded... thanks mech!", "Type", "Error");
+            db.addData("Speed", "Hall Effect sensor not found", "Type", "Error");
             db.setNodeLabel("Packet");
             db.addData("InclineX", 16.2);
             Console.ReadKey();
