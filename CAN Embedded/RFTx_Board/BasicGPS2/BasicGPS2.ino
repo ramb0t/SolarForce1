@@ -1,7 +1,12 @@
+#include <TinyGPS++.h>
+
 #include "SoftwareSerial.h"
 
-SoftwareSerial mySerial(0,1); // RX, TX
+
+SoftwareSerial mySerial(2,3); // RX, TX
 //using 0 & 1 doesn't specifically require the serial header, builtin on Arduino
+TinyGPS++ gps;
+
 
 void setup() 
 {
