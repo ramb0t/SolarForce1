@@ -2,8 +2,10 @@
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
+using System.IO.Ports;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +16,9 @@ namespace DatabaseFiddling
         static void Main(string[] args)
         {
             Database db = new Database("xmlTrialDb.xml");
+            SerialCommsManager a = new SerialCommsManager();
+            a.setDefaultPort();
+            a.activate();
             db.setNodeLabel("Packet");
             db.addData("OutputCurrent", 12, "Type", "Data");
             db.setNodeLabel("Packet");
@@ -124,7 +129,48 @@ namespace DatabaseFiddling
             }
             node_label = acceptable ? label : "Level_1"; //set node_label to "Level_1" by default 
         }
+    }
 
-        
+    class SerialCommsManager
+    {
+        private SerialPort port = new SerialPort();
+
+        private string baudRate;
+        public void setBaudRate(string br)
+        {
+            baudRate = br;
+        }
+        public string getBaudRate()
+        { return baudRate; }
+
+        /*add for parity, stop bits and other params*/
+
+        void received_data(object sender, SerialDataReceivedEventArgs e)
+        {
+            int vals = port.BytesToRead;
+            byte[] buffer = new byte[vals];
+            port.Read(buffer,0,vals);
+            for (int i = 0; i < vals; ++i)
+                Console.WriteLine(buffer[i]);
+        }
+
+        public void setDefaultPort()
+        {
+            port.DataBits = 8;
+            port.PortName = "COM9";
+            port.BaudRate = 4800;
+            port.Parity = Parity.Odd;
+            port.StopBits = StopBits.Two;
+
+            port.DataReceived += new SerialDataReceivedEventHandler(received_data);
+        }
+
+        public void activate()
+        {
+            if (port.IsOpen)
+                port.Close();
+
+            port.Open();
+        }
     }
 }
