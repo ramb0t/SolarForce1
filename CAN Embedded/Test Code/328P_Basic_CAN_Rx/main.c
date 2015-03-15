@@ -6,6 +6,10 @@
  */
 
 #include "main.h"
+// -------- Global Variables --------- //
+
+
+// -------- Functions --------- //
 
 int main(void)
 {
@@ -24,34 +28,39 @@ int main(void)
 		PORTB &=~(1<<PORTB1);
 		_delay_ms(50);
 	}
+	PORTB |= (1<<PORTB1);
 
 while(1)
 	{
 
-
+	rx_status = can_get_message (&message); //gets msg from bus (pointer to the object of CanMessage type) [returns value based on result of Rx
 	// quick flash while waiting for a message
-	while( rx_status == 0xff )
+	//while( rx_status == 0xff ){
 		//_delay_ms(1000);
 
-		PORTB |= (1<<PORTB1);
-		_delay_ms(200);
-		PORTB &=~(1<<PORTB1);
+		//PORTB |= (1<<PORTB1);
+		//_delay_ms(200);
+		//PORTB &=~(1<<PORTB1);
+		//_delay_ms(200);
 
-		rx_status = can_get_message (&message); //gets msg from bus (pointer to the object of CanMessage type) [returns value based on result of Rx
+		//rx_status = can_get_message (&message); //gets msg from bus (pointer to the object of CanMessage type) [returns value based on result of Rx
 
-	}
+	//}
 
-	rx_status = 0xff; // reset
+	if(rx_status!=0xff){
+		// we have a message now!!
+		// check if valid?
+		if (message.data[0] == 0x04 )
+			{
+				if(message.data[1]==0x01){
+				PORTB |= (1<<PORTB1);}
+				else if(message.data[1]==0x02){
+				PORTB &=~(1<<PORTB1);}
+				_delay_ms(200);
+			}
 
-    // we have a message now!!
-	// check if valid?
-	if (message.data[0] == 0x04 && message.data[1]==0xf3)
-		{
-			// turn on for a time
-			PORTB |= (1<<PORTB1);
-			_delay_ms(1000);
 		}
-
+	}
 }
 
 
