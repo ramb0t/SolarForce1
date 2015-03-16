@@ -7,22 +7,41 @@ using System.Text;
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DatabaseFiddling
 {
     class Test
     {
+        public static void runThread2()
+        {
+            for (int loop = 0; loop<3; loop++)
+            {
+                Console.WriteLine("I'm a big boy now...  I use multithreading\n"+Thread.CurrentThread.Name+loop);
+                Thread.Sleep(1500);
+            }
+            SerialCommsManager a = new SerialCommsManager();
+            a.setDefaultPort();
+            //a.activate();
+        }
+        
         static void Main(string[] args)
         {
             Database db = new Database("xmlTrialDb.xml");
-            SerialCommsManager a = new SerialCommsManager();
-            a.setDefaultPort();
-            a.activate();
+            Thread backgroundJobby = new Thread(new ThreadStart(runThread2));
+            backgroundJobby.Name = "Background";
+            backgroundJobby.Start();
+            for (int i = 0; i < 5; i++)
+            {
+                Console.WriteLine("boring main thread is boring "+i);
+                Thread.Sleep(1500);
+            }
+            
             db.setNodeLabel("Packet");
-            db.addData("OutputCurrent", 12, "Type", "Data");
+            db.addData("InputCurrent", 12, "Type", "Data");
             db.setNodeLabel("Packet");
-            db.addData("Speed", "Hall Effect sensor not found", "Type", "Error");
+            db.addData("RF_Link", "Comms Failure", "Type", "Error");
             db.setNodeLabel("Packet");
             db.addData("InclineX", 16.2);
             Console.ReadKey();
