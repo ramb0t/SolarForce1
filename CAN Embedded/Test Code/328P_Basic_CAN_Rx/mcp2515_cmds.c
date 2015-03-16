@@ -186,7 +186,6 @@ uint8_t can_get_message (CANMessage *p_message)
 {
 	// Read status
 	uint8_t status = mcp2515_read_rx_status ();
-	PORTB &=~(1<<PORTB1);
 
 	if (bit_is_set (status, 6))
 	{
