@@ -26,7 +26,7 @@
 
 
 // Project Specific
-#include "u8glib/src/u8g.h"
+#include "GFX_LCD.h"
 #include "AVR_SPI.h"
 
 #define UART_BAUD_RATE 9600

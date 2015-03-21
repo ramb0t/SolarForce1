@@ -38,16 +38,31 @@ void u8g_setup(void)
       A0 and Reset are not used.
   */
    //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
+	DDRC |= (1<<2);
    u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
 
-   u8g_DrawStr(&u8g, 5, 15, "Hello! ");
+   u8g_FirstPage(&u8g);
+   	do
+   	{
+   		u8g_prepare();
+   	    u8g_DrawStr(&u8g, 5, 15, "Hello! ");
+   	} while ( u8g_NextPage(&u8g) );
 
+
+}
+
+void u8g_prepare(void) {
+  u8g_SetFont(&u8g, u8g_font_6x10);
+  u8g_SetFontRefHeightExtendedText(&u8g);
+  u8g_SetDefaultForegroundColor(&u8g);
+  u8g_SetFontPosTop(&u8g);
 }
 
 void GFX_LCD_Draw(CANMessage message){
 	u8g_FirstPage(&u8g);
 	do
 	{
+		u8g_prepare();
 		draw(message);
 	} while ( u8g_NextPage(&u8g) );
 }
@@ -57,60 +72,77 @@ void draw(CANMessage message){
 
 	// ID
 	itoa(message.id, buf, 10);
-	u8g_DrawStr(&u8g, 5, 15, "ID= ");
-	u8g_DrawStr(&u8g, 25, 15, buf);
+	u8g_DrawStr(&u8g, 5, 0, "ID= ");
+	u8g_DrawStr(&u8g, 24, 0, buf);
 
 	// L
 	itoa(message.length, buf, 10);
-	u8g_DrawStr(&u8g, 5, 25, "Length= ");
-	u8g_DrawStr(&u8g, 25, 25, buf);
+	u8g_DrawStr(&u8g, 5, 15, "Length= ");
+	u8g_DrawStr(&u8g, 48, 15, buf);
 
-	// D0
-	if(message.length > 0){
-		itoa(message.data[0], buf, 10);
-		u8g_DrawStr(&u8g, 5, 35, "D0= ");
-		u8g_DrawStr(&u8g, 25, 35, buf);
+	for(int i = 0 ; i < message.length; i++){
+		char string[15] ="D";
+		itoa(i, buf, 10);
+		strcat(string, buf);
+		strcat(string, "= ");
+
+		itoa(message.data[i], buf, 10);
+		strcat(string, buf);
+
+		if(i%2){ // odd number
+			u8g_DrawStr(&u8g, 64, 30 + (i/2)*10, string);
+		}else{ // even number
+			u8g_DrawStr(&u8g, 0, 30 + (i/2)*10, string);
+		}
+
 	}
-	// D1
-	if(message.length > 1){
-		itoa(message.data[1], buf, 10);
-		u8g_DrawStr(&u8g, 5, 15, "ID= ");
-		u8g_DrawStr(&u8g, 5, 15, buf);
-	}
-	// D2
-	if(message.length > 2){
-		itoa(message.data[2], buf, 10);
-		u8g_DrawStr(&u8g, 5, 15, "ID= ");
-		u8g_DrawStr(&u8g, 5, 15, buf);
-	}
-	// D3
-	if(message.length > 3){
-		itoa(message.data[3], buf, 10);
-		u8g_DrawStr(&u8g, 5, 15, "ID= ");
-		u8g_DrawStr(&u8g, 5, 15, buf);
-	}
-	// D4
-	if(message.length > 4){
-		itoa(message.data[4], buf, 10);
-		u8g_DrawStr(&u8g, 5, 15, "ID= ");
-		u8g_DrawStr(&u8g, 5, 15, buf);
-	}
-	// D5
-	if(message.length > 5){
-		itoa(message.data[5], buf, 10);
-		u8g_DrawStr(&u8g, 5, 15, "ID= ");
-		u8g_DrawStr(&u8g, 5, 15, buf);
-	}
-	// D6
-	if(message.length > 6){
-		itoa(message.data[6], buf, 10);
-		u8g_DrawStr(&u8g, 5, 15, "ID= ");
-		u8g_DrawStr(&u8g, 5, 15, buf);
-	}
-	// D7
-	if(message.length > 7){
-		itoa(message.data[7], buf, 10);
-		u8g_DrawStr(&u8g, 5, 15, "ID= ");
-		u8g_DrawStr(&u8g, 5, 15, buf);
-	}
+
+//	// D0
+//	if(message.length > 0){
+//		itoa(message.data[0], buf, 10);
+//		u8g_DrawStr(&u8g, 100, 0, "D0= ");
+//		u8g_DrawStr(&u8g, 119, 0, buf);
+//	}
+//	// D1
+//	if(message.length > 1){
+//		itoa(message.data[1], buf, 10);
+//		u8g_DrawStr(&u8g, 100, 10, "D0= ");
+//		u8g_DrawStr(&u8g, 119, 10, buf);
+//	}
+//	// D2
+//	if(message.length > 2){
+//		itoa(message.data[2], buf, 10);
+//		u8g_DrawStr(&u8g, 100, 20, "D0= ");
+//		u8g_DrawStr(&u8g, 119, 20, buf);
+//	}
+//	// D3
+//	if(message.length > 3){
+//		itoa(message.data[3], buf, 10);
+//		u8g_DrawStr(&u8g, 100, 30, "D0= ");
+//		u8g_DrawStr(&u8g, 114, 30, buf);
+//	}
+//	// D4
+//	if(message.length > 4){
+//		itoa(message.data[4], buf, 10);
+//		u8g_DrawStr(&u8g, 100, 40, "D0= ");
+//		u8g_DrawStr(&u8g, 114, 40, buf);
+//	}
+//	// D5
+//	if(message.length > 5){
+//		itoa(message.data[5], buf, 10);
+//		u8g_DrawStr(&u8g, 100, 50, "D0= ");
+//		u8g_DrawStr(&u8g, 114, 50, buf);
+//	}
+//	// D6
+//	if(message.length > 6){
+//		itoa(message.data[6], buf, 10);
+//		u8g_DrawStr(&u8g, 100, 60, "D0= ");
+//		u8g_DrawStr(&u8g, 114, 60, buf);
+//	}
+//	// D7
+//	if(message.length > 7){
+//		itoa(message.data[7], buf, 10);
+//		u8g_DrawStr(&u8g, 100, 70, "D0= ");
+//		u8g_DrawStr(&u8g, 114, 70, buf);
+//	}
 }
