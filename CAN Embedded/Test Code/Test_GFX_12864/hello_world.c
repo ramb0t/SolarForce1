@@ -114,8 +114,8 @@ void u8g_setup(void)
     Arguments for u8g_InitSPI are: SCK, MOSI, CS, A0, Reset
       A0 and Reset are not used.
   */
-   u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
-  // u8g_InitHWSPI(&u8g, &u8g_dev_st7920_192x32_hw_spi, PN(2, 4), U8G_PIN_NONE, U8G_PIN_NONE);
+   //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
+   u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
 
   
 }
@@ -129,10 +129,69 @@ void sys_init(void)
 #endif
 }
 
-void draw(void)
-{
+void u8g_prepare(void) {
   u8g_SetFont(&u8g, u8g_font_6x10);
-  u8g_DrawStr(&u8g, 0, 15, "Hello World!");
+  u8g_SetFontRefHeightExtendedText(&u8g);
+  u8g_SetDefaultForegroundColor(&u8g);
+  u8g_SetFontPosTop(&u8g);
+}
+
+void u8g_box_frame(uint8_t a) {
+  u8g_DrawStr(&u8g, 0, 0, "drawBox");
+  u8g_DrawBox(&u8g, 5,10,20,10);
+  u8g_DrawBox(&u8g, 10+a,15,30,7);
+  u8g_DrawStr(&u8g, 0, 30, "drawFrame");
+  u8g_DrawFrame(&u8g, 5,10+30,20,10);
+  u8g_DrawFrame(&u8g, 10+a,15+30,30,7);
+}
+
+void u8g_string(uint8_t a) {
+  u8g_DrawStr(&u8g, 30+a,31, " 0");
+  u8g_DrawStr90(&u8g, 30,31+a, " 90");
+  u8g_DrawStr180(&u8g, 30-a,31, " 180");
+  u8g_DrawStr270(&u8g, 30,31-a, " 270");
+}
+
+void u8g_line(uint8_t a) {
+  u8g_DrawStr(&u8g, 0, 0, "drawLine");
+  u8g_DrawLine(&u8g, 7+a, 10, 40, 55);
+  u8g_DrawLine(&u8g, 7+a*2, 10, 60, 55);
+  u8g_DrawLine(&u8g, 7+a*3, 10, 80, 55);
+  u8g_DrawLine(&u8g, 7+a*4, 10, 100, 55);
+}
+
+void u8g_ascii_1(void) {
+  char s[2] = " ";
+  uint8_t x, y;
+  u8g_DrawStr(&u8g, 0, 0, "ASCII page 1");
+  for( y = 0; y < 6; y++ ) {
+    for( x = 0; x < 16; x++ ) {
+      s[0] = y*16 + x + 32;
+      u8g_DrawStr(&u8g, x*7, y*10+10, s);
+    }
+  }
+}
+
+void u8g_ascii_2(void) {
+  char s[2] = " ";
+  uint8_t x, y;
+  u8g_DrawStr(&u8g, 0, 0, "ASCII page 2");
+  for( y = 0; y < 6; y++ ) {
+    for( x = 0; x < 16; x++ ) {
+      s[0] = y*16 + x + 160;
+      u8g_DrawStr(&u8g, x*7, y*10+10, s);
+    }
+  }
+}
+
+
+uint8_t draw_state = 0;
+
+void draw(void) {
+  u8g_prepare();
+
+  u8g_DrawFrame(&u8g, 5,10,50,20);
+  u8g_DrawStr(&u8g, 5, 15, "drawFrame");
 }
 
 int main(void)
@@ -147,8 +206,11 @@ int main(void)
     {
       draw();
     } while ( u8g_NextPage(&u8g) );
-    u8g_Delay(100);
-  }
-  
-}
 
+    draw_state++;
+    if ( draw_state >= 5*8 )
+      draw_state = 0;
+
+    u8g_Delay(150);
+  }
+}
