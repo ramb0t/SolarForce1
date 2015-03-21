@@ -7,43 +7,54 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using System.Threading.Tasks;
 
 namespace DatabaseFiddling
 {
     class Test
     {
-        public static void runThread2()
+        private static void timeoutEvent(object s, ElapsedEventArgs e)
+        {
+            Console.WriteLine("Timeout Event at time "+DateTime.Now);
+        }
+
+        private static void runThread2()
         {
             SerialCommsManager a = new SerialCommsManager();
             a.setDefaultPort();
             //a.activate();
             for (int loop = 0; loop<3; loop++)
             {
-                //Console.WriteLine("Running Thread: "+Thread.CurrentThread.Name+" "+loop);
-                Thread.Sleep(10);
+                Console.WriteLine("Running Thread: "+Thread.CurrentThread.Name+" "+loop);
+                Thread.Sleep(1330);
             }
         }
         
         static void Main(string[] args)
         {
-            Database db = new Database("xmlTrialDb_v2.xml", "Logger");
+            System.Timers.Timer timer = new System.Timers.Timer(3000);
+            timer.Elapsed += timeoutEvent;
+            timer.Enabled = true;
+            Console.WriteLine("Timer Started at " + DateTime.Now);
+            //Database db = new Database("xmlTrialDb_v2.xml", "Logger");
             Thread backgroundJobby = new Thread(new ThreadStart(runThread2));
             backgroundJobby.Name = "Background";
             backgroundJobby.Start();
             for (int i = 0; i < 5; i++)
             {
-                //Console.WriteLine("Running Thread: Main "+i);
-                Thread.Sleep(10);
+                Console.WriteLine("Running Thread: Main "+i);
+                Thread.Sleep(1200);
             }
-            
+
+            /*
             db.setNodeLabel("Packet");
             db.addData("InputCurrent", 12, "Type", "Data");
             db.addData("RF_Link", "Comms Failure", "Type", "Error");
             db.addData("BMS_CurrentIn", 6.51, "Type", "Data");
             Console.WriteLine("\n\nGetting Errors:\n");
             db.getErrors();
-
+            */
             Console.ReadKey();
         }
     }
