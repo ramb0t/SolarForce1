@@ -20,6 +20,8 @@
 #include <avr/wdt.h>
 #include <avr/power.h>
 
+#include <stdlib.h>
+
 // Project Specific
 #include "mcp2515_cmds.h"
 #include "AVR_SPI.h"

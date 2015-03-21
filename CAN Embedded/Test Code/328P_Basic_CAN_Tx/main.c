@@ -26,18 +26,18 @@ int main(void) {
 	CANMessage messageOff;
 
 	// Fill struct with data
-	messageOn. id = 0x0000;
+	messageOn. id = 0x0007;
 	messageOn. rtr = 0 ;
 	messageOn. length = 2 ;
 	messageOn. data [ 0 ] = 0x04;
 	messageOn. data [ 1 ] = 0x01;
 
 	// Fill struct with data
-	messageOff. id = 0x0000;
+	messageOff. id = 0x0101;
 	messageOff. rtr = 0 ;
-	messageOff. length = 2 ;
-	messageOff. data [ 0 ] = 0x04;
-	messageOff. data [ 1 ] = 0x02;
+	messageOff. length = 3 ;
+	messageOff. data [ 0 ] = 0x64;
+	messageOff. data [ 1 ] = 0xAB;
 
 
 	// clock_prescale_set(clock_div_1); /* CPU Clock: 8 MHz */
@@ -46,10 +46,20 @@ int main(void) {
 
 	// ------ Event loop ------ //
 		while (1) {
-			_delay_ms(500);
-			can_send_message ( &messageOn ) ; // turn led on
-			_delay_ms(500);
-			can_send_message ( &messageOff ) ; // turn led off
+			//_delay_ms(750);
+			//can_send_message ( &messageOn ) ; // turn led on
+			//_delay_ms(750);
+			//can_send_message ( &messageOff ) ; // turn led off
+			CANMessage message;
+			message.id = rand();
+			message.length = (rand() / 0xfff);
+			for (int i = 0; i < message.length; i++){
+				message.data[i] = (rand() >> 7);
+			}
+
+			can_send_message ( &message ) ;
+			_delay_ms(750);
+
 
 		} /* End event loop */
 	return (0); /* This line is never reached */
