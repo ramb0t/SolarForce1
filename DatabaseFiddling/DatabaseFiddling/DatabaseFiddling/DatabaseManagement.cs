@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.Ports;
 using System.Text;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,34 +15,35 @@ namespace DatabaseFiddling
     {
         public static void runThread2()
         {
-            for (int loop = 0; loop<3; loop++)
-            {
-                Console.WriteLine("I'm a big boy now...  I use multithreading\n"+Thread.CurrentThread.Name+loop);
-                Thread.Sleep(1500);
-            }
             SerialCommsManager a = new SerialCommsManager();
             a.setDefaultPort();
             //a.activate();
+            for (int loop = 0; loop<3; loop++)
+            {
+                //Console.WriteLine("Running Thread: "+Thread.CurrentThread.Name+" "+loop);
+                Thread.Sleep(10);
+            }
         }
         
         static void Main(string[] args)
         {
-            Database db = new Database("xmlTrialDb.xml");
+            Database db = new Database("xmlTrialDb_v2.xml", "Logger");
             Thread backgroundJobby = new Thread(new ThreadStart(runThread2));
             backgroundJobby.Name = "Background";
             backgroundJobby.Start();
             for (int i = 0; i < 5; i++)
             {
-                Console.WriteLine("boring main thread is boring "+i);
-                Thread.Sleep(1500);
+                //Console.WriteLine("Running Thread: Main "+i);
+                Thread.Sleep(10);
             }
             
             db.setNodeLabel("Packet");
             db.addData("InputCurrent", 12, "Type", "Data");
-            db.setNodeLabel("Packet");
             db.addData("RF_Link", "Comms Failure", "Type", "Error");
-            db.setNodeLabel("Packet");
-            db.addData("InclineX", 16.2);
+            db.addData("BMS_CurrentIn", 6.51, "Type", "Data");
+            Console.WriteLine("\n\nGetting Errors:\n");
+            db.getErrors();
+
             Console.ReadKey();
         }
     }
@@ -58,31 +58,33 @@ namespace DatabaseFiddling
     {
         public Database() { }
 
-        private XElement xml_file; //XElement object to be used for creating nodes
+        private XDocument xml_file; //XElement object to be used for creating nodes
         private string file_name; //address of XML database
         private string node_label; //label associated to each node of database
+        private string root;
 
         //Constructors
-        public Database(String filename)
+        public Database(String filename, String root_name)
         {
-            createXML(filename); 
+            createXML(filename, root_name); 
         }
 
         //Create XML file, return whether it currently exists or not
-        public bool createXML(String filename)
+        public bool createXML(String filename, String rootname)
         {
+            root = rootname;
             bool exists = File.Exists(filename); //check if specified filename exists
             if (!exists) //if file does not exist, create file
             {
-                XDocument x = new XDocument(new XDeclaration("1.0", "utf-", "true"), new XElement("DataLog")); //declare XML version and encoding
-                x.Save(filename); //save XML file
-                Console.WriteLine("XML Database Created"); //confirm message displayed in console
+                xml_file = new XDocument(new XDeclaration("1.0", "utf-", "true"), new XElement(root)); //declare XML version and encoding
+                xml_file.Save(filename); //save XML file
+                Console.WriteLine("XML Database Created. Name: " + filename); //confirm message displayed in console
             }
             else //XML file already exists
             {
-                Console.WriteLine("XML Database already exists."); //indicate file already exists in console
+                Console.WriteLine("XML Database already exists. Name: " + filename); //indicate file already exists in console
             }
-            xml_file = XElement.Load(filename); //load XML file
+            xml_file = XDocument.Load(filename); //load XML file
             file_name = filename; //set address of XML database
             return exists; //return flag indicating if XML file exists or not
         }
@@ -121,12 +123,25 @@ namespace DatabaseFiddling
             Console.WriteLine("Trying to create element...");
             try
             {
-                xml_file.Add(element); //add node
+                xml_file.Element(root).Add(element); //add node
                 xml_file.Save(file_name, SaveOptions.OmitDuplicateNamespaces); //save changes
+                Console.WriteLine("Element Created:\n" + element + "\n");
             }
             catch (Exception ex) //adding new node may return exception if structure of XML file is breached
             {
                 Console.WriteLine("Error: " + ex + "\n\nNode not created."); //display error message
+            }
+        }
+
+        //query XML file
+        public void getErrors()
+        {
+            var entries = from e in xml_file.Descendants(node_label)
+                          where e.Attribute("Type").Value == "Error"
+                          select e;
+            foreach (var e in entries)
+            {
+                Console.WriteLine(e);
             }
         }
 
@@ -188,7 +203,7 @@ namespace DatabaseFiddling
         {
             if (port.IsOpen)
                 port.Close();
-
+           
             port.Open();
         }
     }
