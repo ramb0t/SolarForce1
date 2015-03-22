@@ -234,5 +234,14 @@
 		<field type="char[12]" name="date">Direct conversion on mCU to chars for co-ordinates - time</field>
 		<field type="char[12]" name="lock_error">Error message 'INVALID' broadcast if the GPS has not locked yet.</field>
 	  </message>
+	  <message id="157" name="ACCELO_GYRO">
+		<field type="float" name="acceleration">MPU6050 output value for acceleration in m.s^-2</field>
+		<field type="float" name="incline">MPU6050 output value for inclination in degrees</field>		
+	  </message>
+	  <message id="158" name="HALL_EFFECT">
+		<field type="float" name="speed">Hall Effect sensor averaged speed reading in km/h</field>
+		<field type="uint8_t" name="left_magnet">flag for presence of left wheel Hall Effect magnet; '1' = present, '0' = missing</field>
+		<field type="uint8_t" name="right_magnet">flag for presence of right wheel Hall Effect magnet; '1' = present, '0' = missing</field>			
+	  </message>
     </messages>
 </mavlink>
