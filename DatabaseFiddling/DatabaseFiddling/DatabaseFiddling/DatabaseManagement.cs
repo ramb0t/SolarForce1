@@ -14,6 +14,9 @@ namespace DatabaseFiddling
 {
     class Test
     {
+        static ReaderWriterLock protectionLock = new ReaderWriterLock();
+        static int num = 0;
+
         private static void timeoutEvent(object s, ElapsedEventArgs e)
         {
             Console.WriteLine("Timeout Event at time "+DateTime.Now);
@@ -24,37 +27,69 @@ namespace DatabaseFiddling
             SerialCommsManager a = new SerialCommsManager();
             a.setDefaultPort();
             //a.activate();
-            for (int loop = 0; loop<3; loop++)
-            {
-                Console.WriteLine("Running Thread: "+Thread.CurrentThread.Name+" "+loop);
-                Thread.Sleep(1330);
-            }
+            
+                for (int loop = 0; loop<3; loop++)
+                {
+                    Console.WriteLine("Running Thread: " + Thread.CurrentThread.Name + " " + loop);
+                    try
+                    {
+                        protectionLock.AcquireReaderLock(100);
+                        try
+                        {
+                            Console.WriteLine("Reader Thread locked: num = " + num);
+                        }
+                        finally
+                        {
+                            protectionLock.ReleaseReaderLock();
+                        }
+                    }
+                    catch (ApplicationException)
+                    {
+                        Console.WriteLine("ReaderLock Timeout");
+                    }
+                    Thread.Sleep(400);
+                }
         }
         
         static void Main(string[] args)
         {
-            System.Timers.Timer timer = new System.Timers.Timer(3000);
+            System.Timers.Timer timer = new System.Timers.Timer(1000);
             timer.Elapsed += timeoutEvent;
             timer.Enabled = true;
             Console.WriteLine("Timer Started at " + DateTime.Now);
             //Database db = new Database("xmlTrialDb_v2.xml", "Logger");
             Thread backgroundJobby = new Thread(new ThreadStart(runThread2));
-            backgroundJobby.Name = "Background";
+            backgroundJobby.Name = "Reader";
             backgroundJobby.Start();
             for (int i = 0; i < 5; i++)
-            {
-                Console.WriteLine("Running Thread: Main "+i);
-                Thread.Sleep(1200);
-            }
-
-            /*
-            db.setNodeLabel("Packet");
-            db.addData("InputCurrent", 12, "Type", "Data");
-            db.addData("RF_Link", "Comms Failure", "Type", "Error");
-            db.addData("BMS_CurrentIn", 6.51, "Type", "Data");
-            Console.WriteLine("\n\nGetting Errors:\n");
-            db.getErrors();
-            */
+                {
+                    Console.WriteLine("Running Thread: Writer " + i);
+                    try
+                    {
+                        protectionLock.AcquireWriterLock(100);
+                        try
+                        {
+                            num = new Random().Next(255);
+                            Console.WriteLine("Writer Thread Locked: num set to num = " + num);
+                        }
+                        finally
+                        {
+                            protectionLock.ReleaseWriterLock();
+                        }
+                    }
+                    catch(ApplicationException)
+                    {
+                        Console.WriteLine("Writer Lock timeout");
+                    }
+                    Thread.Sleep(250);
+                }
+            //db.setNodeLabel("Packet");
+            //db.addData("Speed", 100.5, "Type", "Data");
+            //db.addData("MPPT3", "Overheat", "Type", "Error");
+            //db.addData("Speed", "Motor RPM and Analogue Voltage Mismatch", "Type", "Error");
+            //Console.WriteLine("\n\nGetting Errors:\n");
+            //db.getErrors();
+            
             Console.ReadKey();
         }
     }
