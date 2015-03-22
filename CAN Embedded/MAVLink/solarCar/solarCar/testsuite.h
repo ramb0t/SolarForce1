@@ -316,7 +316,7 @@ static void mavlink_test_motor_driver(uint8_t system_id, uint8_t component_id, m
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_motor_driver_t packet_in = {
-		5,72
+		1,72
     };
 	mavlink_motor_driver_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -401,6 +401,95 @@ static void mavlink_test_gps(uint8_t system_id, uint8_t component_id, mavlink_me
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_accelo_gyro(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_accelo_gyro_t packet_in = {
+		2.116,0.4
+    };
+	mavlink_accelo_gyro_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.acceleration = packet_in.acceleration;
+        	packet1.incline = packet_in.incline;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_accelo_gyro_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_accelo_gyro_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_accelo_gyro_pack(system_id, component_id, &msg , packet1.acceleration , packet1.incline );
+	mavlink_msg_accelo_gyro_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_accelo_gyro_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.acceleration , packet1.incline );
+	mavlink_msg_accelo_gyro_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_accelo_gyro_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_accelo_gyro_send(MAVLINK_COMM_1 , packet1.acceleration , packet1.incline );
+	mavlink_msg_accelo_gyro_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
+static void mavlink_test_hall_effect(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_hall_effect_t packet_in = {
+		71.3,1,1
+    };
+	mavlink_hall_effect_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.speed = packet_in.speed;
+        	packet1.left_magnet = packet_in.left_magnet;
+        	packet1.right_magnet = packet_in.right_magnet;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_hall_effect_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_hall_effect_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_hall_effect_pack(system_id, component_id, &msg , packet1.speed , packet1.left_magnet , packet1.right_magnet );
+	mavlink_msg_hall_effect_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_hall_effect_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.speed , packet1.left_magnet , packet1.right_magnet );
+	mavlink_msg_hall_effect_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_hall_effect_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_hall_effect_send(MAVLINK_COMM_1 , packet1.speed , packet1.left_magnet , packet1.right_magnet );
+	mavlink_msg_hall_effect_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_solarCar(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_test_heartbeat(system_id, component_id, last_msg);
@@ -411,6 +500,8 @@ static void mavlink_test_solarCar(uint8_t system_id, uint8_t component_id, mavli
 	mavlink_test_mppt4_data(system_id, component_id, last_msg);
 	mavlink_test_motor_driver(system_id, component_id, last_msg);
 	mavlink_test_gps(system_id, component_id, last_msg);
+	mavlink_test_accelo_gyro(system_id, component_id, last_msg);
+	mavlink_test_hall_effect(system_id, component_id, last_msg);
 }
 
 #ifdef __cplusplus
