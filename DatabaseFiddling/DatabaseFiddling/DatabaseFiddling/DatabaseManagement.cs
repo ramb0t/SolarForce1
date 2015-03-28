@@ -24,10 +24,6 @@ namespace DatabaseFiddling
 
         private static void runThread2()
         {
-            SerialCommsManager a = new SerialCommsManager();
-            a.setDefaultPort();
-            //a.activate();
-            
                 for (int loop = 0; loop<3; loop++)
                 {
                     Console.WriteLine("Running Thread: " + Thread.CurrentThread.Name + " " + loop);
@@ -53,14 +49,17 @@ namespace DatabaseFiddling
         
         static void Main(string[] args)
         {
-            System.Timers.Timer timer = new System.Timers.Timer(1000);
-            timer.Elapsed += timeoutEvent;
-            timer.Enabled = true;
-            Console.WriteLine("Timer Started at " + DateTime.Now);
+            SerialCommsManager a = new SerialCommsManager();
+            a.setDefaultPort();
+            a.activate();
+            //System.Timers.Timer timer = new System.Timers.Timer(1000);
+            //timer.Elapsed += timeoutEvent;
+            //timer.Enabled = true;
+            //Console.WriteLine("Timer Started at " + DateTime.Now);
             //Database db = new Database("xmlTrialDb_v2.xml", "Logger");
             Thread backgroundJobby = new Thread(new ThreadStart(runThread2));
             backgroundJobby.Name = "Reader";
-            backgroundJobby.Start();
+            //backgroundJobby.Start();
             for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine("Running Thread: Writer " + i);
@@ -227,11 +226,16 @@ namespace DatabaseFiddling
 
         void received_data(object sender, SerialDataReceivedEventArgs e)
         {
-            int vals = port.BytesToRead;
-            byte[] buffer = new byte[vals];
-            port.Read(buffer,0,vals);
-            for (int i = 0; i < vals; ++i)
-                Console.WriteLine(buffer[i]);
+            try
+            {
+                int vals = port.BytesToRead;
+                byte[] buffer = new byte[vals];
+                port.Read(buffer, 0, vals);
+                for (int i = 0; i < vals; ++i)
+                    Console.WriteLine(buffer[vals-i-1]);
+            }
+            catch (TimeoutException)
+            { Console.WriteLine("1ms Timeout Exceeded... Comms lost?"); }
         }
 
         public void setDefaultPort()
@@ -241,6 +245,8 @@ namespace DatabaseFiddling
             port.BaudRate = 4800;
             port.Parity = Parity.Odd;
             port.StopBits = StopBits.Two;
+            port.ReceivedBytesThreshold = 2;
+            port.ReadTimeout = 1;
 
             port.DataReceived += new SerialDataReceivedEventHandler(received_data);
         }
@@ -250,7 +256,7 @@ namespace DatabaseFiddling
             if (port.IsOpen)
                 port.Close();
            
-            port.Open();
+            port.Open(); //throws IOException if COM9 (hardcoded) does not exist.
         }
     }
 }
