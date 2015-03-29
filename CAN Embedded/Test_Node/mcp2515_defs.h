@@ -2,7 +2,7 @@
 #ifndef	MCP2515_DEFS_H
 #define	MCP2515_DEFS_H
 
-/** \name	SPI Kommandos */
+/** \name	SPI Commands */
 /*@{*/
 #define SPI_RESET		0xC0
 #define	SPI_READ		0x03
@@ -15,7 +15,7 @@
 #define	SPI_BIT_MODIFY	0x05
 /*@}*/
 
-/** \name	Adressen der Register des MCP2515
+/** \name	Register Addresses for MCP2515
  *
  * Die Redundanten Adressen von z.B. dem Register CANSTAT 
  * (0x0E, 0x1E, 0x2E, ...) wurden dabei nicht mit aufgelistet.

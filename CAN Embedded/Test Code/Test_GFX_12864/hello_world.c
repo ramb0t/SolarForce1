@@ -115,7 +115,9 @@ void u8g_setup(void)
       A0 and Reset are not used.
   */
    //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
-   u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
+   //u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
+   u8g_Init8Bit(&u8g, &u8g_dev_ks0108_128x64, PN(1, 2), PN(1, 1), PN(1, 0), PN(3, 7), PN(3, 6), PN(3, 5), PN(3, 4), PN(3, 3), PN(2, 5), PN(2, 1), PN(2, 0), PN(2,2), PN(2, 3), U8G_PIN_NONE);
+
 
   
 }
@@ -188,10 +190,14 @@ void u8g_ascii_2(void) {
 uint8_t draw_state = 0;
 
 void draw(void) {
-  u8g_prepare();
-
-  u8g_DrawFrame(&u8g, 5,10,50,20);
-  u8g_DrawStr(&u8g, 5, 15, "drawFrame");
+	  u8g_prepare();
+	  switch(draw_state >> 3) {
+	    case 0: u8g_box_frame(draw_state&7); break;
+	    case 1: u8g_string(draw_state&7); break;
+	    case 2: u8g_line(draw_state&7); break;
+	    case 3: u8g_ascii_1(); break;
+	    case 4: u8g_ascii_2(); break;
+	  }
 }
 
 int main(void)
