@@ -188,10 +188,14 @@ void u8g_ascii_2(void) {
 uint8_t draw_state = 0;
 
 void draw(void) {
-  u8g_prepare();
-
-  u8g_DrawFrame(&u8g, 5,10,50,20);
-  u8g_DrawStr(&u8g, 5, 15, "drawFrame");
+	  u8g_prepare();
+	  switch(draw_state >> 3) {
+	    case 0: u8g_box_frame(draw_state&7); break;
+	    case 1: u8g_string(draw_state&7); break;
+	    case 2: u8g_line(draw_state&7); break;
+	    case 3: u8g_ascii_1(); break;
+	    case 4: u8g_ascii_2(); break;
+	  }
 }
 
 int main(void)

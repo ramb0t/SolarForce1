@@ -40,8 +40,12 @@ void u8g_setup(void)
    //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
 	DDRC |= (1<<2);
    u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
+   u8g_Init8Bit(&u8g_t *u8g, u8g_dev_t *dev, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7,
+     uint8_t en, uint8_t cs1, uint8_t cs2, uint8_t di, uint8_t rw, uint8_t reset);
 
-   u8g_FirstPage(&u8g);
+   //U8GLIB_KS0108_128(d0, d1, d2, d3, d4, d5, d6, d7, en, cs1, cs2, di, rw [, reset])u8g_dev_ks0108_128x64
+
+   //u8g_FirstPage(&u8g);
    	do
    	{
    		u8g_prepare();
@@ -52,7 +56,7 @@ void u8g_setup(void)
 }
 
 void u8g_prepare(void) {
-  u8g_SetFont(&u8g, u8g_font_6x10);
+  u8g_SetFont(&u8g, u8g_font_6x13B);
   u8g_SetFontRefHeightExtendedText(&u8g);
   u8g_SetDefaultForegroundColor(&u8g);
   u8g_SetFontPosTop(&u8g);
