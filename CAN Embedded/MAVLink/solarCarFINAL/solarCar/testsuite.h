@@ -78,7 +78,7 @@ static void mavlink_test_bms_data(uint8_t system_id, uint8_t component_id, mavli
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_bms_data_t packet_in = {
-		2.2,1.2,125,{ 5.1, 5.6, 5.9 },{ 32, 45, 51 },0,'t',0,0,86,192,2
+		17.0,45.0,17651,{ 17755, 17756, 17757 },{ 18067, 18068, 18069 },199,'X',77,144,211,22,2
     };
 	mavlink_bms_data_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -93,8 +93,8 @@ static void mavlink_test_bms_data(uint8_t system_id, uint8_t component_id, mavli
         	packet1.system_status = packet_in.system_status;
         	packet1.mavlink_version = packet_in.mavlink_version;
         
-        	mav_array_memcpy(packet1.cell_voltages, packet_in.cell_voltages, sizeof(float)*3);
-        	mav_array_memcpy(packet1.cell_temps, packet_in.cell_temps, sizeof(float)*3);
+        	mav_array_memcpy(packet1.cell_voltages, packet_in.cell_voltages, sizeof(uint16_t)*3);
+        	mav_array_memcpy(packet1.cell_temps, packet_in.cell_temps, sizeof(uint16_t)*3);
         
 
         memset(&packet2, 0, sizeof(packet2));
@@ -132,7 +132,7 @@ static void mavlink_test_mppt1_data(uint8_t system_id, uint8_t component_id, mav
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_mppt1_data_t packet_in = {
-		55,2.1,0,0
+		17235,17339,17,84
     };
 	mavlink_mppt1_data_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -178,7 +178,7 @@ static void mavlink_test_mppt2_data(uint8_t system_id, uint8_t component_id, mav
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_mppt2_data_t packet_in = {
-		52,2.3,0,0
+		17235,17339,17,84
     };
 	mavlink_mppt2_data_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -224,7 +224,7 @@ static void mavlink_test_mppt3_data(uint8_t system_id, uint8_t component_id, mav
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_mppt3_data_t packet_in = {
-		51,2.5,0,0
+		17235,17339,17,84
     };
 	mavlink_mppt3_data_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -270,7 +270,7 @@ static void mavlink_test_mppt4_data(uint8_t system_id, uint8_t component_id, mav
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_mppt4_data_t packet_in = {
-		59,2.8,0,0
+		17235,17339,17,84
     };
 	mavlink_mppt4_data_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -316,7 +316,7 @@ static void mavlink_test_motor_driver(uint8_t system_id, uint8_t component_id, m
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_motor_driver_t packet_in = {
-		1,72
+		5,72
     };
 	mavlink_motor_driver_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -360,7 +360,7 @@ static void mavlink_test_gps(uint8_t system_id, uint8_t component_id, mavlink_me
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_gps_t packet_in = {
-		"-26 30'32''","30 27'11''","11/03/2015","13:23","LOCKED"
+		"ABCDEFGHIJK","MNOPQRSTUVW","YZABCDEFGHI","KLMNOPQRSTU","WXYZABCDEFG"
     };
 	mavlink_gps_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -407,7 +407,7 @@ static void mavlink_test_accelo_gyro(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_accelo_gyro_t packet_in = {
-		2.116,0.4
+		5,72
     };
 	mavlink_accelo_gyro_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -451,7 +451,7 @@ static void mavlink_test_hall_effect(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_hall_effect_t packet_in = {
-		71.3,1,1
+		17.0,17,84
     };
 	mavlink_hall_effect_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));

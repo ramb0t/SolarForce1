@@ -6,9 +6,9 @@ typedef struct __mavlink_bms_data_t
 {
  float source_current; ///< Battery source current 
  float load_current; ///< Battery load current 
- float pack_voltage; ///< Value to indicate the voltage of the pack
- float cell_voltages[3]; ///< cell voltage parameters [minimum, average, maximum]
- float cell_temps[3]; ///< cell temperature parameters [minimum, average, maximum]
+ uint16_t pack_voltage; ///< Value to indicate the voltage of the pack (0-65536V)
+ uint16_t cell_voltages[3]; ///< cell voltage parameters [minimum, average, maximum]
+ uint16_t cell_temps[3]; ///< cell temperature parameters [minimum, average, maximum]
  uint8_t fault_condition; ///< Value to indicate a fault condition ('1' = fault condition, '0' = no fault)
  char bat_fan_status; ///< Char to indicate battery fan status, 't' = okay; 'f' = fault condition
  uint8_t LLIM_state; ///< logic low limit flag for stopping discharging. '1'=flag active; '0'=flag not active 
@@ -18,11 +18,11 @@ typedef struct __mavlink_bms_data_t
  uint8_t mavlink_version; ///< MAVLink version
 } mavlink_bms_data_t;
 
-#define MAVLINK_MSG_ID_BMS_DATA_LEN 43
-#define MAVLINK_MSG_ID_150_LEN 43
+#define MAVLINK_MSG_ID_BMS_DATA_LEN 29
+#define MAVLINK_MSG_ID_150_LEN 29
 
-#define MAVLINK_MSG_ID_BMS_DATA_CRC 17
-#define MAVLINK_MSG_ID_150_CRC 17
+#define MAVLINK_MSG_ID_BMS_DATA_CRC 175
+#define MAVLINK_MSG_ID_150_CRC 175
 
 #define MAVLINK_MSG_BMS_DATA_FIELD_CELL_VOLTAGES_LEN 3
 #define MAVLINK_MSG_BMS_DATA_FIELD_CELL_TEMPS_LEN 3
@@ -32,16 +32,16 @@ typedef struct __mavlink_bms_data_t
 	12, \
 	{  { "source_current", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_bms_data_t, source_current) }, \
          { "load_current", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_bms_data_t, load_current) }, \
-         { "pack_voltage", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_bms_data_t, pack_voltage) }, \
-         { "cell_voltages", NULL, MAVLINK_TYPE_FLOAT, 3, 12, offsetof(mavlink_bms_data_t, cell_voltages) }, \
-         { "cell_temps", NULL, MAVLINK_TYPE_FLOAT, 3, 24, offsetof(mavlink_bms_data_t, cell_temps) }, \
-         { "fault_condition", NULL, MAVLINK_TYPE_UINT8_T, 0, 36, offsetof(mavlink_bms_data_t, fault_condition) }, \
-         { "bat_fan_status", NULL, MAVLINK_TYPE_CHAR, 0, 37, offsetof(mavlink_bms_data_t, bat_fan_status) }, \
-         { "LLIM_state", NULL, MAVLINK_TYPE_UINT8_T, 0, 38, offsetof(mavlink_bms_data_t, LLIM_state) }, \
-         { "HLIM_state", NULL, MAVLINK_TYPE_UINT8_T, 0, 39, offsetof(mavlink_bms_data_t, HLIM_state) }, \
-         { "state_of_chg", NULL, MAVLINK_TYPE_UINT8_T, 0, 40, offsetof(mavlink_bms_data_t, state_of_chg) }, \
-         { "system_status", NULL, MAVLINK_TYPE_UINT8_T, 0, 41, offsetof(mavlink_bms_data_t, system_status) }, \
-         { "mavlink_version", NULL, MAVLINK_TYPE_UINT8_T, 0, 42, offsetof(mavlink_bms_data_t, mavlink_version) }, \
+         { "pack_voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 8, offsetof(mavlink_bms_data_t, pack_voltage) }, \
+         { "cell_voltages", NULL, MAVLINK_TYPE_UINT16_T, 3, 10, offsetof(mavlink_bms_data_t, cell_voltages) }, \
+         { "cell_temps", NULL, MAVLINK_TYPE_UINT16_T, 3, 16, offsetof(mavlink_bms_data_t, cell_temps) }, \
+         { "fault_condition", NULL, MAVLINK_TYPE_UINT8_T, 0, 22, offsetof(mavlink_bms_data_t, fault_condition) }, \
+         { "bat_fan_status", NULL, MAVLINK_TYPE_CHAR, 0, 23, offsetof(mavlink_bms_data_t, bat_fan_status) }, \
+         { "LLIM_state", NULL, MAVLINK_TYPE_UINT8_T, 0, 24, offsetof(mavlink_bms_data_t, LLIM_state) }, \
+         { "HLIM_state", NULL, MAVLINK_TYPE_UINT8_T, 0, 25, offsetof(mavlink_bms_data_t, HLIM_state) }, \
+         { "state_of_chg", NULL, MAVLINK_TYPE_UINT8_T, 0, 26, offsetof(mavlink_bms_data_t, state_of_chg) }, \
+         { "system_status", NULL, MAVLINK_TYPE_UINT8_T, 0, 27, offsetof(mavlink_bms_data_t, system_status) }, \
+         { "mavlink_version", NULL, MAVLINK_TYPE_UINT8_T, 0, 28, offsetof(mavlink_bms_data_t, mavlink_version) }, \
          } \
 }
 
@@ -59,29 +59,29 @@ typedef struct __mavlink_bms_data_t
  * @param LLIM_state logic low limit flag for stopping discharging. '1'=flag active; '0'=flag not active 
  * @param HLIM_state logic high limit flag for stopping charging. '1'=flag active; '0'=flag not active 
  * @param state_of_chg Percentage battery charge, 0-100
- * @param pack_voltage Value to indicate the voltage of the pack
+ * @param pack_voltage Value to indicate the voltage of the pack (0-65536V)
  * @param cell_voltages cell voltage parameters [minimum, average, maximum]
  * @param cell_temps cell temperature parameters [minimum, average, maximum]
  * @param system_status System status flag, see MAV_STATE ENUM
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_bms_data_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, float pack_voltage, const float *cell_voltages, const float *cell_temps, uint8_t system_status)
+						       uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, uint16_t pack_voltage, const uint16_t *cell_voltages, const uint16_t *cell_temps, uint8_t system_status)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_BMS_DATA_LEN];
 	_mav_put_float(buf, 0, source_current);
 	_mav_put_float(buf, 4, load_current);
-	_mav_put_float(buf, 8, pack_voltage);
-	_mav_put_uint8_t(buf, 36, fault_condition);
-	_mav_put_char(buf, 37, bat_fan_status);
-	_mav_put_uint8_t(buf, 38, LLIM_state);
-	_mav_put_uint8_t(buf, 39, HLIM_state);
-	_mav_put_uint8_t(buf, 40, state_of_chg);
-	_mav_put_uint8_t(buf, 41, system_status);
-	_mav_put_uint8_t(buf, 42, 2);
-	_mav_put_float_array(buf, 12, cell_voltages, 3);
-	_mav_put_float_array(buf, 24, cell_temps, 3);
+	_mav_put_uint16_t(buf, 8, pack_voltage);
+	_mav_put_uint8_t(buf, 22, fault_condition);
+	_mav_put_char(buf, 23, bat_fan_status);
+	_mav_put_uint8_t(buf, 24, LLIM_state);
+	_mav_put_uint8_t(buf, 25, HLIM_state);
+	_mav_put_uint8_t(buf, 26, state_of_chg);
+	_mav_put_uint8_t(buf, 27, system_status);
+	_mav_put_uint8_t(buf, 28, 2);
+	_mav_put_uint16_t_array(buf, 10, cell_voltages, 3);
+	_mav_put_uint16_t_array(buf, 16, cell_temps, 3);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_BMS_DATA_LEN);
 #else
 	mavlink_bms_data_t packet;
@@ -95,8 +95,8 @@ static inline uint16_t mavlink_msg_bms_data_pack(uint8_t system_id, uint8_t comp
 	packet.state_of_chg = state_of_chg;
 	packet.system_status = system_status;
 	packet.mavlink_version = 2;
-	mav_array_memcpy(packet.cell_voltages, cell_voltages, sizeof(float)*3);
-	mav_array_memcpy(packet.cell_temps, cell_temps, sizeof(float)*3);
+	mav_array_memcpy(packet.cell_voltages, cell_voltages, sizeof(uint16_t)*3);
+	mav_array_memcpy(packet.cell_temps, cell_temps, sizeof(uint16_t)*3);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_BMS_DATA_LEN);
 #endif
 
@@ -121,7 +121,7 @@ static inline uint16_t mavlink_msg_bms_data_pack(uint8_t system_id, uint8_t comp
  * @param LLIM_state logic low limit flag for stopping discharging. '1'=flag active; '0'=flag not active 
  * @param HLIM_state logic high limit flag for stopping charging. '1'=flag active; '0'=flag not active 
  * @param state_of_chg Percentage battery charge, 0-100
- * @param pack_voltage Value to indicate the voltage of the pack
+ * @param pack_voltage Value to indicate the voltage of the pack (0-65536V)
  * @param cell_voltages cell voltage parameters [minimum, average, maximum]
  * @param cell_temps cell temperature parameters [minimum, average, maximum]
  * @param system_status System status flag, see MAV_STATE ENUM
@@ -129,22 +129,22 @@ static inline uint16_t mavlink_msg_bms_data_pack(uint8_t system_id, uint8_t comp
  */
 static inline uint16_t mavlink_msg_bms_data_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint8_t fault_condition,float source_current,float load_current,char bat_fan_status,uint8_t LLIM_state,uint8_t HLIM_state,uint8_t state_of_chg,float pack_voltage,const float *cell_voltages,const float *cell_temps,uint8_t system_status)
+						           uint8_t fault_condition,float source_current,float load_current,char bat_fan_status,uint8_t LLIM_state,uint8_t HLIM_state,uint8_t state_of_chg,uint16_t pack_voltage,const uint16_t *cell_voltages,const uint16_t *cell_temps,uint8_t system_status)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_BMS_DATA_LEN];
 	_mav_put_float(buf, 0, source_current);
 	_mav_put_float(buf, 4, load_current);
-	_mav_put_float(buf, 8, pack_voltage);
-	_mav_put_uint8_t(buf, 36, fault_condition);
-	_mav_put_char(buf, 37, bat_fan_status);
-	_mav_put_uint8_t(buf, 38, LLIM_state);
-	_mav_put_uint8_t(buf, 39, HLIM_state);
-	_mav_put_uint8_t(buf, 40, state_of_chg);
-	_mav_put_uint8_t(buf, 41, system_status);
-	_mav_put_uint8_t(buf, 42, 2);
-	_mav_put_float_array(buf, 12, cell_voltages, 3);
-	_mav_put_float_array(buf, 24, cell_temps, 3);
+	_mav_put_uint16_t(buf, 8, pack_voltage);
+	_mav_put_uint8_t(buf, 22, fault_condition);
+	_mav_put_char(buf, 23, bat_fan_status);
+	_mav_put_uint8_t(buf, 24, LLIM_state);
+	_mav_put_uint8_t(buf, 25, HLIM_state);
+	_mav_put_uint8_t(buf, 26, state_of_chg);
+	_mav_put_uint8_t(buf, 27, system_status);
+	_mav_put_uint8_t(buf, 28, 2);
+	_mav_put_uint16_t_array(buf, 10, cell_voltages, 3);
+	_mav_put_uint16_t_array(buf, 16, cell_temps, 3);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_BMS_DATA_LEN);
 #else
 	mavlink_bms_data_t packet;
@@ -158,8 +158,8 @@ static inline uint16_t mavlink_msg_bms_data_pack_chan(uint8_t system_id, uint8_t
 	packet.state_of_chg = state_of_chg;
 	packet.system_status = system_status;
 	packet.mavlink_version = 2;
-	mav_array_memcpy(packet.cell_voltages, cell_voltages, sizeof(float)*3);
-	mav_array_memcpy(packet.cell_temps, cell_temps, sizeof(float)*3);
+	mav_array_memcpy(packet.cell_voltages, cell_voltages, sizeof(uint16_t)*3);
+	mav_array_memcpy(packet.cell_temps, cell_temps, sizeof(uint16_t)*3);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_BMS_DATA_LEN);
 #endif
 
@@ -209,29 +209,29 @@ static inline uint16_t mavlink_msg_bms_data_encode_chan(uint8_t system_id, uint8
  * @param LLIM_state logic low limit flag for stopping discharging. '1'=flag active; '0'=flag not active 
  * @param HLIM_state logic high limit flag for stopping charging. '1'=flag active; '0'=flag not active 
  * @param state_of_chg Percentage battery charge, 0-100
- * @param pack_voltage Value to indicate the voltage of the pack
+ * @param pack_voltage Value to indicate the voltage of the pack (0-65536V)
  * @param cell_voltages cell voltage parameters [minimum, average, maximum]
  * @param cell_temps cell temperature parameters [minimum, average, maximum]
  * @param system_status System status flag, see MAV_STATE ENUM
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_bms_data_send(mavlink_channel_t chan, uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, float pack_voltage, const float *cell_voltages, const float *cell_temps, uint8_t system_status)
+static inline void mavlink_msg_bms_data_send(mavlink_channel_t chan, uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, uint16_t pack_voltage, const uint16_t *cell_voltages, const uint16_t *cell_temps, uint8_t system_status)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_BMS_DATA_LEN];
 	_mav_put_float(buf, 0, source_current);
 	_mav_put_float(buf, 4, load_current);
-	_mav_put_float(buf, 8, pack_voltage);
-	_mav_put_uint8_t(buf, 36, fault_condition);
-	_mav_put_char(buf, 37, bat_fan_status);
-	_mav_put_uint8_t(buf, 38, LLIM_state);
-	_mav_put_uint8_t(buf, 39, HLIM_state);
-	_mav_put_uint8_t(buf, 40, state_of_chg);
-	_mav_put_uint8_t(buf, 41, system_status);
-	_mav_put_uint8_t(buf, 42, 2);
-	_mav_put_float_array(buf, 12, cell_voltages, 3);
-	_mav_put_float_array(buf, 24, cell_temps, 3);
+	_mav_put_uint16_t(buf, 8, pack_voltage);
+	_mav_put_uint8_t(buf, 22, fault_condition);
+	_mav_put_char(buf, 23, bat_fan_status);
+	_mav_put_uint8_t(buf, 24, LLIM_state);
+	_mav_put_uint8_t(buf, 25, HLIM_state);
+	_mav_put_uint8_t(buf, 26, state_of_chg);
+	_mav_put_uint8_t(buf, 27, system_status);
+	_mav_put_uint8_t(buf, 28, 2);
+	_mav_put_uint16_t_array(buf, 10, cell_voltages, 3);
+	_mav_put_uint16_t_array(buf, 16, cell_temps, 3);
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_BMS_DATA, buf, MAVLINK_MSG_ID_BMS_DATA_LEN, MAVLINK_MSG_ID_BMS_DATA_CRC);
 #else
@@ -249,8 +249,8 @@ static inline void mavlink_msg_bms_data_send(mavlink_channel_t chan, uint8_t fau
 	packet.state_of_chg = state_of_chg;
 	packet.system_status = system_status;
 	packet.mavlink_version = 2;
-	mav_array_memcpy(packet.cell_voltages, cell_voltages, sizeof(float)*3);
-	mav_array_memcpy(packet.cell_temps, cell_temps, sizeof(float)*3);
+	mav_array_memcpy(packet.cell_voltages, cell_voltages, sizeof(uint16_t)*3);
+	mav_array_memcpy(packet.cell_temps, cell_temps, sizeof(uint16_t)*3);
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_BMS_DATA, (const char *)&packet, MAVLINK_MSG_ID_BMS_DATA_LEN, MAVLINK_MSG_ID_BMS_DATA_CRC);
 #else
@@ -267,22 +267,22 @@ static inline void mavlink_msg_bms_data_send(mavlink_channel_t chan, uint8_t fau
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_bms_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, float pack_voltage, const float *cell_voltages, const float *cell_temps, uint8_t system_status)
+static inline void mavlink_msg_bms_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, uint16_t pack_voltage, const uint16_t *cell_voltages, const uint16_t *cell_temps, uint8_t system_status)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
 	_mav_put_float(buf, 0, source_current);
 	_mav_put_float(buf, 4, load_current);
-	_mav_put_float(buf, 8, pack_voltage);
-	_mav_put_uint8_t(buf, 36, fault_condition);
-	_mav_put_char(buf, 37, bat_fan_status);
-	_mav_put_uint8_t(buf, 38, LLIM_state);
-	_mav_put_uint8_t(buf, 39, HLIM_state);
-	_mav_put_uint8_t(buf, 40, state_of_chg);
-	_mav_put_uint8_t(buf, 41, system_status);
-	_mav_put_uint8_t(buf, 42, 2);
-	_mav_put_float_array(buf, 12, cell_voltages, 3);
-	_mav_put_float_array(buf, 24, cell_temps, 3);
+	_mav_put_uint16_t(buf, 8, pack_voltage);
+	_mav_put_uint8_t(buf, 22, fault_condition);
+	_mav_put_char(buf, 23, bat_fan_status);
+	_mav_put_uint8_t(buf, 24, LLIM_state);
+	_mav_put_uint8_t(buf, 25, HLIM_state);
+	_mav_put_uint8_t(buf, 26, state_of_chg);
+	_mav_put_uint8_t(buf, 27, system_status);
+	_mav_put_uint8_t(buf, 28, 2);
+	_mav_put_uint16_t_array(buf, 10, cell_voltages, 3);
+	_mav_put_uint16_t_array(buf, 16, cell_temps, 3);
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_BMS_DATA, buf, MAVLINK_MSG_ID_BMS_DATA_LEN, MAVLINK_MSG_ID_BMS_DATA_CRC);
 #else
@@ -300,8 +300,8 @@ static inline void mavlink_msg_bms_data_send_buf(mavlink_message_t *msgbuf, mavl
 	packet->state_of_chg = state_of_chg;
 	packet->system_status = system_status;
 	packet->mavlink_version = 2;
-	mav_array_memcpy(packet->cell_voltages, cell_voltages, sizeof(float)*3);
-	mav_array_memcpy(packet->cell_temps, cell_temps, sizeof(float)*3);
+	mav_array_memcpy(packet->cell_voltages, cell_voltages, sizeof(uint16_t)*3);
+	mav_array_memcpy(packet->cell_temps, cell_temps, sizeof(uint16_t)*3);
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_BMS_DATA, (const char *)packet, MAVLINK_MSG_ID_BMS_DATA_LEN, MAVLINK_MSG_ID_BMS_DATA_CRC);
 #else
@@ -323,7 +323,7 @@ static inline void mavlink_msg_bms_data_send_buf(mavlink_message_t *msgbuf, mavl
  */
 static inline uint8_t mavlink_msg_bms_data_get_fault_condition(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  36);
+	return _MAV_RETURN_uint8_t(msg,  22);
 }
 
 /**
@@ -353,7 +353,7 @@ static inline float mavlink_msg_bms_data_get_load_current(const mavlink_message_
  */
 static inline char mavlink_msg_bms_data_get_bat_fan_status(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_char(msg,  37);
+	return _MAV_RETURN_char(msg,  23);
 }
 
 /**
@@ -363,7 +363,7 @@ static inline char mavlink_msg_bms_data_get_bat_fan_status(const mavlink_message
  */
 static inline uint8_t mavlink_msg_bms_data_get_LLIM_state(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  38);
+	return _MAV_RETURN_uint8_t(msg,  24);
 }
 
 /**
@@ -373,7 +373,7 @@ static inline uint8_t mavlink_msg_bms_data_get_LLIM_state(const mavlink_message_
  */
 static inline uint8_t mavlink_msg_bms_data_get_HLIM_state(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  39);
+	return _MAV_RETURN_uint8_t(msg,  25);
 }
 
 /**
@@ -383,17 +383,17 @@ static inline uint8_t mavlink_msg_bms_data_get_HLIM_state(const mavlink_message_
  */
 static inline uint8_t mavlink_msg_bms_data_get_state_of_chg(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  40);
+	return _MAV_RETURN_uint8_t(msg,  26);
 }
 
 /**
  * @brief Get field pack_voltage from bms_data message
  *
- * @return Value to indicate the voltage of the pack
+ * @return Value to indicate the voltage of the pack (0-65536V)
  */
-static inline float mavlink_msg_bms_data_get_pack_voltage(const mavlink_message_t* msg)
+static inline uint16_t mavlink_msg_bms_data_get_pack_voltage(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  8);
+	return _MAV_RETURN_uint16_t(msg,  8);
 }
 
 /**
@@ -401,9 +401,9 @@ static inline float mavlink_msg_bms_data_get_pack_voltage(const mavlink_message_
  *
  * @return cell voltage parameters [minimum, average, maximum]
  */
-static inline uint16_t mavlink_msg_bms_data_get_cell_voltages(const mavlink_message_t* msg, float *cell_voltages)
+static inline uint16_t mavlink_msg_bms_data_get_cell_voltages(const mavlink_message_t* msg, uint16_t *cell_voltages)
 {
-	return _MAV_RETURN_float_array(msg, cell_voltages, 3,  12);
+	return _MAV_RETURN_uint16_t_array(msg, cell_voltages, 3,  10);
 }
 
 /**
@@ -411,9 +411,9 @@ static inline uint16_t mavlink_msg_bms_data_get_cell_voltages(const mavlink_mess
  *
  * @return cell temperature parameters [minimum, average, maximum]
  */
-static inline uint16_t mavlink_msg_bms_data_get_cell_temps(const mavlink_message_t* msg, float *cell_temps)
+static inline uint16_t mavlink_msg_bms_data_get_cell_temps(const mavlink_message_t* msg, uint16_t *cell_temps)
 {
-	return _MAV_RETURN_float_array(msg, cell_temps, 3,  24);
+	return _MAV_RETURN_uint16_t_array(msg, cell_temps, 3,  16);
 }
 
 /**
@@ -423,7 +423,7 @@ static inline uint16_t mavlink_msg_bms_data_get_cell_temps(const mavlink_message
  */
 static inline uint8_t mavlink_msg_bms_data_get_system_status(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  41);
+	return _MAV_RETURN_uint8_t(msg,  27);
 }
 
 /**
@@ -433,7 +433,7 @@ static inline uint8_t mavlink_msg_bms_data_get_system_status(const mavlink_messa
  */
 static inline uint8_t mavlink_msg_bms_data_get_mavlink_version(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  42);
+	return _MAV_RETURN_uint8_t(msg,  28);
 }
 
 /**

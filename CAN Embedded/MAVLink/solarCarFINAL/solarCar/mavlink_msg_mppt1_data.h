@@ -4,27 +4,27 @@
 
 typedef struct __mavlink_mppt1_data_t
 {
- float voltage_in; ///< Input voltage to MPPT
- float current_in; ///< Input current to MPPT
+ uint16_t voltage_in; ///< Input voltage to MPPT (0-65535V)
+ uint16_t current_in; ///< Input current to MPPT (0mA-6.5535kA)
  uint8_t overtemp; ///< Flag to indicate the MPPTs are over temperature ('1' = over temp; '0' = OK)
  uint8_t undervolt; ///< Flag to indicate the MPPTs are under voltage ('1' = over temp; '0' = OK)
 } mavlink_mppt1_data_t;
 
-#define MAVLINK_MSG_ID_MPPT1_DATA_LEN 10
-#define MAVLINK_MSG_ID_151_LEN 10
+#define MAVLINK_MSG_ID_MPPT1_DATA_LEN 6
+#define MAVLINK_MSG_ID_151_LEN 6
 
-#define MAVLINK_MSG_ID_MPPT1_DATA_CRC 36
-#define MAVLINK_MSG_ID_151_CRC 36
+#define MAVLINK_MSG_ID_MPPT1_DATA_CRC 63
+#define MAVLINK_MSG_ID_151_CRC 63
 
 
 
 #define MAVLINK_MESSAGE_INFO_MPPT1_DATA { \
 	"MPPT1_DATA", \
 	4, \
-	{  { "voltage_in", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_mppt1_data_t, voltage_in) }, \
-         { "current_in", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_mppt1_data_t, current_in) }, \
-         { "overtemp", NULL, MAVLINK_TYPE_UINT8_T, 0, 8, offsetof(mavlink_mppt1_data_t, overtemp) }, \
-         { "undervolt", NULL, MAVLINK_TYPE_UINT8_T, 0, 9, offsetof(mavlink_mppt1_data_t, undervolt) }, \
+	{  { "voltage_in", NULL, MAVLINK_TYPE_UINT16_T, 0, 0, offsetof(mavlink_mppt1_data_t, voltage_in) }, \
+         { "current_in", NULL, MAVLINK_TYPE_UINT16_T, 0, 2, offsetof(mavlink_mppt1_data_t, current_in) }, \
+         { "overtemp", NULL, MAVLINK_TYPE_UINT8_T, 0, 4, offsetof(mavlink_mppt1_data_t, overtemp) }, \
+         { "undervolt", NULL, MAVLINK_TYPE_UINT8_T, 0, 5, offsetof(mavlink_mppt1_data_t, undervolt) }, \
          } \
 }
 
@@ -35,21 +35,21 @@ typedef struct __mavlink_mppt1_data_t
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param msg The MAVLink message to compress the data into
  *
- * @param voltage_in Input voltage to MPPT
- * @param current_in Input current to MPPT
+ * @param voltage_in Input voltage to MPPT (0-65535V)
+ * @param current_in Input current to MPPT (0mA-6.5535kA)
  * @param overtemp Flag to indicate the MPPTs are over temperature ('1' = over temp; '0' = OK)
  * @param undervolt Flag to indicate the MPPTs are under voltage ('1' = over temp; '0' = OK)
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_mppt1_data_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       float voltage_in, float current_in, uint8_t overtemp, uint8_t undervolt)
+						       uint16_t voltage_in, uint16_t current_in, uint8_t overtemp, uint8_t undervolt)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MPPT1_DATA_LEN];
-	_mav_put_float(buf, 0, voltage_in);
-	_mav_put_float(buf, 4, current_in);
-	_mav_put_uint8_t(buf, 8, overtemp);
-	_mav_put_uint8_t(buf, 9, undervolt);
+	_mav_put_uint16_t(buf, 0, voltage_in);
+	_mav_put_uint16_t(buf, 2, current_in);
+	_mav_put_uint8_t(buf, 4, overtemp);
+	_mav_put_uint8_t(buf, 5, undervolt);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MPPT1_DATA_LEN);
 #else
@@ -76,22 +76,22 @@ static inline uint16_t mavlink_msg_mppt1_data_pack(uint8_t system_id, uint8_t co
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
- * @param voltage_in Input voltage to MPPT
- * @param current_in Input current to MPPT
+ * @param voltage_in Input voltage to MPPT (0-65535V)
+ * @param current_in Input current to MPPT (0mA-6.5535kA)
  * @param overtemp Flag to indicate the MPPTs are over temperature ('1' = over temp; '0' = OK)
  * @param undervolt Flag to indicate the MPPTs are under voltage ('1' = over temp; '0' = OK)
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_mppt1_data_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           float voltage_in,float current_in,uint8_t overtemp,uint8_t undervolt)
+						           uint16_t voltage_in,uint16_t current_in,uint8_t overtemp,uint8_t undervolt)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MPPT1_DATA_LEN];
-	_mav_put_float(buf, 0, voltage_in);
-	_mav_put_float(buf, 4, current_in);
-	_mav_put_uint8_t(buf, 8, overtemp);
-	_mav_put_uint8_t(buf, 9, undervolt);
+	_mav_put_uint16_t(buf, 0, voltage_in);
+	_mav_put_uint16_t(buf, 2, current_in);
+	_mav_put_uint8_t(buf, 4, overtemp);
+	_mav_put_uint8_t(buf, 5, undervolt);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MPPT1_DATA_LEN);
 #else
@@ -143,21 +143,21 @@ static inline uint16_t mavlink_msg_mppt1_data_encode_chan(uint8_t system_id, uin
  * @brief Send a mppt1_data message
  * @param chan MAVLink channel to send the message
  *
- * @param voltage_in Input voltage to MPPT
- * @param current_in Input current to MPPT
+ * @param voltage_in Input voltage to MPPT (0-65535V)
+ * @param current_in Input current to MPPT (0mA-6.5535kA)
  * @param overtemp Flag to indicate the MPPTs are over temperature ('1' = over temp; '0' = OK)
  * @param undervolt Flag to indicate the MPPTs are under voltage ('1' = over temp; '0' = OK)
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_mppt1_data_send(mavlink_channel_t chan, float voltage_in, float current_in, uint8_t overtemp, uint8_t undervolt)
+static inline void mavlink_msg_mppt1_data_send(mavlink_channel_t chan, uint16_t voltage_in, uint16_t current_in, uint8_t overtemp, uint8_t undervolt)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MPPT1_DATA_LEN];
-	_mav_put_float(buf, 0, voltage_in);
-	_mav_put_float(buf, 4, current_in);
-	_mav_put_uint8_t(buf, 8, overtemp);
-	_mav_put_uint8_t(buf, 9, undervolt);
+	_mav_put_uint16_t(buf, 0, voltage_in);
+	_mav_put_uint16_t(buf, 2, current_in);
+	_mav_put_uint8_t(buf, 4, overtemp);
+	_mav_put_uint8_t(buf, 5, undervolt);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MPPT1_DATA, buf, MAVLINK_MSG_ID_MPPT1_DATA_LEN, MAVLINK_MSG_ID_MPPT1_DATA_CRC);
@@ -187,14 +187,14 @@ static inline void mavlink_msg_mppt1_data_send(mavlink_channel_t chan, float vol
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_mppt1_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float voltage_in, float current_in, uint8_t overtemp, uint8_t undervolt)
+static inline void mavlink_msg_mppt1_data_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint16_t voltage_in, uint16_t current_in, uint8_t overtemp, uint8_t undervolt)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
-	_mav_put_float(buf, 0, voltage_in);
-	_mav_put_float(buf, 4, current_in);
-	_mav_put_uint8_t(buf, 8, overtemp);
-	_mav_put_uint8_t(buf, 9, undervolt);
+	_mav_put_uint16_t(buf, 0, voltage_in);
+	_mav_put_uint16_t(buf, 2, current_in);
+	_mav_put_uint8_t(buf, 4, overtemp);
+	_mav_put_uint8_t(buf, 5, undervolt);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_MPPT1_DATA, buf, MAVLINK_MSG_ID_MPPT1_DATA_LEN, MAVLINK_MSG_ID_MPPT1_DATA_CRC);
@@ -225,21 +225,21 @@ static inline void mavlink_msg_mppt1_data_send_buf(mavlink_message_t *msgbuf, ma
 /**
  * @brief Get field voltage_in from mppt1_data message
  *
- * @return Input voltage to MPPT
+ * @return Input voltage to MPPT (0-65535V)
  */
-static inline float mavlink_msg_mppt1_data_get_voltage_in(const mavlink_message_t* msg)
+static inline uint16_t mavlink_msg_mppt1_data_get_voltage_in(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  0);
+	return _MAV_RETURN_uint16_t(msg,  0);
 }
 
 /**
  * @brief Get field current_in from mppt1_data message
  *
- * @return Input current to MPPT
+ * @return Input current to MPPT (0mA-6.5535kA)
  */
-static inline float mavlink_msg_mppt1_data_get_current_in(const mavlink_message_t* msg)
+static inline uint16_t mavlink_msg_mppt1_data_get_current_in(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  4);
+	return _MAV_RETURN_uint16_t(msg,  2);
 }
 
 /**
@@ -249,7 +249,7 @@ static inline float mavlink_msg_mppt1_data_get_current_in(const mavlink_message_
  */
 static inline uint8_t mavlink_msg_mppt1_data_get_overtemp(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  8);
+	return _MAV_RETURN_uint8_t(msg,  4);
 }
 
 /**
@@ -259,7 +259,7 @@ static inline uint8_t mavlink_msg_mppt1_data_get_overtemp(const mavlink_message_
  */
 static inline uint8_t mavlink_msg_mppt1_data_get_undervolt(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  9);
+	return _MAV_RETURN_uint8_t(msg,  5);
 }
 
 /**
