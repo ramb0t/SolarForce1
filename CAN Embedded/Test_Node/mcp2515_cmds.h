@@ -11,17 +11,17 @@
 /* Includes: */
 #include <avr/io.h>
 #include <util/delay.h>
-#include "mcp2515_defs.h"
-#include "AVR_SPI.h"
+#include "mcp2515_defs.h" // Datasheet register definitions
+#include "AVR_SPI.h" // SPI Functions
 
 /* Defines: */
 
-#define DDR_CS DDRB
-#define PORT_CS PORTB
-#define P_CS 2
+#define DDR_CS 		DDRB
+#define PORT_CS 	PORTB
+#define P_CS 		2
 
-#define DDR_SPI DDRB
-#define PORT_SPI PORTB
+#define DDR_SPI 	DDRB
+#define PORT_SPI 	PORTB
 #define P_MISO 4
 #define P_MOSI 3
 #define P_SCK 5
