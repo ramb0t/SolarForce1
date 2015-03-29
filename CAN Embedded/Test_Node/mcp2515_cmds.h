@@ -12,7 +12,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include "mcp2515_defs.h" // Datasheet register definitions
-#include "AVR_SPI.h" // SPI Functions
+#include "SPI/AVR_SPI.h" // SPI Functions
 
 /* Defines: */
 

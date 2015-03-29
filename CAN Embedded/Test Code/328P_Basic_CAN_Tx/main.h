@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 // Project Specific
-#include "mcp2515_cmds.h"
+#include "mcp2515.h"
 #include "AVR_SPI.h"
 
 // These are optional, but nice to have around.

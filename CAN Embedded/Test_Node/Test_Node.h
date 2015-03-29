@@ -31,12 +31,12 @@
 // for the GFX lcd used
 #include "GFX_LCD.h"
 // SPI Library used with CAN Controller
-#include "AVR_SPI.h"
+#include <SPI/AVR_SPI.h>
 // MCP2515 Library
 #include "mcp2515_cmds.h"
 
 #define UART_BAUD_RATE 9600
-#include "uart/uart.h"
+#include <uart/uart.h>
 
 // These are optional, but nice to have around.
 // Feel free to comment them out if you don't use them.
