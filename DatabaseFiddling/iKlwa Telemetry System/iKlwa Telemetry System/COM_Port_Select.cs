@@ -12,17 +12,16 @@ namespace iKlwa_Telemetry_System
 {
     public partial class COM_Port_Select : Form
     {
-        private object selected_port = "None";
+        private string selected_port = "None";
 
         public COM_Port_Select()
         {
             InitializeComponent();
         }
 
-        public COM_Port_Select(ref object choice)
+        public string getPort()
         {
-            InitializeComponent();
-            choice = selected_port;
+            return selected_port.ToString();
         }
 
         private void COM_Port_Select_Load(object sender, EventArgs e)
@@ -33,14 +32,18 @@ namespace iKlwa_Telemetry_System
 
         private void button1_Click(object sender, EventArgs e)
         {
-            selected_port = comboBox1.SelectedText;
+            selected_port = comboBox1.SelectedItem.ToString();
             this.Dispose();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            comboBox1.Items.AddRange(
-                System.IO.Ports.SerialPort.GetPortNames());
+            string[] allPorts = System.IO.Ports.SerialPort.GetPortNames();
+            for (int i = 0; i < allPorts.Length; i++)
+            {
+                if (comboBox1.Items.Contains(allPorts[i]) == false)
+                    comboBox1.Items.Add(allPorts[i]);
+            }
         }
     }
 }
