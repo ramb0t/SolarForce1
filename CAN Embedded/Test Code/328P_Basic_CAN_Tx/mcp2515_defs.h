@@ -48,6 +48,20 @@ Changes M. Thomas:
 #define MCP_TXB_TXIE_M      0x04
 #define MCP_TXB_TXP10_M     0x03
 
+#define	RTR			6
+#define	DLC3		3
+#define	DLC2		2
+#define	DLC1		1
+#define DLC0		0
+
+/** \brief	Bitdefinition von RXB0CTRL */
+#define RXM1		6
+#define RXM0		5
+#define RXRTR		3
+#define BUKT		2
+#define BUKT1		1
+#define FILHIT0		0
+
 #define MCP_TXB_RTR_M       0x40    // In TXBnDLC
 #define MCP_RXB_IDE_M       0x08    // In RXBnSIDL
 #define MCP_RXB_RTR_M       0x40    // In RXBnDLC
@@ -83,6 +97,8 @@ Changes M. Thomas:
 #define MCP_RXF2SIDL	0x09
 #define MCP_RXF2EID8	0x0A
 #define MCP_RXF2EID0	0x0B
+#define MCP_BFPCTRL		0x0C
+#define MCP_TXRTSCTRL	0x0D
 #define MCP_CANSTAT		0x0E
 #define MCP_CANCTRL		0x0F
 #define MCP_RXF3SIDH	0x10
@@ -114,6 +130,19 @@ Changes M. Thomas:
 #define MCP_CANINTF		0x2C
 #define MCP_EFLG		0x2D
 #define MCP_TXB0CTRL	0x30
+#define MCP_TXB0SIDH	0x31
+#define MCP_TXB0SIDL	0x32
+#define MCP_TXB0EID8	0x33
+#define MCP_TXB0EID0	0x34
+#define MCP_TXB0DLC		0x35
+#define MCP_TXB0D0		0x36
+#define MCP_TXB0D1		0x37
+#define MCP_TXB0D2		0x38
+#define MCP_TXB0D3		0x39
+#define MCP_TXB0D4		0x3A
+#define MCP_TXB0D5		0x3B
+#define MCP_TXB0D6		0x3C
+#define MCP_TXB0D7		0x3D
 #define MCP_TXB1CTRL	0x40
 #define MCP_TXB2CTRL	0x50
 #define MCP_RXB0CTRL	0x60

@@ -67,7 +67,7 @@ uint8_t mcp2515_readRegister(const uint8_t address)
 	MCP2515_SELECT();			// Activate the MCP
 	SPI_ReadWrite(MCP_READ);	// Tell the MCP we want to read a register by passing the READ instruction
 	SPI_ReadWrite(address);		// Next send the address we want to read
-	ret = spi_read();			// Finally get the result of the read action
+	ret = SPI_Read();			// Finally get the result of the read action
 	MCP2515_UNSELECT();			// Deactivate the MCP
 
 	// return the result
@@ -154,7 +154,43 @@ uint8_t mcp2515_init(const uint8_t canSpeed)
 	res = mcp2515_configRate(canSpeed);
 
 	if ( res == MCP2515_OK ) { // Only continue if no fail.
-		mcp2515_initCANBuffers();
+		//TODO: fix this hack to get things working at 4AM..
+		//mcp2515_initCANBuffers();
+
+		/*
+		* Set the filter
+		*/
+
+		// Buffer 0: Receive all news
+		mcp2515_setRegister (MCP_RXB0CTRL, (1 << RXM1) | (1 << RXM0));
+
+		// Buffer 1: Receive all news
+		mcp2515_setRegister (MCP_RXB1CTRL, (1 << RXM1) | (1 << RXM0));
+
+		// All bits of the receiving mask delete,
+		// So that all messages are received
+		mcp2515_setRegister (MCP_RXM0SIDH, 0);
+		mcp2515_setRegister (MCP_RXM0SIDL, 0);
+		mcp2515_setRegister (MCP_RXM0EID8, 0);
+		mcp2515_setRegister (MCP_RXM0EID0, 0);
+
+		mcp2515_setRegister(MCP_RXM1SIDH, 0);
+		mcp2515_setRegister (MCP_RXM1SIDL, 0);
+		mcp2515_setRegister (MCP_RXM1EID8, 0);
+		mcp2515_setRegister (MCP_RXM1EID0, 0);
+
+		/*
+		* Set the pin functions
+		*/
+
+		// Disable the pins RXnBF Pins (High Impedance State)
+		mcp2515_setRegister (MCP_BFPCTRL, 0);
+
+		// Turn TXnRTS bits as inputs
+		mcp2515_setRegister (MCP_TXRTSCTRL, 0);
+
+		// Device back to normal mode offset
+		mcp2515_modifyRegister (MCP_CANCTRL, 0xE0, 0);
 
 #if (DEBUG_RXANY==1)
 		// enable both receive-buffers to receive any message
@@ -168,11 +204,11 @@ uint8_t mcp2515_init(const uint8_t canSpeed)
 		// enable both receive-buffers to receive messages
 		// with std. and ext. identifiers
 		// and enable rollover
-		mcp2515_modifyRegister(MCP_RXB0CTRL,
-			MCP_RXB_RX_MASK | MCP_RXB_BUKT_MASK,
-			MCP_RXB_RX_STDEXT | MCP_RXB_BUKT_MASK );
-		mcp2515_modifyRegister(MCP_RXB1CTRL, MCP_RXB_RX_MASK,
-			MCP_RXB_RX_STDEXT);
+		//mcp2515_modifyRegister(MCP_RXB0CTRL,
+		//	MCP_RXB_RX_MASK | MCP_RXB_BUKT_MASK,
+		//	MCP_RXB_RX_STDEXT | MCP_RXB_BUKT_MASK );
+		//mcp2515_modifyRegister(MCP_RXB1CTRL, MCP_RXB_RX_MASK,
+		//	MCP_RXB_RX_STDEXT);
 #endif
 	}
 
@@ -305,11 +341,11 @@ void mcp2515_readRegisterS(const uint8_t address,
 	uint8_t i;
 	
 	MCP2515_SELECT();
-	spi_readwrite(MCP_READ);
-	spi_readwrite(address);
+	SPI_ReadWrite(MCP_READ);
+	SPI_ReadWrite(address);
 	// mcp2515 has auto-increment of address-pointer
 	for (i=0; i<n; i++) {
-		values[i] = spi_read();
+		values[i] = SPI_Read();
 	}
 	MCP2515_UNSELECT();
 }
@@ -320,11 +356,11 @@ void mcp2515_setRegisterS(const uint8_t address,
 	uint8_t i;
 	
 	MCP2515_SELECT();
-	spi_readwrite(MCP_WRITE);
-	spi_readwrite(address);
+	SPI_ReadWrite(MCP_WRITE);
+	SPI_ReadWrite(address);
 	// mcp2515 has auto-increment of address-pointer
 	for (i=0; i<n; i++) {
-		spi_readwrite(values[i]);
+		SPI_ReadWrite(values[i]);
 	}
 	MCP2515_UNSELECT();
 }
@@ -335,8 +371,8 @@ static uint8_t mcp2515_readXXStatus_helper(const uint8_t cmd)
 	uint8_t i;
 	
 	MCP2515_SELECT();
-	spi_readwrite(cmd);
-	i = spi_read();
+	SPI_ReadWrite(cmd);
+	i = SPI_Read();
 	MCP2515_UNSELECT();
 	
 	return i;
@@ -382,18 +418,18 @@ void mcp2515_read_can_id( const uint8_t mcp_addr,
 
 // Buffer can be MCP_RXBUF_0 or MCP_RXBUF_1
 void mcp2515_read_canMsg( const uint8_t buffer_sidh_addr,
-	CanMessage* msg)
+	CANMessage* msg)
 {
 
     uint8_t mcp_addr, ctrl;
 
 	mcp_addr = buffer_sidh_addr;
 	
-    mcp2515_read_can_id( mcp_addr, &(msg->extended_identifier), 
-		&(msg->identifier) );
+    mcp2515_read_can_id( mcp_addr, &(msg->extended_id),
+		&(msg->id) );
     
 	ctrl = mcp2515_readRegister( mcp_addr-1 );
-    msg->dlc = mcp2515_readRegister( mcp_addr+4 );
+    msg->length = mcp2515_readRegister( mcp_addr+4 );
     
 	if (/*(*dlc & RTR_MASK) || */(ctrl & 0x08)) {
         msg->rtr = 1;
@@ -401,8 +437,8 @@ void mcp2515_read_canMsg( const uint8_t buffer_sidh_addr,
         msg->rtr = 0;
     }
     
-	msg->dlc &= MCP_DLC_MASK;
-    mcp2515_readRegisterS( mcp_addr+5, &(msg->dta[0]), msg->dlc );
+	msg->length &= MCP_DLC_MASK;
+    mcp2515_readRegisterS( mcp_addr+5, &(msg->data[0]), msg->length );
 }
 
 
@@ -433,19 +469,18 @@ void mcp2515_write_can_id( const uint8_t mcp_addr,
 }
 
 // Buffer can be MCP_TXBUF_0 MCP_TXBUF_1 or MCP_TXBUF_2
-void mcp2515_write_canMsg( const uint8_t buffer_sidh_addr, 
-	const CanMessage* msg)
+void mcp2515_write_canMsg( const uint8_t buffer_sidh_addr, const CANMessage* msg)
 {
-    uint8_t mcp_addr, dlc;
+    uint8_t mcp_addr, length;
 
 	mcp_addr = buffer_sidh_addr;
-	dlc = msg->dlc;
+	length = msg->length;
 	
-    mcp2515_setRegisterS(mcp_addr+5, &(msg->dta[0]), dlc );  // write data bytes
-    mcp2515_write_can_id( mcp_addr, msg->extended_identifier,
-		msg->identifier );  // write CAN id
-    if ( msg->rtr == 1)  dlc |= MCP_RTR_MASK;  // if RTR set bit in byte
-    mcp2515_setRegister( (mcp_addr+4), dlc );  // write the RTR and DLC
+    mcp2515_setRegisterS(mcp_addr+5, &(msg->data[0]), length );  // write data bytes
+    mcp2515_write_can_id( mcp_addr, msg->extended_id,
+		msg->id );  // write CAN id
+    if ( msg->rtr == 1)  length |= MCP_RTR_MASK;  // if RTR set bit in byte
+    mcp2515_setRegister( (mcp_addr+4), length );  // write the RTR and DLC
 }
 
 /*
@@ -499,29 +534,29 @@ void mcp2515_dumpExtendedStatus(void)
 	rec  = mcp2515_readRegister(MCP_REC);
 	eflg = mcp2515_readRegister(MCP_EFLG);
 	
-	term_puts_P("MCP2515 Extended Status:\n");
-	Debug_ByteToUart_p(PSTR("MCP Transmit Error Count"), tec);
-	Debug_ByteToUart_p(PSTR("MCP Receiver Error Count"), rec);
-	Debug_ByteToUart_p(PSTR("MCP Error Flag"), eflg);
+	//term_puts_P("MCP2515 Extended Status:\n");
+	//Debug_ByteToUart_p(PSTR("MCP Transmit Error Count"), tec);
+	////term_puts_P(PSTR("MCP Receiver Error Count"), rec);
+	//Debug_ByteToUart_p(PSTR("MCP Error Flag"), eflg);
 	
-	if ( (rec>127) || (tec>127) ) {
-		term_puts_P("Error-Passive or Bus-Off\n");
-	}
-
-	if (eflg & MCP_EFLG_RX1OVR) 
-		term_puts_P("Receive Buffer 1 Overflow\n");
-	if (eflg & MCP_EFLG_RX0OVR) 
-		term_puts_P("Receive Buffer 0 Overflow\n");
-	if (eflg & MCP_EFLG_TXBO) 
-		term_puts_P("Bus-Off\n");
-	if (eflg & MCP_EFLG_TXEP) 
-		term_puts_P("Receive Error Passive\n");
-	if (eflg & MCP_EFLG_TXWAR) 
-		term_puts_P("Transmit Error Warning\n");
-	if (eflg & MCP_EFLG_RXWAR) 
-		term_puts_P("Receive Error Warning\n");
-	if (eflg & MCP_EFLG_EWARN ) 
-		term_puts_P("Receive Error Warning\n");
+//	if ( (rec>127) || (tec>127) ) {
+//		//term_puts_P("Error-Passive or Bus-Off\n");
+//	}
+//
+//	if (eflg & MCP_EFLG_RX1OVR)
+//		//term_puts_P("Receive Buffer 1 Overflow\n");
+//	if (eflg & MCP_EFLG_RX0OVR)
+//		//term_puts_P("Receive Buffer 0 Overflow\n");
+//	if (eflg & MCP_EFLG_TXBO)
+//		//term_puts_P("Bus-Off\n");
+//	if (eflg & MCP_EFLG_TXEP)
+//		//term_puts_P("Receive Error Passive\n");
+//	if (eflg & MCP_EFLG_TXWAR)
+//		//term_puts_P("Transmit Error Warning\n");
+//	if (eflg & MCP_EFLG_RXWAR)
+//		//term_puts_P("Receive Error Warning\n");
+//	if (eflg & MCP_EFLG_EWARN )
+//		//term_puts_P("Receive Error Warning\n");
 }
 #endif
 
