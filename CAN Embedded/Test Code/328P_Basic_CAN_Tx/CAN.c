@@ -68,7 +68,7 @@ uint8_t CAN_sendMessage(const CANMessage* message)
 
 	return CAN_OK;
 
-	//TODO: Impliment this fancy stuff.. for now we use the germans!
+	//TODO: Implement this fancy stuff.. for now we use the germans!
 //	uint8_t res, txbuf_n;
 //	uint8_t timeout = 0;
 //	uint16_t time;
