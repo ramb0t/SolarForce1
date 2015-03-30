@@ -23,7 +23,7 @@ DESCRIPTION:
 #endif
 
 /* 9600 baud */
-#define UART_BAUD_RATE      9600      
+#define UART_BAUD_RATE 9600      
 
 
 int main(void)
@@ -67,7 +67,7 @@ int main(void)
      * Use standard avr-libc functions to convert numbers into string
      * before transmitting via UART
      */     
-    itoa( num, buffer, 10);   // convert interger into string (decimal format)         
+    itoa( num, buffer, 10);   // convert integer into string (decimal format)         
     uart_puts(buffer);        // and transmit string to UART
 
     
