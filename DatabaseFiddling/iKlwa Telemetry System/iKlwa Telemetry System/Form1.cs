@@ -15,6 +15,16 @@ namespace iKlwa_Telemetry_System
         public Form1()
         {
             InitializeComponent();
+            string COM_port = null;
+            COM_Port_Select c = new COM_Port_Select();
+            Application.Run(c);
+            COM_port = c.getPort();
+            iKlwaComms comms = new iKlwaComms();
+            comms.name = COM_port.ToString();
+            comms.OpenPort();
+            while (comms.checkForPing() == false) ;
+
         }
+
     }
 }

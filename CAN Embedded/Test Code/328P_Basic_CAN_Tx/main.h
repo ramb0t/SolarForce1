@@ -23,6 +23,7 @@
 #include <stdlib.h>
 
 // Project Specific
+#include "CAN.h"
 #include "mcp2515.h"
 #include "AVR_SPI.h"
 

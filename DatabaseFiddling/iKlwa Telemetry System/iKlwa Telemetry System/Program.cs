@@ -70,13 +70,7 @@ namespace iKlwa_Telemetry_System
             { return port.PortName; }
             set
             {
-                if (SerialPort.GetPortNames().Contains(value))
-                    port.PortName = value;
-                else
-                {
-                    port.PortName = "COM9";
-                    throw new ArgumentException("The port " + value + " cannot be found");
-                }
+                port.PortName = value;
             }
         }
 
@@ -105,7 +99,7 @@ namespace iKlwa_Telemetry_System
                 else
                 {
                     port.StopBits = StopBits.One;
-                    throw new ArgumentException("Only one or two stop bits supported")
+                    throw new ArgumentException("Only one or two stop bits supported");
                 }
             }
         }
@@ -168,8 +162,8 @@ namespace iKlwa_Telemetry_System
 
         public void writeByte(byte val)
         {
-            string data = val.ToString();
-            port.Write(data);
+            byte[] data = {val};
+            port.Write(data,0,1);
         }
 
         public void writeText(string msg)
@@ -180,7 +174,7 @@ namespace iKlwa_Telemetry_System
         #endregion
 
         private SerialDataReceivedEventHandler current_DREH;
-        protected delegate void general_data_received_handler(object o, SerialDataReceivedEventArgs e);
+        public delegate void general_data_received_handler(object o, SerialDataReceivedEventArgs e);
         public void set_data_received_event_handler(general_data_received_handler data_received_handler)
         {
             if (!current_DREH.Equals(null))
@@ -205,6 +199,7 @@ namespace iKlwa_Telemetry_System
                 stop_bits = 2;
                 parity = (int)Parities.Odd;
                 interrupt_bytes_threshold = 1;
+                MessageBox.Show("Default Initialisation Completed");
             }
             catch (Exception e)
             { MessageBox.Show(e.Message); }
@@ -234,6 +229,8 @@ namespace iKlwa_Telemetry_System
     {
         private byte pingReq = 0xAA;
         private byte ACK = 0x55;
+
+        public iKlwaComms() { }
 
         public bool checkForPing()
         {

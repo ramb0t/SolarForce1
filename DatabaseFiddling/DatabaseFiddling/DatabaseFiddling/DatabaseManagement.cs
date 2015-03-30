@@ -233,6 +233,11 @@ namespace DatabaseFiddling
                 port.Read(buffer, 0, vals);
                 for (int i = 0; i < vals; ++i)
                     Console.WriteLine(buffer[vals-i-1]);
+                if (buffer[0]==0xaa)
+                {
+                    byte[] ACK = {0x55};
+                    port.Write(ACK, 0, 1);
+                }
             }
             catch (TimeoutException)
             { Console.WriteLine("1ms Timeout Exceeded... Comms lost?"); }
@@ -245,7 +250,7 @@ namespace DatabaseFiddling
             port.BaudRate = 4800;
             port.Parity = Parity.Odd;
             port.StopBits = StopBits.Two;
-            port.ReceivedBytesThreshold = 2;
+            port.ReceivedBytesThreshold = 1;
             port.ReadTimeout = 1;
 
             port.DataReceived += new SerialDataReceivedEventHandler(received_data);

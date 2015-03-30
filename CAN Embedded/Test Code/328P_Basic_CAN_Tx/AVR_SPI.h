@@ -19,7 +19,7 @@
 #define SPIPIN  PINB
 #define SPIDDR  DDRB
 
-#if defined(__AVR_ATmega8__)
+#if defined(__AVR_ATmega8__) || defined(__AVR_ATmega328P__)
 #define SPISCK   PB5
 #define SPIMISO  PB4
 #define SPIMOSI  PB3
@@ -30,7 +30,7 @@
 #define SPIMOSI  PB5
 #define SPISS    PB4
 #else
-#error "SPI pins undefined for this target"
+//#error "SPI pins undefined for this target"
 #endif
 
 #define SPI_SS_HIGH() (SPIPORT |= (1<<SPISS))
