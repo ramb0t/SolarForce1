@@ -108,6 +108,9 @@
     <Compile Include="checksum.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="gps_parse.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="mavlink_conversions.h">
       <SubType>compile</SubType>
     </Compile>
