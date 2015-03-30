@@ -5,6 +5,9 @@
  *      Author: RobThePyro
  */
 #include "main.h"
+// Project Specific
+#include "CAN.h"
+#include "AVR_SPI.h"
 
 // -------- Global Variables --------- //
 
@@ -17,7 +20,7 @@ int main(void) {
 	SPI_Init(); // setup SPI
 
 	DDRB  |= 1<<PB1; // led output
-	mcp2515_init();
+	CAN_Init(CAN_125KBPS_16MHZ);
 
 
 
@@ -57,7 +60,7 @@ int main(void) {
 				message.data[i] = (rand() >> 7);
 			}
 
-			can_send_message ( &message ) ;
+			CAN_sendMessage ( &message ) ;
 			_delay_ms(750);
 
 

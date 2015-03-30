@@ -7,7 +7,7 @@
 #include "mcp2515_defs.h"
 #include "mcp2515_bittime.h"
 #include <util/delay.h>
-//#include "can.h"
+#include "CAN.h"
 #include <inttypes.h>
 
 
@@ -42,45 +42,49 @@
 #define MCP2515_FAIL       (1)
 #define MCP_ALLTXBUSY      (2)
 
+// Speed:
+#define CAN_20KBPS   (1)
+#define CAN_125KBPS  (CAN_20KBPS+1)
+#define CAN_125KBPS_16MHZ  (CAN_20KBPS+2)
+
 
 // Functions:
 /*********************************************/
 
-
+// Low Level Functions
 void mcp2515_reset(void);
-uint8_t mcp2515_init(const uint8_t canSpeed);
-
 uint8_t mcp2515_readRegister(const uint8_t address);
+void mcp2515_readRegisterS(const uint8_t address, uint8_t values[], const uint8_t n);
+void mcp2515_setRegister(const uint8_t address, const uint8_t value);
+void mcp2515_setRegisterS(const uint8_t address, const uint8_t values[], const uint8_t n);
+void mcp2515_modifyRegister(const uint8_t address, const uint8_t mask, const uint8_t data);
 
-void mcp2515_setRegisterS(const uint8_t address, 
-	const uint8_t values[],
-	const uint8_t n);
-void mcp2515_setRegister(const uint8_t address, 
-	const uint8_t value);
-void mcp2515_setRegisterS(const uint8_t address, 
-	const uint8_t values[],
-	const uint8_t n);
+// Control Functions
+uint8_t mcp2515_init(const uint8_t canSpeed);
+uint8_t mcp2515_setCANCTRL_Mode(const uint8_t newmode);
+uint8_t mcp2515_configRate(const uint8_t canSpeed);
+void mcp2515_initCANBuffers(void);
 
-void mcp2515_modifyRegister(const uint8_t address, const uint8_t mask, 
-	const uint8_t data);
+
 
 uint8_t mcp2515_readStatus(void);
 uint8_t mcp2515_RXStatus(void);
 
-uint8_t mcp2515_setCANCTRL_Mode(const uint8_t newmode);
 
-uint8_t mcp2515_configRate(const uint8_t canSpeed);
 
+
+
+
+
+// Data Functions
 
 void mcp2515_write_can_id( const uint8_t mcp_addr, 
 	const uint8_t ext, const uint32_t can_id );
 void mcp2515_read_can_id( const uint8_t mcp_addr, 
 	uint8_t* ext, uint32_t* can_id );
 
-void mcp2515_write_canMsg( const uint8_t buffer_sidh_addr, 
-	const CanMessage* msg);
-void mcp2515_read_canMsg( const uint8_t buffer_sidh_addr,
-	CanMessage* msg);
+void mcp2515_write_canMsg( const uint8_t buffer_sidh_addr, const CANMessage *);
+void mcp2515_read_canMsg( const uint8_t buffer_sidh_addr, CANMessage *);
 
 void mcp2515_start_transmit(const uint8_t mcp_addr);
 

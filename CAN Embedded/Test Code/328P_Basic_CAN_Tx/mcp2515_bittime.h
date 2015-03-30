@@ -34,6 +34,70 @@
 // either WAKFIL_ENABLE	or WAKFIL_DISABLE
 #define MCP_GENERAL_WAKFIL (WAKFIL_DISABLE)
 
+/*-----------------------*/
+/* 125 kBPS @ 16MHZ F_OSC */
+/*-----------------------*/
+
+/*
+ * Oscilator Frequency 	16.000 MHz
+ * Target CAN Bus Baud Rate 	125.000 kbps
+ * Selected Options
+ * BRP-1 (Baud Rate Prescaler) 	7
+ * Tq (Time Quanta) 	1.000 µs
+ * Number of Time Quanta 	8
+ * % Error of Target Baud Rate 	0.0 %
+ *  of Time Quanta in 1 bit: TQ = 8
+ *  Bit Timing Setup in Tq
+ *  Propagation Delay 	1
+ *  Phase Segment 1 	3
+ *  Phase Segment 2 	3
+ *  Syncronization Jump Width (SJW) 	1
+ *
+ */
+
+/* CNF1 */
+
+// Sync Jump Width
+// SJW as defined in mcp_defs.h
+// here: SJW = 1*TQ
+#define MCP_16MHz_125kBPS_SJW (SJW1)
+
+// Baud Rate Prescaler
+// Prescaler = (BRP+1)*2
+// here Prescaler = 8 -> BRP=7
+#define MCP_16MHz_125kBPS_BRP (7)
+
+
+/* CNF2 */
+
+// BLT-Mode defined in CNF3 (0 or BTLMODE from mcp_defs.h)
+#define MCP_16MHz_125kBPS_BLTMODE (BTLMODE)
+
+// 3 samples (SAMPLE_3X) or 1 sample (SAMPLE_1X)
+#define MCP_16MHz_125kBPS_SAM   (SAMPLE_1X)
+
+// (Phase Segment 1) PHSEG1 = PS1 - 1
+// here: PS1 calculated as 3
+#define MCP_16MHz_125kBPS_PHSEG1 ((3-1)<<3)
+
+// (Propagation Delay) PRSEG = PRSEQTQ-1
+// here PRSEQTQ = 1
+#define MCP_16MHz_125kBPS_PRSEG (0)
+
+/* CNF3 */
+
+// (Phase Segment 2) PHSEG2 = PS2 - 1
+// here: PS2 calculated as 3
+#define MCP_16MHz_125kBPS_PHSEG (3-1)
+
+
+#define MCP_16MHz_125kBPS_CFG1 (MCP_16MHz_125kBPS_SJW | MCP_16MHz_125kBPS_BRP)
+#define MCP_16MHz_125kBPS_CFG2 (MCP_16MHz_125kBPS_BLTMODE | MCP_16MHz_125kBPS_SAM | \
+				MCP_16MHz_125kBPS_PHSEG1 | MCP_16MHz_125kBPS_PRSEG)
+#define MCP_16MHz_125kBPS_CFG3 (MCP_GENERAL_SOF | MCP_GENERAL_WAKFIL | \
+				MCP_16MHz_125kBPS_PHSEG)
+
+
 
 /*-----------------------*/
 /* 125 kBPS @ 4MHZ F_OSC */
