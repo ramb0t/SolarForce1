@@ -16,10 +16,17 @@
 
 // Defines
 /*****************************************************************************/
+
+// For function returns
 #define CAN_OK         (0)
 #define CAN_FAILINIT   (1)
 #define CAN_FAILTX     (2)
+#define CAN_MSGAVAIL   (3)
+#define CAN_NOMSG      (4)
+#define CAN_CTRLERROR  (5)
+#define CAN_FAIL       (0xff)
 
+// What is the max length of the message
 #define CAN_MAX_CHAR_IN_MESSAGE (8)
 
 // Structures
@@ -45,5 +52,8 @@ typedef struct {
 /*****************************************************************************/
 uint8_t CAN_Init(uint8_t speedset);
 uint8_t CAN_sendMessage(const CANMessage* msg);
+uint8_t CAN_readMessage(CANMessage* msg);
+uint8_t CAN_checkRecieveAvaliable(void);
+uint8_t CAN_checkError(void);
 
 #endif /* CAN_H_ */
