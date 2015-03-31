@@ -110,12 +110,15 @@ int main (void)
 	while(1) {
 		
 		//---------------Get CAN data via SPI---------------------//
+		uart_puts("<<<<START OF MESSAGE>>>>\n");
+		uart_puts("\n---------CAN DATA---------\n");
 	int rx_Result = CAN_OK;
 	CAN_readMessage(&CANBusInput);
 		if (rx_Result == CAN_OK)
 		{
-			char buff[10];
-			itoa(CANBusInput.id,buff,10);
+			char buff[10] ;
+			buff[0] = "\0"; 
+			itoa(CANBusInput.id,buff,16);
 			uart_puts("\nCAN ID:");
 			uart_puts(buff);
 			
@@ -171,7 +174,7 @@ int main (void)
 		//
 		//}while(gpsdata != '$');		
 		//
-		
+			uart_puts("\n---------GPS DATA---------\n");
 			while( !(UCSR0A & (1<<RXC0)) )
 			{			
 				gpsdata = uart_getc();				//get one char from GPS at a time
@@ -209,6 +212,7 @@ int main (void)
   --this ensures the message goes to MAVLink frame
   --connect to QGC and observe output! */
     
+		uart_puts("\n---------MAVLink Heartbeat---------\n");
 	// Define the system type (see solarCar.h for list of possible types) 
 	int system_type = MAV_TYPE_GROUND_ROVER;
 	int autopilot_type = MAV_AUTOPILOT_GENERIC;
@@ -237,7 +241,7 @@ int main (void)
 	uart_puts("\nTest Message from Solar Car\n");
 	
 	}
-	
+	uart_puts("<<<<END OF MESSAGE>>>>\n");
 	
 	
 	return 0;
