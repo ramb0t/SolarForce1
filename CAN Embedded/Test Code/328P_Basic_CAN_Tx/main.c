@@ -69,10 +69,10 @@ int main(void) {
 			message.length = (rand() / 0xfff);
 
 			uart_puts("CAN Message: ID= ");
-			itoa( message.id, buffer, 10);   // convert interger into string (decimal format)
+			itoa( message.id, buffer, 10);   // convert integer into string (decimal format)
 			uart_puts(buffer);        // and transmit string to UART
 			uart_puts(" | Len= ");
-			itoa( message.length, buffer, 10);   // convert interger into string (decimal format)
+			itoa( message.length, buffer, 10);   // convert integer into string (decimal format)
 			uart_puts(buffer);        // and transmit string to UART
 
 

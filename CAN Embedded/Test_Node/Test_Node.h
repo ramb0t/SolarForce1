@@ -28,20 +28,25 @@
 
 // Project Specific
 /*********************************************/
+// CAN Application Layer
+#include "../lib/CAN/CAN.h"
+// MCP2515 Library
+#include "../lib/mcp2515/mcp2515.h"
 // for the GFX lcd used
 #include "GFX_LCD.h"
 // SPI Library used with CAN Controller
-#include <SPI/AVR_SPI.h>
-// MCP2515 Library
-#include "mcp2515_cmds.h"
+#include "../lib/SPI/AVR_SPI.h"
+
+
 
 #define UART_BAUD_RATE 9600
-#include <uart/uart.h>
+#include "../lib/uart/uart.h"
+#include <string.h>
 
 // These are optional, but nice to have around.
 // Feel free to comment them out if you don't use them.
 #include <stdint.h>
-#include "macros.h" // latest version maintained at https://github.com/robthepyro/AVR_Lib
+#include "../lib/macros.h" // latest version maintained at https://github.com/robthepyro/AVR_Lib
 //#include "USART.h"
 
 
