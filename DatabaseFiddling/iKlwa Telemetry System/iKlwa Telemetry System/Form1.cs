@@ -22,8 +22,22 @@ namespace iKlwa_Telemetry_System
             iKlwaComms comms = new iKlwaComms();
             comms.name = COM_port.ToString();
             comms.OpenPort();
-            while (comms.checkForPing() == false) ;
-
+            int trials = 0;
+            while (comms.checkForPing() == false)
+            {
+                trials++;
+                try
+                {
+                    if (trials == 1000)
+                        throw new TimeoutException("Communication to Target Failed: Please Reset Hardware");
+                }
+                catch (TimeoutException t)
+                {
+                    MessageBox.Show(t.Message);
+                    trials = 0;
+                }
+            }
+            //after this, connection is established.
         }
 
     }

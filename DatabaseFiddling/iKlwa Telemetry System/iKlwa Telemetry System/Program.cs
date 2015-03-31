@@ -199,7 +199,6 @@ namespace iKlwa_Telemetry_System
                 stop_bits = 2;
                 parity = (int)Parities.Odd;
                 interrupt_bytes_threshold = 1;
-                MessageBox.Show("Default Initialisation Completed");
             }
             catch (Exception e)
             { MessageBox.Show(e.Message); }
@@ -227,7 +226,7 @@ namespace iKlwa_Telemetry_System
 
     class iKlwaComms:CommsManager
     {
-        private byte pingReq = 0xAA;
+        private byte pingReq = 0x3f;
         private byte ACK = 0x55;
 
         public iKlwaComms() { }
