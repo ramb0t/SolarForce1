@@ -5,39 +5,7 @@
  *  Author: Matt
  */ 
 
-#define F_CPU 16000000UL
-#define UART_BAUD_RATE 9600  
-#define MAVLINK_USE_CONVENIENCE_FUNCTIONS   
-
-#define TELEMETRY_UART_OUT DDD3
-#define GPS_UART_DATA_IN DDD2
-#define TELEMETRY_UART_IN DDD4
-
-#define UART_DDR DDRD
-
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
-#include <avr/pgmspace.h>
-#include <string.h>
-#include "uart.h"					//UART library
-#include "mavlink.h"				//MAVLink framework
-
-#include "../lib/CAN/CAN.h"			//CAN Framework
-#include "../lib/mcp2515/mcp2515.h"	//bit timings for MCP2515
-
-mavlink_system_t mavlink_system;
-volatile int counter=0;
-volatile int ctr2=0;
-
-//------------Enum for MAVLink Heartbeat delay-----------//
-enum {
-	HEARTBEAT_DELAY = 1000
-};
-
-//------------CAN Received Message Struct----------------//
-
-CANMessage CANBusInput;			//object of type CANMessage
+#include "MAVLink_Messaging.h"
 
 //------------ISR for the Timer0-------------------------//
 
@@ -70,7 +38,7 @@ int main (void)
 	DDRB |= _BV(DDB5);
 	
 	/*----------CAN PORT INPUTS-----------------
-		<<Master SPI>>
+		Initialise SPI and CAN libraries
 		Name	CANPin	ArduinoPin		Port
 		------------------------------------
 		CS/SS	PIN8	DigPin10		PB2
@@ -80,7 +48,12 @@ int main (void)
 		INT		PIN4	N/A					*/
 		
 		SPI_Init();
-		CAN_Init(CAN_125KBPS_16MHZ);
+		
+		while(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
+		{
+			CAN_Init(CAN_125KBPS_16MHZ);
+		}
+		;
 		
 	/*---------Timer Setup---------------------
 		*Overflow based
@@ -96,50 +69,82 @@ int main (void)
 		*uses UART.h library
 		*interrupt-based					*/
 	
-	    unsigned int c;
-	    char buffer[7];
-	    unsigned int  num=134;
 		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
 				
 		sei();	//interrupts ON
 	
-	
 	//HACK: Sending GPS data and heartbeat
 	//TODO: Get interrupt-based heartbeats and GPS data integrated with CAN
 	
+//---------------Operational Loop---------------------//
+	
 	while(1) {
 		
-		//---------------Get CAN data via SPI---------------------//
+//---------------Get CAN data via SPI-----------------//
+
 		uart_puts("<<<<START OF MESSAGE>>>>\n");
 		uart_puts("\n---------CAN DATA---------\n");
-	int rx_Result = CAN_OK;
-	CAN_readMessage(&CANBusInput);
-		if (rx_Result == CAN_OK)
+		unsigned int diag_query = 0;
+		diag_query = CAN_checkError();
+		
+		if (diag_query==CAN_OK)
 		{
-			char buff[10] ;
-			buff[0] = "\0"; 
-			itoa(CANBusInput.id,buff,16);
-			uart_puts("\nCAN ID:");
-			uart_puts(buff);
-			
-			itoa(CANBusInput.length,buff,10);
-			uart_puts("\nCAN Data Length:");
-			uart_puts(buff);
-			
-				for(int j = 0; j< CANBusInput.length; j++)
+			uart_puts("CAN Controller Error!");
+			//TODO: Set flag for controller error in GUI
+		}else 
+		if (diag_query==CAN_CTRLERROR)
+		{
+			if(CAN_checkReceiveAvaliable()==CAN_MSGAVAIL)
+			{
+				int rx_Result;
+				rx_Result = CAN_readMessage(&CANBusInput);			//read a byte of CAN data
+				
+				if (rx_Result == CAN_OK)							//if read correctly...
 				{
-				uart_puts("\nCAN Data");
-				itoa(j,buff,10);
-				uart_puts(buff);
-				uart_puts(":");
-				
-				itoa(CANBusInput.data[j],buff,10);
-				
-				uart_puts(buff);
-				uart_puts(" ");
+					char buff[10] ;
+					buff[0] = "\0";
+					itoa(CANBusInput.id,buff,16);					//read ASCII-converted byte into buffer
+					uart_puts("\nCAN ID:");
+					uart_puts(buff);								//output bytestring to UART
+					
+					itoa(CANBusInput.length,buff,10);
+					uart_puts("\nCAN Data Length:");
+					
+					if(CANBusInput.length==0)						//checks length
+					{
+						uart_puts("No CAN Data bits\n");			//Prints if no data bits present
+						
+					}
+					else 
+					{
+						uart_puts(buff);
+						for(int j = 0; j< CANBusInput.length; j++)	//print byte for each data element
+						{
+							uart_puts("\nCAN Data ");
+							itoa(j,buff,10);
+							uart_puts(buff);
+							uart_puts(": ");
+													
+							itoa(CANBusInput.data[j],buff,10);
+													
+							uart_puts(buff);
+							uart_puts(" ");
+						}
+					}
+					
+							
+					itoa(CANBusInput.rtr,buff,2);
+					uart_puts("\nIs this an RTR?: ");
+					if(CANBusInput.rtr==1)
+					{
+						uart_puts("Yes\n");
+					}else uart_puts("No\n");
+
 				}
-				
-				uart_puts("\n-------\n CAN Done.\n");
+			
+			
+			}	
+			uart_puts("\n-------\n CAN Done.\n");
 		}
 		
 		
@@ -162,11 +167,10 @@ int main (void)
 	13   = Checksum
 	*/
 				
-				char NMEA[300];
-				unsigned int z=0;
-				unsigned int ctr = 0;
-				unsigned int hdr = 0;
-				char gpsdata;
+		char NMEA[300];
+		unsigned int z=0;
+		unsigned int ctr = 0;
+		char gpsdata;
 
 		//do								//try find start in first 6 chars
 		//{
@@ -203,7 +207,7 @@ int main (void)
 				
 
 		//---------------MAVLink Setup---------------------------//
-	/*MAVLINK asks to set all systm statuses as integers. For human readibility ENUMS are used in the appropriate headers
+	/*MAVLINK asks to set all system statuses as integers. For human readibility ENUMS are used in the appropriate headers
 	these enums convert text for states to integers sent & interpreted. 3 phases to a message:
   --define the enum types you'll need and use friendly names e.g. value_name = MAV_ENUM_VALUE_NAME
   --use a send / encode function from the relevant header to send HEARTBEAT to get QGC/APM working
@@ -212,13 +216,14 @@ int main (void)
   --this ensures the message goes to MAVLink frame
   --connect to QGC and observe output! */
     
-		uart_puts("\n---------MAVLink Heartbeat---------\n");
+	uart_puts("\n---------MAVLink Heartbeat---------\n");
 	// Define the system type (see solarCar.h for list of possible types) 
-	int system_type = MAV_TYPE_GROUND_ROVER;
-	int autopilot_type = MAV_AUTOPILOT_GENERIC;
-    int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
-	int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
-    int system_status = MAV_STATE_ACTIVE;
+	
+		int system_type = MAV_TYPE_GROUND_ROVER;
+		int autopilot_type = MAV_AUTOPILOT_GENERIC;
+		int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
+		int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+		int system_status = MAV_STATE_ACTIVE;
 
 		// Initialize the required buffers
 		mavlink_message_t msg;
@@ -236,13 +241,12 @@ int main (void)
 			uart_putc(buf[i]);
 		}
 	
-		_delay_ms(HEARTBEAT_DELAY);
 		
-	uart_puts("\nTest Message from Solar Car\n");
+		uart_puts("<<<<END OF MESSAGE>>>>\n");
+		_delay_ms(HEARTBEAT_DELAY);
 	
 	}
-	uart_puts("<<<<END OF MESSAGE>>>>\n");
-	
+
 	
 	return 0;
 }

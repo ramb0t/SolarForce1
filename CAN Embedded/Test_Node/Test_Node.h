@@ -21,8 +21,9 @@
 #include <avr/wdt.h>
 #include <avr/power.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h> // http://www.nongnu.org/avr-libc/user-manual/group__avr__stdio.html
+#include <stdlib.h>  // Random, ITOA etc http://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html
+#include <stdint.h> // C99 Integer typedefs http://www.nongnu.org/avr-libc/user-manual/group__avr__stdint.html
 
 
 
@@ -45,12 +46,14 @@
 
 // These are optional, but nice to have around.
 // Feel free to comment them out if you don't use them.
-#include <stdint.h>
+
 #include "../lib/macros.h" // latest version maintained at https://github.com/robthepyro/AVR_Lib
-//#include "USART.h"
 
 
 // Structure Definitions
+/*********************************************/
+
+// Function Prototypes
 /*********************************************/
 
 

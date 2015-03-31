@@ -146,9 +146,6 @@
     <Compile Include="checksum.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="gps_parse.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="mavlink_conversions.h">
       <SubType>compile</SubType>
     </Compile>
@@ -156,6 +153,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="MAVLink_Messaging.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MAVLink_Messaging.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="mavlink_types.h">
