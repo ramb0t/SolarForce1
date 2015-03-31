@@ -9,16 +9,24 @@
 #define UART_BAUD_RATE 9600  
 #define MAVLINK_USE_CONVENIENCE_FUNCTIONS   
 
+#define DDR_SPI DDRB
+#define DD_MISO DDB4
+#define DD_MOSI DDB3
+#define DD_SCK DDB5
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <string.h>
-#include "uart.h"
-#include "mavlink.h"
+#include "uart.h"					//UART library
+#include "mavlink.h"				//MAVLink framework
+
+#include "../lib/CAN/CAN.h"			//CAN Framework
 
 mavlink_system_t mavlink_system;
-int counter=0;
+volatile int counter=0;
+volatile int ctr2=0;
 
 //------------Enum for MAVLink Heartbeat delay-----------//
 enum {
@@ -29,14 +37,20 @@ ISR(TIMER0_OVF_vect)
 {
 	if (counter ==16)
 	{
-
+		if (ctr2 ==16)
+		{
+		uart_puts("ISR!");
+		ctr2=0;
+		}
+		else ctr2++;
+		counter=0;
 	}
 	else counter++;
 };
 
 int main (void)
 {
-	/* port configuration
+	/* -------port configuration----------------
 	GPS Serial In Dig I/P 2 = PORTD2
 	Telemetry Serial O/P 3 = PORTD3
 	Telemetry Serial I/P 4 = PORTD4
@@ -52,21 +66,36 @@ int main (void)
 		*Overflow based
 		*1024 Prescalar						*/
 	
+	TCNT0 = 0x00;
 	TCCR0A = 0x00;
 	TCCR0B = (1<<CS02)|(1<<CS00);
+	TIMSK0 = (1<<TOIE0);
 	
-	/*---------Serial Init --------------------
+	
+	/*---------UART Serial Init --------------------
 		*uses UART.h library
 		*interrupt-based					*/
 	
 	    unsigned int c;
 	    char buffer[7];
-	    int  num=134;
+	    unsigned int  num=134;
 		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
 				
 		sei();	//interrupts ON
 	
-	//------------GPS Get----------------------//
+	
+	//HACK: Sending GPS data and heartbeat
+	//TODO: Get interrupt-based heartbeats and GPS data integrated with CAN
+	
+	while(1) {
+		
+		//---------------Get CAN data via SPI---------------------//
+	
+	
+
+	
+		
+		//---------------GPS Parse--------------------------------//
 	/*eg4. for NMEA 0183 version 3.00 active the Mode indicator field is added
 	$GPRMC,hhmmss.ss,A,llll.ll,a,yyyyy.yy,a,x.x,x.x,ddmmyy,x.x,a,m*hh
 	Field #
@@ -84,14 +113,11 @@ int main (void)
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
 	*/
-	
-	
-	while(1) {
 				
 				char NMEA[300];
-				int z=0;
-				int ctr = 0;
-				int hdr = 0;
+				unsigned int z=0;
+				unsigned int ctr = 0;
+				unsigned int hdr = 0;
 				char gpsdata;
 
 		//do								//try find start in first 6 chars
@@ -112,7 +138,7 @@ int main (void)
 					}else {(1<<RXC0); break;}		//else set flag to stop parsing data
 				}
 
-				uart_puts("GPS MSG:");
+				uart_puts("\nGPS MSG:");
 				_delay_ms(100);
 
 				for (ctr=0;ctr<z;ctr++)				//display parsed string
@@ -124,13 +150,9 @@ int main (void)
 				_delay_ms(100);
 
 
-		
-		
-	
-		
-		//------------MAVLink Setup-----------------//
-		/*MAVLINK asks to set all systm statuses as integers. For human readibility ENUMS are used in the appropriate headers
-  these enums convert text for states to integers sent & interpreted. 3 phases to a message:
+		//---------------MAVLink Setup---------------------------//
+	/*MAVLINK asks to set all systm statuses as integers. For human readibility ENUMS are used in the appropriate headers
+	these enums convert text for states to integers sent & interpreted. 3 phases to a message:
   --define the enum types you'll need and use friendly names e.g. value_name = MAV_ENUM_VALUE_NAME
   --use a send / encode function from the relevant header to send HEARTBEAT to get QGC/APM working
   --then have a function (see solarCar.h and the entire message_definitions folder for types to send
@@ -160,13 +182,14 @@ int main (void)
 		{
 			uart_putc(buf[i]);
 		}
-		
-		
+	
 		_delay_ms(HEARTBEAT_DELAY);
 		
 	uart_puts("\nTest Message from Solar Car\n");
 	
 	}
+	
+	
 	
 	return 0;
 }
