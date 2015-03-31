@@ -9,10 +9,11 @@
 #define UART_BAUD_RATE 9600  
 #define MAVLINK_USE_CONVENIENCE_FUNCTIONS   
 
-#define DDR_SPI DDRB
-#define DD_MISO DDB4
-#define DD_MOSI DDB3
-#define DD_SCK DDB5
+#define TELEMETRY_UART_OUT DDD3
+#define GPS_UART_DATA_IN DDD2
+#define TELEMETRY_UART_IN DDD4
+
+#define UART_DDR DDRD
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -23,6 +24,7 @@
 #include "mavlink.h"				//MAVLink framework
 
 #include "../lib/CAN/CAN.h"			//CAN Framework
+#include "../lib/mcp2515/mcp2515.h"	//bit timings for MCP2515
 
 mavlink_system_t mavlink_system;
 volatile int counter=0;
@@ -59,15 +61,27 @@ int main (void)
 	/* -------port configuration----------------
 	GPS Serial In Dig I/P 2 = PORTD2
 	Telemetry Serial O/P 3 = PORTD3
-	Telemetry Serial I/P 4 = PORTD4
-	*/
+	Telemetry Serial I/P 4 = PORTD4				*/
 	
-	DDRD |= _BV(DDD3);	//output
-	DDRD &=~_BV(DDD2);	//input
-	DDRD &=~_BV(DDD4);	//input
+	UART_DDR |= _BV(TELEMETRY_UART_OUT);	//output
+	UART_DDR &=~_BV(GPS_UART_DATA_IN);	//input
+	UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
 	
 	DDRB |= _BV(DDB5);
 	
+	/*----------CAN PORT INPUTS-----------------
+		<<Master SPI>>
+		Name	CANPin	ArduinoPin		Port
+		------------------------------------
+		CS/SS	PIN8	DigPin10		PB2
+		MISO	PIN7	DigPin12		PB4
+		MOSI	PIN6	DigPin11		PB3
+		SCK		PIN5	DigPin13		PB5
+		INT		PIN4	N/A					*/
+		
+		SPI_Init();
+		CAN_Init(CAN_125KBPS_16MHZ);
+		
 	/*---------Timer Setup---------------------
 		*Overflow based
 		*1024 Prescalar						*/
@@ -96,19 +110,35 @@ int main (void)
 	while(1) {
 		
 		//---------------Get CAN data via SPI---------------------//
-	int rx_Result;
-	//rx_Result = CAN_readMessage(&CANBusInput);
-		//if (rx_Result == CAN_OK)
-		//{
-			//uart_puts("\nCAN ID:");
-			//uart_puts(CANBusInput->id);
-			//uart_puts("\nCAN Data Length:");
-			//uart_puts(CANBusInput->length);
-			//uart_puts("\nCAN Data:");
-			//uart_puts(CANBusInput->data);
-			//uart_puts("\n-------\nDone.\n");
-			//
-		//}
+	int rx_Result = CAN_OK;
+	CAN_readMessage(&CANBusInput);
+		if (rx_Result == CAN_OK)
+		{
+			char buff[10];
+			itoa(CANBusInput.id,buff,10);
+			uart_puts("\nCAN ID:");
+			uart_puts(buff);
+			
+			itoa(CANBusInput.length,buff,10);
+			uart_puts("\nCAN Data Length:");
+			uart_puts(buff);
+			
+				for(int j = 0; j< CANBusInput.length; j++)
+				{
+				uart_puts("\nCAN Data");
+				itoa(j,buff,10);
+				uart_puts(buff);
+				uart_puts(":");
+				
+				itoa(CANBusInput.data[j],buff,10);
+				
+				uart_puts(buff);
+				uart_puts(" ");
+				}
+				
+				uart_puts("\n-------\n CAN Done.\n");
+		}
+		
 		
 		//---------------GPS Parse--------------------------------//
 	/*eg4. for NMEA 0183 version 3.00 active the Mode indicator field is added
@@ -150,8 +180,12 @@ int main (void)
 				{
 					NMEA[z] = gpsdata;				//add to char array if not EOL
 					z++;
-					}else {(1<<RXC0); break;}		//else set flag to stop parsing data
 				}
+				else 
+				{
+					(1<<RXC0); break;				//else set flag to stop parsing data
+				}		
+			}
 
 				uart_puts("\nGPS MSG:");
 				_delay_ms(100);
@@ -163,7 +197,7 @@ int main (void)
 				uart_puts("\n<<end");
 				uart_puts("\nGPS received.\n");
 				_delay_ms(100);
-
+				
 
 		//---------------MAVLink Setup---------------------------//
 	/*MAVLINK asks to set all systm statuses as integers. For human readibility ENUMS are used in the appropriate headers
