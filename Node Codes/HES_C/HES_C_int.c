@@ -39,7 +39,7 @@ void magnet()
 	//_delay_ms(300);
 }
 
-ISR(INT0_vect)
+/*ISR(INT0_vect)
 {
 	//to run when there is an interrupt from HES
 	half_rev++;
@@ -58,13 +58,13 @@ void initComms(unsigned int baudRate)
 	UBRR0H = (unsigned char)(baudRate>>8);
 	UBRR0L = (unsigned char) baudRate;
 	UCSR0B = (1<<TXEN0);	
-}
+}*/
 
 int main(void)
 {
 	//initializations
-	initInterrupt0();
-	initComms(12);
+	//initInterrupt0();
+	//initComms(12);
 	
 	SPI_Init(); // setup SPI	
 	CAN_Init(CAN_125KBPS_16MHZ);
@@ -77,6 +77,16 @@ int main(void)
 	unsigned int speed = 0;
 	
 	UDR0 = 0x04;
+	
+	CANMessage speed;
+	
+	speed. id = 0x0101;
+	speed. rtr = 0 ;
+	speed. length = 2 ;
+	speed. data [ 0 ] = 0x06;
+	speed. data [ 1 ] = 0x09;
+	
+	CAN_sendMessage (&speed);
 	
 	//while(1==1){
 	//	magnet();
@@ -105,12 +115,12 @@ int main(void)
 		TIFR0 &= ~(1 << TOV0);
 		//reset the overflow flag
 		
-		if(half_rev >= 20){
+		/*if(half_rev >= 20){
 			rpm = 30*1000/1000*half_rev;
 			UDR0 = half_rev;
 			half_rev = 0;
 			speed = (rpm*(18*3.14)/60)*2;
 			UDR0 = speed;
-			}
-	}
+			}*/
+		}
 }
