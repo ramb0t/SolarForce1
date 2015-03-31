@@ -19,15 +19,15 @@ DESCRIPTION:
 
 /* define CPU frequency in Mhz here if not defined in Makefile */
 #ifndef F_CPU
-#define F_CPU 1600000UL
+#define F_CPU 4000000UL
 #endif
 
 /* 9600 baud */
-#define UART_BAUD_RATE 9600      
+#define UART_BAUD_RATE      9600      
 
 
 int main(void)
-{	
+{
     unsigned int c;
     char buffer[7];
     int  num=134;
@@ -54,9 +54,8 @@ int main(void)
      *  uart_puts() blocks if it can not write the whole string to the circular 
      *  buffer
      */
-
     uart_puts("String stored in SRAM\n");
-
+    
     /*
      * Transmit string from program memory to UART
      */
@@ -67,7 +66,7 @@ int main(void)
      * Use standard avr-libc functions to convert numbers into string
      * before transmitting via UART
      */     
-    itoa( num, buffer, 10);   // convert integer into string (decimal format)         
+    itoa( num, buffer, 10);   // convert interger into string (decimal format)         
     uart_puts(buffer);        // and transmit string to UART
 
     

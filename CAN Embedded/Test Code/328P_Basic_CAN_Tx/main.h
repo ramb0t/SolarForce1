@@ -26,12 +26,17 @@
 #include "CAN.h"
 #include "mcp2515.h"
 #include "AVR_SPI.h"
+#include "uart.h"
+#include <string.h>
 
 // These are optional, but nice to have around.
 // Feel free to comment them out if you don't use them.
 #include <stdint.h>
 #include "macros.h" // latest version maintained at https://github.com/robthepyro/AVR_Lib
 //#include "USART.h"
+
+/* 9600 baud */
+#define UART_BAUD_RATE 9600
 
 
 
