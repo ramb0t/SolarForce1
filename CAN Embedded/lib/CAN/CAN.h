@@ -53,7 +53,7 @@ typedef struct {
 uint8_t CAN_Init(uint8_t speedset);
 uint8_t CAN_sendMessage(const CANMessage* msg);
 uint8_t CAN_readMessage(CANMessage* msg);
-uint8_t CAN_checkRecieveAvaliable(void);
+uint8_t CAN_checkReceiveAvaliable(void);
 uint8_t CAN_checkError(void);
 
 #endif /* CAN_H_ */

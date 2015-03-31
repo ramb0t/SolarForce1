@@ -7,7 +7,6 @@
 
 
 #include "Test_Node.h"
-#include "lib/CAN/CAN.h"
 
 int main(void)
 {
@@ -33,7 +32,7 @@ int main(void)
 
     while(1) {
 
-    	rx_status = CAN_checkRecieveAvaliable();
+    	rx_status = CAN_checkReceiveAvaliable();
 
     	if(rx_status == CAN_MSGAVAIL){
     		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
