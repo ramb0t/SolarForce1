@@ -7,12 +7,13 @@
 
 
 #include "Test_Node.h"
+#include "lib/CAN/CAN.h"
 
 int main(void)
 {
 
 	SPI_Init();
-	mcp2515_init();
+	CAN_Init(CAN_125KBPS_16MHZ);
 	// Create a new message
 	CANMessage message;
 	uint8_t rx_status = 0xff;
@@ -23,17 +24,19 @@ int main(void)
 
     sei();
 
+    uart_puts("Hello! CAN Test node has booted!! :D\n");
+    // For working with strings
+    char buffer[10];
+
     // init LCD
     u8g_setup();
 
     while(1) {
 
-    	rx_status = can_get_message (&message); //gets msg from bus (pointer to the object of CanMessage type) [returns value based on result of Rx
+    	rx_status = CAN_checkRecieveAvaliable();
 
-
-
-
-    	if(rx_status!=0xff){
+    	if(rx_status == CAN_MSGAVAIL){
+    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
     		PORTC &= ~(1<<2);
     		GFX_LCD_Draw(message);
     		PORTC |= (1<<2);

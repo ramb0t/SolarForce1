@@ -15,25 +15,17 @@ Returns:  None
 **************************************************************************/
 void SPI_Init(void){
 
-	// Set SS (Slave Select) as output
-	SPI_SS_DDR |= (1 << SPI_SS);
-	// Set SS High, (Active Low)
-	SPI_SS_PORT |= (1 << SPI_SS);
-
-	// Set MOSI as output
-	SPI_MOSI_DDR |= (1 << SPI_MOSI);
-
-	// Set MISO as input
-	SPI_MISO_DDR &= ~(1<<SPI_MISO);
-	// Activate MISO Pullup
-	SPI_MISO_PORT |= (1 << SPI_MISO);
-
-	// Set SCK as output
-	SPI_SCK_DDR |= (1 << SPI_SCK);
+	// SCK, SS!!, MOSI as outputs
+	SPIDDR |= (1<<SPISCK)|(1<<SPISS)|(1<<SPIMOSI);
+	// MISO as input
+	SPIDDR &= ~(1<<SPIMISO);	// cbi(SPIDDR,SPIMISO);
 
 	SPCR |= (1 << MSTR); /* clockmaster */
 	SPCR |= (1 << SPE); /* enable */
 	SPSR = ( 1 <<SPI2X ) ; /* fosc = fclk / 2 */
+
+	// INIT interface, Master, set clock rate fck/128 TODO: check prescaler
+	// SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1);
 
 }
 
@@ -56,7 +48,7 @@ Purpose:  Write a byte to the SPI bus and return Read byte simultaneously
 Input:    Byte to Write
 Returns:  Read Byte
 **************************************************************************/
-uint8_t SPI_WriteRead(uint8_t WriteByte){
+uint8_t SPI_ReadWrite(uint8_t WriteByte){
 	// Put the Write byte in the SPI SPDR
 	SPDR = WriteByte;
 
@@ -74,8 +66,8 @@ Input:    none
 Returns:  Read Byte
 **************************************************************************/
 uint8_t SPI_Read(){
-	// write 0xff and return result
-	return SPI_WriteRead(0xFF);
+	// write SPIDONTCARE and return result
+	return SPI_ReadWrite(SPIDONTCARE);
 }
 
 /*************************************************************************
@@ -86,6 +78,6 @@ Returns:  node
 **************************************************************************/
 void SPI_Write(uint8_t WriteByte){
 	// Write the byte and discard the result
-	SPI_WriteRead(WriteByte);
+	SPI_ReadWrite(WriteByte);
 }
 
