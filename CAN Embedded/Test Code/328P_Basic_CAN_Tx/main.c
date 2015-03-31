@@ -46,10 +46,10 @@ int main(void) {
 	messageOff. rtr = 0 ;
 	messageOff. length = 3 ;
 	messageOff. data [ 0 ] = 0x64;
-	messageOff. data [ 1 ] = 0xAB;
+	messageOff. data [ 1 ] = 0xABclock_prescale_set
 
 
-	// clock_prescale_set(clock_div_1); /* CPU Clock: 8 MHz */
+	// (clock_div_1); /* CPU Clock: 8 MHz */
 	//initUSART();
 	//printString("OK");
 	uint16_t i = 0;
