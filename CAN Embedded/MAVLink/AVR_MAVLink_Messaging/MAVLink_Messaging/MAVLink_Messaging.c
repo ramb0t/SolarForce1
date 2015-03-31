@@ -48,7 +48,12 @@ int main (void)
 		INT		PIN4	N/A					*/
 		
 		SPI_Init();
-		CAN_Init(CAN_125KBPS_16MHZ);
+		
+		while(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
+		{
+			CAN_Init(CAN_125KBPS_16MHZ);
+		}
+		;
 		
 	/*---------Timer Setup---------------------
 		*Overflow based
@@ -79,36 +84,67 @@ int main (void)
 
 		uart_puts("<<<<START OF MESSAGE>>>>\n");
 		uart_puts("\n---------CAN DATA---------\n");
+		unsigned int diag_query = 0;
+		diag_query = CAN_checkError();
 		
-		int rx_Result;
-		rx_Result = CAN_readMessage(&CANBusInput);
-		
-		if (rx_Result == CAN_OK)
+		if (diag_query==CAN_OK)
 		{
-			char buff[10] ;
-			buff[0] = "\0"; 
-			itoa(CANBusInput.id,buff,16);
-			uart_puts("\nCAN ID:");
-			uart_puts(buff);
-			
-			itoa(CANBusInput.length,buff,10);
-			uart_puts("\nCAN Data Length:");
-			uart_puts(buff);
-			
-				for(int j = 0; j< CANBusInput.length; j++)
+			uart_puts("CAN Controller Error!");
+			//TODO: Set flag for controller error in GUI
+		}else 
+		if (diag_query==CAN_CTRLERROR)
+		{
+			if(CAN_checkReceiveAvaliable()==CAN_MSGAVAIL)
+			{
+				int rx_Result;
+				rx_Result = CAN_readMessage(&CANBusInput);			//read a byte of CAN data
+				
+				if (rx_Result == CAN_OK)							//if read correctly...
 				{
-					uart_puts("\nCAN Data ");
-					itoa(j,buff,10);
-					uart_puts(buff);
-					uart_puts(": ");
-				
-					itoa(CANBusInput.data[j],buff,10);
-				
-					uart_puts(buff);
-					uart_puts(" ");
+					char buff[10] ;
+					buff[0] = "\0";
+					itoa(CANBusInput.id,buff,16);					//read ASCII-converted byte into buffer
+					uart_puts("\nCAN ID:");
+					uart_puts(buff);								//output bytestring to UART
+					
+					itoa(CANBusInput.length,buff,10);
+					uart_puts("\nCAN Data Length:");
+					
+					if(CANBusInput.length==0)						//checks length
+					{
+						uart_puts("No CAN Data bits\n");			//Prints if no data bits present
+						
+					}
+					else 
+					{
+						uart_puts(buff);
+						for(int j = 0; j< CANBusInput.length; j++)	//print byte for each data element
+						{
+							uart_puts("\nCAN Data ");
+							itoa(j,buff,10);
+							uart_puts(buff);
+							uart_puts(": ");
+													
+							itoa(CANBusInput.data[j],buff,10);
+													
+							uart_puts(buff);
+							uart_puts(" ");
+						}
+					}
+					
+							
+					itoa(CANBusInput.rtr,buff,2);
+					uart_puts("\nIs this an RTR?: ");
+					if(CANBusInput.rtr==1)
+					{
+						uart_puts("Yes\n");
+					}else uart_puts("No\n");
+
 				}
-				
-				uart_puts("\n-------\n CAN Done.\n");
+			
+			
+			}	
+			uart_puts("\n-------\n CAN Done.\n");
 		}
 		
 		
