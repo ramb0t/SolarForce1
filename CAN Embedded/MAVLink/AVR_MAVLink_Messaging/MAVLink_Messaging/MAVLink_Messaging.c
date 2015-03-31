@@ -33,6 +33,12 @@ enum {
 	HEARTBEAT_DELAY = 1000
 };
 
+//------------CAN Received Message Struct----------------//
+
+CANMessage CANBusInput;			//object of type CANMessage
+
+//------------ISR for the Timer0-------------------------//
+
 ISR(TIMER0_OVF_vect)
 {
 	if (counter ==16)
@@ -69,7 +75,7 @@ int main (void)
 	TCNT0 = 0x00;
 	TCCR0A = 0x00;
 	TCCR0B = (1<<CS02)|(1<<CS00);
-	TIMSK0 = (1<<TOIE0);
+	//TIMSK0 = (1<<TOIE0);		--enable later!
 	
 	
 	/*---------UART Serial Init --------------------
@@ -90,10 +96,19 @@ int main (void)
 	while(1) {
 		
 		//---------------Get CAN data via SPI---------------------//
-	
-	
-
-	
+	int rx_Result;
+	//rx_Result = CAN_readMessage(&CANBusInput);
+		//if (rx_Result == CAN_OK)
+		//{
+			//uart_puts("\nCAN ID:");
+			//uart_puts(CANBusInput->id);
+			//uart_puts("\nCAN Data Length:");
+			//uart_puts(CANBusInput->length);
+			//uart_puts("\nCAN Data:");
+			//uart_puts(CANBusInput->data);
+			//uart_puts("\n-------\nDone.\n");
+			//
+		//}
 		
 		//---------------GPS Parse--------------------------------//
 	/*eg4. for NMEA 0183 version 3.00 active the Mode indicator field is added

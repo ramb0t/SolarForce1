@@ -119,6 +119,22 @@
       <SubType>compile</SubType>
       <Link>lib\CAN\CAN.h</Link>
     </Compile>
+    <Compile Include="..\..\..\lib\mcp2515\mcp2515.c">
+      <SubType>compile</SubType>
+      <Link>lib\mcp2515\mcp2515.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\lib\mcp2515\mcp2515.h">
+      <SubType>compile</SubType>
+      <Link>lib\mcp2515\mcp2515.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\lib\mcp2515\mcp2515_bittime.h">
+      <SubType>compile</SubType>
+      <Link>lib\mcp2515\mcp2515_bittime.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\lib\mcp2515\mcp2515_defs.h">
+      <SubType>compile</SubType>
+      <Link>lib\mcp2515\mcp2515_defs.h</Link>
+    </Compile>
     <Compile Include="..\..\..\lib\SPI\AVR_SPI.c">
       <SubType>compile</SubType>
       <Link>lib\SPI\AVR_SPI.c</Link>
