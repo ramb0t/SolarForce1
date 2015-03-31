@@ -5,13 +5,12 @@
  *  Author: Terayza
  */ 
 
-#define F_CPU 16000000L
+#define F_CPU 16000000UL
 #define HES1 1
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-
-int half_rev;
+#include "../lib/CAN/CAN.h"
 
 void magnet()
 {
@@ -26,6 +25,19 @@ void magnet()
 	//_delay_ms(300);
 }
 
+ISR(INT0_vect)
+{
+	//to run when there is an interrupt from HES
+	half_rev++;
+}
+
+void initInterrupt0(void)
+{
+	EIMSK |= (1 << INT0); //enable INT0
+	EICRA |= (1 << ISC00); // trigger when button changes
+	sei(); // set (global) interrupt enable bit
+}
+
 void initComms(unsigned int baudRate)
 {
 	//set baud rate to 4800
@@ -36,14 +48,17 @@ void initComms(unsigned int baudRate)
 
 int main(void)
 {
-	//timerSetup();
+	//initializations
+	initInterrupt0();
 	initComms(12);
+	CAN_Init()
 	
-	DDRB = 0x00; //set port B as input pins
-	PORTB = 0xff; // set pullups
-		
-	int rpm = 0; //unsigned
-	int speed = 0; //unsigned
+	DDRD = 0x00; //set port D as input pins
+	PORTD = 0xff; // set pull ups
+	
+	volatile int half_rev;
+	unsigned int rpm = 0;
+	unsigned int speed = 0;
 	
 	UDR0 = 0x04;
 	
