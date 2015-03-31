@@ -1,12 +1,12 @@
 
 #include "GFX_LCD.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 u8g_t u8g;
 
 void u8g_setup(void)
 {
+	// Init CS pin
+	GFX_CS_DDR |= (1<<GFX_CS_BIT);
   /*
     Test Envionment 1, ATMEGA and DOGM132
     CS: PORTB, Bit 2
@@ -38,19 +38,20 @@ void u8g_setup(void)
       A0 and Reset are not used.
   */
    //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
-	DDRC |= (1<<2);
-   u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
+	GFX_SELECT();
+	u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
    //u8g_Init8Bit(&u8g, &u8g_dev_ks0108_128x64, PN(1, 2), PN(1, 1), PN(1, 0), PN(3, 7), PN(3, 6), PN(3, 5), PN(3, 4), PN(3, 3), PN(2, 5), PN(2, 1), PN(2, 0), PN(2,2), PN(2, 3), U8G_PIN_NONE);
 
    //U8GLIB_KS0108_128(d0, d1, d2, d3, d4, d5, d6, d7, en, cs1, cs2, di, rw [, reset])u8g_dev_ks0108_128x64
-
+	u8g_Begin(&u8g);
    u8g_FirstPage(&u8g);
+   u8g_prepare();
    	do
    	{
-   		u8g_prepare();
+
    	    u8g_DrawStr(&u8g, 5, 15, "Hello! ");
    	} while ( u8g_NextPage(&u8g) );
-
+   	GFX_UNSELECT();
 
 }
 
@@ -61,18 +62,38 @@ void u8g_prepare(void) {
   u8g_SetFontPosTop(&u8g);
 }
 
-void GFX_LCD_Draw(CANMessage message){
+void GFX_Cnt(int i){
+	GFX_SELECT();
 	u8g_FirstPage(&u8g);
+
 	do
 	{
+		char buf[10];
+		itoa(i, buf, 10);
 		u8g_prepare();
-		draw(message);
+		u8g_DrawStr(&u8g, 5, 15, buf);
+		//draw(message);
 	} while ( u8g_NextPage(&u8g) );
+	GFX_UNSELECT();
 }
 
-void draw(CANMessage message){
+void GFX_LCD_Draw(CANMessage* message){
+	GFX_SELECT();
+	u8g_Begin(&u8g);
+	u8g_FirstPage(&u8g);
+	u8g_prepare();
+	do
+	{
+		draw(message);
+
+	} while ( u8g_NextPage(&u8g) );
+	GFX_UNSELECT();
+}
+
+void draw(CANMessage* msg){
 	char buf[10]; // used for forming strings to pass to the display ??
 
+	CANMessage message = *msg;
 	// ID
 	itoa(message.id, buf, 10);
 	u8g_DrawStr(&u8g, 5, 0, "ID= ");

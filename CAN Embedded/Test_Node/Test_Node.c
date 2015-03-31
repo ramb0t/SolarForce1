@@ -27,18 +27,21 @@ int main(void)
     // For working with strings
     char buffer[10];
 
+    DDRC |= (1<<2);
     // init LCD
     u8g_setup();
-
+    int g = 0;
     while(1) {
+
+    	//FX_Cnt(g++);
 
     	rx_status = CAN_checkReceiveAvaliable();
 
     	if(rx_status == CAN_MSGAVAIL){
     		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
-    		PORTC &= ~(1<<2);
-    		GFX_LCD_Draw(message);
-    		PORTC |= (1<<2);
+
+    		GFX_LCD_Draw(&message);
+
     	}
     }
 }
