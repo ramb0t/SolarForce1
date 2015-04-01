@@ -39,6 +39,7 @@ LICENSE:
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <avr/delay.h>
 #include "uart.h"
 
 
@@ -482,7 +483,11 @@ Returns:  none
 void uart_puts(const char *s )
 {
     while (*s) 
+	{
+	  _delay_ms(10);	
       uart_putc(*s++);
+	  _delay_ms(10);
+	}
 
 }/* uart_puts */
 

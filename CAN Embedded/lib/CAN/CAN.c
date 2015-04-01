@@ -132,7 +132,7 @@ Returns:  either
  #define CAN_MSGAVAIL   (3) - a message has been received
  #define CAN_NOMSG      (4) - no new message
 **************************************************************************/
-uint8_t CAN_checkReceiveAvaliable(void)
+uint8_t CAN_checkReceiveAvailable(void)
 {
 	uint8_t res;
 
@@ -158,7 +158,7 @@ uint8_t CAN_checkError(void)
 	if ( eflg & MCP_EFLG_ERRORMASK ) {
 		return CAN_CTRLERROR;
 	}
-	else {
+	else{
 		return CAN_OK;
 	}
 }
