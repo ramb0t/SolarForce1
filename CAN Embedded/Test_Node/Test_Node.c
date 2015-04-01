@@ -35,12 +35,14 @@ int main(void)
 
     	//FX_Cnt(g++);
 
-    	rx_status = CAN_checkReceiveAvaliable();
+    	rx_status = CAN_checkReceiveAvailable();
 
     	if(rx_status == CAN_MSGAVAIL){
     		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
 
     		GFX_LCD_Draw(&message);
+    		// sends the message on the CAN interface.
+    		uart_SendCANMsg(&message);
 
     	}
     }
