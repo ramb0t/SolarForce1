@@ -156,7 +156,7 @@ typedef enum MAV_STATE
 #include "./mavlink_msg_gps.h"
 #include "./mavlink_msg_accelo_gyro.h"
 #include "./mavlink_msg_hall_effect.h"
-//#include "./mavlink_msg_sys_status.h"
+#include "./mavlink_msg_sys_status.h"
 //#include "./mavlink_msg_gps_raw.h"
 
 #ifdef __cplusplus

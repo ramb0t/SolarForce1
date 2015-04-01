@@ -143,6 +143,14 @@
       <SubType>compile</SubType>
       <Link>lib\SPI\AVR_SPI.h</Link>
     </Compile>
+    <Compile Include="..\..\..\lib\uart\uart.c">
+      <SubType>compile</SubType>
+      <Link>lib\uart\uart.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\lib\uart\uart.h">
+      <SubType>compile</SubType>
+      <Link>lib\uart\uart.h</Link>
+    </Compile>
     <Compile Include="checksum.h">
       <SubType>compile</SubType>
     </Compile>

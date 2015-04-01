@@ -39,7 +39,7 @@ extern "C" {
 //#include "./mavlink_msg_gps_raw.h"
 //#include "./mavlink_msg_gps_status.h"
 //#include "./mavlink_msg_global_position.h"
-//#include "./mavlink_msg_sys_status.h"
+#include "./mavlink_msg_sys_status.h"
 //#include "./mavlink_msg_rc_channels_raw.h"
 //#include "./mavlink_msg_rc_channels_scaled.h"
 //#include "./mavlink_msg_waypoint.h"

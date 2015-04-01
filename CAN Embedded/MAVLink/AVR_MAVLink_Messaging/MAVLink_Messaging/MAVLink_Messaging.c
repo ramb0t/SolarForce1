@@ -11,17 +11,7 @@
 
 ISR(TIMER0_OVF_vect)
 {
-	if (counter ==16)
-	{
-		if (ctr2 ==16)
-		{
-		uart_puts("ISR!");
-		ctr2=0;
-		}
-		else ctr2++;
-		counter=0;
-	}
-	else counter++;
+
 };
 
 int main (void)
@@ -62,7 +52,7 @@ int main (void)
 	TCNT0 = 0x00;
 	TCCR0A = 0x00;
 	TCCR0B = (1<<CS02)|(1<<CS00);
-	//TIMSK0 = (1<<TOIE0);		--enable later!
+	//TIMSK0 = (1<<TOIE0);		//--enable later!
 	
 	
 	/*---------UART Serial Init --------------------
@@ -80,19 +70,24 @@ int main (void)
 	
 	while(1) {
 		
+		if(TIFR0 &(1<<TOV0))
+		{
+			MAV_hb();
+			TIFR0 = (0<<TOV0);
+		}
+		
 //---------------Get CAN data via SPI-----------------//
 
 		uart_puts("<<<<START OF MESSAGE>>>>\n");
 		uart_puts("\n---------CAN DATA---------\n");
-		unsigned int diag_query = 0;
-		diag_query = CAN_checkError();
+		int query;
+		query = CAN_checkError();
 		
-		if (diag_query==CAN_OK)
+		if (query==CAN_OK)
 		{
 			uart_puts("CAN Controller Error!");
 			//TODO: Set flag for controller error in GUI
-		}else 
-		if (diag_query==CAN_CTRLERROR)
+		}else if (query==CAN_CTRLERROR)
 		{
 			if(CAN_checkReceiveAvaliable()==CAN_MSGAVAIL)
 			{
@@ -196,17 +191,15 @@ int main (void)
 
 				uart_puts("\nGPS MSG:");
 				_delay_ms(100);
-
 				for (ctr=0;ctr<z;ctr++)				//display parsed string
 				{
 					uart_putc(NMEA[ctr]);
 				}
 				uart_puts("\n<<end");
 				uart_puts("\nGPS received.\n");
-				_delay_ms(100);
 				
-
-		//---------------MAVLink Setup---------------------------//
+				
+				//---------------MAVLink Setup---------------------------//
 	/*MAVLINK asks to set all system statuses as integers. For human readibility ENUMS are used in the appropriate headers
 	these enums convert text for states to integers sent & interpreted. 3 phases to a message:
   --define the enum types you'll need and use friendly names e.g. value_name = MAV_ENUM_VALUE_NAME
@@ -215,7 +208,7 @@ int main (void)
   --pass the values or enum friendly names to the functions
   --this ensures the message goes to MAVLink frame
   --connect to QGC and observe output! */
-    
+    _delay_ms(200);
 	uart_puts("\n---------MAVLink Heartbeat---------\n");
 	// Define the system type (see solarCar.h for list of possible types) 
 	
@@ -230,24 +223,49 @@ int main (void)
 		uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 		uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 		
+
+				//mavlink_msg_sys_status_pack(100,200,&msg,base_mode,custom_mode,system_status,12,5,22,0);
+				mavlink_msg_hall_effect_pack(100,200,&msg,72,0,0);
+				
+				if( !(UCSR0A & (1<<UDRE0)) ){
+					for (int i = 0; i < len ; i++)
+					{
+						uart_putc(buf[i]);
+					}
+				}
+		
 		// Pack the message
 		// mavlink_message_heartbeat_pack(system id, component id, message container, system type, MAV_AUTOPILOT_GENERIC)
 		mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
-		
+
 		//only load as many bytes as needed into the send buffer
 		
+		if( !(UCSR0A & (1<<UDRE0)) ){
 		for (int i = 0; i < len ; i++)
 		{
 			uart_putc(buf[i]);
 		}
-	
-		
+		}
 		uart_puts("<<<<END OF MESSAGE>>>>\n");
-		_delay_ms(HEARTBEAT_DELAY);
-	
-	}
+		//_delay_ms(HEARTBEAT_DELAY);
 
+				
+			
+	}
+		
 	
 	return 0;
 }
 
+
+void MAV_hb()
+{
+	if (counter == 16)
+	{
+		if(ctr2 == 1000)
+		{
+			
+		}
+	}
+						
+}
