@@ -8,6 +8,39 @@
 #ifndef TERMINAL_H_
 #define TERMINAL_H_
 
+// Includes:
+/*****************************************************************************/
+#include <stdlib.h>
+#include <string.h>
+#include <inttypes.h>
+
+
+// Project Specific
+#include "../lib/uart/uart.h"
+
+// Defines:
+/*****************************************************************************/
+#define TERMINAL_INIT					0
+#define TERMINAL_RUN					TERMINAL_INIT+1
+#define TERMINAL_LISTEN					TERMINAL_INIT+2
+#define TERMINAL_LISTENFILTER			TERMINAL_INIT+3
+#define TERMINAL_SEND1					TERMINAL_INIT+4
+
+#define TERMINAL_MAX_INPUT_LENGTH		10
+
+#define TERMINAL_HELP					"help"
+
+
+// Variables:
+/*****************************************************************************/
+
+// Function Prototypes:
+/*****************************************************************************/
+void Terminal_init(void);
+void Terminal_read(uint8_t* state);
+void Terminal_run(uint8_t* state);
+
+static void Terminal_showMenu(void);
 
 
 #endif /* TERMINAL_H_ */

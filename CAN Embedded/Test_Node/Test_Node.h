@@ -46,6 +46,9 @@
 #include "../lib/uart/uart_CANFunc.h"
 #include <string.h>
 
+// Terminal / Console interface for test node.
+#include "Terminal.h"
+
 // These are optional, but nice to have around.
 // Feel free to comment them out if you don't use them.
 

@@ -18,22 +18,29 @@ int main(void)
 	uint8_t rx_status = 0xff;
 
 
-	//init uart
+	// Init UART
 	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 
     sei();
 
     uart_puts("Hello! CAN Test node has booted!! :D\n");
-    // For working with strings
-    char buffer[10];
 
-    DDRC |= (1<<2);
-    // init LCD
+    // Init LCD
     u8g_setup();
-    int g = 0;
+
+    // Create Terminal State
+    uint8_t Terminal_state = TERMINAL_INIT;
+    // Init the Terminal
+    Terminal_init();
+
+    // Loop for all the time!
     while(1) {
 
-    	//FX_Cnt(g++);
+    	if(uart1_available()){ // UART RX data waiting
+    		// Let the Terminal deal with it.
+    		Terminal_read(&Terminal_state);
+    	}
+
 
     	rx_status = CAN_checkReceiveAvailable();
 
@@ -42,7 +49,7 @@ int main(void)
 
     		GFX_LCD_Draw(&message);
     		// sends the message on the CAN interface.
-    		uart_SendCANMsg(&message);
+    		//uart_SendCANMsg(&message);
 
     	}
     }
