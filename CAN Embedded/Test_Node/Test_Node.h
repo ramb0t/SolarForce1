@@ -43,7 +43,7 @@
 #define UART_BAUD_RATE 9600
 #include "../lib/uart/uart.h"
 // Handy uart functions
-#include "../lib/uart/uart_CANMsg.h"
+#include "../lib/uart/uart_CANFunc.h"
 #include <string.h>
 
 // These are optional, but nice to have around.
