@@ -182,36 +182,70 @@ int main (void)
 
 		//do								//try find start in first 6 chars
 		//{
-			//gpsdata = uart_getc();						//check first char of input buffer for $GPRMC
+			//						//check first char of input buffer for $GPRMC
 		//
 		//}while(gpsdata != '$');		
 		//
 			
 			uart_puts("\n---------GPS DATA---------\n");
 			
-			while( !(UCSR0A & (1<<RXC0)) )
-			{			
-				gpsdata = uart_getc();				//get one char from GPS at a time
+				
+				uart_puts("GPS Ready");
+				if(DEBUG)
+				{
+					gpsdata = uart_getc();	
+					if(gpsdata=="$" )
+					{
+						uart_puts("Got$");
+						gpsdata = uart_getc();	
+						if(gpsdata=="G")
+						{
+							uart_puts("GotG");
+							gpsdata = uart_getc();	
+							if(gpsdata=="P")
+							{
+								uart_puts("GotP");
+								gpsdata = uart_getc();
+								if(gpsdata=="R")
+								{
+									uart_puts("GotR");
+									gpsdata = uart_getc();
+									if(gpsdata=="M")
+									{
+										uart_puts("GotM");
+										gpsdata = uart_getc();
+										if (gpsdata=="C")										
+										{
+											//while( !(UCSR0A & (1<<RXC0)) )
+											//{
+											while(gpsdata != '\0')				//getting GPRMC data only
+											{
+												NMEA[z] = gpsdata;				//add to char array if not EOL
+												z++;
+											}
+											//}
+										}
 
-				if(gpsdata != '\0')				//getting GPRMC data only
-				{
-					NMEA[z] = gpsdata;				//add to char array if not EOL
-					z++;
-				}
-				else 
-				{
-					(1<<RXC0); break;				//else set flag to stop parsing data
-				}		
-			}
+										uart_puts("\nGPS MSG:");
+										_delay_ms(100);
+										for (ctr=0;ctr<z;ctr++)				//display parsed string
+										{
+											uart_putc(NMEA[ctr]);
+										}
+										uart_puts("\n<<end");
+										uart_puts("\nGPS received.\n");
+										}
+									}
+								}
+							}
+						}
+					}
+			
+				
+						
+				//gpsdata = uart_getc();				//get one char from GPS at a time
 
-				uart_puts("\nGPS MSG:");
-				_delay_ms(100);
-				for (ctr=0;ctr<z;ctr++)				//display parsed string
-				{
-					uart_putc(NMEA[ctr]);
-				}
-				uart_puts("\n<<end");
-				uart_puts("\nGPS received.\n");
+				
 				
 				
 	////---------------MAVLink Setup---------------------------//
