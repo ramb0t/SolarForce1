@@ -5,11 +5,37 @@
  *  Author: Terayza
  */ 
 
-
+#define F_CPU 16000000UL
 #include <avr/io.h>
+#include <util/delay.h>
 #include "I2C.h"
-#include <avr/delay.h>;
+#include <avr/interrupt.h>
+//#include "../../lib/CAN/CAN.h"
+#include "../../CAN Embedded/lib/CAN/CAN.h"
+// Standard AVR includes
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include <avr/eeprom.h>
+#include <avr/pgmspace.h>
+#include <avr/sleep.h>
+#include <avr/wdt.h>
+#include <avr/power.h>
 
+#include <stdlib.h>
+
+// Project Specific
+//#include "../../lib/mcp2515/mcp2515.h"
+#include "../../CAN Embedded/lib/mcp2515/mcp2515.h"
+//#include "../../lib/SPI/AVR_SPI.h"
+#include "../../CAN Embedded/lib/SPI/AVR_SPI.h"
+//#include "../../lib/uart/uart.h"
+#include "../../CAN Embedded/lib/uart/uart.h"
+#include <string.h>
+
+// These are optional, but nice to have around.
+// Feel free to comment them out if you don't use them.
+#include <stdint.h>
 
 #define addr 0x68
 
@@ -97,13 +123,25 @@ void initComms(unsigned int baudRate)
 int main(void)
 {
 	initComms(12);
+	SPI_Init(); // setup SPI
+	CAN_Init(CAN_125KBPS_16MHZ);
 	
 	UDR0 = 'A';
 	
 	TWIM_Init(12);
 	TWIM_WriteRegister(107,0); //disable sleep mode
 	
-	UDR0 = 0x04;
+	UDR0 = 0x02;
+	
+	CANMessage gyro;
+	
+	gyro. id = 0x0012;
+	gyro. rtr = 0 ;
+	gyro. length = 2 ;
+	gyro. data [ 0 ] = 0x07;
+	gyro. data [ 1 ] = 0x03;
+	
+	CAN_sendMessage (&gyro);
 	
     while(1)
     {
