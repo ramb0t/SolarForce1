@@ -88,7 +88,7 @@ int main(void)
 	SPI_Init(); // setup SPI	
 	CAN_Init(CAN_125KBPS_16MHZ);
 	
-#define UART_BAUD_RATE	9600
+	#define UART_BAUD_RATE	9600
 
 	uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU));
 
