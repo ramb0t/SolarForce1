@@ -52,10 +52,10 @@ int main (void)
 		*Overflow based
 		*1024 Prescalar						*/
 	
-	//TCNT0 = 0x00;
-	//TCCR0A = 0x00;
-	//TCCR0B = (1<<CS02)|(1<<CS00);
-	//TIMSK0 = (1<<TOIE0);		//--enable later!
+	TCNT0 = 0x00;
+	TCCR0A = 0x00;
+	TCCR0B = (1<<CS02)|(1<<CS00);
+	TIMSK0 = (1<<TOIE0);		//--enable later!
 	
 	
 	/*---------UART Serial Init --------------------
@@ -72,7 +72,6 @@ int main (void)
 //---------------Operational Loop---------------------//
 	
 	while(1) {
-		_delay_ms(100);
 		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
 		
 		//if(TIFR0 &(1<<TOV0))
@@ -82,7 +81,7 @@ int main (void)
 		//}
 		
 //---------------Get CAN data via SPI-----------------//
-		
+		uart_flush();
 		uart_puts("<<<<START OF MESSAGE>>>>\n");
 		uart_puts("\n---------CAN DATA---------\n");
 		char buff[16] ;
@@ -175,77 +174,61 @@ int main (void)
 	13   = Checksum
 	*/
 				
-		char NMEA[300];
+		char NMEA[100];
 		unsigned int z=0;
+		unsigned int lgth=0;
 		unsigned int ctr = 0;
 		char gpsdata;
 
-		//do								//try find start in first 6 chars
-		//{
-			//						//check first char of input buffer for $GPRMC
-		//
-		//}while(gpsdata != '$');		
-		//
-			
+
 			uart_puts("\n---------GPS DATA---------\n");
 			
 				
 				uart_puts("GPS Ready");
-				if(DEBUG)
-				{
-					gpsdata = uart_getc();	
-					if(gpsdata=="$" )
-					{
-						uart_puts("Got$");
-						gpsdata = uart_getc();	
-						if(gpsdata=="G")
+					while (!(UCSR0A & (1<<RXC0)))	//is there anything in buffer?
+					{	
+						gpsdata = uart_getc();		
+						if(gpsdata != '\0')				//getting GPRMC data only
 						{
-							uart_puts("GotG");
-							gpsdata = uart_getc();	
-							if(gpsdata=="P")
-							{
-								uart_puts("GotP");
-								gpsdata = uart_getc();
-								if(gpsdata=="R")
-								{
-									uart_puts("GotR");
-									gpsdata = uart_getc();
-									if(gpsdata=="M")
-									{
-										uart_puts("GotM");
-										gpsdata = uart_getc();
-										if (gpsdata=="C")										
-										{
-											//while( !(UCSR0A & (1<<RXC0)) )
-											//{
-											while(gpsdata != '\0')				//getting GPRMC data only
-											{
-												NMEA[z] = gpsdata;				//add to char array if not EOL
-												z++;
-											}
-											//}
-										}
-
-										uart_puts("\nGPS MSG:");
-										_delay_ms(100);
-										for (ctr=0;ctr<z;ctr++)				//display parsed string
-										{
-											uart_putc(NMEA[ctr]);
-										}
-										uart_puts("\n<<end");
-										uart_puts("\nGPS received.\n");
-										}
-									}
-								}
-							}
-						}
+							NMEA[z] = gpsdata;				//add to char array if not EOL
+							z++;
+						}else lgth=z; break;				//store string length
 					}
-			
-				
-						
-				//gpsdata = uart_getc();				//get one char from GPS at a time
+															////check each char for $GPRMC
 
-				
+					if(DEBUG)
+					{
+						uart_putc(lgth);
+						uart_putc(z);
+					}
+
+					z=0;
+				while(NMEA[z]!='$' && z<62)			//search the string for '$'
+				{
+						z++;
+					if(DEBUG)
+					{
+						if(NMEA[z]=='$')
+						{
+							uart_puts("Got$");
+							if (NMEA[z+1]=="G")
+							{
+								uart_puts("GotG");
+							}
+							break;
+						}
+						break;
+					}
+					
+				}
+					
+					
+					
+					uart_flush();	
+					for(ctr=z+1;ctr<lgth;ctr++)
+					{
+						uart_putc(NMEA[ctr]);
+					}
 				
 				
 	////---------------MAVLink Setup---------------------------//
@@ -258,42 +241,40 @@ int main (void)
   //--this ensures the message goes to MAVLink frame
   //--connect to QGC and observe output! */
     //_delay_ms(200);
-	//uart_puts("\n---------MAVLink Data---------\n");
-	//// Define the system type (see solarCar.h for list of possible types) 
-	//
-		//int system_type = MAV_TYPE_GROUND_ROVER;
-		//int autopilot_type = MAV_AUTOPILOT_GENERIC;
-		//int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
-		//int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
-		//int system_status = MAV_STATE_ACTIVE;
+	uart_puts("\n---------MAVLink Data---------\n");
+	// Define the system type (see solarCar.h for list of possible types) 
+	
+		int system_type = MAV_TYPE_GROUND_ROVER;
+		int autopilot_type = MAV_AUTOPILOT_GENERIC;
+		int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
+		int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+		int system_status = MAV_STATE_ACTIVE;
 //
 		//// Initialize the required buffers
-		//mavlink_message_t msg;
-		//uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-		//uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-		//
-		////---------------MAVLink Data---------------------------//
-		//
+		mavlink_message_t msg;
+		uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+		uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+		
+		//---------------MAVLink Data---------------------------//
+		
 //
 		////Assume CAN data 0 = motor controller temp
-		////			 data 1 = speed
-		//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
-		//MAV_hb(buf,len);
+		////		   data 1 = speed
+		mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
+		MAV_hb(buf,len);
 		//
 		////Assume CAN data 2 = speed
-		////mavlink_msg_sys_status_pack(100,200,&msg,base_mode,custom_mode,system_status,speed,l_mag_flag,r_mag_flag);
-		//mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
-		//MAV_hb(buf,len);
-		//
-		////mavlink_msg_gps_pack(100,200,&msg,)
-		//
-		//uart_puts("\n---------MAVLink Heartbeat---------\n");
-		//// Pack the message
-		//// mavlink_message_heartbeat_pack(system id, component id, message container, system type, MAV_AUTOPILOT_GENERIC)
-		//mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
-		//MAV_hb(buf,len);
+		mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
+		MAV_hb(buf,len);
+
+		uart_flush();
+		uart_puts("\n---------MAVLink Heartbeat---------\n");
+		// Pack the message
+		// mavlink_message_heartbeat_pack(system id, component id, message container, system type, MAV_AUTOPILOT_GENERIC)
+		mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
+		MAV_hb(buf,len);
 //
-		//uart_puts("\n<<<<END OF MESSAGE>>>>\n");
+		uart_puts("\n<<<<END OF MESSAGE>>>>\n");
 		////_delay_ms(HEARTBEAT_DELAY);
 
 	}
@@ -308,6 +289,7 @@ void MAV_hb(uint8_t buf[],uint8_t len)
 
 	if( !(UCSR0A & (1<<UDRE0)) )
 	{
+		uart_flush();
 	for (int i = 0; i < len ; i++)
 		{
 		uart_putc(buf[i]);
