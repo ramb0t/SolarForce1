@@ -32,8 +32,8 @@ void Terminal_read(uint8_t* state){
 	// index pointer
 	uint8_t index = 0;
 
-	while(uart1_available()){
-		input[index++] = uart1_getc(); // read a byte out
+	while(uart_available()){
+		input[index++] = uart_getc(); // read a byte out
 
 		if(index >= TERMINAL_MAX_INPUT_LENGTH){
 			// Error!
@@ -42,11 +42,11 @@ void Terminal_read(uint8_t* state){
 		}
 	}
 
-	if(strcmp(input, TERMINAL_HELP)){
+	if(strcmp(input, TERMINAL_HELP) == 0){
 		Terminal_showMenu();
 		return;
 	}else{
-		uart1_puts("Sorry I did not understand that, please try again\n");
+		uart_puts("Sorry I did not understand that, please try again\n");
 		return;
 	}
 
@@ -69,12 +69,15 @@ Input:    None
 Returns:  None
 **************************************************************************/
 static void Terminal_showMenu(void){
-	uart1_puts("Main Menu:\n");
-	uart1_puts("1: Listen All CAN data\n");
-	uart1_puts("2: Listen for Specified CAN ID \n");
-	uart1_puts("3: Send Single CAN Message\n");
-	uart1_puts("4: Loop Single CAN Message\n");
-	uart1_puts("-------------------------------------/n");
-	uart1_puts("Type 'help' to show this menu again\n\n");
+	uart_puts("\n");
+	uart_puts("-------------------------------------/n");
+	uart_puts("Main Menu:\n");
+	uart_puts("1: Listen All CAN data\n");
+	uart_puts("2: Listen for Specified CAN ID \n");
+	uart_puts("3: Send Single CAN Message\n");
+	uart_puts("4: Loop Single CAN Message\n");
+	uart_puts("-------------------------------------/n");
+	uart_puts("\n");
+	uart_puts("Type 'help' to show this menu again\n");
 
 }

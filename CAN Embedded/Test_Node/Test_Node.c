@@ -36,7 +36,7 @@ int main(void)
     // Loop for all the time!
     while(1) {
 
-    	if(uart1_available()){ // UART RX data waiting
+    	if(uart_available()){ // UART RX data waiting
     		// Let the Terminal deal with it.
     		Terminal_read(&Terminal_state);
     	}
