@@ -41,16 +41,32 @@ int main(void)
     		Terminal_read(&Terminal_state);
     	}
 
+    	// Run the Terminal Operation
+    	Terminal_run(&Terminal_state);
 
-    	rx_status = CAN_checkReceiveAvailable();
+    	switch (Terminal_state){
+    		case (TERMINAL_INIT):
 
-    	if(rx_status == CAN_MSGAVAIL){
-    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
+    				break;
+    		case (TERMINAL_RUN):
 
-    		GFX_LCD_Draw(&message);
-    		// sends the message on the CAN interface.
-    		//uart_SendCANMsg(&message);
+    			break;
+    		case (TERMINAL_LISTEN):
+    	    	rx_status = CAN_checkReceiveAvailable();
 
-    	}
+    	    	if(rx_status == CAN_MSGAVAIL){
+    	    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
+
+    	    		GFX_LCD_Draw(&message);
+    	    		// sends the message on the CAN interface.
+    	    		uart_SendCANMsg(&message);
+    	    	}
+
+    			break;
+    		default:
+
+    			break;
+    		}
+
     }
 }

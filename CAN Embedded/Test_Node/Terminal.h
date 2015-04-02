@@ -20,6 +20,8 @@
 
 // Defines:
 /*****************************************************************************/
+#define DEBUG
+
 #define TERMINAL_INIT					0
 #define TERMINAL_RUN					TERMINAL_INIT+1
 #define TERMINAL_LISTEN					TERMINAL_INIT+2
@@ -28,7 +30,9 @@
 
 #define TERMINAL_MAX_INPUT_LENGTH		10
 
-#define TERMINAL_HELP					"help"
+#define TERMINAL_sCANCEL				"c"
+#define TERMINAL_sHELP					"help"
+#define TERMINAL_sLISTEN				"1"
 
 
 // Variables:
