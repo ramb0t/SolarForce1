@@ -68,7 +68,14 @@ void Terminal_read(uint8_t* state){
 		uart_puts("\n");
 		return;
 	}
-
+	else if(strcasecmp(input, TERMINAL_sLISTENRAW) == 0){ // Mode 2
+		*state = TERMINAL_LISTENRAW;
+		uart_puts("\n");
+		uart_puts("Entering Listen Mode RAW\n");
+		uart_puts("Type 'c' to exit\n");
+		uart_puts("\n");
+		return;
+	}
 
 
 	else{
@@ -109,6 +116,9 @@ void Terminal_run(uint8_t* state){
 	case (TERMINAL_LISTEN):
 
 		break;
+	case (TERMINAL_LISTENRAW):
+
+		break;
 	default:
 		uart_puts("Invalid State!\n");
 		break;
@@ -126,10 +136,11 @@ static void Terminal_showMenu(void){
 	uart_puts("\n");
 	uart_puts("-------------------------------------\n");
 	uart_puts("Main Menu:\n");
-	uart_puts("1: Listen All CAN data\n");
-	uart_puts("2: Listen for Specified CAN ID \n");
-	uart_puts("3: Send Single CAN Message\n");
-	uart_puts("4: Loop Single CAN Message\n");
+	uart_puts("1: Listen All CAN data Readable\n");
+	uart_puts("2: Listen All CAN data Raw\n");
+	uart_puts("3: Listen for Specified CAN ID \n");
+	uart_puts("4: Send Single CAN Message\n");
+	uart_puts("5: Loop Single CAN Message\n");
 	uart_puts("-------------------------------------\n");
 	uart_puts("\n");
 	uart_puts("Type 'help' to show this menu again\n");

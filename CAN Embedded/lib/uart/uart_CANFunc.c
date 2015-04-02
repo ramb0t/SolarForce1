@@ -45,3 +45,40 @@ void uart_SendCANMsg(CANMessage* message){
 	uart_puts("\n");
 
 }
+
+
+/*************************************************************************
+Function: uart_SendCANMsgRAW()
+Purpose:  Take a CAN message, Output it 'RAW'.
+Input:    CANMessage
+Returns:  None
+**************************************************************************/
+void uart_SendCANMsgRAW(CANMessage* message){
+	char buffer[5]; // used to hold conversions
+
+	itoa( message->id, buffer, 10);   // convert integer into string (decimal format)
+	uart_puts(buffer);        // and transmit string to UART
+
+	uart_puts(",");
+	itoa( message->rtr, buffer, 10);   // convert integer into string (decimal format)
+	uart_puts(buffer);        // and transmit string to UART
+
+
+	uart_puts(",");
+	itoa( message->length, buffer, 10);   // convert integer into string (decimal format)
+	uart_puts(buffer);        // and transmit string to UART
+
+
+
+	for (int i = 0; i < message->length; i++){
+
+		char string[15] =",";
+		itoa(i, buffer, 10);
+		strcat(string, buffer);
+		itoa(message->data[i], buffer, 10);
+		strcat(string, buffer);
+		uart_puts(string);        // and transmit string to UART
+	}
+	uart_puts("\n");
+
+}

@@ -25,5 +25,6 @@
 // Function Prototypes:
 /*****************************************************************************/
 void uart_SendCANMsg(CANMessage* message);
+void uart_SendCANMsgRAW(CANMessage* message);
 
 #endif // UART_CANFUNC_H
