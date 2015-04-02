@@ -314,12 +314,7 @@ Date        Description
 /*
  *  module global variables
  */
-<<<<<<< HEAD
 #if defined(AT90_UART)||defined(ATMEGA_UART)||defined(ATMEGA_USART)||defined(ATMEGA_USART0)
-=======
-#if defined( AT90_UART )||( ATMEGA_UART )||( ATMEGA_USART )||( ATMEGA_USART0 )
-
->>>>>>> 648d6492cbcc8ee14086db8e1594c8da3966904e
 static volatile unsigned char UART_TxBuf[UART_TX_BUFFER_SIZE];
 static volatile unsigned char UART_RxBuf[UART_RX_BUFFER_SIZE];
 static volatile unsigned char UART_TxHead;
@@ -340,12 +335,7 @@ static volatile unsigned char UART1_LastRxError;
 #endif
 
 
-<<<<<<< HEAD
 #if defined(AT90_UART)||defined(ATMEGA_UART)||defined(ATMEGA_USART)||defined(ATMEGA_USART0)
-=======
-#if defined(AT90_UART)||(ATMEGA_UART)||(ATMEGA_USART)||(ATMEGA_USART0)
-
->>>>>>> 648d6492cbcc8ee14086db8e1594c8da3966904e
 ISR(UART0_RECEIVE_INTERRUPT)
 /*************************************************************************
 Function: UART Receive Complete interrupt
