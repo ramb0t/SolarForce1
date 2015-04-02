@@ -55,7 +55,7 @@ int main(void)
     	}
 
     	// Run the Terminal Operation
-    	Terminal_run(&Terminal_state);
+    	//Terminal_run(&Terminal_state);
 
     	switch (Terminal_state){
     		case (TERMINAL_INIT):
@@ -77,15 +77,27 @@ int main(void)
 
     			break;
     		case (TERMINAL_LISTENRAW):
-    	    	rx_status = CAN_checkReceiveAvailable();
 
-    	    	if(rx_status == CAN_MSGAVAIL){
+
+    	    	while(CAN_checkReceiveAvailable() == CAN_MSGAVAIL){
     	    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
 
-    	    		GFX_LCD_Draw(&message);
+    	    		//GFX_LCD_Draw(&message);
     	    		// sends the message on the CAN interface.
     	    		uart_SendCANMsgRAW(&message);
     	    	}
+
+    			break;
+    		case (TERMINAL_SEND1):
+    	    	message.id = 0b11100010001;
+    			message.rtr = 1;
+    			message.length = 0;
+
+    			// Send the request
+    			CAN_sendMessage(&message);
+
+    			// Listen for the response
+    			Terminal_state = TERMINAL_LISTENRAW;
 
     			break;
     		default:

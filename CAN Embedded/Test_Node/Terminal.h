@@ -36,6 +36,8 @@
 #define TERMINAL_sLISTEN				"1"
 #define TERMINAL_sLISTENRAW				"2"
 
+#define TERMINAL_sSEND1					"4"
+
 
 // Variables:
 /*****************************************************************************/

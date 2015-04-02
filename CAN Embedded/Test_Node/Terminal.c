@@ -76,7 +76,13 @@ void Terminal_read(uint8_t* state){
 		uart_puts("\n");
 		return;
 	}
-
+	else if(strcasecmp(input, TERMINAL_sSEND1) == 0){ // Mode 2
+			*state = TERMINAL_SEND1;
+			uart_puts("\n");
+			uart_puts("Sending MPPT Request \n");
+			uart_puts("\n");
+			return;
+		}
 
 	else{
 		uart_puts("\n");
@@ -95,6 +101,7 @@ void Terminal_read(uint8_t* state){
 
 		return;
 	}
+	return;
 
 }
 
@@ -117,6 +124,9 @@ void Terminal_run(uint8_t* state){
 
 		break;
 	case (TERMINAL_LISTENRAW):
+
+		break;
+	case (TERMINAL_SEND1):
 
 		break;
 	default:
