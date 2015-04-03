@@ -7,21 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ZedGraph;
 
 namespace iKlwa_Telemetry_System
 {
     public partial class Form1 : Form
     {
+        COM_Port_Select c = new COM_Port_Select();
+        ReliableCommsManager comms = new ReliableCommsManager();
+
+
+
         public Form1()
         {
             InitializeComponent();
-            string COM_port = null;
-            COM_Port_Select c = new COM_Port_Select();
-            Application.Run(c);
-            COM_port = c.getPort();
-            iKlwaComms comms = new iKlwaComms();
-            comms.name = COM_port.ToString();
-            comms.OpenPort();
+
+            XmlDatabase d = new XmlDatabase("I LIKE PI.xml", "potato");
+        }
+
+        private void checkForConnection()
+        {
             int trials = 0;
             while (comms.checkForPing() == false)
             {
@@ -37,7 +42,14 @@ namespace iKlwa_Telemetry_System
                     trials = 0;
                 }
             }
-            //after this, connection is established.
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Application.Run(c);
+            string COM_port = c.getPort();
+            comms.name = COM_port.ToString();
+            comms.OpenPort();
         }
 
     }

@@ -6,7 +6,14 @@
  */ 
 
 #define F_CPU 1e6
-#define ACK 0x55
+#define ACK 0x06
+#define PING 0x05
+
+enum uint8_t {BMS, MPPT1, MPPT2, MPPT3, MPPT4,
+			  HE_left, HE_right, MotorDriver,
+			  GPS,
+			  Incline, Accel,//for encoding purposes --> match the enum to Matt's MAVlink ID for these
+			  WindSpeed = 1, Irrad = 2}; //local sensors
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -24,12 +31,12 @@ typedef union
 	struct 
 	{
 		uint8_t connected: 1,
-				undef1: 1,
-				undef2: 1,
-				undef3: 1,
-				undef4: 1,
-				undef5: 1,
-				undef6: 1,
+				ID_sent: 1,
+				length_sent: 1,
+				payload_sent: 1,
+				ID_received_ack: 1,
+				length_received_ack: 1,
+				payload_received_ack: 1,
 				undef7: 1;
 	};
 } FLAGS;
@@ -63,6 +70,60 @@ void InitComms(unsigned int baudRate)
 	UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0) | (1<<UPM1) | (1<<UPM0) | (1<<USBS);
 }
 
+PACKET makePacket(int identifier)
+{
+	PACKET pkt;
+	switch(identifier)
+	{
+		case BMS:
+			pkt.ID = 1;
+			break;
+		case HE_right:
+			pkt.ID = 2;
+			break;
+		case HE_left:
+			pkt.ID = 3;
+			break;
+		case WindSpeed:
+			pkt.ID = 4;
+			break;
+		case Irrad:
+			pkt.ID = 5;
+			break;
+		//add other sensors
+	}
+	return pkt;
+}
+
+void transmit_packet(PACKET p)
+{
+	myFlags.ID_received_ack = 0;
+	myFlags.ID_sent = 0;
+	myFlags.length_received_ack = 0;
+	myFlags.length_sent = 0;
+	myFlags.payload_received_ack = 0;
+	myFlags.payload_sent = 0;
+	
+	//transmit ID and Type
+	UDR = (p.ID << 1) | p.Type;
+	myFlags.ID_sent = 1;
+	while (myFlags.ID_received_ack == 0); //wait for ack
+	
+	//transmit length of payload
+	UDR = p.length;
+	myFlags.length_sent = 1;
+	while(myFlags.length_received_ack == 0); //wait for ack
+	
+	//transmit payload
+	for (int i = 0; i<p.length; i++)
+	{
+		UDR = p.payload[i];
+		while (TXC==0);
+	}
+	myFlags.payload_sent = 1;
+	while (myFlags.payload_received_ack == 0); //wait for ack
+}
+
 int main(void)
 {
 	
@@ -86,10 +147,11 @@ int main(void)
 		test.ID = 0b1000001;
 		test.Type = 1;
 		int P = test.Type | (test.ID<<1);
+		transmit_packet(test);
 		//
 		if (myFlags.connected != 1) 
 		{
-			UDR = 0x3f;
+			UDR = PING;
 		}
 		else
 		{
@@ -101,36 +163,33 @@ int main(void)
     }
 }
 
-void transmit_packet(PACKET p)
-{
-	do
-	{
-		UDR = p.Type | (p.ID<<1);
-	}while (waitingForAck());
-	do 
-	{
-		UDR = p.length;
-	} while (waitingForAck()==1);
-}
-
-int waitingForAck()
-{
-	int retVal = (UDR != ACK) ? 1 : 0;
-	return retVal;
-}
-
 ISR (TIMER1_CAPT_vect)
 {
 	prev_capture = current_capture;
 	current_capture = ICR1;
+	
 }
 
 ISR(USART_RXC_vect)
 {
-	if (UDR == ACK)
+	if (UDR == ACK)//check if ack is received
 	{
-		myFlags.connected = 1;
-		UCSRB &= ~(1<<TXEN);
+		if (myFlags.connected != 1)//if the ack is for checking initial connection
+		{
+			myFlags.connected = 1;//connected flag is set
+		}
+		else if (myFlags.ID_received_ack != 1 && myFlags.ID_sent == 1)//if the ack is for receiving the ID
+		{
+			myFlags.ID_received_ack = 1;
+		}
+		else if (myFlags.length_received_ack != 1 && myFlags.length_sent == 1)//if the ack is for receiving the payload length
+		{
+			myFlags.length_sent = 1;
+		}
+		else if(myFlags.payload_received_ack != 1 && myFlags.payload_sent == 1)//if the ack is for receiving the payload
+		{
+			myFlags.payload_sent = 1;
+		}
 	}
 }
 

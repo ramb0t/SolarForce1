@@ -51,3 +51,4 @@ E:\Users\RobThePyro\Docs\GitHub\SolarForce1\GUI\Test GUI\TelemetryGUI\obj\Debug\
 E:\Users\RobThePyro\Docs\GitHub\SolarForce1\GUI\Test GUI\TelemetryGUI\obj\Debug\BasicTestAppDesign3.graphScreen.resources
 E:\Users\RobThePyro\Docs\GitHub\SolarForce1\GUI\Test GUI\TelemetryGUI\obj\Debug\BasicTestAppDesign3.Properties.Resources.resources
 E:\Users\RobThePyro\Docs\GitHub\SolarForce1\GUI\Test GUI\TelemetryGUI\obj\Debug\TelemetryGUI.csproj.GenerateResource.Cache
+C:\Users\Sulaiman\Documents\University\design\GitRepo\GUI\Test GUI\TelemetryGUI\bin\Debug\TelemetryGUI.exe.config
