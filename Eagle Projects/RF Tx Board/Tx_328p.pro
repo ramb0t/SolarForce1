@@ -1,25 +1,25 @@
 EAGLE AutoRouter Statistics:
 
-Job           : C:/Users/Matt/Documents/SolarForce1/CAN Embedded/RFTx_Board/Sch_PCB_SolarEV_Tx/Tx_328p.brd
+Job           : C:/Users/Matt/Documents/SolarForce1/Eagle Projects/RF Tx Board/Tx_328p.brd
 
-Start at      : 02:45:16 (2015/03/31)
-End at        : 02:45:19 (2015/03/31)
-Elapsed time  : 00:00:01
+Start at      : 02:03:21 (2015/04/03)
+End at        : 02:03:28 (2015/04/03)
+Elapsed time  : 00:00:06
 
-Signals       :    10   RoutingGrid: 13 mil  Layers: 1
-Connections   :    14   predefined:  0 ( 0 Vias )
+Signals       :    16   RoutingGrid: 13 mil  Layers: 1
+Connections   :    42   predefined:  29 ( 0 Vias )
 
-Router memory :   155500
+Router memory :   159264
 
-Passname          : TopRouter     Route Optimize1 Optimize2 Optimize3 Optimize4 Optimize5 Optimize6 Optimize7 Optimize8
+Passname          : TopRouter     Route Optimize1 Optimize2 Optimize3 Optimize4 Optimize5 Optimize6 Optimize7 Optimize8 Optimize9Optimize10Optimize11Optimize12
 
-Time per pass     :  00:00:01  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00
-Number of Ripups  :         0         0         0         0         0         0         0         0         0         0
-max. Level        :         0         0         0         0         0         0         0         0         0         0
-max. Total        :         0         0         0         0         0         0         0         0         0         0
+Time per pass     :  00:00:05  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00  00:00:01  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00
+Number of Ripups  :         0         0         0         0         0         0         0         0         0         0         0         0         0         0
+max. Level        :         0         1         0         0         0         0         0         0         0         0         0         0         0         0
+max. Total        :         0         0         0         0         0         0         0         0         0         0         0         0         0         0
 
-Routed            :        14        14        13        13        13        13        13        13        13        13
-Vias              :         0         0         0         0         0         0         0         0         0         0
-Resolution        :   100.0 %   100.0 %    92.9 %    92.9 %    92.9 %    92.9 %    92.9 %    92.9 %    92.9 %    92.9 %
+Routed            :         2         2         0         0         0         0         0         0         0         0         0         0         0         0
+Vias              :         0         0         0         0         0         0         0         0         0         0         0         0         0         0
+Resolution        :    73.8 %    73.8 %    69.0 %    69.0 %    69.0 %    69.0 %    69.0 %    69.0 %    69.0 %    69.0 %    69.0 %    69.0 %    69.0 %    69.0 %
 
-Final             : 92.9% finished
+Final             : 69.0% finished

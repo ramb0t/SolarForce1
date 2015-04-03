@@ -1,12 +1,12 @@
 
 #include "GFX_LCD.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 u8g_t u8g;
 
 void u8g_setup(void)
 {
+	// Init CS pin
+	GFX_CS_DDR |= (1<<GFX_CS_BIT);
   /*
     Test Envionment 1, ATMEGA and DOGM132
     CS: PORTB, Bit 2
@@ -38,19 +38,21 @@ void u8g_setup(void)
       A0 and Reset are not used.
   */
    //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
-	DDRC |= (1<<2);
-   u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
+	//GFX_SELECT();
+	u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(3, 3), U8G_PIN_NONE, PN(3,4));
    //u8g_Init8Bit(&u8g, &u8g_dev_ks0108_128x64, PN(1, 2), PN(1, 1), PN(1, 0), PN(3, 7), PN(3, 6), PN(3, 5), PN(3, 4), PN(3, 3), PN(2, 5), PN(2, 1), PN(2, 0), PN(2,2), PN(2, 3), U8G_PIN_NONE);
 
    //U8GLIB_KS0108_128(d0, d1, d2, d3, d4, d5, d6, d7, en, cs1, cs2, di, rw [, reset])u8g_dev_ks0108_128x64
-
+	u8g_Begin(&u8g);
    u8g_FirstPage(&u8g);
+   u8g_prepare();
    	do
    	{
-   		u8g_prepare();
-   	    u8g_DrawStr(&u8g, 5, 15, "Hello! ");
-   	} while ( u8g_NextPage(&u8g) );
 
+   	    u8g_DrawStr(&u8g, 5, 15, "Hello! Welcome to ");
+   	    u8g_DrawStr(&u8g, 5, 25, "the CAN Test Node ");
+   	} while ( u8g_NextPage(&u8g) );
+   	//GFX_UNSELECT();
 
 }
 
@@ -61,18 +63,43 @@ void u8g_prepare(void) {
   u8g_SetFontPosTop(&u8g);
 }
 
-void GFX_LCD_Draw(CANMessage message){
+void GFX_Cnt(int i){
+	//GFX_SELECT();
 	u8g_FirstPage(&u8g);
+
 	do
 	{
+		char buf[10];
+		itoa(i, buf, 10);
 		u8g_prepare();
-		draw(message);
+		u8g_DrawStr(&u8g, 5, 15, buf);
+		//draw(message);
 	} while ( u8g_NextPage(&u8g) );
+	//GFX_UNSELECT();
 }
 
-void draw(CANMessage message){
+void GFX_LCD_Draw(CANMessage* message){
+	//GFX_SELECT();
+	u8g_Begin(&u8g);
+	u8g_FirstPage(&u8g);
+	u8g_prepare();
+	do
+	{
+		draw(message);
+
+	} while ( u8g_NextPage(&u8g) );
+	//GFX_UNSELECT();
+}
+
+void draw(CANMessage* msg){
 	char buf[10]; // used for forming strings to pass to the display ??
 
+	CANMessage message = *msg;
+
+	u8g_SetFont(&u8g, u8g_font_6x10);
+	  u8g_SetFontRefHeightExtendedText(&u8g);
+	  u8g_SetDefaultForegroundColor(&u8g);
+	  u8g_SetFontPosTop(&u8g);
 	// ID
 	itoa(message.id, buf, 10);
 	u8g_DrawStr(&u8g, 5, 0, "ID= ");
@@ -82,6 +109,11 @@ void draw(CANMessage message){
 	itoa(message.length, buf, 10);
 	u8g_DrawStr(&u8g, 5, 15, "Length= ");
 	u8g_DrawStr(&u8g, 48, 15, buf);
+
+	u8g_SetFont(&u8g, u8g_font_5x8);
+	  u8g_SetFontRefHeightExtendedText(&u8g);
+	  u8g_SetDefaultForegroundColor(&u8g);
+	  u8g_SetFontPosTop(&u8g);
 
 	for(int i = 0 ; i < message.length; i++){
 		char string[15] ="D";
@@ -93,59 +125,10 @@ void draw(CANMessage message){
 		strcat(string, buf);
 
 		if(i%2){ // odd number
-			u8g_DrawStr(&u8g, 64, 30 + (i/2)*10, string);
+			u8g_DrawStr(&u8g, 64, 30 + (i/2)*9, string);
 		}else{ // even number
-			u8g_DrawStr(&u8g, 0, 30 + (i/2)*10, string);
+			u8g_DrawStr(&u8g, 0, 30 + (i/2)*9, string);
 		}
 
 	}
-
-//	// D0
-//	if(message.length > 0){
-//		itoa(message.data[0], buf, 10);
-//		u8g_DrawStr(&u8g, 100, 0, "D0= ");
-//		u8g_DrawStr(&u8g, 119, 0, buf);
-//	}
-//	// D1
-//	if(message.length > 1){
-//		itoa(message.data[1], buf, 10);
-//		u8g_DrawStr(&u8g, 100, 10, "D0= ");
-//		u8g_DrawStr(&u8g, 119, 10, buf);
-//	}
-//	// D2
-//	if(message.length > 2){
-//		itoa(message.data[2], buf, 10);
-//		u8g_DrawStr(&u8g, 100, 20, "D0= ");
-//		u8g_DrawStr(&u8g, 119, 20, buf);
-//	}
-//	// D3
-//	if(message.length > 3){
-//		itoa(message.data[3], buf, 10);
-//		u8g_DrawStr(&u8g, 100, 30, "D0= ");
-//		u8g_DrawStr(&u8g, 114, 30, buf);
-//	}
-//	// D4
-//	if(message.length > 4){
-//		itoa(message.data[4], buf, 10);
-//		u8g_DrawStr(&u8g, 100, 40, "D0= ");
-//		u8g_DrawStr(&u8g, 114, 40, buf);
-//	}
-//	// D5
-//	if(message.length > 5){
-//		itoa(message.data[5], buf, 10);
-//		u8g_DrawStr(&u8g, 100, 50, "D0= ");
-//		u8g_DrawStr(&u8g, 114, 50, buf);
-//	}
-//	// D6
-//	if(message.length > 6){
-//		itoa(message.data[6], buf, 10);
-//		u8g_DrawStr(&u8g, 100, 60, "D0= ");
-//		u8g_DrawStr(&u8g, 114, 60, buf);
-//	}
-//	// D7
-//	if(message.length > 7){
-//		itoa(message.data[7], buf, 10);
-//		u8g_DrawStr(&u8g, 100, 70, "D0= ");
-//		u8g_DrawStr(&u8g, 114, 70, buf);
-//	}
 }

@@ -19,7 +19,6 @@ int main(void) {
 	// -------- Inits --------- //
 	SPI_Init(); // setup SPI
 
-	DDRB  |= 1<<PB1; // led output
 	CAN_Init(CAN_125KBPS_16MHZ);
 
 	// Setup USART
@@ -30,23 +29,6 @@ int main(void) {
 	char buffer[10];
 
 
-	// Create a new message struct
-	CANMessage messageOn;
-	CANMessage messageOff;
-
-	// Fill struct with data
-	messageOn. id = 0x0007;
-	messageOn. rtr = 0 ;
-	messageOn. length = 2 ;
-	messageOn. data [ 0 ] = 0x04;
-	messageOn. data [ 1 ] = 0x01;
-
-	// Fill struct with data
-	messageOff. id = 0x0101;
-	messageOff. rtr = 0 ;
-	messageOff. length = 3 ;
-	messageOff. data [ 0 ] = 0x64;
-	messageOff. data [ 1 ] = 0xABclock_prescale_set
 
 
 	// (clock_div_1); /* CPU Clock: 8 MHz */

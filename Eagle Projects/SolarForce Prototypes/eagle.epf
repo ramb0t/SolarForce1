@@ -1,12 +1,15 @@
 [Eagle]
 Version="07 02 00"
-Platform="Windows"
+Platform="Linux"
 Serial="62191E841E-LSR-WLM-1EL"
 Globals="Globals"
 Desktop="Desktop"
 
 [Globals]
 AutoSaveProject=1
+UsedLibrary="/mnt/Electron/Dropbox/Electronics/Eagle/Libaries/KIS-3R33S.lbr"
+UsedLibrary="/mnt/Electron/Dropbox/Electronics/Eagle/Libaries/TI_MSP430_v16.lbr"
+UsedLibrary="/mnt/Electron/Dropbox/Electronics/Eagle/Libaries/ftdichip-3.lbr"
 
 [Win_1]
 Type="Board Editor"
@@ -56,11 +59,11 @@ Layer=16
 
 [Win_2]
 Type="Control Panel"
-Loc="543 24 1144 452"
+Loc="2306 326 2905 725"
 State=1
 Number=0
 
 [Desktop]
-Screen="3840 1080"
+Screen="3286 1080"
 Window="Win_1"
 Window="Win_2"
