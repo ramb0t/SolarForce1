@@ -8025,12 +8025,14 @@ Tx
 <segment>
 <pinref part="ISP1" gate="G$1" pin="SCK"/>
 <wire x1="167.64" y1="35.56" x2="162.56" y2="35.56" width="0.1524" layer="91"/>
+<label x="154.94" y="35.56" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="RST" class="0">
 <segment>
 <pinref part="ISP1" gate="G$1" pin="RST"/>
 <wire x1="167.64" y1="33.02" x2="162.56" y2="33.02" width="0.1524" layer="91"/>
+<label x="154.94" y="33.02" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
