@@ -14164,6 +14164,13 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="S1" library="switch" deviceset="SKHMP*E010" device="" technology="S"/>
 <part name="RESET" library="SparkFun-Retired" deviceset="TAC_SWITCH" device="SMD" value="TAC_SWITCHSMD"/>
+<part name="VCC" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="GND" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="GND_2" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="VIN" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="GND16" library="supply1" deviceset="GND" device=""/>
+<part name="GND17" library="supply1" deviceset="GND" device=""/>
+<part name="P+13" library="supply1" deviceset="VCC" device=""/>
 <part name="U$1" library="RobThePyro" deviceset="MCP2515" device="SO"/>
 <part name="U2" library="SparkFun" deviceset="MCP2551" device=""/>
 <part name="P+9" library="supply1" deviceset="+5V" device=""/>
@@ -14190,13 +14197,6 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="Z1" library="supressor" deviceset="TVS-UD-" device="SOD323"/>
 <part name="Z2" library="supressor" deviceset="TVS-UD-" device="SOD323"/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
-<part name="VCC" library="pinhead" deviceset="PINHD-1X1" device=""/>
-<part name="GND" library="pinhead" deviceset="PINHD-1X1" device=""/>
-<part name="GND_2" library="pinhead" deviceset="PINHD-1X1" device=""/>
-<part name="VIN" library="pinhead" deviceset="PINHD-1X1" device=""/>
-<part name="GND16" library="supply1" deviceset="GND" device=""/>
-<part name="GND17" library="supply1" deviceset="GND" device=""/>
-<part name="P+13" library="supply1" deviceset="VCC" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -14653,7 +14653,7 @@ Programming header</text>
 <wire x1="-58.42" y1="-30.48" x2="119.38" y2="-30.48" width="0.3048" layer="94"/>
 <wire x1="119.38" y1="-30.48" x2="119.38" y2="60.96" width="0.3048" layer="94"/>
 <wire x1="119.38" y1="60.96" x2="-58.42" y2="60.96" width="0.3048" layer="94"/>
-<text x="76.2" y="53.34" size="2.54" layer="94">CAN Interface</text>
+<text x="81.28" y="53.34" size="2.54" layer="94">CAN Interface</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="0" y="0"/>
