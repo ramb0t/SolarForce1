@@ -7139,6 +7139,23 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <text x="-6.0579" y="-3.81" size="1.778" layer="25" ratio="10" rot="R90">&gt;NAME</text>
 <text x="7.9121" y="-3.81" size="1.778" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
 </package>
+<package name="SMPSBOARD">
+<wire x1="0" y1="0" x2="0" y2="20" width="0.127" layer="21"/>
+<wire x1="0" y1="20" x2="44" y2="20" width="0.127" layer="21"/>
+<wire x1="44" y1="20" x2="44" y2="0" width="0.127" layer="21"/>
+<wire x1="44" y1="0" x2="0" y2="0" width="0.127" layer="21"/>
+<pad name="VIN" x="2" y="18.5" drill="0.8" shape="long"/>
+<pad name="GND" x="2" y="1.5" drill="0.8" shape="long"/>
+<pad name="GND@" x="42" y="1.5" drill="0.8" shape="long"/>
+<pad name="VOUT" x="42" y="18.5" drill="0.8" shape="long"/>
+<text x="1" y="16" size="1.27" layer="21">Vin</text>
+<text x="39" y="16" size="1.27" layer="21">Vout</text>
+<text x="0.5" y="2.5" size="1.27" layer="21">GND</text>
+<text x="40.5" y="2.5" size="1.27" layer="21">GND</text>
+<text x="7.5" y="16" size="1.27" layer="21">SMPS Regulator</text>
+<text x="0" y="20.32" size="1.27" layer="25">&gt;Name</text>
+<text x="0" y="-1.905" size="1.27" layer="27">&gt;Value</text>
+</package>
 </packages>
 <symbols>
 <symbol name="MCP2515">
@@ -7174,6 +7191,19 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <text x="-2.54" y="0" size="1.778" layer="95">&gt;NAME</text>
 <text x="2.54" y="-7.62" size="1.4224" layer="95" rot="R90">VSS</text>
 <text x="2.54" y="2.54" size="1.4224" layer="95" rot="R90">VDD</text>
+</symbol>
+<symbol name="SMPSBOARD">
+<description>LM2596 Or MP2307 Based SMPS Regulator</description>
+<wire x1="-15.24" y1="7.62" x2="15.24" y2="7.62" width="0.254" layer="94"/>
+<wire x1="15.24" y1="7.62" x2="15.24" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="15.24" y1="-7.62" x2="-15.24" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-15.24" y1="-7.62" x2="-15.24" y2="7.62" width="0.254" layer="94"/>
+<pin name="VIN" x="-20.32" y="5.08" length="middle"/>
+<pin name="GND" x="-20.32" y="-5.08" length="middle"/>
+<pin name="VOUT" x="20.32" y="5.08" length="middle" rot="R180"/>
+<pin name="GND@1" x="20.32" y="-5.08" length="middle" rot="R180"/>
+<text x="-15.24" y="8.128" size="1.27" layer="95">&gt;Name</text>
+<text x="-15.24" y="-9.398" size="1.27" layer="96">&gt;Value</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -7254,6 +7284,24 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <connect gate="G$1" pin="TXCAN" pad="1"/>
 <connect gate="G$2" pin="VDD" pad="18"/>
 <connect gate="G$2" pin="VSS" pad="9"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="SMPSBOARD">
+<gates>
+<gate name="G$1" symbol="SMPSBOARD" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SMPSBOARD">
+<connects>
+<connect gate="G$1" pin="GND" pad="GND"/>
+<connect gate="G$1" pin="GND@1" pad="GND@"/>
+<connect gate="G$1" pin="VIN" pad="VIN"/>
+<connect gate="G$1" pin="VOUT" pad="VOUT"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -10096,6 +10144,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="Z1" library="supressor" deviceset="TVS-UD-" device="SOD323"/>
 <part name="Z2" library="supressor" deviceset="TVS-UD-" device="SOD323"/>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
+<part name="U$2" library="RobThePyro" deviceset="SMPSBOARD" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -10153,6 +10202,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <instance part="Z1" gate="G$1" x="175.26" y="-93.98" rot="R90"/>
 <instance part="Z2" gate="G$1" x="180.34" y="-93.98" rot="R90"/>
 <instance part="GND10" gate="1" x="177.8" y="-101.6"/>
+<instance part="U$2" gate="G$1" x="-35.56" y="-25.4"/>
 </instances>
 <busses>
 </busses>
