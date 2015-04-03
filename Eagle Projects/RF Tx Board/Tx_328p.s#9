@@ -7741,10 +7741,6 @@ GND</text>
 Rx
 Tx
 GND</text>
-<text x="190.5" y="59.69" size="1.778" layer="91">
-Rx
-Tx
-</text>
 </plain>
 <instances>
 <instance part="GND1" gate="1" x="55.88" y="15.24"/>
