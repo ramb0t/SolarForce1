@@ -9992,6 +9992,7 @@ Source: http://www.molex.com</description>
 <part name="X1" library="con-molex" deviceset="5566-6" device=""/>
 <part name="X2" library="con-molex" deviceset="5566-6" device=""/>
 <part name="JP2" library="pinhead" deviceset="PINHD-1X2" device=""/>
+<part name="Q5" library="crystal" deviceset="CRYSTAL" device="HC49UP" value="16MHz"/>
 </parts>
 <sheets>
 <sheet>
@@ -10074,6 +10075,7 @@ Source: http://www.molex.com</description>
 <instance part="X2" gate="-5" x="106.68" y="157.48"/>
 <instance part="X2" gate="-6" x="106.68" y="154.94"/>
 <instance part="JP2" gate="G$1" x="73.66" y="25.4"/>
+<instance part="Q5" gate="G$1" x="-48.26" y="68.58" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -10082,22 +10084,30 @@ Source: http://www.molex.com</description>
 <segment>
 <pinref part="Q1" gate="G$1" pin="1"/>
 <pinref part="U1" gate="U$1" pin="PB6(XTAL1/TOSC1)"/>
-<wire x1="-53.34" y1="73.66" x2="-45.72" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="-53.34" y1="73.66" x2="-48.26" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="-48.26" y1="73.66" x2="-45.72" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="-45.72" y1="73.66" x2="-45.72" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="C1" gate="G$1" pin="2"/>
 <wire x1="-58.42" y1="73.66" x2="-53.34" y2="73.66" width="0.1524" layer="91"/>
 <junction x="-53.34" y="73.66"/>
+<pinref part="Q5" gate="G$1" pin="2"/>
+<wire x1="-48.26" y1="71.12" x2="-48.26" y2="73.66" width="0.1524" layer="91"/>
+<junction x="-48.26" y="73.66"/>
 </segment>
 </net>
 <net name="N$2" class="0">
 <segment>
 <pinref part="Q1" gate="G$1" pin="2"/>
 <pinref part="U1" gate="U$1" pin="PB7(XTAL2/TOSC2)"/>
-<wire x1="-53.34" y1="63.5" x2="-45.72" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="-53.34" y1="63.5" x2="-48.26" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="-48.26" y1="63.5" x2="-45.72" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="-45.72" y1="63.5" x2="-45.72" y2="66.04" width="0.1524" layer="91"/>
 <pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="-53.34" y1="63.5" x2="-58.42" y2="63.5" width="0.1524" layer="91"/>
 <junction x="-53.34" y="63.5"/>
+<pinref part="Q5" gate="G$1" pin="1"/>
+<wire x1="-48.26" y1="63.5" x2="-48.26" y2="66.04" width="0.1524" layer="91"/>
+<junction x="-48.26" y="63.5"/>
 </segment>
 </net>
 <net name="GND" class="0">

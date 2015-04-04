@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.005" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.001" altunitdist="inch" altunit="inch"/>
+<grid distance="0.005" unitdist="inch" unit="mm" style="lines" multiple="1" display="no" altdistance="0.001" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -1291,21 +1291,6 @@ We've spent an enormous amount of time creating and checking these footprints an
 &lt;br&gt;&lt;br&gt;
 &lt;b&gt;Licensing:&lt;/b&gt; CC v3.0 Share-Alike You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
 <packages>
-<package name="SOT23">
-<description>&lt;b&gt;SOT-23&lt;/b&gt;</description>
-<wire x1="1.4224" y1="0.6604" x2="1.4224" y2="-0.6604" width="0.1524" layer="51"/>
-<wire x1="1.4224" y1="-0.6604" x2="-1.4224" y2="-0.6604" width="0.1524" layer="51"/>
-<wire x1="-1.4224" y1="-0.6604" x2="-1.4224" y2="0.6604" width="0.1524" layer="51"/>
-<wire x1="-1.4224" y1="0.6604" x2="1.4224" y2="0.6604" width="0.1524" layer="51"/>
-<smd name="3" x="0" y="1.1" dx="1" dy="1.4" layer="1"/>
-<smd name="2" x="0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
-<smd name="1" x="-0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
-<text x="-0.889" y="2.032" size="0.4064" layer="25">&gt;NAME</text>
-<text x="-1.016" y="-0.1905" size="0.4064" layer="27">&gt;VALUE</text>
-<rectangle x1="-0.2286" y1="0.7112" x2="0.2286" y2="1.2954" layer="51"/>
-<rectangle x1="0.7112" y1="-1.2954" x2="1.1684" y2="-0.7112" layer="51"/>
-<rectangle x1="-1.1684" y1="-1.2954" x2="-0.7112" y2="-0.7112" layer="51"/>
-</package>
 <package name="SO08">
 <description>&lt;b&gt;Small Outline Package&lt;/b&gt; Fits JEDEC packages (narrow SOIC-8)</description>
 <wire x1="-2.362" y1="-1.803" x2="2.362" y2="-1.803" width="0.1524" layer="51"/>
@@ -1808,6 +1793,51 @@ Source: http://www.molex.com</description>
 </package>
 </packages>
 </library>
+<library name="transistor-fet">
+<description>&lt;b&gt;Field Effect Transistors&lt;/b&gt;&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;&lt;p&gt;
+&lt;p&gt;
+Symbols changed according to IEC617&lt;p&gt; 
+All types, packages and assignment to symbols and pins checked&lt;p&gt;
+Package outlines partly checked&lt;p&gt;
+&lt;p&gt;
+JFET = junction FET&lt;p&gt;
+IGBT-x = insulated gate bipolar transistor&lt;p&gt;
+x=N: NPN; x=P: PNP&lt;p&gt;
+IGFET-mc-nnn; (IGFET=insulated gate field effect transistor)&lt;P&gt;
+m=D: depletion mode (Verdr&amp;auml;ngungstyp)&lt;p&gt;
+m=E: enhancement mode (Anreicherungstyp)&lt;p&gt;
+c: N=N-channel; P=P-Channel&lt;p&gt;
+nnn=GDS:  gate, drain, source&lt;p&gt;
+2GDS: 2 x gate, drain, source&lt;p&gt;
+GnDS: gate, n x drain, source&lt;p&gt;
+GDSB: gate, drain, source, bulk&lt;p&gt;
+&lt;p&gt;
+by R. Vogg  15.March.2002</description>
+<packages>
+<package name="SOT23">
+<description>&lt;b&gt;SMALL OUTLINE TRANSISTOR&lt;/b&gt;&lt;p&gt;
+reflow soldering</description>
+<wire x1="1.4224" y1="0.6604" x2="1.4224" y2="-0.6604" width="0.2032" layer="51"/>
+<wire x1="1.4224" y1="-0.6604" x2="-1.4224" y2="-0.6604" width="0.2032" layer="51"/>
+<wire x1="-1.4224" y1="-0.6604" x2="-1.4224" y2="0.6604" width="0.2032" layer="51"/>
+<wire x1="-1.4224" y1="0.6604" x2="1.4224" y2="0.6604" width="0.2032" layer="51"/>
+<wire x1="-1.4224" y1="-0.1524" x2="-1.4224" y2="0.6604" width="0.2032" layer="21"/>
+<wire x1="-1.4224" y1="0.6604" x2="-0.7636" y2="0.6604" width="0.2032" layer="21"/>
+<wire x1="1.4224" y1="0.6604" x2="1.4224" y2="-0.1524" width="0.2032" layer="21"/>
+<wire x1="0.7636" y1="0.6604" x2="1.4224" y2="0.6604" width="0.2032" layer="21"/>
+<smd name="3" x="0" y="1.1" dx="1" dy="1.4" layer="1"/>
+<smd name="2" x="0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
+<smd name="1" x="-0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
+<text x="1.27" y="1.27" size="1.016" layer="25" ratio="18">&gt;NAME</text>
+<text x="-1.905" y="-3.175" size="0.8128" layer="27" ratio="10">&gt;VALUE</text>
+<rectangle x1="-0.5001" y1="-0.3" x2="0.5001" y2="0.3" layer="35"/>
+<rectangle x1="-0.2286" y1="0.7112" x2="0.2286" y2="1.2954" layer="51"/>
+<rectangle x1="0.7112" y1="-1.2954" x2="1.1684" y2="-0.7112" layer="51"/>
+<rectangle x1="-1.1684" y1="-1.2954" x2="-0.7112" y2="-0.7112" layer="51"/>
+</package>
+</packages>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -2000,9 +2030,8 @@ design rules under a new name.</description>
 <element name="C1" library="resistor" package="C0805" value="22pF" x="50.7492" y="45.6334" rot="R270"/>
 <element name="C2" library="resistor" package="C0805" value="22pF" x="48.006" y="45.6334" rot="R270"/>
 <element name="Q1" library="special" package="QS" value="16MHz" x="49.403" y="40.274" rot="R180"/>
-<element name="Q2" library="SparkFun" package="SOT23" value="" x="75.326" y="8.763" rot="R270"/>
 <element name="R1" library="resistor" package="R0805" value="50k" x="57.404" y="35.575" rot="R180"/>
-<element name="R2" library="resistor" package="R0805" value="1k" x="67.945" y="9.667" rot="R180"/>
+<element name="R2" library="resistor" package="R0805" value="100E" x="67.945" y="9.667" rot="R180"/>
 <element name="U1" library="SparkFun-DigitalIC" package="TQFP32-08" value="ATMEGA328P_TQFP" x="51.816" y="29.098" rot="R270">
 <attribute name="PROD_ID" value="IC-09069" x="51.816" y="29.098" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
@@ -2056,6 +2085,9 @@ design rules under a new name.</description>
 <attribute name="MF" value="" x="49.403" y="40.274" size="1.778" layer="27" display="off"/>
 <attribute name="OC_FARNELL" value="unknown" x="49.403" y="40.274" size="1.778" layer="27" display="off"/>
 </element>
+<element name="Q6" library="transistor-fet" package="SOT23" value="2N7002" x="42.926" y="8.001" rot="R270"/>
+<element name="R8" library="resistor" package="R0805" value="100E" x="40.767" y="31.115" rot="R180"/>
+<element name="Q7" library="transistor-fet" package="SOT23" value="2N7002" x="74.422" y="8.636" rot="R270"/>
 </elements>
 <signals>
 <signal name="N$1">
@@ -2088,7 +2120,6 @@ design rules under a new name.</description>
 <contactref element="U1" pad="21"/>
 <contactref element="U1" pad="3"/>
 <contactref element="U1" pad="5"/>
-<contactref element="Q2" pad="2"/>
 <contactref element="JP1" pad="6"/>
 <contactref element="U2" pad="2"/>
 <contactref element="R7" pad="2"/>
@@ -2137,10 +2168,12 @@ design rules under a new name.</description>
 <vertex x="0" y="100"/>
 </polygon>
 <wire x1="50.7492" y1="46.5834" x2="48.006" y2="46.5834" width="0.4064" layer="1"/>
-<wire x1="74.226" y1="7.813" x2="68.392" y2="7.813" width="0.4064" layer="1"/>
-<wire x1="68.392" y1="7.813" x2="66.294" y2="5.715" width="0.4064" layer="1"/>
-<wire x1="66.294" y1="5.715" x2="66.294" y2="4.006" width="0.4064" layer="1"/>
+<wire x1="66.294" y1="5.715" x2="66.294" y2="5.207" width="0.4064" layer="1"/>
+<wire x1="66.294" y1="5.207" x2="66.294" y2="4.006" width="0.4064" layer="1"/>
 <wire x1="66.294" y1="4.006" x2="66.3" y2="4" width="0.4064" layer="1"/>
+<contactref element="Q7" pad="2"/>
+<wire x1="73.322" y1="7.686" x2="68.773" y2="7.686" width="0.4064" layer="1"/>
+<wire x1="68.773" y1="7.686" x2="66.294" y2="5.207" width="0.4064" layer="1"/>
 <wire x1="51.416" y1="33.3906" x2="50.7492" y2="46.5834" width="0" layer="19" extent="1-1"/>
 <wire x1="53.016" y1="33.3906" x2="51.416" y2="33.3906" width="0" layer="19" extent="1-1"/>
 <wire x1="52.216" y1="24.8054" x2="51.416" y2="33.3906" width="0" layer="19" extent="1-1"/>
@@ -2210,16 +2243,18 @@ design rules under a new name.</description>
 <wire x1="39.7002" y1="37.8864" x2="50.616" y2="33.3906" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$4">
-<contactref element="Q2" pad="3"/>
 <contactref element="U$3" pad="P$1"/>
 <wire x1="79" y1="4" x2="79" y2="6.189" width="0.4064" layer="1"/>
-<wire x1="79" y1="6.189" x2="76.426" y2="8.763" width="0.4064" layer="1"/>
+<contactref element="Q7" pad="3"/>
+<wire x1="75.522" y1="8.636" x2="76.553" y2="8.636" width="0.4064" layer="1"/>
+<wire x1="76.553" y1="8.636" x2="79" y2="6.189" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$5">
-<contactref element="Q2" pad="1"/>
 <contactref element="R2" pad="1"/>
-<wire x1="74.226" y1="9.713" x2="68.941" y2="9.713" width="0.4064" layer="1"/>
 <wire x1="68.941" y1="9.713" x2="68.895" y2="9.667" width="0.4064" layer="1"/>
+<contactref element="Q7" pad="1"/>
+<wire x1="73.322" y1="9.586" x2="68.976" y2="9.586" width="0.4064" layer="1"/>
+<wire x1="68.976" y1="9.586" x2="68.895" y2="9.667" width="0.4064" layer="1"/>
 </signal>
 <signal name="MOSI">
 <contactref element="U1" pad="15"/>
@@ -2244,7 +2279,6 @@ design rules under a new name.</description>
 <contactref element="JP1" pad="3"/>
 <contactref element="U$1" pad="13"/>
 <wire x1="48.9966" y1="24.786" x2="49.016" y2="24.8054" width="0.4064" layer="1"/>
-<contactref element="U$3" pad="P$15"/>
 <wire x1="26.6319" y1="19.192" x2="38.608" y2="19.192" width="0.4064" layer="1"/>
 <wire x1="38.608" y1="19.192" x2="40.64" y2="17.16" width="0.4064" layer="1"/>
 <wire x1="40.64" y1="17.16" x2="40.64" y2="14.62" width="0.4064" layer="1"/>
@@ -2255,9 +2289,10 @@ design rules under a new name.</description>
 <wire x1="43.18" y1="17.922" x2="49.022" y2="23.764" width="0.4064" layer="1"/>
 <wire x1="49.022" y1="23.764" x2="49.022" y2="24.7994" width="0.4064" layer="1"/>
 <wire x1="49.022" y1="24.7994" x2="49.016" y2="24.8054" width="0.4064" layer="1"/>
-<wire x1="43.44" y1="4" x2="43.44" y2="10.408" width="0.4064" layer="1"/>
-<wire x1="43.44" y1="10.408" x2="41.91" y2="11.938" width="0.4064" layer="1"/>
+<wire x1="44.026" y1="9.822" x2="41.91" y2="11.938" width="0.4064" layer="1"/>
 <wire x1="41.91" y1="11.938" x2="41.91" y2="13.35" width="0.4064" layer="1"/>
+<contactref element="Q6" pad="3"/>
+<wire x1="44.026" y1="8.001" x2="44.026" y2="9.822" width="0.4064" layer="1"/>
 </signal>
 <signal name="MISO">
 <contactref element="U1" pad="16"/>
@@ -2284,7 +2319,17 @@ design rules under a new name.</description>
 <signal name="LCD_CS">
 <contactref element="U1" pad="11"/>
 <contactref element="U$3" pad="P$17"/>
-<wire x1="38.36" y1="4" x2="47.5234" y2="30.298" width="0" layer="19" extent="1-1"/>
+<via x="34.417" y="8.509" extent="1-16" drill="0.9" diameter="1.27"/>
+<wire x1="34.417" y1="8.509" x2="34.417" y2="25.654" width="0.4064" layer="16"/>
+<via x="34.417" y="25.654" extent="1-16" drill="0.9" diameter="1.27"/>
+<wire x1="39.624" y1="25.654" x2="44.2722" y2="30.3022" width="0.4064" layer="1"/>
+<wire x1="44.2722" y1="30.3022" x2="47.5192" y2="30.3022" width="0.4064" layer="1"/>
+<wire x1="47.5192" y1="30.3022" x2="47.5234" y2="30.298" width="0.4064" layer="1"/>
+<wire x1="39.624" y1="25.654" x2="34.417" y2="25.654" width="0.4064" layer="1"/>
+<wire x1="34.417" y1="8.509" x2="35.56" y2="8.509" width="0.4064" layer="1"/>
+<wire x1="35.56" y1="8.509" x2="38.354" y2="5.715" width="0.4064" layer="1"/>
+<wire x1="38.354" y1="5.715" x2="38.354" y2="4.006" width="0.4064" layer="1"/>
+<wire x1="38.354" y1="4.006" x2="38.36" y2="4" width="0.4064" layer="1"/>
 </signal>
 <signal name="RST">
 <contactref element="JP1" pad="5"/>
@@ -2494,6 +2539,30 @@ design rules under a new name.</description>
 <wire x1="31.877" y1="17.907" x2="30.734" y2="16.764" width="0.4064" layer="1"/>
 <wire x1="30.734" y1="16.764" x2="30.734" y2="13.4516" width="0.4064" layer="1"/>
 <wire x1="30.734" y1="13.4516" x2="30.6936" y2="13.4112" width="0.4064" layer="1"/>
+</signal>
+<signal name="N$11">
+<contactref element="Q6" pad="2"/>
+<contactref element="U$3" pad="P$15"/>
+<wire x1="43.44" y1="4" x2="43.44" y2="5.437" width="0.4064" layer="1"/>
+<wire x1="43.44" y1="5.437" x2="41.826" y2="7.051" width="0.4064" layer="1"/>
+</signal>
+<signal name="N$12">
+<contactref element="Q6" pad="1"/>
+<contactref element="R8" pad="2"/>
+<wire x1="41.826" y1="8.951" x2="38.288" y2="8.951" width="0.4064" layer="1"/>
+<wire x1="38.288" y1="8.951" x2="37.465" y2="8.128" width="0.4064" layer="1"/>
+<via x="37.465" y="8.128" extent="1-16" drill="0.9" diameter="1.27"/>
+<wire x1="37.465" y1="8.128" x2="37.465" y2="27.178" width="0.4064" layer="16"/>
+<wire x1="39.817" y1="31.115" x2="39.817" y2="29.53" width="0.4064" layer="1"/>
+<wire x1="39.817" y1="29.53" x2="37.592" y2="27.305" width="0.4064" layer="1"/>
+<via x="37.592" y="27.305" extent="1-16" drill="0.9" diameter="1.27"/>
+<wire x1="37.592" y1="27.305" x2="37.465" y2="27.178" width="0.4064" layer="16"/>
+</signal>
+<signal name="SCKCNTRL">
+<contactref element="R8" pad="1"/>
+<contactref element="U1" pad="10"/>
+<wire x1="47.5234" y1="31.098" x2="41.734" y2="31.098" width="0.4064" layer="1"/>
+<wire x1="41.734" y1="31.098" x2="41.717" y2="31.115" width="0.4064" layer="1"/>
 </signal>
 </signals>
 </board>

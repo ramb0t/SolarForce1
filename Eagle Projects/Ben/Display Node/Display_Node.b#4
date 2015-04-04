@@ -2180,11 +2180,11 @@ design rules under a new name.</description>
 <element name="LED5" library="led" package="CHIP-LED0805" value="" x="60.579" y="32.639"/>
 <element name="R9" library="resistor" package="R0805" value="1k" x="66.167" y="40.005"/>
 <element name="R10" library="resistor" package="R0805" value="1k" x="72.771" y="35.052"/>
-<element name="X4" library="con-molex" package="70553-06" value="C-GRID-06-70553" x="10.414" y="-78.359">
-<attribute name="OC_NEWARK" value="unknown" x="10.414" y="-78.359" size="1.778" layer="27" display="off"/>
-<attribute name="MPN" value="" x="10.414" y="-78.359" size="1.778" layer="27" display="off"/>
-<attribute name="MF" value="" x="10.414" y="-78.359" size="1.778" layer="27" display="off"/>
-<attribute name="OC_FARNELL" value="unknown" x="10.414" y="-78.359" size="1.778" layer="27" display="off"/>
+<element name="X4" library="con-molex" package="70553-06" value="C-GRID-06-70553" x="89.027" y="20.701" rot="R90">
+<attribute name="OC_NEWARK" value="unknown" x="89.027" y="20.701" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MPN" value="" x="89.027" y="20.701" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MF" value="" x="89.027" y="20.701" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="OC_FARNELL" value="unknown" x="89.027" y="20.701" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
 </elements>
 <signals>
@@ -2727,22 +2727,22 @@ design rules under a new name.</description>
 <signal name="CRUISE1">
 <contactref element="U1" pad="25"/>
 <contactref element="X4" pad="1"/>
-<wire x1="4.064" y1="-85.979" x2="56.1086" y2="26.298" width="0" layer="19" extent="1-1"/>
+<wire x1="96.647" y1="14.351" x2="56.1086" y2="26.298" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CRUISE2">
 <contactref element="U1" pad="26"/>
 <contactref element="X4" pad="2"/>
-<wire x1="6.604" y1="-85.979" x2="56.1086" y2="27.098" width="0" layer="19" extent="1-1"/>
+<wire x1="96.647" y1="16.891" x2="56.1086" y2="27.098" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CRUISE3">
 <contactref element="U1" pad="27"/>
 <contactref element="X4" pad="3"/>
-<wire x1="9.144" y1="-85.979" x2="56.1086" y2="27.898" width="0" layer="19" extent="1-1"/>
+<wire x1="96.647" y1="19.431" x2="56.1086" y2="27.898" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CRUISE4">
 <contactref element="U1" pad="28"/>
 <contactref element="X4" pad="4"/>
-<wire x1="11.684" y1="-85.979" x2="56.1086" y2="28.698" width="0" layer="19" extent="1-1"/>
+<wire x1="96.647" y1="21.971" x2="56.1086" y2="28.698" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="BTN3">
 <contactref element="U1" pad="2"/>
