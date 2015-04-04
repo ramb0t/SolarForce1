@@ -59,6 +59,9 @@ int system_status = MAV_STATE_ACTIVE;
 
 //------------Function Prototypes------------------------//
 
-
+void CAN_readData(void);
+void MAV_msg_pack();
+void MAV_uart_send(uint8_t [],uint8_t);
+void GPS_readData(void);
 
 #endif /* MAVLINK_MESSAGING_H_ */

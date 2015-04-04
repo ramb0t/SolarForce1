@@ -74,87 +74,23 @@ int main (void)
 	while(1) {
 		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
 		
+		GPS_readData(void);
+		CAN_readData(void);
+		
+		MAV_msg_pack();
+		
 		//if(TIFR0 &(1<<TOV0))
 		//{
 			//MAV_hb();
 			//TIFR0 = (0<<TOV0);
 		//}
-		
-//---------------Get CAN data via SPI-----------------//
-		uart_flush();
-		uart_puts("<<<<START OF MESSAGE>>>>\n");
-		uart_puts("\n---------CAN DATA---------\n");
-		char buff[16] ;
-		if(DEBUG){
-			itoa(CAN_checkReceiveAvailable(), buff,10);
-			uart_puts("RXAvail:");
-			uart_puts(buff);
-			
-			itoa(CAN_checkError(),buff,10);
-			uart_puts("CheckErr:");
-			uart_puts(buff);
-			_delay_ms(100);
-			
-			if(CAN_checkReceiveAvailable()==CAN_NOMSG)
-			{
-				uart_puts("\nNo CAN message / CAN Bus disconnected!\n");
-			}
-		}					
-		//if (CAN_checkError()==CAN_CTRLERROR)
-		//{
-			//uart_puts("CAN Controller Error!");
-			////TODO: Set flag for controller error in GUI
-		//}else if (CAN_checkError()==CAN_OK)
-		{
-			if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
-			{
-				int rx_Result;
-				rx_Result = CAN_readMessage(&CANBusInput);			//read a byte of CAN data
-				
-				if (rx_Result == CAN_OK)							//if read correctly...
-				{
-					//char buff[32] ;
-					buff[0] = "\0";
-					itoa(CANBusInput.id,buff,16);					//read ASCII-converted byte into buffer
-					uart_puts("\nCAN ID:");
-					uart_puts(buff);								//output bytestring to UART
-					
-					itoa(CANBusInput.length,buff,10);
-					uart_puts("\nCAN Data Length:");
-					
-					if(CANBusInput.length==0)						//checks length
-					{
-						uart_puts("No CAN Data bits\n");			//Prints if no data bits present
-					}else{
-						uart_puts(buff);
-						for(int j = 0; j< CANBusInput.length; j++)	//print byte for each data element
-						{
-							uart_puts("\nCAN Data ");
-							itoa(j,buff,10);
-							uart_puts(buff);
-							uart_puts(": ");
-													
-							itoa(CANBusInput.data[j],buff,10);
-													
-							uart_puts(buff);
-							uart_puts(" ");
-						}
-					}
-					
-							
-					itoa(CANBusInput.rtr,buff,2);
-					uart_puts("\nIs this an RTR?: ");
-					if(CANBusInput.rtr==1)
-					{
-						uart_puts("Yes\n");
-					}else uart_puts("No\n");
-					
-					
-				}  
-			uart_puts("\n-------\n CAN Done.\n");
-		}
-		
-		
+	}
+	return 0;
+
+}
+
+void GPS_readData()
+{
 		//---------------GPS Parse--------------------------------//
 	/*eg4. for NMEA 0183 version 3.00 active the Mode indicator field is added
 	$GPRMC,hhmmss.ss,A,llll.ll,a,yyyyy.yy,a,x.x,x.x,ddmmyy,x.x,a,m*hh
@@ -181,57 +117,141 @@ int main (void)
 		char gpsdata;
 
 
-			uart_puts("\n---------GPS DATA---------\n");
+		uart_puts("\n---------GPS DATA---------\n");
 			
 				
-				uart_puts("GPS Ready");
-					while (!(UCSR0A & (1<<RXC0)))	//is there anything in buffer?
-					{	
-						gpsdata = uart_getc();		
-						if(gpsdata != '\0')				//getting GPRMC data only
-						{
-							NMEA[z] = gpsdata;				//add to char array if not EOL
-							z++;
-						}else lgth=z; break;				//store string length
-					}
+		uart_puts("GPS Ready");
+		while (!(UCSR0A & (1<<RXC0)))	//is there anything in buffer?
+		{	
+			gpsdata = uart_getc();		
+			if(gpsdata != '\0')				//getting GPRMC data only
+			{
+				NMEA[z] = gpsdata;				//add to char array if not EOL
+				z++;
+			}else lgth=z; break;				//store string length
+		}
 															////check each char for $GPRMC
 
-					if(DEBUG)
-					{
-						uart_putc(lgth);
-						uart_putc(z);
-					}
+		if(DEBUG)
+		{
+			uart_putc(lgth);
+			uart_putc(z);
+		}
 
-					z=0;
-				while(NMEA[z]!='$' && z<62)			//search the string for '$'
+		z=0;
+		
+		while(NMEA[z]!='$' && z<62)			//search the string for '$'
+		{
+				z++;
+			if(DEBUG)
+			{
+				if(NMEA[z]=='$')
 				{
-						z++;
-					if(DEBUG)
+					uart_puts("Got$");
+					if (NMEA[z+1]=="G")
 					{
-						if(NMEA[z]=='$')
-						{
-							uart_puts("Got$");
-							if (NMEA[z+1]=="G")
-							{
-								uart_puts("GotG");
-							}
-							break;
-						}
-						break;
+						uart_puts("GotG");
 					}
-					
+					break;
 				}
+				break;
+			}
 					
-					
-					
-					uart_flush();	
-					for(ctr=z+1;ctr<lgth;ctr++)
+		}
+		
+		//print GPS data to UART	
+		uart_flush();
+		for(ctr=z+1;ctr<lgth;ctr++)
+		{
+			uart_putc(NMEA[ctr]);
+		}
+	
+}
+
+
+void CAN_readData()
+{
+	uart_flush();
+	uart_puts("<<<<START OF MESSAGE>>>>\n");
+	uart_puts("\n---------CAN DATA---------\n");
+	char buff[16] ;
+	if(DEBUG){
+		itoa(CAN_checkReceiveAvailable(), buff,10);
+		uart_puts("RXAvail:");
+		uart_puts(buff);
+		
+		itoa(CAN_checkError(),buff,10);
+		uart_puts("CheckErr:");
+		uart_puts(buff);
+		_delay_ms(100);
+		
+		if(CAN_checkReceiveAvailable()==CAN_NOMSG)
+		{
+			uart_puts("\nNo CAN message / CAN Bus disconnected!\n");
+		}
+	
+	//if (CAN_checkError()==CAN_CTRLERROR)
+	//{
+	//uart_puts("CAN Controller Error!");
+	////TODO: Set flag for controller error in GUI
+	//}else if (CAN_checkError()==CAN_OK)
+	
+		if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
+		{
+			int rx_Result;
+			rx_Result = CAN_readMessage(&CANBusInput);			//read a byte of CAN data
+			
+			if (rx_Result == CAN_OK)							//if read correctly...
+			{
+				//char buff[32] ;
+				buff[0] = "\0";
+				itoa(CANBusInput.id,buff,16);					//read ASCII-converted byte into buffer
+				uart_puts("\nCAN ID:");
+				uart_puts(buff);								//output bytestring to UART
+				
+				itoa(CANBusInput.length,buff,10);
+				uart_puts("\nCAN Data Length:");
+				
+				if(CANBusInput.length==0)						//checks length
+				{
+					uart_puts("No CAN Data bits\n");			//Prints if no data bits present
+					}else{
+						
+					uart_puts(buff);
+					for(int j = 0; j< CANBusInput.length; j++)	//print byte for each data element
 					{
-						uart_putc(NMEA[ctr]);
+						uart_puts("\nCAN Data ");
+						itoa(j,buff,10);
+						uart_puts(buff);
+						uart_puts(": ");
+						
+						itoa(CANBusInput.data[j],buff,10);
+						
+						uart_puts(buff);
+						uart_puts(" ");
 					}
+				}//endif input length==0
+				
+				itoa(CANBusInput.rtr,buff,2);
+				uart_puts("\nIs this an RTR?: ");
+				if(CANBusInput.rtr==1)
+				{
+					uart_puts("Yes\n");
+				}else uart_puts("No\n");
 				
 				
-	////---------------MAVLink Setup---------------------------//
+			}//endif CAN_OK
+			uart_puts("\n-------\n CAN Done.\n");
+		}//endif CAN_MSGAVAIL
+	}//endif DEBUG
+		
+}//end CAN_readData
+
+
+
+void MAV_msg_pack()
+{
+				////---------------MAVLink Setup---------------------------//
 	///*MAVLINK asks to set all system statuses as integers. For human readibility ENUMS are used in the appropriate headers
 	//these enums convert text for states to integers sent & interpreted. 3 phases to a message:
   //--define the enum types you'll need and use friendly names e.g. value_name = MAV_ENUM_VALUE_NAME
@@ -240,57 +260,47 @@ int main (void)
   //--pass the values or enum friendly names to the functions
   //--this ensures the message goes to MAVLink frame
   //--connect to QGC and observe output! */
-    //_delay_ms(200);
-	uart_puts("\n---------MAVLink Data---------\n");
-	
-		
-		//---------------MAVLink Data---------------------------//
-		//// Initialize the required buffers
-		mavlink_message_t msg;
-		uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-		uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-//
-		////Assume CAN data 0 = motor controller temp
-		////		   data 1 = speed
-		mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
-		MAV_uart_send(buf,len);
-		//
-		////Assume CAN data 2 = speed
-		mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
-		MAV_uart_send(buf,len);
 
-		uart_flush();
-		uart_puts("\n---------MAVLink Heartbeat---------\n");
-		// Pack the message
-		// mavlink_message_heartbeat_pack(system id, component id, message container, system type, MAV_AUTOPILOT_GENERIC)
-		mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
-		MAV_uart_send(buf,len);
-//
-		uart_puts("\n<<<<END OF MESSAGE>>>>\n");
-		////_delay_ms(HEARTBEAT_DELAY);
 
-	}
-		}
+			uart_puts("\n---------MAVLink Data---------\n");
+			//---------------MAVLink Data---------------------------//
+			//// Initialize the required buffers
+			mavlink_message_t msg;
+			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+			//
+			////Assume CAN data 0 = motor controller temp
+			////		   data 1 = speed
+			mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
+			MAV_uart_send(buf,len);
+			//
+			////Assume CAN data 2 = speed
+			mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
+			MAV_uart_send(buf,len);
+
+			uart_flush();
+			uart_puts("\n---------MAVLink Heartbeat---------\n");
+			// Pack the message
+			// mavlink_message_heartbeat_pack(system id, component id, message container, system type, MAV_AUTOPILOT_GENERIC)
+			mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
+			MAV_uart_send(buf,len);
+			//
+			uart_puts("\n<<<<END OF MESSAGE>>>>\n");
+			////_delay_ms(HEARTBEAT_DELAY);
 	
-	return 0;
 }
 
-void MAV_msg_pack()
-{
-	
-	
-}
 void MAV_uart_send(uint8_t buf[],uint8_t len)
 {
 
 	if( !(UCSR0A & (1<<UDRE0)) )
 	{
 		uart_flush();
-	for (int i = 0; i < len ; i++)
-		{
+	for (int i = 0; i < len ; i++){
 		uart_putc(buf[i]);
 		}
 	}
 						
 }
+
 
