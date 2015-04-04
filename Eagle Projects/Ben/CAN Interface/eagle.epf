@@ -814,11 +814,12 @@ UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/SparkFun-Eag
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/SparkFun-Eagle-Libraries-master/User-Submitted.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/sparkfun-SparkFun-Eagle-Library-683dd3d/LilyPad-Wearables.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/sparkfun-SparkFun-Eagle-Library-683dd3d/SparkFun.lbr"
+UsedLibrary="E:/Users/RobThePyro/Docs/GitHub/SolarForce1/Eagle Librarys/con-TE-EP.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="2694 115 3744 543"
-State=2
+Loc="1318 0 1919 428"
+State=1
 Number=0
 
 [Desktop]
