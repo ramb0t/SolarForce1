@@ -242,37 +242,29 @@ int main (void)
   //--connect to QGC and observe output! */
     //_delay_ms(200);
 	uart_puts("\n---------MAVLink Data---------\n");
-	// Define the system type (see solarCar.h for list of possible types) 
 	
-		int system_type = MAV_TYPE_GROUND_ROVER;
-		int autopilot_type = MAV_AUTOPILOT_GENERIC;
-		int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
-		int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
-		int system_status = MAV_STATE_ACTIVE;
-//
+		
+		//---------------MAVLink Data---------------------------//
 		//// Initialize the required buffers
 		mavlink_message_t msg;
 		uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 		uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-		
-		//---------------MAVLink Data---------------------------//
-		
 //
 		////Assume CAN data 0 = motor controller temp
 		////		   data 1 = speed
 		mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
-		MAV_hb(buf,len);
+		MAV_uart_send(buf,len);
 		//
 		////Assume CAN data 2 = speed
 		mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
-		MAV_hb(buf,len);
+		MAV_uart_send(buf,len);
 
 		uart_flush();
 		uart_puts("\n---------MAVLink Heartbeat---------\n");
 		// Pack the message
 		// mavlink_message_heartbeat_pack(system id, component id, message container, system type, MAV_AUTOPILOT_GENERIC)
 		mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
-		MAV_hb(buf,len);
+		MAV_uart_send(buf,len);
 //
 		uart_puts("\n<<<<END OF MESSAGE>>>>\n");
 		////_delay_ms(HEARTBEAT_DELAY);
@@ -283,8 +275,12 @@ int main (void)
 	return 0;
 }
 
-
-void MAV_hb(uint8_t buf[],uint8_t len)
+void MAV_msg_pack()
+{
+	
+	
+}
+void MAV_uart_send(uint8_t buf[],uint8_t len)
 {
 
 	if( !(UCSR0A & (1<<UDRE0)) )

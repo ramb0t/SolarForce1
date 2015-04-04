@@ -47,4 +47,18 @@ enum {
 	HEARTBEAT_DELAY = 1000
 };
 
+// Define the system type (see solarCar.h for list of possible types)
+
+int system_type = MAV_TYPE_GROUND_ROVER;
+int autopilot_type = MAV_AUTOPILOT_GENERIC;
+int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
+int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+int system_status = MAV_STATE_ACTIVE;
+//
+
+
+//------------Function Prototypes------------------------//
+
+
+
 #endif /* MAVLINK_MESSAGING_H_ */
