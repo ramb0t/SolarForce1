@@ -49,10 +49,23 @@
 // Terminal / Console interface for test node.
 #include "Terminal.h"
 
+// Timer1
+#include "Timer1.h"
+
+// Pin Defines
+#include "pinDefines.h"
+#define LCD_SELECT() 	( LCD_SCKCTL_PORT |=  (1<<LCD_SCKCTL) )
+#define LCD_UNSELECT()  ( LCD_SCKCTL_PORT &= ~(1<<LCD_SCKCTL) )
+
 // These are optional, but nice to have around.
 // Feel free to comment them out if you don't use them.
 
 #include "../lib/macros.h" // latest version maintained at https://github.com/robthepyro/AVR_Lib
+
+
+// Defines
+/*********************************************/
+
 
 
 // Structure Definitions

@@ -10416,6 +10416,12 @@ chip</description>
 <part name="F1" library="adafruit" deviceset="PTCFUSE" device="-1812"/>
 <part name="LED6" library="led" deviceset="LED" device="5MM"/>
 <part name="LED7" library="led" deviceset="LED" device="5MM"/>
+<part name="C7" library="resistor" deviceset="C-EU" device="C0805" value="100nF"/>
+<part name="C8" library="resistor" deviceset="C-EU" device="C0805" value="100nF"/>
+<part name="C9" library="resistor" deviceset="C-EU" device="C0805" value="100nF"/>
+<part name="C10" library="resistor" deviceset="C-EU" device="C0805" value="10uF"/>
+<part name="P+14" library="supply1" deviceset="+5V" device=""/>
+<part name="GND16" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -10517,6 +10523,12 @@ chip</description>
 <instance part="F1" gate="G$1" x="213.36" y="73.66"/>
 <instance part="LED6" gate="G$1" x="43.18" y="81.28"/>
 <instance part="LED7" gate="G$1" x="25.4" y="81.28"/>
+<instance part="C7" gate="G$1" x="-22.86" y="129.54" rot="R270"/>
+<instance part="C8" gate="G$1" x="-22.86" y="121.92" rot="R270"/>
+<instance part="C9" gate="G$1" x="93.98" y="93.98"/>
+<instance part="C10" gate="G$1" x="101.6" y="119.38"/>
+<instance part="P+14" gate="1" x="-30.48" y="137.16"/>
+<instance part="GND16" gate="1" x="-17.78" y="114.3"/>
 </instances>
 <busses>
 </busses>
@@ -10673,6 +10685,16 @@ chip</description>
 <wire x1="-48.26" y1="116.84" x2="-48.26" y2="111.76" width="0.1524" layer="91"/>
 <junction x="-48.26" y="111.76"/>
 </segment>
+<segment>
+<pinref part="C7" gate="G$1" pin="1"/>
+<pinref part="GND16" gate="1" pin="GND"/>
+<wire x1="-20.32" y1="129.54" x2="-17.78" y2="129.54" width="0.1524" layer="91"/>
+<wire x1="-17.78" y1="129.54" x2="-17.78" y2="121.92" width="0.1524" layer="91"/>
+<pinref part="C8" gate="G$1" pin="1"/>
+<wire x1="-17.78" y1="121.92" x2="-17.78" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="-20.32" y1="121.92" x2="-17.78" y2="121.92" width="0.1524" layer="91"/>
+<junction x="-17.78" y="121.92"/>
+</segment>
 </net>
 <net name="+5V" class="0">
 <segment>
@@ -10768,6 +10790,16 @@ chip</description>
 <pinref part="P+13" gate="1" pin="+5V"/>
 <pinref part="F1" gate="G$1" pin="1"/>
 <wire x1="198.12" y1="76.2" x2="208.28" y2="76.2" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="P+14" gate="1" pin="+5V"/>
+<wire x1="-30.48" y1="134.62" x2="-30.48" y2="129.54" width="0.1524" layer="91"/>
+<pinref part="C7" gate="G$1" pin="2"/>
+<wire x1="-30.48" y1="129.54" x2="-27.94" y2="129.54" width="0.1524" layer="91"/>
+<pinref part="C8" gate="G$1" pin="2"/>
+<wire x1="-27.94" y1="121.92" x2="-30.48" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="-30.48" y1="121.92" x2="-30.48" y2="129.54" width="0.1524" layer="91"/>
+<junction x="-30.48" y="129.54"/>
 </segment>
 </net>
 <net name="N$4" class="0">
