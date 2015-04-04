@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.2.0">
+<eagle version="7.1.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -12552,6 +12552,156 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 </deviceset>
 </devicesets>
 </library>
+<library name="con-molex">
+<description>&lt;b&gt;Molex Connectors&lt;/b&gt;&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="5566-6">
+<description>&lt;b&gt;Mini FIT connector 6 pol&lt;/b&gt;&lt;p&gt;
+Source: http://www.molex.com</description>
+<wire x1="-6.8" y1="4.5" x2="6.8" y2="4.5" width="0.254" layer="21"/>
+<wire x1="6.8" y1="4.5" x2="6.8" y2="-2.2" width="0.254" layer="21"/>
+<wire x1="6.8" y1="-3.3" x2="6.8" y2="-4.9" width="0.254" layer="21"/>
+<wire x1="6.8" y1="-4.9" x2="-6.8" y2="-4.9" width="0.254" layer="21"/>
+<wire x1="-6.8" y1="-4.9" x2="-6.8" y2="4.5" width="0.254" layer="21"/>
+<wire x1="-10.3" y1="3.2" x2="-7.5" y2="3.2" width="0.254" layer="21" curve="-114.529547"/>
+<wire x1="-10.3" y1="1.4" x2="-7.5" y2="1.4" width="0.254" layer="21" curve="114.529547"/>
+<wire x1="-10.3" y1="3.2" x2="-10.3" y2="1.4" width="0.254" layer="21"/>
+<wire x1="-7.6" y1="3.3" x2="-6.9" y2="3.3" width="0.254" layer="21"/>
+<wire x1="-7.6" y1="1.3" x2="-6.9" y2="1.3" width="0.254" layer="21"/>
+<wire x1="7.5" y1="1.4" x2="10.3" y2="1.4" width="0.254" layer="21" curve="114.529547"/>
+<wire x1="7.5" y1="3.2" x2="10.3" y2="3.2" width="0.254" layer="21" curve="-114.529547"/>
+<wire x1="10.3" y1="1.4" x2="10.3" y2="3.2" width="0.254" layer="21"/>
+<wire x1="7.6" y1="1.3" x2="6.9" y2="1.3" width="0.254" layer="21"/>
+<wire x1="7.6" y1="3.3" x2="6.9" y2="3.3" width="0.254" layer="21"/>
+<wire x1="6.8" y1="-2.2" x2="6.8" y2="-3.3" width="0.254" layer="21" curve="-180"/>
+<wire x1="-2.1" y1="6.3" x2="2.1" y2="6.3" width="0.254" layer="27"/>
+<wire x1="-2.1" y1="6.3" x2="-2.1" y2="4.6" width="0.254" layer="27"/>
+<wire x1="2.1" y1="6.3" x2="2.1" y2="4.6" width="0.254" layer="27"/>
+<pad name="1" x="4.2" y="-2.75" drill="1.4" shape="square"/>
+<pad name="2" x="0" y="-2.75" drill="1.4" shape="square"/>
+<pad name="3" x="-4.2" y="-2.75" drill="1.4" shape="square"/>
+<pad name="6" x="-4.2" y="2.75" drill="1.4" shape="square"/>
+<pad name="5" x="0" y="2.75" drill="1.4" shape="square"/>
+<pad name="4" x="4.2" y="2.75" drill="1.4" shape="square"/>
+<text x="-1.27" y="-6.985" size="1.27" layer="25">&gt;NAME</text>
+<text x="-2.54" y="6.985" size="1.27" layer="27">&gt;VALUE</text>
+<hole x="8.9" y="2.29" drill="3"/>
+<hole x="-8.9" y="2.29" drill="3"/>
+</package>
+</packages>
+<symbols>
+<symbol name="MV">
+<wire x1="1.27" y1="0" x2="0" y2="0" width="0.6096" layer="94"/>
+<text x="2.54" y="-0.762" size="1.524" layer="95">&gt;NAME</text>
+<text x="-0.762" y="1.397" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="S" x="-2.54" y="0" visible="off" length="short" direction="pas"/>
+</symbol>
+<symbol name="M">
+<wire x1="1.27" y1="0" x2="0" y2="0" width="0.6096" layer="94"/>
+<text x="2.54" y="-0.762" size="1.524" layer="95">&gt;NAME</text>
+<pin name="S" x="-2.54" y="0" visible="off" length="short" direction="pas"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="5566-6" prefix="X">
+<description>&lt;b&gt;Mini FIT connector 6 pol&lt;/b&gt;&lt;p&gt;
+Source: http://www.molex.com</description>
+<gates>
+<gate name="-1" symbol="MV" x="0" y="5.08" addlevel="always"/>
+<gate name="-2" symbol="M" x="0" y="2.54" addlevel="always"/>
+<gate name="-3" symbol="M" x="0" y="0" addlevel="always"/>
+<gate name="-4" symbol="M" x="0" y="-2.54" addlevel="always"/>
+<gate name="-5" symbol="M" x="0" y="-5.08" addlevel="always"/>
+<gate name="-6" symbol="M" x="0" y="-7.62" addlevel="always"/>
+</gates>
+<devices>
+<device name="" package="5566-6">
+<connects>
+<connect gate="-1" pin="S" pad="1"/>
+<connect gate="-2" pin="S" pad="2"/>
+<connect gate="-3" pin="S" pad="3"/>
+<connect gate="-4" pin="S" pad="4"/>
+<connect gate="-5" pin="S" pad="5"/>
+<connect gate="-6" pin="S" pad="6"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="MF" value="" constant="no"/>
+<attribute name="MPN" value="95566-61002" constant="no"/>
+<attribute name="OC_FARNELL" value="unknown" constant="no"/>
+<attribute name="OC_NEWARK" value="22K8620" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
+<library name="jumper">
+<description>&lt;b&gt;Jumpers&lt;/b&gt;&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="JP1">
+<description>&lt;b&gt;JUMPER&lt;/b&gt;</description>
+<wire x1="-1.016" y1="0" x2="-1.27" y2="0.254" width="0.1524" layer="21"/>
+<wire x1="-1.016" y1="0" x2="-1.27" y2="-0.254" width="0.1524" layer="21"/>
+<wire x1="1.016" y1="0" x2="1.27" y2="0.254" width="0.1524" layer="21"/>
+<wire x1="1.016" y1="0" x2="1.27" y2="-0.254" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="-0.254" x2="1.27" y2="-2.286" width="0.1524" layer="21"/>
+<wire x1="1.016" y1="-2.54" x2="1.27" y2="-2.286" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="2.286" x2="1.016" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="2.286" x2="1.27" y2="0.254" width="0.1524" layer="21"/>
+<wire x1="1.016" y1="2.54" x2="-1.016" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="-1.27" y1="2.286" x2="-1.016" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="-1.27" y1="2.286" x2="-1.27" y2="0.254" width="0.1524" layer="21"/>
+<wire x1="-1.27" y1="-0.254" x2="-1.27" y2="-2.286" width="0.1524" layer="21"/>
+<wire x1="-1.016" y1="-2.54" x2="-1.27" y2="-2.286" width="0.1524" layer="21"/>
+<wire x1="-1.016" y1="-2.54" x2="1.016" y2="-2.54" width="0.1524" layer="21"/>
+<pad name="1" x="0" y="-1.27" drill="0.9144" shape="long"/>
+<pad name="2" x="0" y="1.27" drill="0.9144" shape="long"/>
+<text x="-1.651" y="-2.54" size="1.27" layer="25" ratio="10" rot="R90">&gt;NAME</text>
+<text x="2.921" y="-2.54" size="1.27" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<rectangle x1="-0.3048" y1="0.9652" x2="0.3048" y2="1.5748" layer="51"/>
+<rectangle x1="-0.3048" y1="-1.5748" x2="0.3048" y2="-0.9652" layer="51"/>
+</package>
+</packages>
+<symbols>
+<symbol name="JP2E">
+<wire x1="0" y1="0" x2="0" y2="1.27" width="0.1524" layer="94"/>
+<wire x1="0" y1="2.54" x2="0" y2="1.27" width="0.4064" layer="94"/>
+<wire x1="2.54" y1="0" x2="2.54" y2="1.27" width="0.1524" layer="94"/>
+<wire x1="2.54" y1="2.54" x2="2.54" y2="1.27" width="0.4064" layer="94"/>
+<wire x1="-0.635" y1="0" x2="3.175" y2="0" width="0.4064" layer="94"/>
+<wire x1="3.175" y1="0" x2="3.175" y2="0.635" width="0.4064" layer="94"/>
+<wire x1="3.175" y1="0.635" x2="-0.635" y2="0.635" width="0.4064" layer="94"/>
+<wire x1="-0.635" y1="0.635" x2="-0.635" y2="0" width="0.4064" layer="94"/>
+<text x="-1.27" y="0" size="1.778" layer="95" rot="R90">&gt;NAME</text>
+<text x="5.715" y="0" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
+<pin name="1" x="0" y="-2.54" visible="pad" length="short" direction="pas" rot="R90"/>
+<pin name="2" x="2.54" y="-2.54" visible="pad" length="short" direction="pas" rot="R90"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="JP1E" prefix="JP" uservalue="yes">
+<description>&lt;b&gt;JUMPER&lt;/b&gt;</description>
+<gates>
+<gate name="A" symbol="JP2E" x="2.54" y="0"/>
+</gates>
+<devices>
+<device name="" package="JP1">
+<connects>
+<connect gate="A" pin="1" pad="1"/>
+<connect gate="A" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -12624,11 +12774,9 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <part name="R8" library="resistor" deviceset="R-US_" device="R0805" value="10k"/>
 <part name="U$4" library="MyPOW" deviceset="+5V" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
-<part name="JP1" library="pinhead" deviceset="PINHD-1X2" device="" value="Anemometer Connect"/>
 <part name="D3" library="diode" deviceset="MBR0540" device=""/>
 <part name="D4" library="diode" deviceset="MBR0540" device=""/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
-<part name="JP2" library="pinhead" deviceset="PINHD-1X2" device="" value="PhotovoltaicCell Connect"/>
 <part name="U$2" library="MyPOW" deviceset="+5V" device=""/>
 <part name="D5" library="diode" deviceset="MBR0540" device=""/>
 <part name="D6" library="diode" deviceset="MBR0540" device=""/>
@@ -12649,12 +12797,15 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <part name="R11" library="resistor" deviceset="R-US_" device="R0805" value="1k"/>
 <part name="ON6" library="led" deviceset="LED" device="CHIPLED_0805" value="Yellow"/>
 <part name="X1" library="SparkFun" deviceset="USB" device="PTH"/>
+<part name="X2" library="con-molex" deviceset="5566-6" device=""/>
+<part name="JP1" library="jumper" deviceset="JP1E" device=""/>
 </parts>
 <sheets>
 <sheet>
 <plain>
 <text x="-165.1" y="-93.98" size="3.81" layer="94" ratio="10" rot="MR0">USB</text>
 <text x="142.24" y="-15.24" size="3.81" layer="94" ratio="10" rot="MR0">ATmega32U4</text>
+<text x="193.04" y="-27.94" size="1.778" layer="91">Photovolt</text>
 </plain>
 <instances>
 <instance part="ICSP" gate="A" x="71.12" y="-96.52" smashed="yes">
@@ -12724,11 +12875,9 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <instance part="R8" gate="G$1" x="-137.16" y="-99.06" rot="R90"/>
 <instance part="U$4" gate="G$1" x="71.12" y="-48.26"/>
 <instance part="GND1" gate="1" x="86.36" y="-101.6"/>
-<instance part="JP1" gate="G$1" x="205.74" y="-68.58" rot="R90"/>
 <instance part="D3" gate="G$1" x="195.58" y="-63.5" rot="R90"/>
 <instance part="D4" gate="G$1" x="195.58" y="-76.2" rot="R90"/>
 <instance part="GND3" gate="1" x="195.58" y="-86.36"/>
-<instance part="JP2" gate="G$1" x="205.74" y="-22.86" rot="R90"/>
 <instance part="U$2" gate="G$1" x="185.42" y="-10.16"/>
 <instance part="D5" gate="G$1" x="185.42" y="-17.78" rot="R90"/>
 <instance part="D6" gate="G$1" x="185.42" y="-35.56" rot="R90"/>
@@ -12749,6 +12898,13 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <instance part="R11" gate="G$1" x="177.8" y="-66.04" rot="R180"/>
 <instance part="ON6" gate="G$1" x="167.64" y="-66.04" rot="R270"/>
 <instance part="X1" gate="G$1" x="-152.4" y="-116.84" rot="R180"/>
+<instance part="X2" gate="-1" x="279.4" y="-58.42"/>
+<instance part="X2" gate="-2" x="208.28" y="-60.96"/>
+<instance part="X2" gate="-3" x="172.72" y="-22.86" rot="R90"/>
+<instance part="X2" gate="-4" x="279.4" y="-66.04"/>
+<instance part="X2" gate="-5" x="205.74" y="-71.12"/>
+<instance part="X2" gate="-6" x="182.88" y="-40.64" rot="R180"/>
+<instance part="JP1" gate="A" x="27.94" y="-30.48"/>
 </instances>
 <busses>
 </busses>
@@ -12797,8 +12953,7 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <wire x1="195.58" y1="-55.88" x2="205.74" y2="-55.88" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="-55.88" x2="205.74" y2="-50.8" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="-50.8" x2="223.52" y2="-50.8" width="0.1524" layer="91"/>
-<pinref part="JP1" gate="G$1" pin="2"/>
-<wire x1="205.74" y1="-55.88" x2="205.74" y2="-71.12" width="0.1524" layer="91"/>
+<wire x1="205.74" y1="-55.88" x2="205.74" y2="-60.96" width="0.1524" layer="91"/>
 <junction x="205.74" y="-55.88"/>
 <junction x="223.52" y="-50.8"/>
 <pinref part="R9" gate="G$1" pin="1"/>
@@ -12812,6 +12967,7 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <wire x1="187.96" y1="-66.04" x2="182.88" y2="-66.04" width="0.1524" layer="91"/>
 <junction x="187.96" y="-55.88"/>
 <junction x="187.96" y="-63.5"/>
+<pinref part="X2" gate="-2" pin="S"/>
 </segment>
 <segment>
 <pinref part="P+2" gate="1" pin="+5V"/>
@@ -12990,11 +13146,10 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <segment>
 <pinref part="D6" gate="G$1" pin="A"/>
 <pinref part="GND5" gate="1" pin="GND"/>
-<wire x1="185.42" y1="-38.1" x2="185.42" y2="-43.18" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="G$1" pin="2"/>
-<wire x1="205.74" y1="-25.4" x2="205.74" y2="-43.18" width="0.1524" layer="91"/>
-<wire x1="205.74" y1="-43.18" x2="185.42" y2="-43.18" width="0.1524" layer="91"/>
-<junction x="185.42" y="-43.18"/>
+<wire x1="185.42" y1="-38.1" x2="185.42" y2="-40.64" width="0.1524" layer="91"/>
+<pinref part="X2" gate="-6" pin="S"/>
+<wire x1="185.42" y1="-40.64" x2="185.42" y2="-43.18" width="0.1524" layer="91"/>
+<junction x="185.42" y="-40.64"/>
 </segment>
 <segment>
 <pinref part="S1" gate="S" pin="2"/>
@@ -13247,32 +13402,19 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <junction x="68.58" y="-99.06"/>
 </segment>
 </net>
-<net name="N$1" class="0">
-<segment>
-<pinref part="U2" gate="G$1" pin="(ICP1/ADC8)PD4"/>
-<wire x1="152.4" y1="-71.12" x2="195.58" y2="-71.12" width="0.1524" layer="91"/>
-<pinref part="JP1" gate="G$1" pin="1"/>
-<pinref part="D3" gate="G$1" pin="A"/>
-<wire x1="195.58" y1="-71.12" x2="203.2" y2="-71.12" width="0.1524" layer="91"/>
-<wire x1="195.58" y1="-66.04" x2="195.58" y2="-71.12" width="0.1524" layer="91"/>
-<pinref part="D4" gate="G$1" pin="C"/>
-<wire x1="195.58" y1="-71.12" x2="195.58" y2="-73.66" width="0.1524" layer="91"/>
-<junction x="195.58" y="-71.12"/>
-<junction x="152.4" y="-71.12"/>
-</segment>
-</net>
 <net name="N$4" class="0">
 <segment>
-<wire x1="152.4" y1="-25.4" x2="185.42" y2="-25.4" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="G$1" pin="1"/>
+<wire x1="152.4" y1="-25.4" x2="172.72" y2="-25.4" width="0.1524" layer="91"/>
 <pinref part="D5" gate="G$1" pin="A"/>
-<wire x1="185.42" y1="-25.4" x2="203.2" y2="-25.4" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="-25.4" x2="185.42" y2="-25.4" width="0.1524" layer="91"/>
 <wire x1="185.42" y1="-20.32" x2="185.42" y2="-25.4" width="0.1524" layer="91"/>
 <pinref part="D6" gate="G$1" pin="C"/>
 <wire x1="185.42" y1="-25.4" x2="185.42" y2="-33.02" width="0.1524" layer="91"/>
 <junction x="185.42" y="-25.4"/>
 <pinref part="U2" gate="G$1" pin="(PCINT6/OC1B/OC4B/ADC13)PB6"/>
 <junction x="152.4" y="-25.4"/>
+<pinref part="X2" gate="-3" pin="S"/>
+<junction x="172.72" y="-25.4"/>
 </segment>
 </net>
 <net name="N$7" class="0">
@@ -13373,14 +13515,6 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <wire x1="172.72" y1="-55.88" x2="170.18" y2="-55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="RF_TRANSCEIVER_CONNECTED_OK" class="0">
-<segment>
-<pinref part="ON4" gate="G$1" pin="C"/>
-<pinref part="U2" gate="G$1" pin="(INT6/AIN0)PE6"/>
-<wire x1="162.56" y1="-55.88" x2="152.4" y2="-55.88" width="0.1524" layer="91"/>
-<label x="157.48" y="-53.34" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="N$12" class="0">
 <segment>
 <pinref part="R10" gate="G$1" pin="2"/>
@@ -13391,8 +13525,13 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <net name="TX_LED" class="0">
 <segment>
 <pinref part="ON5" gate="G$1" pin="C"/>
-<wire x1="162.56" y1="-63.5" x2="152.4" y2="-63.5" width="0.1524" layer="91"/>
+<wire x1="162.56" y1="-63.5" x2="160.02" y2="-63.5" width="0.1524" layer="91"/>
 <label x="154.94" y="-63.5" size="1.778" layer="95"/>
+<pinref part="U2" gate="G$1" pin="(SDA/INT1)PD1"/>
+<wire x1="152.4" y1="-78.74" x2="160.02" y2="-78.74" width="0.1524" layer="91"/>
+<wire x1="160.02" y1="-78.74" x2="160.02" y2="-71.12" width="0.1524" layer="91" curve="180"/>
+<wire x1="160.02" y1="-63.5" x2="160.02" y2="-71.12" width="0.1524" layer="91"/>
+<junction x="152.4" y="-78.74"/>
 </segment>
 </net>
 <net name="N$14" class="0">
@@ -13405,8 +13544,41 @@ Button commonly used for reset or general input. Spark Fun Electronics SKU : COM
 <net name="RX_LED" class="0">
 <segment>
 <pinref part="ON6" gate="G$1" pin="C"/>
-<wire x1="162.56" y1="-66.04" x2="152.4" y2="-66.04" width="0.1524" layer="91"/>
 <label x="154.94" y="-68.58" size="1.778" layer="95"/>
+<pinref part="U2" gate="G$1" pin="(OC0B/SCL/INT0)PD0"/>
+<wire x1="152.4" y1="-81.28" x2="162.56" y2="-81.28" width="0.1524" layer="91"/>
+<wire x1="162.56" y1="-81.28" x2="162.56" y2="-78.74" width="0.1524" layer="91"/>
+<wire x1="162.56" y1="-78.74" x2="162.56" y2="-71.12" width="0.1524" layer="91" curve="180"/>
+<wire x1="162.56" y1="-71.12" x2="162.56" y2="-66.04" width="0.1524" layer="91"/>
+<junction x="152.4" y="-81.28"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<wire x1="193.04" y1="-53.34" x2="193.04" y2="-58.42" width="0.1524" layer="91" curve="180"/>
+<pinref part="U2" gate="G$1" pin="(ICP3/CLK0/OC4A)PC7"/>
+<wire x1="152.4" y1="-48.26" x2="193.04" y2="-48.26" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="-53.34" x2="193.04" y2="-48.26" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="-58.42" x2="193.04" y2="-71.12" width="0.1524" layer="91"/>
+<pinref part="D3" gate="G$1" pin="A"/>
+<wire x1="195.58" y1="-71.12" x2="203.2" y2="-71.12" width="0.1524" layer="91"/>
+<wire x1="195.58" y1="-66.04" x2="195.58" y2="-71.12" width="0.1524" layer="91"/>
+<pinref part="D4" gate="G$1" pin="C"/>
+<wire x1="195.58" y1="-71.12" x2="195.58" y2="-73.66" width="0.1524" layer="91"/>
+<junction x="195.58" y="-71.12"/>
+<wire x1="193.04" y1="-71.12" x2="195.58" y2="-71.12" width="0.1524" layer="91"/>
+<junction x="152.4" y="-48.26"/>
+<pinref part="X2" gate="-5" pin="S"/>
+</segment>
+</net>
+<net name="N$13" class="0">
+<segment>
+<pinref part="U2" gate="G$1" pin="(#HWB)PE2"/>
+<wire x1="152.4" y1="-58.42" x2="157.48" y2="-58.42" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="-58.42" x2="157.48" y2="-55.88" width="0.1524" layer="91"/>
+<pinref part="ON4" gate="G$1" pin="C"/>
+<wire x1="157.48" y1="-55.88" x2="162.56" y2="-55.88" width="0.1524" layer="91"/>
+<junction x="152.4" y="-58.42"/>
 </segment>
 </net>
 </nets>
