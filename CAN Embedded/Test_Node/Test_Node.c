@@ -31,12 +31,23 @@ int main(void)
     u8g_setup();
 	uart_puts("LCD Initialised\n");
 
+	// Init LCD Backlight
+	Timer1_init();
+	OCR1A = 14;
+
+	// HACK
+	// LCD SCKCTL Output
+	LCD_SCKCTL_DDR |= (1<<LCD_SCKCTL);
+
+
+	// /HACK
+
 
     uart_puts("\nHello! CAN Test node has booted!! :D\n");
     uart_puts("-------------------------------------\n");
 
     // Create Terminal State
-    uint8_t Terminal_state = TERMINAL_INIT;
+    uint8_t Terminal_state = TERMINAL_LISTEN;
     // Init the Terminal
     Terminal_init();
 
@@ -70,7 +81,9 @@ int main(void)
     	    	if(rx_status == CAN_MSGAVAIL){
     	    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
 
+    	    		LCD_SELECT();
     	    		GFX_LCD_Draw(&message);
+    	    		LCD_UNSELECT();
     	    		// sends the message on the CAN interface.
     	    		uart_SendCANMsg(&message);
     	    	}
