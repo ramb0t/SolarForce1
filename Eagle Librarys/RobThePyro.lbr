@@ -1267,10 +1267,10 @@ B82144, manufacturer Siemens</description>
 <wire x1="15.24" y1="7.62" x2="15.24" y2="-7.62" width="0.254" layer="94"/>
 <wire x1="15.24" y1="-7.62" x2="-15.24" y2="-7.62" width="0.254" layer="94"/>
 <wire x1="-15.24" y1="-7.62" x2="-15.24" y2="7.62" width="0.254" layer="94"/>
-<pin name="VIN" x="-20.32" y="5.08" length="middle"/>
-<pin name="GND" x="-20.32" y="-5.08" length="middle"/>
-<pin name="VOUT" x="20.32" y="5.08" length="middle" rot="R180"/>
-<pin name="GND@1" x="20.32" y="-5.08" length="middle" rot="R180"/>
+<pin name="VIN" x="-20.32" y="5.08" visible="pin" length="middle"/>
+<pin name="GND" x="-20.32" y="-5.08" visible="pin" length="middle"/>
+<pin name="VOUT" x="20.32" y="5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="GND@1" x="20.32" y="-5.08" visible="pin" length="middle" rot="R180"/>
 <text x="-15.24" y="8.128" size="1.27" layer="95">&gt;Name</text>
 <text x="-15.24" y="-9.398" size="1.27" layer="96">&gt;Value</text>
 </symbol>
@@ -1280,26 +1280,26 @@ B82144, manufacturer Siemens</description>
 <wire x1="-15.24" y1="-20.32" x2="15.24" y2="-20.32" width="0.254" layer="94"/>
 <wire x1="15.24" y1="-20.32" x2="15.24" y2="22.86" width="0.254" layer="94"/>
 <wire x1="15.24" y1="22.86" x2="-15.24" y2="22.86" width="0.254" layer="94"/>
-<pin name="VSS" x="-20.32" y="17.78" length="middle"/>
-<pin name="VDD" x="-20.32" y="20.32" length="middle"/>
-<pin name="V0" x="-20.32" y="12.7" length="middle"/>
-<pin name="CS/RS" x="-20.32" y="5.08" length="middle"/>
-<pin name="MOSI/RW" x="-20.32" y="2.54" length="middle"/>
-<pin name="SCK/E" x="-20.32" y="0" length="middle"/>
-<pin name="DB0" x="20.32" y="12.7" length="middle" rot="R180"/>
-<pin name="DB1" x="20.32" y="10.16" length="middle" rot="R180"/>
-<pin name="DB2" x="20.32" y="7.62" length="middle" rot="R180"/>
-<pin name="DB3" x="20.32" y="5.08" length="middle" rot="R180"/>
-<pin name="DB4" x="20.32" y="2.54" length="middle" rot="R180"/>
-<pin name="DB5" x="20.32" y="0" length="middle" rot="R180"/>
-<pin name="DB6" x="20.32" y="-2.54" length="middle" rot="R180"/>
-<pin name="DB7" x="20.32" y="-5.08" length="middle" rot="R180"/>
-<pin name="PSB" x="-20.32" y="-5.08" length="middle"/>
-<pin name="NC" x="20.32" y="-17.78" length="middle" rot="R180"/>
-<pin name="!RST" x="-20.32" y="-7.62" length="middle"/>
-<pin name="VDBL" x="20.32" y="-15.24" length="middle" rot="R180"/>
-<pin name="A+" x="-20.32" y="-15.24" length="middle"/>
-<pin name="K-" x="-20.32" y="-17.78" length="middle"/>
+<pin name="VSS" x="-20.32" y="17.78" visible="pin" length="middle"/>
+<pin name="VDD" x="-20.32" y="20.32" visible="pin" length="middle"/>
+<pin name="V0" x="-20.32" y="12.7" visible="pin" length="middle"/>
+<pin name="CS/RS" x="-20.32" y="5.08" visible="pin" length="middle"/>
+<pin name="MOSI/RW" x="-20.32" y="2.54" visible="pin" length="middle"/>
+<pin name="SCK/E" x="-20.32" y="0" visible="pin" length="middle"/>
+<pin name="DB0" x="20.32" y="12.7" visible="pin" length="middle" rot="R180"/>
+<pin name="DB1" x="20.32" y="10.16" visible="pin" length="middle" rot="R180"/>
+<pin name="DB2" x="20.32" y="7.62" visible="pin" length="middle" rot="R180"/>
+<pin name="DB3" x="20.32" y="5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="DB4" x="20.32" y="2.54" visible="pin" length="middle" rot="R180"/>
+<pin name="DB5" x="20.32" y="0" visible="pin" length="middle" rot="R180"/>
+<pin name="DB6" x="20.32" y="-2.54" visible="pin" length="middle" rot="R180"/>
+<pin name="DB7" x="20.32" y="-5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="PSB" x="-20.32" y="-5.08" visible="pin" length="middle"/>
+<pin name="NC" x="20.32" y="-17.78" visible="pin" length="middle" rot="R180"/>
+<pin name="!RST" x="-20.32" y="-7.62" visible="pin" length="middle"/>
+<pin name="VDBL" x="20.32" y="-15.24" visible="pin" length="middle" rot="R180"/>
+<pin name="A+" x="-20.32" y="-15.24" visible="pin" length="middle"/>
+<pin name="K-" x="-20.32" y="-17.78" visible="pin" length="middle"/>
 <text x="-15.24" y="23.622" size="1.27" layer="95">&gt;Name</text>
 <text x="-15.24" y="-22.606" size="1.27" layer="96">&gt;Value</text>
 <text x="0" y="20.32" size="1.27" layer="95">ST7920 LCD</text>

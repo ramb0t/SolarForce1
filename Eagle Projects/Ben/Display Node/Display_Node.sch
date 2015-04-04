@@ -7139,6 +7139,51 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <text x="-6.0579" y="-3.81" size="1.778" layer="25" ratio="10" rot="R90">&gt;NAME</text>
 <text x="7.9121" y="-3.81" size="1.778" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
 </package>
+<package name="BYT12864F">
+<wire x1="0" y1="0" x2="93" y2="0" width="0.127" layer="21"/>
+<wire x1="93" y1="0" x2="93" y2="70" width="0.127" layer="21"/>
+<wire x1="93" y1="70" x2="0" y2="70" width="0.127" layer="21"/>
+<wire x1="0" y1="70" x2="0" y2="0" width="0.127" layer="21"/>
+<hole x="3" y="3" drill="3"/>
+<hole x="90" y="3" drill="3"/>
+<hole x="90" y="67" drill="3"/>
+<hole x="3" y="67" drill="3"/>
+<pad name="P$1" x="14" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$2" x="16.54" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$3" x="19.08" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$4" x="21.62" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$5" x="24.16" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$6" x="26.7" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$7" x="29.24" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$8" x="31.78" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$9" x="34.32" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$10" x="36.86" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$11" x="39.4" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$12" x="41.94" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$13" x="44.48" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$14" x="47.02" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$15" x="49.56" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$16" x="52.1" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$17" x="54.64" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$18" x="57.18" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$19" x="59.72" y="2" drill="0.8" shape="offset" rot="R270"/>
+<pad name="P$20" x="62.26" y="2" drill="0.8" shape="offset" rot="R270"/>
+<wire x1="7.35" y1="9.5" x2="7.35" y2="60.5" width="0.127" layer="21"/>
+<wire x1="7.35" y1="60.5" x2="85.65" y2="60.5" width="0.127" layer="21"/>
+<wire x1="85.65" y1="60.5" x2="85.65" y2="9.5" width="0.127" layer="21"/>
+<wire x1="85.65" y1="9.5" x2="7.35" y2="9.5" width="0.127" layer="21"/>
+<polygon width="0.127" layer="21" pour="hatch">
+<vertex x="10.5" y="15"/>
+<vertex x="10.5" y="55"/>
+<vertex x="82.5" y="55"/>
+<vertex x="82.5" y="15"/>
+</polygon>
+<text x="0.05" y="70.6" size="1.27" layer="25">&gt;Name</text>
+<text x="0.35" y="-1.65" size="1.27" layer="27">&gt;Value</text>
+<text x="7.15" y="66.6" size="1.27" layer="21">BYT12864F GFX LCD</text>
+<text x="64" y="1.3" size="1.27" layer="21">1</text>
+<text x="10.6" y="1.1" size="1.27" layer="21">20</text>
+</package>
 <package name="SMPSBOARD">
 <wire x1="0" y1="0" x2="0" y2="20" width="0.127" layer="21"/>
 <wire x1="0" y1="20" x2="44" y2="20" width="0.127" layer="21"/>
@@ -7192,16 +7237,46 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <text x="2.54" y="-7.62" size="1.4224" layer="95" rot="R90">VSS</text>
 <text x="2.54" y="2.54" size="1.4224" layer="95" rot="R90">VDD</text>
 </symbol>
+<symbol name="ST7920LCD">
+<description>ST7920 / BYT12864F Based GFX LCD</description>
+<wire x1="-15.24" y1="22.86" x2="-15.24" y2="-20.32" width="0.254" layer="94"/>
+<wire x1="-15.24" y1="-20.32" x2="15.24" y2="-20.32" width="0.254" layer="94"/>
+<wire x1="15.24" y1="-20.32" x2="15.24" y2="22.86" width="0.254" layer="94"/>
+<wire x1="15.24" y1="22.86" x2="-15.24" y2="22.86" width="0.254" layer="94"/>
+<pin name="VSS" x="-20.32" y="17.78" visible="pin" length="middle"/>
+<pin name="VDD" x="-20.32" y="20.32" visible="pin" length="middle"/>
+<pin name="V0" x="-20.32" y="12.7" visible="pin" length="middle"/>
+<pin name="CS/RS" x="-20.32" y="5.08" visible="pin" length="middle"/>
+<pin name="MOSI/RW" x="-20.32" y="2.54" visible="pin" length="middle"/>
+<pin name="SCK/E" x="-20.32" y="0" visible="pin" length="middle"/>
+<pin name="DB0" x="20.32" y="12.7" visible="pin" length="middle" rot="R180"/>
+<pin name="DB1" x="20.32" y="10.16" visible="pin" length="middle" rot="R180"/>
+<pin name="DB2" x="20.32" y="7.62" visible="pin" length="middle" rot="R180"/>
+<pin name="DB3" x="20.32" y="5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="DB4" x="20.32" y="2.54" visible="pin" length="middle" rot="R180"/>
+<pin name="DB5" x="20.32" y="0" visible="pin" length="middle" rot="R180"/>
+<pin name="DB6" x="20.32" y="-2.54" visible="pin" length="middle" rot="R180"/>
+<pin name="DB7" x="20.32" y="-5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="PSB" x="-20.32" y="-5.08" visible="pin" length="middle"/>
+<pin name="NC" x="20.32" y="-17.78" visible="pin" length="middle" rot="R180"/>
+<pin name="!RST" x="-20.32" y="-7.62" visible="pin" length="middle"/>
+<pin name="VDBL" x="20.32" y="-15.24" visible="pin" length="middle" rot="R180"/>
+<pin name="A+" x="-20.32" y="-15.24" visible="pin" length="middle"/>
+<pin name="K-" x="-20.32" y="-17.78" visible="pin" length="middle"/>
+<text x="-15.24" y="23.622" size="1.27" layer="95">&gt;Name</text>
+<text x="-15.24" y="-22.606" size="1.27" layer="96">&gt;Value</text>
+<text x="0" y="20.32" size="1.27" layer="95">ST7920 LCD</text>
+</symbol>
 <symbol name="SMPSBOARD">
 <description>LM2596 Or MP2307 Based SMPS Regulator</description>
 <wire x1="-15.24" y1="7.62" x2="15.24" y2="7.62" width="0.254" layer="94"/>
 <wire x1="15.24" y1="7.62" x2="15.24" y2="-7.62" width="0.254" layer="94"/>
 <wire x1="15.24" y1="-7.62" x2="-15.24" y2="-7.62" width="0.254" layer="94"/>
 <wire x1="-15.24" y1="-7.62" x2="-15.24" y2="7.62" width="0.254" layer="94"/>
-<pin name="VIN" x="-20.32" y="5.08" length="middle"/>
-<pin name="GND" x="-20.32" y="-5.08" length="middle"/>
-<pin name="VOUT" x="20.32" y="5.08" length="middle" rot="R180"/>
-<pin name="GND@1" x="20.32" y="-5.08" length="middle" rot="R180"/>
+<pin name="VIN" x="-20.32" y="5.08" visible="pin" length="middle"/>
+<pin name="GND" x="-20.32" y="-5.08" visible="pin" length="middle"/>
+<pin name="VOUT" x="20.32" y="5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="GND@1" x="20.32" y="-5.08" visible="pin" length="middle" rot="R180"/>
 <text x="-15.24" y="8.128" size="1.27" layer="95">&gt;Name</text>
 <text x="-15.24" y="-9.398" size="1.27" layer="96">&gt;Value</text>
 </symbol>
@@ -7284,6 +7359,41 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <connect gate="G$1" pin="TXCAN" pad="1"/>
 <connect gate="G$2" pin="VDD" pad="18"/>
 <connect gate="G$2" pin="VSS" pad="9"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="BYT12864FLCD">
+<description>ST7920 / BYT12864F Based GFX LCD</description>
+<gates>
+<gate name="G$1" symbol="ST7920LCD" x="7.62" y="7.62"/>
+</gates>
+<devices>
+<device name="" package="BYT12864F">
+<connects>
+<connect gate="G$1" pin="!RST" pad="P$4"/>
+<connect gate="G$1" pin="A+" pad="P$2"/>
+<connect gate="G$1" pin="CS/RS" pad="P$17"/>
+<connect gate="G$1" pin="DB0" pad="P$14"/>
+<connect gate="G$1" pin="DB1" pad="P$13"/>
+<connect gate="G$1" pin="DB2" pad="P$12"/>
+<connect gate="G$1" pin="DB3" pad="P$11"/>
+<connect gate="G$1" pin="DB4" pad="P$10"/>
+<connect gate="G$1" pin="DB5" pad="P$9"/>
+<connect gate="G$1" pin="DB6" pad="P$8"/>
+<connect gate="G$1" pin="DB7" pad="P$7"/>
+<connect gate="G$1" pin="K-" pad="P$1"/>
+<connect gate="G$1" pin="MOSI/RW" pad="P$16"/>
+<connect gate="G$1" pin="NC" pad="P$5"/>
+<connect gate="G$1" pin="PSB" pad="P$6"/>
+<connect gate="G$1" pin="SCK/E" pad="P$15"/>
+<connect gate="G$1" pin="V0" pad="P$18"/>
+<connect gate="G$1" pin="VDBL" pad="P$3"/>
+<connect gate="G$1" pin="VDD" pad="P$19"/>
+<connect gate="G$1" pin="VSS" pad="P$20"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -10144,6 +10254,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="Z1" library="supressor" deviceset="TVS-UD-" device="SOD323"/>
 <part name="Z2" library="supressor" deviceset="TVS-UD-" device="SOD323"/>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
+<part name="U$3" library="RobThePyro" deviceset="BYT12864FLCD" device=""/>
 <part name="U$2" library="RobThePyro" deviceset="SMPSBOARD" device=""/>
 </parts>
 <sheets>
@@ -10202,7 +10313,8 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <instance part="Z1" gate="G$1" x="175.26" y="-93.98" rot="R90"/>
 <instance part="Z2" gate="G$1" x="180.34" y="-93.98" rot="R90"/>
 <instance part="GND10" gate="1" x="177.8" y="-101.6"/>
-<instance part="U$2" gate="G$1" x="-35.56" y="-25.4"/>
+<instance part="U$3" gate="G$1" x="139.7" y="60.96"/>
+<instance part="U$2" gate="G$1" x="-30.48" y="-20.32"/>
 </instances>
 <busses>
 </busses>
