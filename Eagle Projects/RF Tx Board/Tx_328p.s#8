@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.2.0">
+<eagle version="6.3">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -14164,6 +14164,13 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="S1" library="switch" deviceset="SKHMP*E010" device="" technology="S"/>
 <part name="RESET" library="SparkFun-Retired" deviceset="TAC_SWITCH" device="SMD" value="TAC_SWITCHSMD"/>
+<part name="VCC" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="GND" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="GND_2" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="VIN" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="GND16" library="supply1" deviceset="GND" device=""/>
+<part name="GND17" library="supply1" deviceset="GND" device=""/>
+<part name="P+13" library="supply1" deviceset="VCC" device=""/>
 <part name="U$1" library="RobThePyro" deviceset="MCP2515" device="SO"/>
 <part name="U2" library="SparkFun" deviceset="MCP2551" device=""/>
 <part name="P+9" library="supply1" deviceset="+5V" device=""/>
@@ -14190,13 +14197,6 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="Z1" library="supressor" deviceset="TVS-UD-" device="SOD323"/>
 <part name="Z2" library="supressor" deviceset="TVS-UD-" device="SOD323"/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
-<part name="VCC" library="pinhead" deviceset="PINHD-1X1" device=""/>
-<part name="GND" library="pinhead" deviceset="PINHD-1X1" device=""/>
-<part name="GND_2" library="pinhead" deviceset="PINHD-1X1" device=""/>
-<part name="VIN" library="pinhead" deviceset="PINHD-1X1" device=""/>
-<part name="GND16" library="supply1" deviceset="GND" device=""/>
-<part name="GND17" library="supply1" deviceset="GND" device=""/>
-<part name="P+13" library="supply1" deviceset="VCC" device=""/>
 </parts>
 <sheets>
 <sheet>

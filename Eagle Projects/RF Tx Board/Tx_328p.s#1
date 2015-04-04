@@ -14982,14 +14982,14 @@ Programming header</text>
 <junction x="185.42" y="-48.26"/>
 </segment>
 <segment>
-<wire x1="147.32" y1="-10.16" x2="147.32" y2="-17.78" width="0.1524" layer="91"/>
-<label x="147.32" y="-22.86" size="1.778" layer="95" rot="R90"/>
-<pinref part="X1" gate="-3" pin="S"/>
+<wire x1="142.24" y1="-10.16" x2="142.24" y2="-17.78" width="0.1524" layer="91"/>
+<label x="142.24" y="-22.86" size="1.778" layer="95" rot="R90"/>
+<pinref part="X1" gate="-1" pin="S"/>
 </segment>
 <segment>
-<wire x1="175.26" y1="-10.16" x2="175.26" y2="-17.78" width="0.1524" layer="91"/>
-<label x="175.26" y="-22.86" size="1.778" layer="95" rot="R90"/>
-<pinref part="X2" gate="-3" pin="S"/>
+<wire x1="170.18" y1="-10.16" x2="170.18" y2="-17.78" width="0.1524" layer="91"/>
+<label x="170.18" y="-22.86" size="1.778" layer="95" rot="R90"/>
+<pinref part="X2" gate="-1" pin="S"/>
 </segment>
 </net>
 <net name="CANL" class="0">
@@ -15042,18 +15042,18 @@ Programming header</text>
 </net>
 <net name="VIN" class="0">
 <segment>
-<wire x1="142.24" y1="-10.16" x2="142.24" y2="-17.78" width="0.1524" layer="91"/>
-<label x="142.24" y="-22.86" size="1.778" layer="95" rot="R90"/>
-<pinref part="X1" gate="-1" pin="S"/>
-</segment>
-<segment>
 <pinref part="U$2" gate="G$1" pin="VIN"/>
 <wire x1="96.52" y1="147.32" x2="91.44" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<wire x1="170.18" y1="-10.16" x2="170.18" y2="-17.78" width="0.1524" layer="91"/>
-<label x="170.18" y="-22.86" size="1.778" layer="95" rot="R90"/>
-<pinref part="X2" gate="-1" pin="S"/>
+<wire x1="147.32" y1="-10.16" x2="147.32" y2="-17.78" width="0.1524" layer="91"/>
+<label x="147.32" y="-22.86" size="1.778" layer="95" rot="R90"/>
+<pinref part="X1" gate="-3" pin="S"/>
+</segment>
+<segment>
+<wire x1="175.26" y1="-10.16" x2="175.26" y2="-17.78" width="0.1524" layer="91"/>
+<label x="175.26" y="-22.86" size="1.778" layer="95" rot="R90"/>
+<pinref part="X2" gate="-3" pin="S"/>
 </segment>
 </net>
 <net name="N$20" class="0">
