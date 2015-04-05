@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.2.0">
+<eagle version="7.1.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -12881,7 +12881,7 @@ Source: http://www.molex.com</description>
 <instance part="X2" gate="-5" x="215.9" y="-71.12"/>
 <instance part="X2" gate="-6" x="182.88" y="-40.64" rot="R180"/>
 <instance part="JP1" gate="A" x="27.94" y="-30.48"/>
-<instance part="U$1" gate="G$1" x="182.88" y="-78.74"/>
+<instance part="U$1" gate="G$1" x="180.34" y="-78.74"/>
 <instance part="U$3" gate="G$1" x="175.26" y="-71.12"/>
 <instance part="GND10" gate="1" x="175.26" y="-86.36"/>
 <instance part="R13" gate="G$1" x="193.04" y="-25.4" rot="R180"/>
@@ -12987,7 +12987,6 @@ Source: http://www.molex.com</description>
 <segment>
 <pinref part="U$1" gate="G$1" pin="P$4"/>
 <pinref part="U$3" gate="G$1" pin="+5V"/>
-<wire x1="177.8" y1="-76.2" x2="175.26" y2="-76.2" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="-76.2" x2="175.26" y2="-73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -13144,7 +13143,6 @@ Source: http://www.molex.com</description>
 <segment>
 <pinref part="U$1" gate="G$1" pin="P$1"/>
 <pinref part="GND10" gate="1" pin="GND"/>
-<wire x1="177.8" y1="-83.82" x2="175.26" y2="-83.82" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AREF" class="4">
@@ -13381,7 +13379,7 @@ Source: http://www.molex.com</description>
 <junction x="152.4" y="-76.2"/>
 <wire x1="170.18" y1="-76.2" x2="170.18" y2="-81.28" width="0.1524" layer="91"/>
 <pinref part="U$1" gate="G$1" pin="P$2"/>
-<wire x1="170.18" y1="-81.28" x2="177.8" y2="-81.28" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="-81.28" x2="175.26" y2="-81.28" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$8" class="0">
@@ -13390,7 +13388,7 @@ Source: http://www.molex.com</description>
 <wire x1="152.4" y1="-73.66" x2="172.72" y2="-73.66" width="0.1524" layer="91"/>
 <junction x="152.4" y="-73.66"/>
 <pinref part="U$1" gate="G$1" pin="P$3"/>
-<wire x1="177.8" y1="-78.74" x2="172.72" y2="-78.74" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="-78.74" x2="172.72" y2="-78.74" width="0.1524" layer="91"/>
 <wire x1="172.72" y1="-78.74" x2="172.72" y2="-73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -13575,6 +13573,7 @@ Source: http://www.molex.com</description>
 <pinref part="C10" gate="G$1" pin="1"/>
 <wire x1="172.72" y1="-25.4" x2="172.72" y2="-30.48" width="0.1524" layer="91"/>
 <junction x="172.72" y="-25.4"/>
+<junction x="152.4" y="-25.4"/>
 </segment>
 </net>
 <net name="N$4" class="0">
