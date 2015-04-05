@@ -349,6 +349,7 @@ UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/KIS-3R33S.lb
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/TI_MSP430_v16.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/ftdichip-3.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Apps/CircuitHub/parts/eagle/CircuitHub.lbr"
+UsedLibrary="E:/Users/RobThePyro/Docs/GitHub/SolarForce1/Eagle Librarys/con-TE-EP.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/Adafruit/adafruit.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/adafruit-Adafruit-Eagle-Library-2a72a48/adafruit.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/Eagle-Libraries-master/adafruit.lbr"
@@ -814,7 +815,6 @@ UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/SparkFun-Eag
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/SparkFun-Eagle-Libraries-master/User-Submitted.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/sparkfun-SparkFun-Eagle-Library-683dd3d/LilyPad-Wearables.lbr"
 UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/sparkfun-SparkFun-Eagle-Library-683dd3d/SparkFun.lbr"
-UsedLibrary="E:/Users/RobThePyro/Docs/GitHub/SolarForce1/Eagle Librarys/con-TE-EP.lbr"
 
 [Win_1]
 Type="Control Panel"
