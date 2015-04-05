@@ -74,17 +74,17 @@ int main (void)
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 		
-		//if(TIFR0 &(1<<TOV0))
-		//{
-			//if (ctr2 == 15)
-			//{
+		if(TIFR0 &(1<<TOV0))
+		{
+			if (ctr2 == 15)
+			{
 			ctr2=0;
 			uart_puts("\n------------GPS start----------\n");
 			GPS_readData();
 			uart_puts("\n------------GPS done----------\n");
 			TIFR0 = (0<<TOV0);
-			//}else ctr2++;
-		//}
+			}else ctr2++;
+		}
 
 		//CAN_readData();
 		
@@ -116,7 +116,7 @@ void GPS_readData()
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
 	*/
-				
+		uint8_t parseDone = 0;		
 		char NMEA[70];
 		unsigned int z=0;
 		unsigned int lgth=0;
@@ -131,61 +131,48 @@ void GPS_readData()
 		
 				if(DEBUG)
 				{
-					//sample another char!
-					//for (int i=0;i<62;i++)
-					//{
 						gpsdata = uart_getc();
-						if (gpsdata != '$')
+						while (gpsdata != '$')
 						{
+							gpsdata = uart_getc();							
 							uart_putc(gpsdata);
 							uart_puts("Invalid GPS data!");
-							uart_flush();
 						}
-						else{
-						for(ctr=0;ctr<63;ctr++)
-						{
-							gpsdata = uart_getc();	//store char in NMEA buffer
-
-							if (gpsdata != '\n')
+						
+							while (gpsdata != '\n')
 							{
-								//NMEA[ctr]=gpsdata;
+								gpsdata = uart_getc();	//store char in NMEA buffer
 								strcat(NMEA[ctr],gpsdata);
-								//if (uart_available()>0)
-								//{
-								//uart_putc(gpsdata);		//print to UART
-								//uart_puts("<CTR>:");
-								//uart_putc(atoi(ctr));
-								//}
-								//if (ctr == 63){break;}
-							}							
-						}
-						uart_puts(NMEA);
+							}
+							uart_puts(NMEA);				//print raw NMEA data
+
+							//PARSE TIME: hhmmss.ss
+							uart_puts("Time: ");
+							//hour
+							for(int i=0;i<2;i++)
+							{
+								uart_putc(NMEA[i]);
+							}
+							//minute
+							uart_puts("h:");
+							for(int i=2;i<4;i++)
+							{
+								uart_putc(NMEA[i]);
+							}
+							uart_puts(": ");
+							for(int i=4;i<6;i++)
+							{
+								uart_putc(NMEA[i]);
+							}
+							parseDone==1;
 						
-						//PARSE TIME: hhmmss.ss
-						uart_puts("Time: ");
-						//hour
-						for(int i=6;i<8;i++)					
-						{	
-							uart_putc(NMEA[i]);
-						}
-						//minute
-						uart_puts("h:");
-						for(int i=8;i<10;i++)
-						{
-							uart_putc(NMEA[i]);
-						}
-						uart_puts(": ");
-						for(int i=10;i<12;i++)
-						{
-							uart_putc(NMEA[i]);
-						}
-						
-						
-						
-						}
 					
 
+						
 				}
+					
+
+				
 				//gpsdata = uart_getc();
 				//if(gpsdata != '\0')				//getting GPRMC data only
 				//{
