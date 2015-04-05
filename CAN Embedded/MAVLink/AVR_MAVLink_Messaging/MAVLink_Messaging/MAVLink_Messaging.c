@@ -72,18 +72,25 @@ int main (void)
 //---------------Operational Loop---------------------//
 	
 	while(1) {
-		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
+		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 		
-		GPS_readData(void);
-		CAN_readData(void);
+		if(TIFR0 &(1<<TOV0))
+		{
+			if (ctr2 == 15)
+			{
+			ctr2=0;
+			uart_puts("\n------------GPS start----------\n");
+			GPS_readData();
+			uart_puts("\n------------GPS done----------\n");
+			TIFR0 = (0<<TOV0);
+			}else ctr2++;
+		}
+
+		//CAN_readData();
 		
-		MAV_msg_pack();
+		//MAV_msg_pack();
 		
-		//if(TIFR0 &(1<<TOV0))
-		//{
-			//MAV_hb();
-			//TIFR0 = (0<<TOV0);
-		//}
+
 	}
 	return 0;
 
@@ -109,62 +116,104 @@ void GPS_readData()
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
 	*/
-				
-		char NMEA[100];
+		uint8_t parseDone = 0;		
+		char NMEA[70];
 		unsigned int z=0;
 		unsigned int lgth=0;
 		unsigned int ctr = 0;
 		char gpsdata;
 
 
-		uart_puts("\n---------GPS DATA---------\n");
+		//uart_puts("\n---------GPS DATA---------\n");
 			
 				
-		uart_puts("GPS Ready");
-		while (!(UCSR0A & (1<<RXC0)))	//is there anything in buffer?
-		{	
-			gpsdata = uart_getc();		
-			if(gpsdata != '\0')				//getting GPRMC data only
-			{
-				NMEA[z] = gpsdata;				//add to char array if not EOL
-				z++;
-			}else lgth=z; break;				//store string length
-		}
-															////check each char for $GPRMC
-
-		if(DEBUG)
-		{
-			uart_putc(lgth);
-			uart_putc(z);
-		}
-
-		z=0;
+		//uart_puts("GPS Ready");
 		
-		while(NMEA[z]!='$' && z<62)			//search the string for '$'
-		{
-				z++;
-			if(DEBUG)
-			{
-				if(NMEA[z]=='$')
+				if(DEBUG)
 				{
-					uart_puts("Got$");
-					if (NMEA[z+1]=="G")
-					{
-						uart_puts("GotG");
-					}
-					break;
-				}
-				break;
-			}
+						gpsdata = uart_getc();
+						while (gpsdata != '$')
+						{
+							gpsdata = uart_getc();							
+							uart_putc(gpsdata);
+							uart_puts("Invalid GPS data!");
+						}
+						
+							while (gpsdata != '\n')
+							{
+								gpsdata = uart_getc();	//store char in NMEA buffer
+								strcat(NMEA[ctr],gpsdata);
+							}
+							uart_puts(NMEA);				//print raw NMEA data
+
+							//PARSE TIME: hhmmss.ss
+							uart_puts("Time: ");
+							//hour
+							for(int i=0;i<2;i++)
+							{
+								uart_putc(NMEA[i]);
+							}
+							//minute
+							uart_puts("h:");
+							for(int i=2;i<4;i++)
+							{
+								uart_putc(NMEA[i]);
+							}
+							uart_puts(": ");
+							for(int i=4;i<6;i++)
+							{
+								uart_putc(NMEA[i]);
+							}
+							parseDone==1;
+						
 					
-		}
+
+						
+				}
+					
+
+				
+				//gpsdata = uart_getc();
+				//if(gpsdata != '\0')				//getting GPRMC data only
+				//{
+				//NMEA[z] = gpsdata;				//add to char array if not EOL
+				//z++;
+				//}else lgth=z; break;				//store string length
+			
+															////check each char for $GPRMC
+		//for(int i = 0;i<62;i++)
+		//{
+			//uart_putc(NMEA[i]);
+		//}
+
+
+		//z=0;
+		//
+		//while(NMEA[z]!='$' && z<10)			//search the string for '$'
+		//{
+				//z++;
+			//if(DEBUG)
+			//{
+				//if(NMEA[z]=='$')
+				//{
+					//uart_puts("Got$");
+					//if (NMEA[z+1]=="G")
+					//{
+						//uart_puts("GotG");
+					//}
+					//break;
+				//}
+				//break;
+			//}
+					//
+		//}
 		
-		//print GPS data to UART	
-		uart_flush();
-		for(ctr=z+1;ctr<lgth;ctr++)
-		{
-			uart_putc(NMEA[ctr]);
-		}
+		////print GPS data to UART	
+		//uart_flush();
+		//for(ctr=z+1;ctr<lgth;ctr++)
+		//{
+			//uart_putc(NMEA[ctr]);
+		//}
 	
 }
 
@@ -172,6 +221,7 @@ void GPS_readData()
 void CAN_readData()
 {
 	uart_flush();
+	_delay_ms(20);
 	uart_puts("<<<<START OF MESSAGE>>>>\n");
 	uart_puts("\n---------CAN DATA---------\n");
 	char buff[16] ;
