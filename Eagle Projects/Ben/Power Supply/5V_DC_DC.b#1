@@ -1703,6 +1703,12 @@ design rules under a new name.</description>
 <wire x1="40.5" y1="1.6" x2="40.4" y2="1.5" width="1.016" layer="1"/>
 <wire x1="35.09" y1="15.63" x2="33.93" y2="15.63" width="1.016" layer="1"/>
 <wire x1="33.93" y1="15.63" x2="31.7" y2="13.4" width="1.016" layer="1"/>
+<polygon width="0.6096" layer="16">
+<vertex x="0" y="0"/>
+<vertex x="0" y="20"/>
+<vertex x="44" y="20"/>
+<vertex x="44" y="0"/>
+</polygon>
 </signal>
 <signal name="N$2">
 <contactref element="L1" pad="1"/>
