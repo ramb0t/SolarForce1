@@ -32,8 +32,13 @@ namespace iKlwa_Telemetry_System
 
         private void button1_Click(object sender, EventArgs e)
         {
-            selected_port = comboBox1.SelectedItem.ToString();
-            this.Dispose();
+            try
+            {
+                selected_port = comboBox1.SelectedItem.ToString();
+                this.Dispose();
+            }
+            catch (NullReferenceException n)
+            { MessageBox.Show(n.Message); }
         }
 
         private void button2_Click(object sender, EventArgs e)

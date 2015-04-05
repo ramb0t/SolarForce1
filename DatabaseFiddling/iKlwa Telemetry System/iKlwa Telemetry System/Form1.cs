@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,13 +17,14 @@ namespace iKlwa_Telemetry_System
         COM_Port_Select c = new COM_Port_Select();
         ReliableCommsManager comms = new ReliableCommsManager();
 
-
+        XmlDatabase d;
 
         public Form1()
         {
             InitializeComponent();
 
-            XmlDatabase d = new XmlDatabase("I LIKE PI.xml", "potato");
+            d = new XmlDatabase("xmlTrialDb_v2.xml", "Logger");
+            d.NodeTag = "Packet";
         }
 
         private void checkForConnection()
@@ -46,10 +48,31 @@ namespace iKlwa_Telemetry_System
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Application.Run(c);
+            c.ShowDialog();
             string COM_port = c.getPort();
             comms.name = COM_port.ToString();
             comms.OpenPort();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //test error message query
+            var errors = d.queryLvl1ByAttributes("Type", "Error");
+            richTextBox1.Text = "Errors found: "+ errors.Count().ToString() + "\n\n";
+            foreach (var err in errors)
+            {
+                foreach (var val in err.Descendants())
+                richTextBox1.AppendText(val.Name + ": " + val.Value + "\n");
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var allData = d.queryLvl2("Speed");
+            foreach (var err1 in allData)
+            {
+                richTextBox1.AppendText(err1.ToString()+'\n');
+            }
         }
 
     }

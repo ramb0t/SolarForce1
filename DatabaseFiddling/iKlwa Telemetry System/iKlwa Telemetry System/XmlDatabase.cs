@@ -84,21 +84,29 @@ namespace iKlwa_Telemetry_System
 
         public IEnumerable<XElement> queryLvl1()
         {
-            var nodes = from n in xml_file.Descendants(node_tag)
-                        select n;
-            IEnumerable<XElement> results = nodes;
+            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
+                                            select n;
             return results;
         }
 
         public IEnumerable<XElement> queryLvl1ByAttributes(string attr_name, string attr)
         {
-            var nodes = from n in xml_file.Descendants(node_tag)
+            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
                         where n.Attribute(attr_name).Value == attr
                         select n;
-            IEnumerable<XElement> results = nodes;
             return results;
         }
 
+        public IEnumerable<XElement> queryLvl1Range(string field, object start, object end)
+        {
+            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag).Descendants(field)
+                                            where n.Value.CompareTo(start) > 0 && n.Value.CompareTo(end) < 0
+                                            select n;
+            return results;
+        }
+
+        /*
+         * May not actually need this
         public IEnumerable<XElement> queryLvl2(string lvl2_tag)
         {
             var nodes = from n in xml_file.Descendants(node_tag).Descendants(lvl2_tag)
@@ -114,6 +122,30 @@ namespace iKlwa_Telemetry_System
                     group n by xml_file.Descendants(node_tag).Descendants(lvl2_tag);
             IEnumerable<IGrouping<IEnumerable<XElement>, XElement>> results = k;
             return results;
+        }
+
+        */
+
+        public string NodeTag
+        {
+            set
+            {
+                bool acceptable = true; //flag indicating acceptability
+                try
+                {
+                    XElement x = new XElement(value); //attempt creating XElement object with specified node tag
+                                                      //if an XElement can be created, the tag is valid
+                }
+                catch (System.Xml.XmlException) //if invalid string entered, XmlException is thrown
+                {
+                    acceptable = false; //set acceptability flag to false
+                }
+                node_tag = acceptable ? value : null;
+            }
+            get
+            {
+                return node_tag;
+            }
         }
 
     }
