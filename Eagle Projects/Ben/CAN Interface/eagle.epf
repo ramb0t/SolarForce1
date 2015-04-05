@@ -818,8 +818,8 @@ UsedLibrary="E:/Users/RobThePyro/Dropbox/Electronics/Eagle/Libaries/sparkfun-Spa
 
 [Win_1]
 Type="Control Panel"
-Loc="1318 0 1919 428"
-State=1
+Loc="960 0 1903 1001"
+State=2
 Number=0
 
 [Desktop]
