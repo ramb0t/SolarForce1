@@ -2038,6 +2038,41 @@ reflow soldering</description>
 </package>
 </packages>
 </library>
+<library name="diode">
+<description>&lt;b&gt;Diodes&lt;/b&gt;&lt;p&gt;
+Based on the following sources:
+&lt;ul&gt;
+&lt;li&gt;Motorola : www.onsemi.com
+&lt;li&gt;Fairchild : www.fairchildsemi.com
+&lt;li&gt;Philips : www.semiconductors.com
+&lt;li&gt;Vishay : www.vishay.de
+&lt;/ul&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="SOT23-6L">
+<description>&lt;b&gt;Small Outline Transistor&lt;/b&gt;</description>
+<wire x1="1.522" y1="0.81" x2="1.522" y2="-0.81" width="0.2032" layer="21"/>
+<wire x1="1.522" y1="-0.81" x2="-1.522" y2="-0.81" width="0.2032" layer="51"/>
+<wire x1="-1.522" y1="-0.81" x2="-1.522" y2="0.81" width="0.2032" layer="21"/>
+<wire x1="-1.522" y1="0.81" x2="1.522" y2="0.81" width="0.2032" layer="51"/>
+<circle x="-0.95" y="-0.3" radius="0.25" width="0" layer="21"/>
+<smd name="1" x="-0.95" y="-1.3" dx="0.55" dy="1.2" layer="1"/>
+<smd name="2" x="0" y="-1.3" dx="0.55" dy="1.2" layer="1"/>
+<smd name="3" x="0.95" y="-1.3" dx="0.55" dy="1.2" layer="1"/>
+<smd name="4" x="0.95" y="1.3" dx="0.55" dy="1.2" layer="1"/>
+<smd name="5" x="0" y="1.3" dx="0.55" dy="1.2" layer="1"/>
+<smd name="6" x="-0.95" y="1.3" dx="0.55" dy="1.2" layer="1"/>
+<text x="-1.905" y="-0.635" size="1.016" layer="25" ratio="18" rot="R90">&gt;NAME</text>
+<text x="2.54" y="-0.635" size="0.8128" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<rectangle x1="-1.2" y1="-1.5" x2="-0.7" y2="-0.85" layer="51"/>
+<rectangle x1="-0.25" y1="-1.5" x2="0.25" y2="-0.85" layer="51"/>
+<rectangle x1="0.7" y1="-1.5" x2="1.2" y2="-0.85" layer="51"/>
+<rectangle x1="0.7" y1="0.85" x2="1.2" y2="1.5" layer="51"/>
+<rectangle x1="-0.25" y1="0.85" x2="0.25" y2="1.5" layer="51"/>
+<rectangle x1="-1.2" y1="0.85" x2="-0.7" y2="1.5" layer="51"/>
+</package>
+</packages>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -2308,6 +2343,7 @@ design rules under a new name.</description>
 <element name="S3" library="SparkFun" package="TACTILE-PTH" value="SWITCH-MOMENTARY-2PTH" x="66.7" y="77.4" rot="MR90"/>
 <element name="S4" library="SparkFun" package="TACTILE_SWITCH_SMD" value="BTN3" x="74.5" y="69.3" rot="R270"/>
 <element name="S5" library="SparkFun" package="TACTILE_SWITCH_SMD" value="BTN4" x="66.8" y="69.3" rot="R270"/>
+<element name="D1" library="diode" package="SOT23-6L" value="SRV05-4" x="77.4" y="45.7"/>
 </elements>
 <signals>
 <signal name="N$1">
@@ -2450,8 +2486,10 @@ design rules under a new name.</description>
 <wire x1="26.15" y1="6.45" x2="28.6" y2="4" width="0.4064" layer="1"/>
 <wire x1="28.6" y1="4" x2="30.74" y2="4" width="0.4064" layer="1"/>
 <contactref element="U$4" pad="P$1"/>
+<contactref element="D1" pad="2"/>
 <wire x1="52.216" y1="24.8054" x2="52.15" y2="20.9" width="0" layer="19" extent="1-1"/>
 <wire x1="15.224" y1="13.096" x2="14.986" y2="12.858" width="0" layer="19" extent="1-1"/>
+<wire x1="77.4" y1="44.4" x2="28.6" y2="4" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="+5V">
 <contactref element="U1" pad="20"/>
@@ -2562,7 +2600,9 @@ design rules under a new name.</description>
 <wire x1="28.05" y1="9.4" x2="28.05" y2="7.3" width="0.4064" layer="1"/>
 <wire x1="28.05" y1="7.3" x2="32.5" y2="7.3" width="0.4064" layer="1"/>
 <wire x1="32.5" y1="7.3" x2="32.539" y2="7.339" width="0.4064" layer="1"/>
+<contactref element="D1" pad="5"/>
 <wire x1="52.085" y1="22.083" x2="54.05" y2="20.9" width="0" layer="19" extent="1-1"/>
+<wire x1="77.4" y1="47" x2="24.638" y2="1.905" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$4">
 <contactref element="U$3" pad="P$1"/>
@@ -2922,6 +2962,8 @@ design rules under a new name.</description>
 <wire x1="64.4906" y1="36.2458" x2="77.9272" y2="49.6824" width="0.4064" layer="1"/>
 <wire x1="77.9272" y1="49.6824" x2="83.4064" y2="49.6824" width="0.4064" layer="1"/>
 <wire x1="83.4064" y1="49.6824" x2="83.421" y2="49.697" width="0.4064" layer="1"/>
+<contactref element="D1" pad="3"/>
+<wire x1="78.35" y1="44.4" x2="54.616" y2="33.3906" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="BTN1">
 <contactref element="U1" pad="32"/>
@@ -2934,7 +2976,9 @@ design rules under a new name.</description>
 <wire x1="65.532" y1="35.1028" x2="73.9648" y2="43.5356" width="0.4064" layer="1"/>
 <wire x1="73.9648" y1="43.5356" x2="83.4526" y2="43.5356" width="0.4064" layer="1"/>
 <wire x1="83.4526" y1="43.5356" x2="83.471" y2="43.554" width="0.4064" layer="1"/>
+<contactref element="D1" pad="4"/>
 <wire x1="57.298" y1="31.948" x2="57.298" y2="31.898" width="0" layer="19" extent="1-1"/>
+<wire x1="78.35" y1="47" x2="56.1086" y2="31.898" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CRUISE1">
 <contactref element="U1" pad="23"/>
@@ -2986,6 +3030,8 @@ design rules under a new name.</description>
 <wire x1="72.595" y1="66.76" x2="72.595" y2="71.84" width="0.4064" layer="1"/>
 <wire x1="72.595" y1="71.84" x2="72.595" y2="73.4932" width="0.4064" layer="1"/>
 <wire x1="72.595" y1="73.4932" x2="71.9394" y2="74.1488" width="0.4064" layer="1"/>
+<contactref element="D1" pad="1"/>
+<wire x1="76.45" y1="44.4" x2="53.816" y2="33.3906" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="BTN4">
 <contactref element="U1" pad="9"/>
@@ -3009,6 +3055,8 @@ design rules under a new name.</description>
 <wire x1="64.895" y1="66.76" x2="64.895" y2="71.84" width="0.4064" layer="1"/>
 <wire x1="64.895" y1="71.84" x2="64.895" y2="73.6932" width="0.4064" layer="1"/>
 <wire x1="64.895" y1="73.6932" x2="64.4394" y2="74.1488" width="0.4064" layer="1"/>
+<contactref element="D1" pad="6"/>
+<wire x1="76.45" y1="47" x2="46.461" y2="31.898" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="A0">
 <contactref element="U1" pad="27"/>

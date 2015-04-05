@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="mm" unit="mm" style="lines" multiple="1" display="no" altdistance="0.025" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -130,6 +130,10 @@
 <wire x1="100" y1="0" x2="100" y2="80" width="0" layer="20"/>
 <wire x1="100" y1="80" x2="0" y2="80" width="0" layer="20"/>
 <wire x1="0" y1="80" x2="0" y2="0" width="0" layer="20"/>
+<wire x1="18.5" y1="9.7" x2="18.5" y2="21.25" width="0.254" layer="21"/>
+<wire x1="18.5" y1="21.25" x2="36.5" y2="21.25" width="0.254" layer="21"/>
+<wire x1="36.5" y1="21.25" x2="36.5" y2="9.7" width="0.254" layer="21"/>
+<wire x1="36.5" y1="9.7" x2="18.5" y2="9.7" width="0.254" layer="21"/>
 </plain>
 <libraries>
 <library name="resistor">
@@ -1591,23 +1595,23 @@ design rules under a new name.</description>
 <element name="C3" library="resistor" package="C0805" value="10uF 10V" x="-20.32" y="10.16"/>
 <element name="C4" library="resistor" package="C1206" value="100uF" x="-26.67" y="10.16"/>
 <element name="C5" library="resistor" package="C1206" value="100uF" x="-17.78" y="16.51"/>
-<element name="F1" library="adafruit" package="1812" value="" x="-21.59" y="29.21"/>
-<element name="M5V" library="pinhead" package="1X01" value="" x="-22.86" y="15.24"/>
-<element name="$MGND" library="pinhead" package="1X01" value="" x="-27.94" y="15.24"/>
-<element name="MGND" library="pinhead" package="1X01" value="" x="-33.02" y="15.24"/>
-<element name="MVIN" library="pinhead" package="1X01" value="" x="-15.24" y="21.59"/>
-<element name="VIN" library="pinhead" package="1X01" value="" x="-20.32" y="21.59"/>
-<element name="GND" library="pinhead" package="1X01" value="" x="-25.4" y="21.59"/>
-<element name="5VOUT" library="pinhead" package="1X01" value="" x="-30.48" y="21.59"/>
-<element name="$GND" library="pinhead" package="1X01" value="" x="-15.24" y="26.67"/>
-<element name="Z1" library="supressor" package="SOD323" value="TVS-UD-SOD323" x="-34.29" y="27.94"/>
-<element name="L1" library="inductor-bourns" package="SDR0302" value="SDR0302" x="-39.37" y="3.81"/>
+<element name="F1" library="adafruit" package="1812" value="" x="35.31" y="36.71"/>
+<element name="M5V" library="pinhead" package="1X01" value="" x="35" y="20"/>
+<element name="$MGND" library="pinhead" package="1X01" value="" x="35" y="11"/>
+<element name="MGND" library="pinhead" package="1X01" value="" x="20" y="11"/>
+<element name="MVIN" library="pinhead" package="1X01" value="" x="20" y="20"/>
+<element name="VIN" library="pinhead" package="1X01" value="" x="8.48" y="23.19"/>
+<element name="GND" library="pinhead" package="1X01" value="" x="8.2" y="9.39"/>
+<element name="5VOUT" library="pinhead" package="1X01" value="" x="42.71" y="26.98"/>
+<element name="$GND" library="pinhead" package="1X01" value="" x="42.46" y="8.47"/>
+<element name="Z1" library="supressor" package="SOD323" value="TVS-UD-SOD323" x="13.56" y="16.41" rot="R90"/>
+<element name="L1" library="inductor-bourns" package="SDR0302" value="SDR0302" x="13.28" y="25.65" rot="R270"/>
 <element name="C6" library="resistor" package="C0805" value="10uF 10V" x="-39.37" y="-3.81"/>
-<element name="C7" library="resistor" package="C0805" value="10uF 10V" x="-39.37" y="-10.16"/>
-<element name="D1" library="SparkFun-DiscreteSemi" package="SMA-DIODE" value="MBRA140" x="-38.1" y="-16.51">
-<attribute name="PROD_ID" value="DIO-08053" x="-38.1" y="-16.51" size="1.778" layer="27" display="off"/>
+<element name="C7" library="resistor" package="C0805" value="10uF 10V" x="28.53" y="5.24"/>
+<element name="D1" library="SparkFun-DiscreteSemi" package="SMA-DIODE" value="MBRA140" x="10.6" y="37.39">
+<attribute name="PROD_ID" value="DIO-08053" x="10.6" y="37.39" size="1.778" layer="27" display="off"/>
 </element>
-<element name="C8" library="resistor" package="PANASONIC_D" value="" x="-36.83" y="-21.59"/>
+<element name="C8" library="resistor" package="PANASONIC_D" value="" x="47.09" y="16.07" rot="R90"/>
 </elements>
 <signals>
 <signal name="+12V">
@@ -1617,11 +1621,11 @@ design rules under a new name.</description>
 <contactref element="C5" pad="1"/>
 <contactref element="C6" pad="1"/>
 <contactref element="L1" pad="2"/>
-<wire x1="-39.37" y1="2.71" x2="-40.32" y2="-3.81" width="0" layer="19" extent="1-1"/>
-<wire x1="-21.27" y1="10.16" x2="-39.37" y2="2.71" width="0" layer="19" extent="1-1"/>
+<wire x1="12.18" y1="25.65" x2="-40.32" y2="-3.81" width="0" layer="19" extent="1-1"/>
+<wire x1="-21.27" y1="10.16" x2="12.18" y2="25.65" width="0" layer="19" extent="1-1"/>
 <wire x1="-19.18" y1="16.51" x2="-21.27" y2="10.16" width="0" layer="19" extent="1-1"/>
-<wire x1="-15.24" y1="21.59" x2="-19.18" y2="16.51" width="0" layer="19" extent="1-1"/>
-<wire x1="-35.433" y1="27.94" x2="-19.18" y2="16.51" width="0" layer="19" extent="1-1"/>
+<wire x1="20" y1="20" x2="-19.18" y2="16.51" width="0" layer="19" extent="1-1"/>
+<wire x1="13.56" y1="15.267" x2="-19.18" y2="16.51" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="+5V">
 <contactref element="M5V" pad="1"/>
@@ -1630,11 +1634,11 @@ design rules under a new name.</description>
 <contactref element="5VOUT" pad="1"/>
 <contactref element="C4" pad="1"/>
 <contactref element="C8" pad="+"/>
-<wire x1="-31.43" y1="3.81" x2="-34.43" y2="-21.59" width="0" layer="19" extent="1-1"/>
+<wire x1="-31.43" y1="3.81" x2="47.09" y2="18.47" width="0" layer="19" extent="1-1"/>
 <wire x1="-28.07" y1="10.16" x2="-31.43" y2="3.81" width="0" layer="19" extent="1-1"/>
-<wire x1="-22.86" y1="15.24" x2="-28.07" y2="10.16" width="0" layer="19" extent="1-1"/>
+<wire x1="35" y1="20" x2="-28.07" y2="10.16" width="0" layer="19" extent="1-1"/>
 <wire x1="-21.27" y1="3.81" x2="-28.07" y2="10.16" width="0" layer="19" extent="1-1"/>
-<wire x1="-30.48" y1="21.59" x2="-22.86" y2="15.24" width="0" layer="19" extent="1-1"/>
+<wire x1="42.71" y1="26.98" x2="35" y2="20" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="GND">
 <contactref element="$MGND" pad="1"/>
@@ -1650,35 +1654,35 @@ design rules under a new name.</description>
 <contactref element="C7" pad="2"/>
 <contactref element="C6" pad="2"/>
 <contactref element="C8" pad="-"/>
-<wire x1="-38.42" y1="-10.16" x2="-39.23" y2="-21.59" width="0" layer="19" extent="1-1"/>
-<wire x1="-38.42" y1="-3.81" x2="-38.42" y2="-10.16" width="0" layer="19" extent="1-1"/>
+<wire x1="29.48" y1="5.24" x2="47.09" y2="13.67" width="0" layer="19" extent="1-1"/>
+<wire x1="-38.42" y1="-3.81" x2="29.48" y2="5.24" width="0" layer="19" extent="1-1"/>
 <wire x1="-29.53" y1="3.81" x2="-38.42" y2="-3.81" width="0" layer="19" extent="1-1"/>
 <wire x1="-25.27" y1="10.16" x2="-29.53" y2="3.81" width="0" layer="19" extent="1-1"/>
-<wire x1="-27.94" y1="15.24" x2="-25.27" y2="10.16" width="0" layer="19" extent="1-1"/>
-<wire x1="-33.02" y1="15.24" x2="-27.94" y2="15.24" width="0" layer="19" extent="1-1"/>
+<wire x1="35" y1="11" x2="-25.27" y2="10.16" width="0" layer="19" extent="1-1"/>
+<wire x1="20" y1="11" x2="35" y2="11" width="0" layer="19" extent="1-1"/>
 <wire x1="-19.37" y1="10.16" x2="-25.27" y2="10.16" width="0" layer="19" extent="1-1"/>
 <wire x1="-19.37" y1="3.81" x2="-19.37" y2="10.16" width="0" layer="19" extent="1-1"/>
-<wire x1="-25.4" y1="21.59" x2="-27.94" y2="15.24" width="0" layer="19" extent="1-1"/>
+<wire x1="8.2" y1="9.39" x2="35" y2="11" width="0" layer="19" extent="1-1"/>
 <wire x1="-16.38" y1="16.51" x2="-19.37" y2="10.16" width="0" layer="19" extent="1-1"/>
-<wire x1="-33.147" y1="27.94" x2="-25.4" y2="21.59" width="0" layer="19" extent="1-1"/>
-<wire x1="-15.24" y1="26.67" x2="-16.38" y2="16.51" width="0" layer="19" extent="1-1"/>
+<wire x1="13.56" y1="17.553" x2="8.2" y2="9.39" width="0" layer="19" extent="1-1"/>
+<wire x1="42.46" y1="8.47" x2="-16.38" y2="16.51" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$2">
 <contactref element="L1" pad="1"/>
 <contactref element="F1" pad="2"/>
 <contactref element="C7" pad="1"/>
-<wire x1="-39.37" y1="4.91" x2="-40.32" y2="-10.16" width="0" layer="19" extent="1-1"/>
-<wire x1="-19.544" y1="29.21" x2="-39.37" y2="4.91" width="0" layer="19" extent="1-1"/>
+<wire x1="14.38" y1="25.65" x2="27.58" y2="5.24" width="0" layer="19" extent="1-1"/>
+<wire x1="37.356" y1="36.71" x2="14.38" y2="25.65" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$3">
 <contactref element="F1" pad="1"/>
 <contactref element="D1" pad="C"/>
-<wire x1="-23.636" y1="29.21" x2="-35.95" y2="-16.51" width="0" layer="19" extent="1-1"/>
+<wire x1="33.264" y1="36.71" x2="12.75" y2="37.39" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$4">
 <contactref element="D1" pad="A"/>
 <contactref element="VIN" pad="1"/>
-<wire x1="-20.32" y1="21.59" x2="-40.25" y2="-16.51" width="0" layer="19" extent="1-1"/>
+<wire x1="8.48" y1="23.19" x2="8.45" y2="37.39" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>
