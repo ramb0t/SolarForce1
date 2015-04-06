@@ -14623,6 +14623,7 @@ Programming header</text>
 <segment>
 <pinref part="GPS" gate="A" pin="3"/>
 <wire x1="190.5" y1="106.68" x2="180.34" y2="106.68" width="0.1524" layer="91"/>
+<label x="175.26" y="106.68" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="MOSI" class="0">

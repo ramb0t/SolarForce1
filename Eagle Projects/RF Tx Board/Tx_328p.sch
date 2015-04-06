@@ -14749,12 +14749,22 @@ Programming header</text>
 <wire x1="114.3" y1="-58.42" x2="119.38" y2="-58.42" width="0.1524" layer="91"/>
 <junction x="114.3" y="-58.42"/>
 </segment>
+<segment>
+<pinref part="U1" gate="U$1" pin="PB1(OC1A)"/>
+<wire x1="119.38" y1="43.18" x2="129.54" y2="43.18" width="0.1524" layer="91"/>
+<label x="132.08" y="43.18" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="CANCS" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="!CS"/>
 <wire x1="68.58" y1="-45.72" x2="58.42" y2="-45.72" width="0.1524" layer="91"/>
 <label x="50.8" y="-45.72" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="U1" gate="U$1" pin="PB2(SS/OC1B)"/>
+<wire x1="119.38" y1="40.64" x2="129.54" y2="40.64" width="0.1524" layer="91"/>
+<label x="132.08" y="40.64" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$10" class="0">

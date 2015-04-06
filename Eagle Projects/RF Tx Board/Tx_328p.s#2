@@ -14169,8 +14169,8 @@ Tx
 NC
 GND</text>
 <text x="195.834" y="100.584" size="1.778" layer="91">Vcc
-Rx
 Tx
+Rx
 GND</text>
 <text x="189.23" y="81.026" size="1.778" layer="91">
 Rx
@@ -14299,7 +14299,7 @@ Programming header</text>
 <instance part="R1" gate="G$1" x="172.72" y="76.2"/>
 <instance part="R3" gate="G$1" x="172.72" y="68.58"/>
 <instance part="SUPPLY1" gate="G$1" x="162.56" y="81.28"/>
-<instance part="JP2" gate="G$1" x="170.18" y="106.68" rot="R180"/>
+<instance part="JP2" gate="G$1" x="165.1" y="104.14" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -14616,14 +14616,13 @@ Programming header</text>
 <pinref part="U$4" gate="G$1" pin="P$1"/>
 </segment>
 <segment>
-<pinref part="GPS" gate="A" pin="2"/>
-<label x="154.94" y="104.14" size="1.778" layer="95"/>
-<wire x1="162.56" y1="104.14" x2="190.5" y2="104.14" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="U$3" gate="G$1" pin="P$3"/>
 <wire x1="185.42" y1="137.16" x2="167.64" y2="137.16" width="0.1524" layer="91"/>
 <label x="162.56" y="137.16" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="GPS" gate="A" pin="3"/>
+<wire x1="190.5" y1="106.68" x2="180.34" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="MOSI" class="0">
@@ -14953,9 +14952,9 @@ Programming header</text>
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="GPS" gate="A" pin="3"/>
+<pinref part="GPS" gate="A" pin="2"/>
+<wire x1="190.5" y1="104.14" x2="167.64" y2="104.14" width="0.1524" layer="91"/>
 <pinref part="JP2" gate="G$1" pin="1"/>
-<wire x1="190.5" y1="106.68" x2="172.72" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
