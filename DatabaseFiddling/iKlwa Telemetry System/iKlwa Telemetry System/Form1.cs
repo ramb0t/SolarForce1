@@ -17,14 +17,14 @@ namespace iKlwa_Telemetry_System
         COM_Port_Select c = new COM_Port_Select();
         ReliableCommsManager comms = new ReliableCommsManager();
 
-        XmlDatabase d;
+        XmlDatabase database;
 
         public Form1()
         {
             InitializeComponent();
 
-            d = new XmlDatabase("xmlTrialDb_v2.xml", "Logger");
-            d.NodeTag = "Packet";
+            database = new XmlDatabase("xmlTrialDb_v2.xml", "Logger");
+            database.NodeTag = "Packet";
         }
 
         private void checkForConnection()
@@ -57,7 +57,7 @@ namespace iKlwa_Telemetry_System
         private void button2_Click(object sender, EventArgs e)
         {
             //test error message query
-            var errors = d.queryLvl1ByAttributes("Type", "Error");
+            var errors = database.queryLvl1ByAttributes("Type", "Error");
             richTextBox1.Text = "Errors found: "+ errors.Count().ToString() + "\n\n";
             foreach (var err in errors)
             {
@@ -68,7 +68,7 @@ namespace iKlwa_Telemetry_System
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var allData = d.queryLvl2("Speed");
+            var allData = database.queryLvl2("Speed");
             foreach (var err1 in allData)
             {
                 richTextBox1.AppendText(err1.ToString()+'\n');

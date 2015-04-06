@@ -105,8 +105,8 @@ namespace iKlwa_Telemetry_System
             return results;
         }
 
-        /*
-         * May not actually need this
+        
+        // May not actually need this
         public IEnumerable<XElement> queryLvl2(string lvl2_tag)
         {
             var nodes = from n in xml_file.Descendants(node_tag).Descendants(lvl2_tag)
@@ -124,7 +124,7 @@ namespace iKlwa_Telemetry_System
             return results;
         }
 
-        */
+        
 
         public string NodeTag
         {
