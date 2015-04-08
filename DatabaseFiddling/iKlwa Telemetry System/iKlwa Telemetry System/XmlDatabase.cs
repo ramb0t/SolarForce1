@@ -24,15 +24,22 @@ namespace iKlwa_Telemetry_System
             createXml(filename, rootname);
         }
 
+        #region create & modify XML files and nodes
+
         //Create XML file, return whether it currently exists or not
-        public bool createXml(string filename, string rootname)
+        protected bool createXml(string filename, string rootname)
         {
+            //ensure that filename extension is an XML file
+            if (filename.EndsWith(".xml") == false)
+                filename = filename + ".xml";
+
             bool exists = File.Exists(filename); //check if specified filename exists
             if (!exists) //if file does not exist, create file
             {
                 try
                 {
-                    xml_file = new XDocument(new XDeclaration("1.0", "utf-", "true"), new XElement(rootname)); //declare XML version and encoding
+                    xml_file = new XDocument(new XDeclaration("1.0", "utf-", "true"),
+                               new XElement(rootname)); //declare XML version, root tag and encoding
                     xml_file.Save(filename); //save XML file
                 }
                 catch (Exception e)
@@ -54,11 +61,11 @@ namespace iKlwa_Telemetry_System
         }
 
         //adds node to XML file
-        public void addNode(XElement element)
+        protected void addNode(XElement element)
         {
             try
             {
-                xml_file.Element(root).Add(element); //add node
+                xml_file.Element(root).AddFirst(element); //add node to top of file
                 xml_file.Save(file_name, SaveOptions.OmitDuplicateNamespaces); //save changes
             }
             catch (Exception ex) //adding new node may return exception if structure of XML file is breached
@@ -67,29 +74,57 @@ namespace iKlwa_Telemetry_System
             }
         }
 
+        protected XElement createElement()
+        {
+            XElement xelem = new XElement(node_tag);
+            return xelem;
+        }
+
         //create XML Element
-        public XElement createElement(string label, object value)
+        protected XElement createElement(string label, object value)
         {
             XElement xelem = new XElement(node_tag, new XElement(label, value));
             return xelem;
         }
 
+        protected void setAttribute(ref XElement xelem, string attribute_name, object attribute_value)
+        {
+            xelem.SetAttributeValue(attribute_name, attribute_value);
+        }
+
+        protected void removeAttribute(ref XElement xelem, string attribute_name)
+        {
+            xelem.SetAttributeValue(attribute_name, null);
+        }
+
         //create XML Element with attribute
-        public XElement createElement( string attLabel, object att, string label, object value)
+        protected XElement createElement( string attLabel, object att, string label, object value)
         {
             XElement xelem = createElement(label, value);
             xelem.SetAttributeValue(attLabel, att);
             return xelem;
         }
 
-        public IEnumerable<XElement> queryLvl1()
+        protected void setChild(ref XElement xelem, string node_name, object node_value)
+        {
+            xelem.SetElementValue(node_name, node_value);
+        }
+
+        protected void removeChild(ref XElement xelem, string node_name)
+        {
+            xelem.SetElementValue(node_name, null);
+        }
+
+        #endregion
+
+        protected IEnumerable<XElement> queryLvl1()
         {
             IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
                                             select n;
             return results;
         }
 
-        public IEnumerable<XElement> queryLvl1ByAttributes(string attr_name, string attr)
+        protected IEnumerable<XElement> queryLvl1ByAttributes(string attr_name, string attr)
         {
             IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
                         where n.Attribute(attr_name).Value == attr
@@ -97,34 +132,21 @@ namespace iKlwa_Telemetry_System
             return results;
         }
 
-        public IEnumerable<XElement> queryLvl1Range(string field, object start, object end)
+        protected IEnumerable<IGrouping<string, XElement>> queryLvl2Group(string lvl2_field)
         {
-            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag).Descendants(field)
-                                            where n.Value.CompareTo(start) > 0 && n.Value.CompareTo(end) < 0
+            IEnumerable<IGrouping<string, XElement>> results = from n in xml_file.Descendants(node_tag).Descendants(lvl2_field)
+                                                                    group n by n.Value;
+            return results;
+        }
+
+        protected IEnumerable<XElement> queryLvl3Range(string field, string start, string end)
+        {
+            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
+                                            where n.Element(field).Value.CompareTo(start) > 0
+                                                  && n.Element(field).Value.CompareTo(end) < 0
                                             select n;
             return results;
         }
-
-        
-        // May not actually need this
-        public IEnumerable<XElement> queryLvl2(string lvl2_tag)
-        {
-            var nodes = from n in xml_file.Descendants(node_tag).Descendants(lvl2_tag)
-                        select n;
-            IEnumerable<XElement> results = nodes;
-            return results;
-        }
-
-        public IEnumerable<IGrouping<IEnumerable<XElement>, XElement>>
-            queryLvl2Grp(string lvl2_tag)
-        {
-            var k = from n in xml_file.Descendants(node_tag).Descendants(lvl2_tag)
-                    group n by xml_file.Descendants(node_tag).Descendants(lvl2_tag);
-            IEnumerable<IGrouping<IEnumerable<XElement>, XElement>> results = k;
-            return results;
-        }
-
-        
 
         public string NodeTag
         {
