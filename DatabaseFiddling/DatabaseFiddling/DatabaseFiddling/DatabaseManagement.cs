@@ -183,7 +183,7 @@ namespace DatabaseFiddling
         {
             var entries = from e in xml_file.Descendants(node_label)
                           where e.Attribute("Type").Value == "Error"
-                          select e;
+                       select e;
             foreach (var e in entries)
             {
                 Console.WriteLine(e);
