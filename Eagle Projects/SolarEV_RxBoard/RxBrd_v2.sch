@@ -12831,6 +12831,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="C11" library="resistor" deviceset="C-US" device="C0805" value="100n"/>
 <part name="Q2" library="crystal" deviceset="CRYSTAL" device="HC49S"/>
 <part name="JP1" library="atmel-avr" deviceset="AVR-ISP6-" device="75869-131"/>
+<part name="GND6" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -12937,6 +12938,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <instance part="C11" gate="G$1" x="190.5" y="-76.2"/>
 <instance part="Q2" gate="G$1" x="71.12" y="-33.02" rot="R90"/>
 <instance part="JP1" gate="G$1" x="78.74" y="-134.62" rot="R90"/>
+<instance part="GND6" gate="1" x="154.94" y="-60.96"/>
 </instances>
 <busses>
 </busses>
@@ -13193,6 +13195,11 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <pinref part="JP1" gate="G$1" pin="6"/>
 <wire x1="86.36" y1="-127" x2="86.36" y2="-116.84" width="0.1524" layer="91"/>
 <label x="86.36" y="-116.84" size="1.778" layer="95" rot="R90"/>
+</segment>
+<segment>
+<pinref part="U2" gate="G$1" pin="(#HWB)PE2"/>
+<pinref part="GND6" gate="1" pin="GND"/>
+<wire x1="152.4" y1="-58.42" x2="154.94" y2="-58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AREF" class="4">
@@ -13616,12 +13623,11 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 </net>
 <net name="N$13" class="0">
 <segment>
-<pinref part="U2" gate="G$1" pin="(#HWB)PE2"/>
-<wire x1="152.4" y1="-58.42" x2="157.48" y2="-58.42" width="0.1524" layer="91"/>
-<wire x1="157.48" y1="-58.42" x2="157.48" y2="-55.88" width="0.1524" layer="91"/>
 <pinref part="ON4" gate="G$1" pin="C"/>
 <wire x1="157.48" y1="-55.88" x2="162.56" y2="-55.88" width="0.1524" layer="91"/>
-<junction x="152.4" y="-58.42"/>
+<pinref part="U2" gate="G$1" pin="(OC3A/#0C4A)PC6"/>
+<wire x1="152.4" y1="-50.8" x2="157.48" y2="-50.8" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="-50.8" x2="157.48" y2="-55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$5" class="0">
