@@ -6,6 +6,9 @@
 #include "mavlink_types.h"
 #include "mavlink_conversions.h"
 
+//MANUALLY INCLUDED BY PROGRAMMER; REFERENCES INCLUSION IN MAVLINK_MESSAGING.H
+mavlink_system_t mavlink_system;
+
 #ifndef MAVLINK_HELPER
 #define MAVLINK_HELPER
 #endif

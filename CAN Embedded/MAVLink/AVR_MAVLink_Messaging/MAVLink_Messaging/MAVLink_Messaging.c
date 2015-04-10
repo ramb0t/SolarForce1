@@ -83,7 +83,7 @@ int main (void)
 			{
 			ctr2=0;
 			uart_puts("\n------------GPS start----------\n");
-			//GPS_readData();
+			GPS_readData();
 			uart_puts("\n------------GPS done----------\n");
 			TIFR0 = (0<<TOV0);
 			}else ctr2++;
@@ -132,7 +132,7 @@ void GPS_readData()
 		char gpsdata;
 
 
-		//uart_puts("\n---------GPS DATA---------\n");
+		uart_puts("\n---------GPS DATA---------\n");
 			
 				
 		//uart_puts("GPS Ready");
@@ -331,43 +331,115 @@ void MAV_msg_pack()
 			/*-----------------------------------------------------------------------
 			NAME: Motor Driver Data
 			DESCRIPTION: Speed from the motor driver RPM and error flags
-				Parameters		4 = speed from motor driver (RPM)
-			/*					5 = uint8_t magnet_back missing? (0/n 1/y)
-								6 = uint8_t magnet_front missing? (0/n 1/y)
+			..........................................................................
+				Parameters	 Value	Detail									Range/Type
+			...........................................................................				
+								4 = speed from motor driver (RPM)			0-255km/h
+								5 = uint8_t magnet_back missing?			0=no 1=yes
+								6 = uint8_t magnet_front missing?			0=no 1=yes
 			Assume CAN data 0 = motor controller temp
 							   data 1 = speed								*/
+			
 			mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			MAV_uart_send(buf,len);
+			
 			/*-----------------------------------------------------------------------
-				Parameters		4 = speed from hall effect
-								5 = uint8_t magnet_back missing? (0/n 1/y)
-								6 = uint8_t magnet_front missing? (0/n 1/y)
+			NAME: Hall Effect Sensor Data
+			DESCRIPTION: Speed from the Hall Effect Sensors and error flags	
+			.........................................................................
+			Parameters		 Value	Detail									Range/Type
+			...........................................................................
+				Parameters		4 = speed from hall effect					0-255km/h
+								5 = uint8_t magnet_back missing?			0=no 1=yes
+								6 = uint8_t magnet_front missing?			0=no 1=yes
 			//TESTING		CAN 2 = speed to send							*/
+			
 			mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
 			MAV_uart_send(buf,len);
-			//-----------------------------------------------------------------------
-			////Parameters		4 = uint8_t fault condition
-			/*					5 = uint8_t source current
-								6 = uint8_t load_current
-								7 = char bat_fan_status
-								8 = uint8_t LLIM_state
-								9 = uint8_t HLIM_state
-								10 = uint8_t state_of_chg (percentage)
-								11 = uint16_t pack_voltage
-								12 = const uint16_t *cell_voltages [low,avg,high]
-								13 = const uint16_t *cell_temps [low,avg,high]
-								14 = uint8_t system_status
+			
+			/*-----------------------------------------------------------------------
+			NAME: BMS Data
+			DESCRIPTION: All data originating from the BMS, including error flags
+			.........................................................................
+				Parameters	 Value	Detail									Range/Type
+			...........................................................................
+								4 = uint8_t fault condition?				0=no 1=yes
+								5 = uint16_t source current					0-65535mA
+								6 = uint16_t load_current					0-65535mA
+								7 = char bat_fan_status						t=OK f=FAULT
+								8 = uint8_t LLIM_state						1=flag active 0=flag not active
+								9 = uint8_t HLIM_state						1=flag active 0=flag not active
+								10 = uint8_t state_of_chg (percentage)		0-100%
+								11 = uint16_t pack_voltage					0-65535V
+								12 = const uint16_t *cell_voltages [low,avg,high]	0-65535V per element
+								13 = const uint16_t *cell_temps [low,avg,high]		0-65535C per element
+								14 = uint8_t system_status							MAVLINK_ENUM
 								
 			*/
-			// mavlink_msg_bms_data_pack(100,200, &msg,uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, uint16_t pack_voltage, const uint16_t *cell_voltages, const uint16_t *cell_temps, uint8_t system_status)
+			//mavlink_msg_bms_data_pack(100,200, &msg,uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, uint16_t pack_voltage, const uint16_t *cell_voltages, const uint16_t *cell_temps, uint8_t system_status)
 
+			/*-----------------------------------------------------------------------
+			NAME: Accelerometer/Gyroscope Data
+			DESCRIPTION: Yaw, Pitch, Roll and Acceleration data from MPU6050
+			.........................................................................
+			Parameters		Value	Detail									Range/Type
+			...........................................................................
+								4 = int8_t acceleration (m.s^-2)			-127 to 127 m.s^-2		
+								5 = uint8_t magnet_back missing? 			0=no 1=yes
+								6 = uint8_t magnet_front missing?			0=no 1=yes
+			//TESTING																	*/
+			
+			mavlink_msg_accelo_gyro_pack(100,200,&msg,acceleration,incline);
+			
+			/*-----------------------------------------------------------------------
+			NAME: GPS Data
+			DESCRIPTION: Location, speed and other GPS data 
+			.........................................................................
+			Parameters		Value	Detail									Range/Type
+			...........................................................................
+								4 = const char *latitude					12 characters max
+								5 = const char *longitude					12 characters max
+								6 = const char *time						12 characters max
+								7 = const char *date						12 characters max
+								8 = const char *lock_error					12 characters max "OK" or "INVALID"
+			//TESTING																		*/
+			
+			mavlink_msg_gps_pack(100,200,&msg,latitude,longitude,time,date,lock_error);
+
+			/*-----------------------------------------------------------------------
+			NAME: MPPT Data
+			DESCRIPTION: Telemetry data from the MPPT's. There a 4 definitions, one for each MPPT. All variable ranges and types are the same.
+			.........................................................................
+			Parameters(x4)		Value	Detail								Range/Type
+			...........................................................................
+								4 = 	uint16_t voltage_in					0-65535mV
+								5 =		uint16_t current_in					0-65535mA
+								6 =		uint8_t overtemp?					0=no 1=yes
+								7 =		uint8_t undervolt?					0=no 1=yes
+			//TESTING																		*/
+			
+			mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			
+			mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			
+			mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			
+			mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			
+			/*-----------------------------------------------------------------------
+			NAME: Heartbeat
+			DESCRIPTION: MAVLink heartbeat required to confirm a connection is active
+			.........................................................................
+			Parameters(x4)		Value	Detail								Range/Type
+			...........................................................................
+			Flags are fixed each time, standard to the MAVLink library. Not edited / written to.
+			//TESTING																		*/			
+			
 			uart_flush();
 			uart_puts("\n---------MAVLink Heartbeat---------\n");
-			// Pack the message
-			// mavlink_message_heartbeat_pack(system id, component id, message container, system type, MAV_AUTOPILOT_GENERIC)
 			mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
 			MAV_uart_send(buf,len);
-			//
+
 			uart_puts("\n<<<<END OF MESSAGE>>>>\n");
 			////_delay_ms(HEARTBEAT_DELAY);
 	
