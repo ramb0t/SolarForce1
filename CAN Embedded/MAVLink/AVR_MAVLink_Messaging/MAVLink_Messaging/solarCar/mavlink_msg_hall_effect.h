@@ -4,25 +4,25 @@
 
 typedef struct __mavlink_hall_effect_t
 {
- float speed; ///< Hall Effect sensor averaged speed reading in km/h
+ uint8_t speed; ///< Hall Effect sensor averaged speed reading in km/h (0-255km/h)
  uint8_t left_magnet; ///< flag for presence of left wheel Hall Effect magnet; '1' = present, '0' = missing
  uint8_t right_magnet; ///< flag for presence of right wheel Hall Effect magnet; '1' = present, '0' = missing
 } mavlink_hall_effect_t;
 
-#define MAVLINK_MSG_ID_HALL_EFFECT_LEN 6
-#define MAVLINK_MSG_ID_158_LEN 6
+#define MAVLINK_MSG_ID_HALL_EFFECT_LEN 3
+#define MAVLINK_MSG_ID_158_LEN 3
 
-#define MAVLINK_MSG_ID_HALL_EFFECT_CRC 200
-#define MAVLINK_MSG_ID_158_CRC 200
+#define MAVLINK_MSG_ID_HALL_EFFECT_CRC 193
+#define MAVLINK_MSG_ID_158_CRC 193
 
 
 
 #define MAVLINK_MESSAGE_INFO_HALL_EFFECT { \
 	"HALL_EFFECT", \
 	3, \
-	{  { "speed", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_hall_effect_t, speed) }, \
-         { "left_magnet", NULL, MAVLINK_TYPE_UINT8_T, 0, 4, offsetof(mavlink_hall_effect_t, left_magnet) }, \
-         { "right_magnet", NULL, MAVLINK_TYPE_UINT8_T, 0, 5, offsetof(mavlink_hall_effect_t, right_magnet) }, \
+	{  { "speed", NULL, MAVLINK_TYPE_UINT8_T, 0, 0, offsetof(mavlink_hall_effect_t, speed) }, \
+         { "left_magnet", NULL, MAVLINK_TYPE_UINT8_T, 0, 1, offsetof(mavlink_hall_effect_t, left_magnet) }, \
+         { "right_magnet", NULL, MAVLINK_TYPE_UINT8_T, 0, 2, offsetof(mavlink_hall_effect_t, right_magnet) }, \
          } \
 }
 
@@ -33,19 +33,19 @@ typedef struct __mavlink_hall_effect_t
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param msg The MAVLink message to compress the data into
  *
- * @param speed Hall Effect sensor averaged speed reading in km/h
+ * @param speed Hall Effect sensor averaged speed reading in km/h (0-255km/h)
  * @param left_magnet flag for presence of left wheel Hall Effect magnet; '1' = present, '0' = missing
  * @param right_magnet flag for presence of right wheel Hall Effect magnet; '1' = present, '0' = missing
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_hall_effect_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       float speed, uint8_t left_magnet, uint8_t right_magnet)
+						       uint8_t speed, uint8_t left_magnet, uint8_t right_magnet)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_HALL_EFFECT_LEN];
-	_mav_put_float(buf, 0, speed);
-	_mav_put_uint8_t(buf, 4, left_magnet);
-	_mav_put_uint8_t(buf, 5, right_magnet);
+	_mav_put_uint8_t(buf, 0, speed);
+	_mav_put_uint8_t(buf, 1, left_magnet);
+	_mav_put_uint8_t(buf, 2, right_magnet);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_HALL_EFFECT_LEN);
 #else
@@ -71,20 +71,20 @@ static inline uint16_t mavlink_msg_hall_effect_pack(uint8_t system_id, uint8_t c
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
- * @param speed Hall Effect sensor averaged speed reading in km/h
+ * @param speed Hall Effect sensor averaged speed reading in km/h (0-255km/h)
  * @param left_magnet flag for presence of left wheel Hall Effect magnet; '1' = present, '0' = missing
  * @param right_magnet flag for presence of right wheel Hall Effect magnet; '1' = present, '0' = missing
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_hall_effect_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           float speed,uint8_t left_magnet,uint8_t right_magnet)
+						           uint8_t speed,uint8_t left_magnet,uint8_t right_magnet)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_HALL_EFFECT_LEN];
-	_mav_put_float(buf, 0, speed);
-	_mav_put_uint8_t(buf, 4, left_magnet);
-	_mav_put_uint8_t(buf, 5, right_magnet);
+	_mav_put_uint8_t(buf, 0, speed);
+	_mav_put_uint8_t(buf, 1, left_magnet);
+	_mav_put_uint8_t(buf, 2, right_magnet);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_HALL_EFFECT_LEN);
 #else
@@ -135,19 +135,19 @@ static inline uint16_t mavlink_msg_hall_effect_encode_chan(uint8_t system_id, ui
  * @brief Send a hall_effect message
  * @param chan MAVLink channel to send the message
  *
- * @param speed Hall Effect sensor averaged speed reading in km/h
+ * @param speed Hall Effect sensor averaged speed reading in km/h (0-255km/h)
  * @param left_magnet flag for presence of left wheel Hall Effect magnet; '1' = present, '0' = missing
  * @param right_magnet flag for presence of right wheel Hall Effect magnet; '1' = present, '0' = missing
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_hall_effect_send(mavlink_channel_t chan, float speed, uint8_t left_magnet, uint8_t right_magnet)
+static inline void mavlink_msg_hall_effect_send(mavlink_channel_t chan, uint8_t speed, uint8_t left_magnet, uint8_t right_magnet)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_HALL_EFFECT_LEN];
-	_mav_put_float(buf, 0, speed);
-	_mav_put_uint8_t(buf, 4, left_magnet);
-	_mav_put_uint8_t(buf, 5, right_magnet);
+	_mav_put_uint8_t(buf, 0, speed);
+	_mav_put_uint8_t(buf, 1, left_magnet);
+	_mav_put_uint8_t(buf, 2, right_magnet);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_HALL_EFFECT, buf, MAVLINK_MSG_ID_HALL_EFFECT_LEN, MAVLINK_MSG_ID_HALL_EFFECT_CRC);
@@ -176,13 +176,13 @@ static inline void mavlink_msg_hall_effect_send(mavlink_channel_t chan, float sp
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_hall_effect_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float speed, uint8_t left_magnet, uint8_t right_magnet)
+static inline void mavlink_msg_hall_effect_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint8_t speed, uint8_t left_magnet, uint8_t right_magnet)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
-	_mav_put_float(buf, 0, speed);
-	_mav_put_uint8_t(buf, 4, left_magnet);
-	_mav_put_uint8_t(buf, 5, right_magnet);
+	_mav_put_uint8_t(buf, 0, speed);
+	_mav_put_uint8_t(buf, 1, left_magnet);
+	_mav_put_uint8_t(buf, 2, right_magnet);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_HALL_EFFECT, buf, MAVLINK_MSG_ID_HALL_EFFECT_LEN, MAVLINK_MSG_ID_HALL_EFFECT_CRC);
@@ -212,11 +212,11 @@ static inline void mavlink_msg_hall_effect_send_buf(mavlink_message_t *msgbuf, m
 /**
  * @brief Get field speed from hall_effect message
  *
- * @return Hall Effect sensor averaged speed reading in km/h
+ * @return Hall Effect sensor averaged speed reading in km/h (0-255km/h)
  */
-static inline float mavlink_msg_hall_effect_get_speed(const mavlink_message_t* msg)
+static inline uint8_t mavlink_msg_hall_effect_get_speed(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  0);
+	return _MAV_RETURN_uint8_t(msg,  0);
 }
 
 /**
@@ -226,7 +226,7 @@ static inline float mavlink_msg_hall_effect_get_speed(const mavlink_message_t* m
  */
 static inline uint8_t mavlink_msg_hall_effect_get_left_magnet(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  4);
+	return _MAV_RETURN_uint8_t(msg,  1);
 }
 
 /**
@@ -236,7 +236,7 @@ static inline uint8_t mavlink_msg_hall_effect_get_left_magnet(const mavlink_mess
  */
 static inline uint8_t mavlink_msg_hall_effect_get_right_magnet(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  5);
+	return _MAV_RETURN_uint8_t(msg,  2);
 }
 
 /**

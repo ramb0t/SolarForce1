@@ -146,7 +146,7 @@ void GPS_readData()
 							uart_putc(gpsdata);
 						}
 						
-							while (gpsdata != '\n')
+							while (gpsdata != '*')
 							{
 								gpsdata = uart_getc();	//store char in NMEA buffer
 								strcat(NMEA[ctr],gpsdata);
