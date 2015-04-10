@@ -15,9 +15,18 @@
 #define UART_BAUD_RATE 9600
 #define MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-#define TELEMETRY_UART_OUT	DDD3
-#define GPS_UART_DATA_IN	DDD2
-#define TELEMETRY_UART_IN	DDD4
+#define TELEMETRY_UART_OUT	DDD1
+#define GPS_UART_DATA_IN	DDD0
+#define TELEMETRY_UART_IN	DDD0
+
+#define CANINT_DDR			DDRB
+#define CANINT_PORT			PORTB
+#define CANINT_LED			PORTB1
+
+#define LED_DIAG_DDR		DDRD
+#define LED_DIAG_PORT		PORTD
+#define LED_DIAG_ORG		PORTD2
+#define LED_DIAG_GRN		PORTD3	
 
 #define UART_DDR			DDRD
 
@@ -28,7 +37,7 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <string.h>
-#include "uart.h"					//UART library
+#include "../lib/uart/uart.h"					//UART library
 #include "mavlink.h"				//MAVLink framework
 
 #include "../lib/CAN/CAN.h"			//CAN Framework

@@ -30,6 +30,10 @@ int main (void)
 	
 	DDRB |= _BV(DDB5);
 	
+	LED_DIAG_DDR |= (1<<LED_DIAG_GRN)|(1<<LED_DIAG_ORG); //setup diagnostic LEDs
+	
+	CANINT_DDR |= (1<<CANINT_LED);		//CAN interrupt LED
+			
 	/*----------CAN PORT INPUTS-----------------
 		Initialise SPI and CAN libraries
 		Name	CANPin	ArduinoPin		Port
@@ -42,11 +46,10 @@ int main (void)
 		
 		SPI_Init();
 		
-		while(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
-		{
+		//while(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
+		//{
 			CAN_Init(CAN_125KBPS_16MHZ);
-		}
-		;
+		//};
 		
 	/*---------Timer Setup---------------------
 		*Overflow based
@@ -80,15 +83,20 @@ int main (void)
 			{
 			ctr2=0;
 			uart_puts("\n------------GPS start----------\n");
-			GPS_readData();
+			//GPS_readData();
 			uart_puts("\n------------GPS done----------\n");
 			TIFR0 = (0<<TOV0);
 			}else ctr2++;
-		}
 
-		//CAN_readData();
+		}
 		
-		//MAV_msg_pack();
+_delay_ms(500);
+		LED_DIAG_PORT |= (1<<LED_DIAG_ORG);
+		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
+					
+		CAN_readData();
+		
+		MAV_msg_pack();
 		
 
 	}
@@ -136,7 +144,6 @@ void GPS_readData()
 						{
 							gpsdata = uart_getc();							
 							uart_putc(gpsdata);
-							uart_puts("Invalid GPS data!");
 						}
 						
 							while (gpsdata != '\n')
@@ -318,15 +325,41 @@ void MAV_msg_pack()
 			mavlink_message_t msg;
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-			//
-			////Assume CAN data 0 = motor controller temp
-			////		   data 1 = speed
+			
+			/*For all packaging, parameters 1,2,3 are the same */
+			
+			/*-----------------------------------------------------------------------
+			NAME: Motor Driver Data
+			DESCRIPTION: Speed from the motor driver RPM and error flags
+				Parameters		4 = speed from motor driver (RPM)
+			/*					5 = uint8_t magnet_back missing? (0/n 1/y)
+								6 = uint8_t magnet_front missing? (0/n 1/y)
+			Assume CAN data 0 = motor controller temp
+							   data 1 = speed								*/
 			mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			MAV_uart_send(buf,len);
-			//
-			////Assume CAN data 2 = speed
+			/*-----------------------------------------------------------------------
+				Parameters		4 = speed from hall effect
+								5 = uint8_t magnet_back missing? (0/n 1/y)
+								6 = uint8_t magnet_front missing? (0/n 1/y)
+			//TESTING		CAN 2 = speed to send							*/
 			mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
 			MAV_uart_send(buf,len);
+			//-----------------------------------------------------------------------
+			////Parameters		4 = uint8_t fault condition
+			/*					5 = uint8_t source current
+								6 = uint8_t load_current
+								7 = char bat_fan_status
+								8 = uint8_t LLIM_state
+								9 = uint8_t HLIM_state
+								10 = uint8_t state_of_chg (percentage)
+								11 = uint16_t pack_voltage
+								12 = const uint16_t *cell_voltages [low,avg,high]
+								13 = const uint16_t *cell_temps [low,avg,high]
+								14 = uint8_t system_status
+								
+			*/
+			// mavlink_msg_bms_data_pack(100,200, &msg,uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, uint16_t pack_voltage, const uint16_t *cell_voltages, const uint16_t *cell_temps, uint8_t system_status)
 
 			uart_flush();
 			uart_puts("\n---------MAVLink Heartbeat---------\n");
