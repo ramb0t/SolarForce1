@@ -26,7 +26,10 @@ int main(void)
 
 	// Init LCD Backlight
 	Timer1_init();
+	OCR1A = 0;
+	Timer1_PWM_Off();
 	OCR1A = 128;
+	Timer1_PWM_On();
 
 	// Create a new message
 	CANMessage message;

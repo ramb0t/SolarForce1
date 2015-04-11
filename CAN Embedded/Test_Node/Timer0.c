@@ -31,10 +31,10 @@ ISR(TIMER0_OVF_vect)
 		}
 
 		//Should we check for stuff?
-		if(uart_available()){
+		//if(uart_available()){
 			// We have something available!! Process?
-			Terminal_read(&Terminal_state);
-		}
+		//	Terminal_read(&Terminal_state);
+		//}
 	//}
 }
 

@@ -26,6 +26,8 @@
 // Function Prototypes:
 /*****************************************************************************/
 void Timer1_init(void);
+void Timer1_PWM_Off(void);
+void Timer1_PWM_On(void);
 
 
 #endif /* TIMER1_H_ */

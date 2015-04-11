@@ -19,3 +19,13 @@ void Timer1_init(void) {
 	// Pin Setup
 	LCD_PWM_DDR |= (1 << LCD_PWM);
 }
+
+void Timer1_PWM_Off(void){
+	// Disconnect Clock!
+	TCCR1B &= ~((1<<CS12)|(1<<CS11)|(1<<CS10));
+}
+
+void Timer1_PWM_On(void){
+	// Connect Clock!
+	TCCR1B |= (0<<CS12)|(1<<CS11)|(0<<CS10);
+}

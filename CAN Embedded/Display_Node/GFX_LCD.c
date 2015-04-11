@@ -52,7 +52,8 @@ void u8g_setup(void)
    	    u8g_DrawStr(&u8g, 5, 15, "Hello! Welcome to ");
    	    u8g_DrawStr(&u8g, 5, 25, "the CAN Display Node ");
    	} while ( u8g_NextPage(&u8g) );
-   	//GFX_UNSELECT();
+
+
 
 }
 
@@ -79,6 +80,7 @@ void GFX_Cnt(int i){
 	//GFX_UNSELECT();
 }
 
+
 void GFX_LCD_Draw(CANMessage* message){
 	//GFX_SELECT();
 	u8g_Begin(&u8g);
@@ -97,14 +99,15 @@ void draw(CANMessage* msg){
 
 	CANMessage message = *msg;
 
-	u8g_SetFont(&u8g, u8g_font_6x10);
-	  u8g_SetFontRefHeightExtendedText(&u8g);
-	  u8g_SetDefaultForegroundColor(&u8g);
-	  u8g_SetFontPosTop(&u8g);
+	//u8g_SetFont(&u8g, u8g_font_6x10);
+	//u8g_SetFontRefHeightExtendedText(&u8g);
+	//u8g_SetDefaultForegroundColor(&u8g);
+	//u8g_SetFontPosTop(&u8g);
 	// ID
 	itoa(message.id, buf, 10);
 	u8g_DrawStr(&u8g, 5, 0, "ID= ");
 	u8g_DrawStr(&u8g, 24, 0, buf);
+
 
 	// L
 	itoa(message.length, buf, 10);

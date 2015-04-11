@@ -53,7 +53,7 @@
 #include "Timer0.h"
 
 // Timer1
-#include "Timer1.h"
+//#include "Timer1.h"
 
 // Pin Defines
 #include "pinDefines.h"

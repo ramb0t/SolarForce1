@@ -33,19 +33,23 @@ void Terminal_read(uint8_t* state){
 	uint8_t index = 0;
 
 	while(uart_available()){
-		input[index++] = uart_getc(); // read a byte out
+		input[index] = uart_getc(); // read a byte out
+		index++;
+
+
 
 		if(index >= TERMINAL_MAX_INPUT_LENGTH){
 			// Error!
 			uart_puts("\n");
 			uart_puts("Input Too Long!");
+			*state = TERMINAL_RUN;
 			return;
 		}
 	}
 
 	// clear the excess input chars (init random ram)
 	// could we not get away with setting next char to endline operator?
-	for(int i = index ; index < TERMINAL_MAX_INPUT_LENGTH+1; index++){
+	for(int i = index ; index <= TERMINAL_MAX_INPUT_LENGTH; index++){
 		input[i] = 0;
 	}
 
@@ -78,13 +82,26 @@ void Terminal_read(uint8_t* state){
 		uart_puts("\n");
 		return;
 	}
-	else if(strcasecmp(input, TERMINAL_sSEND1) == 0){ // Mode 2
-			*state = TERMINAL_SEND1;
-			uart_puts("\n");
-			uart_puts("Sending MPPT Request \n");
-			uart_puts("\n");
-			return;
-		}
+
+
+	else if(strcasecmp(input, TERMINAL_sSEND1) == 0){ // Mode 4
+		*state = TERMINAL_SEND1;
+		uart_puts("\n");
+		uart_puts("Sending MPPT Request \n");
+		uart_puts("\n");
+		return;
+	}
+
+
+
+	else if(strcasecmp(input, TERMINAL_sSENDRANDOM) == 0){ // Mode 6
+		*state = TERMINAL_SENDRANDOM;
+		uart_puts("\n");
+		uart_puts("Sending Random CAN Messages \n");
+		uart_puts("Type 'c' to exit\n");
+		uart_puts("\n");
+		return;
+	}
 
 	else{
 		uart_puts("\n");
@@ -153,6 +170,7 @@ static void Terminal_showMenu(void){
 	uart_puts("3: Listen for Specified CAN ID \n");
 	uart_puts("4: Send Single CAN Message\n");
 	uart_puts("5: Loop Single CAN Message\n");
+	uart_puts("6: Send Random CAN Messages\n");
 	uart_puts("-------------------------------------\n");
 	uart_puts("\n");
 	uart_puts("Type 'help' to show this menu again\n");
