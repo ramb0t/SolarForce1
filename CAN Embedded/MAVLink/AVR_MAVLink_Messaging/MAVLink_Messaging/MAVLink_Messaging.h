@@ -30,6 +30,10 @@
 
 #define UART_DDR			DDRD
 
+#define UART_REG			UCSR0A
+#define TX_ENABLE			(1<<TXEN0)
+#define TX_DISABLE			(0<<TXEN0)
+
 //------------Library and AVR Includes--------------------//
 
 #include <avr/io.h>

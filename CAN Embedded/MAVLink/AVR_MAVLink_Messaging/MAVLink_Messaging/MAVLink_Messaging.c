@@ -9,7 +9,6 @@
 
 #define DEBUG	1
 
-
 //------------ISR for the Timer0-------------------------//
 
 ISR(TIMER0_OVF_vect)
@@ -24,11 +23,11 @@ int main (void)
 	Telemetry Serial O/P 3 = PORTD3
 	Telemetry Serial I/P 4 = PORTD4				*/
 	
-	UART_DDR |= _BV(TELEMETRY_UART_OUT);	//output
-	UART_DDR &=~_BV(GPS_UART_DATA_IN);	//input
-	UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
+	//UART_DDR |= _BV(TELEMETRY_UART_OUT);	//output
+	//UART_DDR &=~_BV(GPS_UART_DATA_IN);	//input
+	//UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
 	
-	DDRB |= _BV(DDB5);
+	//DDRB |= _BV(DDB5);
 	
 	LED_DIAG_DDR |= (1<<LED_DIAG_GRN)|(1<<LED_DIAG_ORG); //setup diagnostic LEDs
 	
@@ -46,10 +45,10 @@ int main (void)
 		
 		SPI_Init();
 		
-		//while(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
-		//{
+		if(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
+		{
 			CAN_Init(CAN_125KBPS_16MHZ);
-		//};
+		};
 		
 	/*---------Timer Setup---------------------
 		*Overflow based
@@ -57,8 +56,8 @@ int main (void)
 	
 	TCNT0 = 0x00;
 	TCCR0A = 0x00;
-	TCCR0B = (1<<CS02)|(1<<CS00);
-	TIMSK0 = (1<<TOIE0);		//--enable later!
+	//TCCR0B = (1<<CS02)|(1<<CS00);
+	//TIMSK0 = (1<<TOIE0);		//--enable later!
 	
 	
 	/*---------UART Serial Init --------------------
@@ -77,26 +76,24 @@ int main (void)
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 		
-		if(TIFR0 &(1<<TOV0))
-		{
-			if (ctr2 == 15)
-			{
-			ctr2=0;
-			uart_puts("\n------------GPS start----------\n");
-			GPS_readData();
-			uart_puts("\n------------GPS done----------\n");
-			TIFR0 = (0<<TOV0);
-			}else ctr2++;
 
-		}
-		
-_delay_ms(500);
+	if (DEBUG)
+	{
+//		_delay_ms(500);
 		LED_DIAG_PORT |= (1<<LED_DIAG_ORG);
 		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
-					
-		CAN_readData();
+		//_delay_ms(500);
+		LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
+		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
+	}	
+
+				
+		//CAN_readData();
 		
-		MAV_msg_pack();
+		//MAV_msg_pack();
+		//uart_puts("Hi!");
+		
+		GPS_readData();
 		
 
 	}
@@ -124,103 +121,73 @@ void GPS_readData()
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
 	*/
-		uint8_t parseDone = 0;		
-		char NMEA[70];
-		unsigned int z=0;
-		unsigned int lgth=0;
-		unsigned int ctr = 0;
-		char gpsdata;
-
-
-		uart_puts("\n---------GPS DATA---------\n");
-			
-				
-		//uart_puts("GPS Ready");
+		//char NMEA[72];
+		//unsigned int z=0;
+		//unsigned int lgth=0;
+		//unsigned int ctr = 0;
+		//char gpsdata;
 		
-				if(DEBUG)
-				{
-						gpsdata = uart_getc();
-						while (gpsdata != '$')
-						{
-							gpsdata = uart_getc();							
-							uart_putc(gpsdata);
-						}
-						
-							while (gpsdata != '*')
-							{
-								gpsdata = uart_getc();	//store char in NMEA buffer
-								strcat(NMEA[ctr],gpsdata);
-							}
-							uart_puts(NMEA);				//print raw NMEA data
-
-							//PARSE TIME: hhmmss.ss
-							uart_puts("Time: ");
-							//hour
-							for(int i=0;i<2;i++)
-							{
-								uart_putc(NMEA[i]);
-							}
-							//minute
-							uart_puts("h:");
-							for(int i=2;i<4;i++)
-							{
-								uart_putc(NMEA[i]);
-							}
-							uart_puts(": ");
-							for(int i=4;i<6;i++)
-							{
-								uart_putc(NMEA[i]);
-							}
-							parseDone==1;
-						
-					
-
-						
-				}
-					
-
-				
-				//gpsdata = uart_getc();
-				//if(gpsdata != '\0')				//getting GPRMC data only
-				//{
-				//NMEA[z] = gpsdata;				//add to char array if not EOL
-				//z++;
-				//}else lgth=z; break;				//store string length
-			
-															////check each char for $GPRMC
-		//for(int i = 0;i<62;i++)
-		//{
-			//uart_putc(NMEA[i]);
-		//}
-
-
-		//z=0;
-		//
-		//while(NMEA[z]!='$' && z<10)			//search the string for '$'
-		//{
-				//z++;
-			//if(DEBUG)
-			//{
-				//if(NMEA[z]=='$')
-				//{
-					//uart_puts("Got$");
-					//if (NMEA[z+1]=="G")
-					//{
-						//uart_puts("GotG");
-					//}
-					//break;
-				//}
-				//break;
-			//}
-					//
-		//}
-		
-		////print GPS data to UART	
-		//uart_flush();
-		//for(ctr=z+1;ctr<lgth;ctr++)
-		//{
-			//uart_putc(NMEA[ctr]);
-		//}
+		if(uart_available()){
+			uart_putc(uart_getc());
+		}
+	//UART_REG = TX_DISABLE;
+	//uart_flush();
+	//gpsdata = uart_getc();	
+//
+	//for (int i=0;i<30;i++)
+	//{
+		//gpsdata = uart_getc();
+		//NMEA[i] = gpsdata;
+	//}
+	//
+	////UART_REG = TX_ENABLE;
+	////uart_flush();
+	//
+	//for (int i=0;i<30;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+		//uart_puts("\n---------GPS DATA---------\n");
+	//UART_REG = TX_DISABLE;			
+	//gpsdata = uart_getc();
+	//while (gpsdata != '$')
+	//{
+	//gpsdata = uart_getc();
+	//uart_putc(gpsdata);
+	//uart_puts("Invalid GPS data!");
+	//}
+//
+	//while (gpsdata != '*')
+	//{
+		//gpsdata = uart_getc();	//store char in NMEA buffer
+		//NMEA[ctr] = gpsdata;
+		//ctr++;
+	//}
+//
+	//for (int i=0;i<ctr;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+				////print raw NMEA data
+//
+	////PARSE TIME: hhmmss.ss
+	//uart_puts("Time: ");
+	////hour
+	//for(int i=0;i<2;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+	////minute
+	//uart_puts("h:");
+	//for(int i=2;i<4;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+	//uart_puts(": ");
+	//for(int i=4;i<6;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
 	
 }
 
@@ -228,7 +195,7 @@ void GPS_readData()
 void CAN_readData()
 {
 	uart_flush();
-	_delay_ms(20);
+//	_delay_ms(20);
 	uart_puts("<<<<START OF MESSAGE>>>>\n");
 	uart_puts("\n---------CAN DATA---------\n");
 	char buff[16] ;
@@ -240,7 +207,7 @@ void CAN_readData()
 		itoa(CAN_checkError(),buff,10);
 		uart_puts("CheckErr:");
 		uart_puts(buff);
-		_delay_ms(100);
+//		_delay_ms(100);
 		
 		if(CAN_checkReceiveAvailable()==CAN_NOMSG)
 		{
@@ -389,7 +356,8 @@ void MAV_msg_pack()
 								6 = uint8_t magnet_front missing?			0=no 1=yes
 			//TESTING																	*/
 			
-			mavlink_msg_accelo_gyro_pack(100,200,&msg,acceleration,incline);
+//TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
+			MAV_uart_send(buf,len);
 			
 			/*-----------------------------------------------------------------------
 			NAME: GPS Data
@@ -402,10 +370,11 @@ void MAV_msg_pack()
 								6 = const char *time						12 characters max
 								7 = const char *date						12 characters max
 								8 = const char *lock_error					12 characters max "OK" or "INVALID"
-			//TESTING																		*/
+			//TESTING
+																					*/
+//TESTING	mavlink_msg_gps_pack(100,200,&msg,latitude,longitude,time,date,lock_error);
+			MAV_uart_send(buf,len);
 			
-			mavlink_msg_gps_pack(100,200,&msg,latitude,longitude,time,date,lock_error);
-
 			/*-----------------------------------------------------------------------
 			NAME: MPPT Data
 			DESCRIPTION: Telemetry data from the MPPT's. There a 4 definitions, one for each MPPT. All variable ranges and types are the same.
@@ -418,13 +387,17 @@ void MAV_msg_pack()
 								7 =		uint8_t undervolt?					0=no 1=yes
 			//TESTING																		*/
 			
-			mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+//TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			MAV_uart_send(buf,len);
 			
-			mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+//TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			MAV_uart_send(buf,len);
 			
-			mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+//TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			MAV_uart_send(buf,len);
 			
-			mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+//TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			MAV_uart_send(buf,len);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
