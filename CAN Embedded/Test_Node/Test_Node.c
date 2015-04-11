@@ -50,7 +50,7 @@ int main(void)
     uart_puts("-------------------------------------\n");
 
     // Create Terminal State
-    Terminal_state = TERMINAL_INIT;
+    Terminal_state = TERMINAL_LISTEN;
     // Init the Terminal
     Terminal_init();
 

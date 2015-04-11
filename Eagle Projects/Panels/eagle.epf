@@ -1,6 +1,6 @@
 [Eagle]
 Version="07 02 00"
-Platform="Windows"
+Platform="Linux"
 Serial="62191E841E-LSR-WLM-1EL"
 Globals="Globals"
 Desktop="Desktop"
@@ -53,11 +53,12 @@ ArcDirection=0
 AddLevel=2
 PadsSameType=0
 Layer=91
+Views=" 1: -79.5977 -117.91 400.869 193.957"
 Sheet="1"
 
 [Win_2]
 Type="Board Editor"
-Loc="-8 -8 591 391"
+Loc="0 24 599 423"
 State=3
 Number=1
 File="E:/Users/RobThePyro/Docs/GitHub/SolarForce1/Eagle Projects/Ben/Display Node/Display_Node.brd"
@@ -103,12 +104,12 @@ Layer=16
 
 [Win_3]
 Type="Control Panel"
-Loc="766 326 1365 725"
+Loc="2758 364 3355 734"
 State=1
 Number=0
 
 [Desktop]
-Screen="3840 1080"
+Screen="3286 1080"
 Window="Win_1"
 Window="Win_2"
 Window="Win_3"
