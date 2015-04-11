@@ -10691,6 +10691,7 @@ diameter 5 mm, horizontal, grid 15.24 mm</description>
 <part name="SUPPLY17" library="supply2" deviceset="VCC" device=""/>
 <part name="SUPPLY18" library="supply2" deviceset="VCC" device=""/>
 <part name="SUPPLY19" library="supply2" deviceset="VCC" device=""/>
+<part name="Q4" library="crystal" deviceset="CRYSTAL" device="HC49UP" value="16MHz"/>
 </parts>
 <sheets>
 <sheet>
@@ -10770,6 +10771,7 @@ diameter 5 mm, horizontal, grid 15.24 mm</description>
 <instance part="OK1" gate="G$1" x="-111.76" y="30.48"/>
 <instance part="R16" gate="G$1" x="-104.14" y="43.18" rot="R90"/>
 <instance part="D1" gate="G$1" x="-132.08" y="-22.86"/>
+<instance part="Q4" gate="G$1" x="-45.72" y="-12.7" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -11034,22 +11036,30 @@ diameter 5 mm, horizontal, grid 15.24 mm</description>
 <segment>
 <pinref part="Q1" gate="G$1" pin="2"/>
 <pinref part="U3" gate="U$1" pin="PB6(XTAL1/TOSC1)"/>
-<wire x1="-50.8" y1="-7.62" x2="-38.1" y2="-7.62" width="0.1524" layer="91"/>
+<wire x1="-50.8" y1="-7.62" x2="-45.72" y2="-7.62" width="0.1524" layer="91"/>
+<wire x1="-45.72" y1="-7.62" x2="-38.1" y2="-7.62" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="-7.62" x2="-38.1" y2="-10.16" width="0.1524" layer="91"/>
 <pinref part="C3" gate="G$1" pin="2"/>
 <wire x1="-60.96" y1="-7.62" x2="-50.8" y2="-7.62" width="0.1524" layer="91"/>
 <junction x="-50.8" y="-7.62"/>
+<pinref part="Q4" gate="G$1" pin="2"/>
+<wire x1="-45.72" y1="-10.16" x2="-45.72" y2="-7.62" width="0.1524" layer="91"/>
+<junction x="-45.72" y="-7.62"/>
 </segment>
 </net>
 <net name="N$6" class="0">
 <segment>
 <pinref part="Q1" gate="G$1" pin="1"/>
 <pinref part="U3" gate="U$1" pin="PB7(XTAL2/TOSC2)"/>
-<wire x1="-50.8" y1="-17.78" x2="-38.1" y2="-17.78" width="0.1524" layer="91"/>
+<wire x1="-50.8" y1="-17.78" x2="-45.72" y2="-17.78" width="0.1524" layer="91"/>
+<wire x1="-45.72" y1="-17.78" x2="-38.1" y2="-17.78" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="-17.78" x2="-38.1" y2="-15.24" width="0.1524" layer="91"/>
 <pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="-60.96" y1="-17.78" x2="-50.8" y2="-17.78" width="0.1524" layer="91"/>
 <junction x="-50.8" y="-17.78"/>
+<pinref part="Q4" gate="G$1" pin="1"/>
+<wire x1="-45.72" y1="-17.78" x2="-45.72" y2="-15.24" width="0.1524" layer="91"/>
+<junction x="-45.72" y="-17.78"/>
 </segment>
 </net>
 <net name="CANCS" class="0">
