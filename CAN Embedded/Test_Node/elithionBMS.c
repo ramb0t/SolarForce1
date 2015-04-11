@@ -21,7 +21,7 @@ void BMS_send_fake_data(){
 	message.length = 8;
 	uint8_t datastring[8];
 
-	message.data = &datastring;
+//	message.data = &datastring;
 
 
 	CAN_sendMessage(&message);

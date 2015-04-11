@@ -26,10 +26,10 @@
 #define TIMEBASE_HITS_PER_1MS ( F_CPU/TIMEBASE_PRESCALE/1000 ) //number of timer ovf per 1mS
 #define TIMEBASE_RELOAD ((uint8_t)(0xff-TIMEBASE_HITS_PER_1MS+1)) // value to reload timer with
 
-#define LEDT_DDR	DDRC
-#define LEDT_PORT	PORTC
-#define LEDT1		PC2
-#define LEDT2		PC3
+#define LEDT_DDR	DDRD
+#define LEDT_PORT	PORTD
+#define LEDT1		PD0
+#define LEDT2		PD1
 
 // Variables:
 /*****************************************************************************/
