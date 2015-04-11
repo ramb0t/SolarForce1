@@ -35,6 +35,9 @@ int main(void)
 	Timer1_init();
 	OCR1A = 14;
 
+	// Init Timer0
+	Timer0_init();
+
 	// HACK
 	// LCD SCKCTL Output
 	LCD_SCKCTL_DDR |= (1<<LCD_SCKCTL);
@@ -47,7 +50,7 @@ int main(void)
     uart_puts("-------------------------------------\n");
 
     // Create Terminal State
-    uint8_t Terminal_state = TERMINAL_LISTEN;
+    Terminal_state = TERMINAL_INIT;
     // Init the Terminal
     Terminal_init();
 

@@ -28,7 +28,7 @@ Returns:  None
 void Terminal_read(uint8_t* state){
 
 	// input char array
-	char input[TERMINAL_MAX_INPUT_LENGTH+1];
+	char input[TERMINAL_MAX_INPUT_LENGTH+1];  // defines the maximum string length that we are willing at accept
 	// index pointer
 	uint8_t index = 0;
 
@@ -43,11 +43,13 @@ void Terminal_read(uint8_t* state){
 		}
 	}
 
-	// clear the input chars
+	// clear the excess input chars (init random ram)
+	// could we not get away with setting next char to endline operator?
 	for(int i = index ; index < TERMINAL_MAX_INPUT_LENGTH+1; index++){
 		input[i] = 0;
 	}
 
+	// Lets see if we can find a command?
 	if(strcasecmp(input, TERMINAL_sCANCEL) == 0){ // Cancel
 			*state = TERMINAL_RUN;
 			uart_puts("\n");

@@ -13,9 +13,8 @@
 /*****************************************************************************/
 #include <inttypes.h>
 #include <avr/io.h>
-#include <avr/signal.h>
 #include <avr/interrupt.h>
-
+#include "../lib/uart/uart.h"
 
 // Project Specific
 
@@ -27,9 +26,16 @@
 #define TIMEBASE_HITS_PER_1MS ( F_CPU/TIMEBASE_PRESCALE/1000 ) //number of timer ovf per 1mS
 #define TIMEBASE_RELOAD ((uint8_t)(0xff-TIMEBASE_HITS_PER_1MS+1)) // value to reload timer with
 
+#define LEDT_DDR	DDRC
+#define LEDT_PORT	PORTC
+#define LEDT1		PC2
+#define LEDT2		PC3
+
 // Variables:
 /*****************************************************************************/
 volatile uint8_t gMilliSecTick;
+volatile uint16_t ms_Counter;
+extern volatile uint8_t Terminal_state;
 
 
 // Function Prototypes:

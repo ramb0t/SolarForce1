@@ -21,7 +21,7 @@
 int main(void){
 	// setup leds
 	LED_DDR |= (1<<LED1)|(1<<LED2);
-	LEDT_DDR |= (1<<LED1)|(1<<LED2);
+	LEDT_DDR |= (1<<LEDT1)|(1<<LEDT2);
 
 	while(1){
 		// toggle

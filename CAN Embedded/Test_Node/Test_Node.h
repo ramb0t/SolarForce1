@@ -49,6 +49,9 @@
 // Terminal / Console interface for test node.
 #include "Terminal.h"
 
+// Timer0
+#include "Timer0.h"
+
 // Timer1
 #include "Timer1.h"
 
@@ -69,6 +72,10 @@
 
 
 // Structure Definitions
+/*********************************************/
+volatile uint8_t Terminal_state;
+
+// Variable Definitions
 /*********************************************/
 
 // Function Prototypes
