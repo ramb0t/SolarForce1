@@ -79,7 +79,7 @@ int main (void)
 
 	if (DEBUG)
 	{
-//		_delay_ms(500);
+		//_delay_ms(500);
 		LED_DIAG_PORT |= (1<<LED_DIAG_ORG);
 		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
 		//_delay_ms(500);
@@ -87,13 +87,13 @@ int main (void)
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
 
-				
+		uart_putc('a');				
 		//CAN_readData();
 		
 		//MAV_msg_pack();
 		//uart_puts("Hi!");
 		
-		GPS_readData();
+		//GPS_readData();
 		
 
 	}
@@ -121,15 +121,112 @@ void GPS_readData()
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
 	*/
-		//char NMEA[72];
+		char GPRMC[60];
 		//unsigned int z=0;
 		//unsigned int lgth=0;
-		//unsigned int ctr = 0;
-		//char gpsdata;
+		uint8_t ctr = 0;
+		uint8_t ctr2 = 0;
+		uint8_t errctr = 0;
+		char gpsdata;
 		
-		if(uart_available()){
-			uart_putc(uart_getc());
-		}
+		if(uart_available())
+		{
+			//uart_putc(uart_getc());
+			gpsdata = uart_getc();
+			//uart_putc(gpsdata);
+			if(gpsdata !='$')
+			{
+				gpsdata = uart_getc();
+				ctr++;
+				if (ctr > 500)
+				{
+					uart_flush();
+					uart_puts("GPS Invalid! Check wiring.");
+				}
+			}else{
+				uart_puts("Fnd$");
+				gpsdata = uart_getc();
+				uart_putc(gpsdata);
+				if (gpsdata == 'G')
+				{
+					uart_puts("FoundG");
+					gpsdata = uart_getc();
+					ctr2++;
+
+					if (gpsdata == 'P')
+					{
+						uart_puts("FoundP");
+						gpsdata = uart_getc();
+						//uart_putc(gpsdata);
+						strcat(GPRMC[ctr2],gpsdata);
+						ctr2++;
+						if (gpsdata == 'R')
+						{
+							uart_puts("FoundR");
+							gpsdata = uart_getc();
+							//uart_putc(gpsdata);
+							strcat(GPRMC[ctr2],gpsdata);
+							ctr2++;
+							if (gpsdata == 'M')
+							{
+								uart_puts("FoundM");
+								gpsdata = uart_getc();
+								//uart_putc(gpsdata);
+								strcat(GPRMC[ctr2],gpsdata);
+								ctr2++;
+								if (gpsdata == 'C')
+								{
+									uart_puts("FoundC");
+									gpsdata = uart_getc();
+									//uart_putc(gpsdata);
+									strcat(GPRMC[ctr2],gpsdata);
+									ctr2++;
+								}
+							}
+						}
+					}
+				}
+			}
+	}
+	
+	while (!uart_available())
+	{
+			errctr++;
+			
+			if (errctr>500)
+			{
+				uart_puts("GPS Disconnected!");
+				errctr =0;
+			}
+			
+	}
+
+			
+			
+			
+			
+			
+			//while (uart_getc() != '$')
+			//{	
+					//gpsdata = uart_getc();
+					////uart_putc(gpsdata);
+				//ctr++;
+
+//
+			//}
+
+	
+		
+		
+
+
+		
+				
+
+
+}
+		
+		
 	//UART_REG = TX_DISABLE;
 	//uart_flush();
 	//gpsdata = uart_getc();	
@@ -189,29 +286,28 @@ void GPS_readData()
 		//uart_putc(NMEA[i]);
 	//}
 	
-}
+
 
 
 void CAN_readData()
 {
 	uart_flush();
 //	_delay_ms(20);
-	uart_puts("<<<<START OF MESSAGE>>>>\n");
-	uart_puts("\n---------CAN DATA---------\n");
-	char buff[16] ;
+	
+	char buff[10] ;
 	if(DEBUG){
-		itoa(CAN_checkReceiveAvailable(), buff,10);
-		uart_puts("RXAvail:");
-		uart_puts(buff);
-		
-		itoa(CAN_checkError(),buff,10);
-		uart_puts("CheckErr:");
-		uart_puts(buff);
+		//itoa(CAN_checkReceiveAvailable(), buff,10);
+		//uart_puts("RXAvail:");
+		//uart_puts(buff);
+		//
+		//itoa(CAN_checkError(),buff,10);
+		//uart_puts("CheckErr:");
+		//uart_puts(buff);
 //		_delay_ms(100);
 		
 		if(CAN_checkReceiveAvailable()==CAN_NOMSG)
 		{
-			uart_puts("\nNo CAN message / CAN Bus disconnected!\n");
+			//uart_puts("\nNo CAN message\n");
 		}
 	
 	//if (CAN_checkError()==CAN_CTRLERROR)
@@ -220,16 +316,38 @@ void CAN_readData()
 	////TODO: Set flag for controller error in GUI
 	//}else if (CAN_checkError()==CAN_OK)
 	
-		if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
+	if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
 		{
+			uart_puts("<<<<START OF MESSAGE>>>>\n");
+			uart_puts("\n---------CAN DATA---------\n");
+			
+			itoa(CAN_checkReceiveAvailable(), buff,10);
+			uart_puts("RXAvail:");
+			uart_puts(buff);
+					
+			itoa(CAN_checkError(),buff,10);
+			uart_puts("CheckErr:");
+			uart_puts(buff);
+			//-----------------Pull MPPT data----------------//
+			//CANBusInput.id = 0x711;
+			//CANBusInput.rtr = 1;
+			//CANBusInput.length = 0;
+
+			// Send the request
+			//CAN_sendMessage(&message);
+			
+			//-------------------Receive Data----------------//
+			
+			itoa(CANBusInput.extended_id,buff,10);
+			uart_putc(CANBusInput.id);
+			
 			int rx_Result;
 			rx_Result = CAN_readMessage(&CANBusInput);			//read a byte of CAN data
 			
 			if (rx_Result == CAN_OK)							//if read correctly...
 			{
-				//char buff[32] ;
-				buff[0] = "\0";
-				itoa(CANBusInput.id,buff,16);					//read ASCII-converted byte into buffer
+				//buff[0] = "\0";
+				itoa(CANBusInput.extended_id,buff,10);					//read ASCII-converted byte into buffer
 				uart_puts("\nCAN ID:");
 				uart_puts(buff);								//output bytestring to UART
 				
@@ -307,8 +425,8 @@ void MAV_msg_pack()
 			Assume CAN data 0 = motor controller temp
 							   data 1 = speed								*/
 			
-			mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
-			MAV_uart_send(buf,len);
+			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
+			//MAV_uart_send(buf,len);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
@@ -321,9 +439,10 @@ void MAV_msg_pack()
 								6 = uint8_t magnet_front missing?			0=no 1=yes
 			//TESTING		CAN 2 = speed to send							*/
 			
-			mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
-			MAV_uart_send(buf,len);
+			mavlink_msg_motor_driver_send(0, 72, CANBusInput.data[0]);
 			
+			uart_puts("RX");
+			uart_puts(MAV_Rx_buff);
 			/*-----------------------------------------------------------------------
 			NAME: BMS Data
 			DESCRIPTION: All data originating from the BMS, including error flags
@@ -357,7 +476,7 @@ void MAV_msg_pack()
 			//TESTING																	*/
 			
 //TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
-			MAV_uart_send(buf,len);
+			//MAV_uart_send(buf,len);
 			
 			/*-----------------------------------------------------------------------
 			NAME: GPS Data
@@ -373,7 +492,7 @@ void MAV_msg_pack()
 			//TESTING
 																					*/
 //TESTING	mavlink_msg_gps_pack(100,200,&msg,latitude,longitude,time,date,lock_error);
-			MAV_uart_send(buf,len);
+			//MAV_uart_send(buf,len);
 			
 			/*-----------------------------------------------------------------------
 			NAME: MPPT Data
@@ -388,16 +507,16 @@ void MAV_msg_pack()
 			//TESTING																		*/
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			MAV_uart_send(buf,len);
+			//MAV_uart_send(buf,len);
 			
 //TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			MAV_uart_send(buf,len);
+			//MAV_uart_send(buf,len);
 			
 //TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			MAV_uart_send(buf,len);
+			//MAV_uart_send(buf,len);
 			
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			MAV_uart_send(buf,len);
+			//MAV_uart_send(buf,len);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
@@ -410,11 +529,27 @@ void MAV_msg_pack()
 			
 			uart_flush();
 			uart_puts("\n---------MAVLink Heartbeat---------\n");
+			
 			mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
 			MAV_uart_send(buf,len);
 
 			uart_puts("\n<<<<END OF MESSAGE>>>>\n");
 			////_delay_ms(HEARTBEAT_DELAY);
+			
+			uart_puts("\n<<<<RX MESSAGE>>>>\n");
+			mavlink_motor_driver_t* MotorDriver;
+			mavlink_message_type_t* msgRx;
+			
+			msgRx = MAV_Rx_buff;
+			mavlink_msg_motor_driver_decode(&msgRx, MotorDriver);
+			
+			itoa(MotorDriver->controller_temp,buf,10);					//read ASCII-converted byte into buffer
+			uart_puts("\nTemperature:");
+			uart_puts(buf);
+			
+			itoa(MotorDriver->speed,buf,10);
+			uart_puts("\nSpeed:");
+			uart_puts(buf);
 	
 }
 
@@ -426,6 +561,7 @@ void MAV_uart_send(uint8_t buf[],uint8_t len)
 		uart_flush();
 	for (int i = 0; i < len ; i++){
 		uart_putc(buf[i]);
+		MAV_Rx_buff[i] = buf[i];
 		}
 	}
 						

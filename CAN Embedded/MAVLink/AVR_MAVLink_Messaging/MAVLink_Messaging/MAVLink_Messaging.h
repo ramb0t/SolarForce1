@@ -9,6 +9,8 @@
 #ifndef MAVLINK_MESSAGING_H_
 #define MAVLINK_MESSAGING_H_
 
+#define MAVLINK_SEND_UART_BYTES
+
 //------------Port Naming/ System Defines-----------------//
 
 #define F_CPU 16000000UL
@@ -55,6 +57,8 @@ mavlink_system_t mavlink_system;	//MAVLink system object
 volatile int counter=0;
 volatile int ctr2=0;
 
+char MAV_Rx_buff[10];
+
 //------------Enum for MAVLink Heartbeat delay-----------//
 enum {
 	HEARTBEAT_DELAY = 1000
@@ -76,5 +80,9 @@ void CAN_readData(void);
 void MAV_msg_pack();
 void MAV_uart_send(uint8_t [],uint8_t);
 void GPS_readData(void);
+
+static inline void mavlink_msg_motor_driver_decode(const mavlink_message_t* msg, mavlink_motor_driver_t* motor_driver);
+
+
 
 #endif /* MAVLINK_MESSAGING_H_ */
