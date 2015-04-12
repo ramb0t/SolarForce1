@@ -60,7 +60,7 @@ int main(void)
 
 	// Create a new message
 	CANMessage message;
-	uint8_t rx_status = 0xff;
+	//uint8_t rx_status = 0xff;
 
 	uint16_t i = 0;
 	// For working with strings

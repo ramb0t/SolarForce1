@@ -61,6 +61,8 @@ typedef struct {
 /*****************************************************************************/
 uint8_t CAN_Init(uint8_t speedset);
 void 	CAN_setupInt0(void);
+void 	CAN_setupPCINT0(void);
+uint8_t CAN_fillBuffer(void);
 uint8_t CAN_getMessage_Buffer(CANMessage* msg);
 uint8_t CAN_sendMessage(const CANMessage* msg);
 uint8_t CAN_readMessage(CANMessage* msg);

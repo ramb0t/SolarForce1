@@ -19,36 +19,17 @@
 
 // Create the buffer
 static volatile CANMessage CAN_Rx_Buffer[CAN_RX_BUFFER_SIZE];
-static volatile uint8_t CAN_Rx_Head;
-static volatile uint8_t CAN_Rx_Tail;
+volatile uint8_t CAN_Rx_Head;
+volatile uint8_t CAN_Rx_Tail;
 volatile uint8_t 	flag;
 //WE NEED AN ISR!
 
 ISR(INT0_vect){
-	uint8_t tmphead;
-	//uint8_t lastRxError;
-
-	// WE HAVE A MESSAGE
-	/* calculate buffer index */
-		tmphead = ( CAN_Rx_Head + 1) &CAN_RX_BUFFER_MASK;
-
-		if ( tmphead == CAN_Rx_Tail ) {
-			/* error: receive buffer overflow */
-		//	lastRxError = CAN_BUFFER_OVERFLOW >> 8;
-			flag = CAN_FAIL;
-		}else{
-			/* store new index */
-			CAN_Rx_Head = tmphead;
-			/* store received data in buffer */
-			CANMessage msg;
-			CAN_readMessage(&msg);
-			CAN_Rx_Buffer[tmphead] = msg;
-			flag = CAN_MSGAVAIL;
-		}
-		//CAN_LastRxError = lastRxError;
-
+	CAN_fillBuffer();
 
 }
+
+//ISR(PCINT0_vect, ISR_ALIASOF(INT0_vect));
 
 /*************************************************************************
 Function: CAN_Init()
@@ -72,10 +53,46 @@ uint8_t CAN_Init(uint8_t speedset)
 void CAN_setupInt0(void){
 	// setup pin int
 	DDRD &= ~(1<<PD2);   //Set pin as input
-	PORTD |= (1<<PD2);
+	PORTD |= (1<<PD2);   //Pullup
 	EICRA |= (1<<ISC01); //Falling edge of INT0
 	EIMSK |= (1<<INT0);  //enable int
 	flag = CAN_NOMSG;
+}
+
+void CAN_setupPCINT0(void){
+	// setup pin int
+	DDRB &= ~(1<<PB0);   //Set pin as input
+	PORTB |= (1<<PB0);   //Pullup
+	PCICR |= (1<<PCIE0); //Enable on PCINT0 pins
+	PCMSK0 |= (1<<PCINT0); //Mask PB0
+	flag = CAN_NOMSG;
+}
+
+uint8_t CAN_fillBuffer(void){
+	uint8_t tmphead;
+	//uint8_t lastRxError;
+	// WE HAVE A MESSAGE?
+	if(CAN_checkReceiveAvailable() == CAN_MSGAVAIL){
+	/* calculate buffer index */
+		tmphead = ( CAN_Rx_Head + 1) &CAN_RX_BUFFER_MASK;
+
+		if ( tmphead == CAN_Rx_Tail ) {
+			/* error: receive buffer overflow */
+		//	lastRxError = CAN_BUFFER_OVERFLOW >> 8;
+			flag = CAN_FAIL;
+			CAN_Rx_Head = CAN_Rx_Tail; // FLUSH!
+		}else{
+			/* store new index */
+			CAN_Rx_Head = tmphead;
+			/* store received data in buffer */
+			CANMessage msg;
+			CAN_readMessage(&msg);
+			CAN_Rx_Buffer[tmphead] = msg;
+			flag = CAN_MSGAVAIL;
+		}
+			//CAN_LastRxError = lastRxError;
+	}
+		return 0;
 }
 
 uint8_t CAN_getMessage_Buffer(CANMessage *msg){

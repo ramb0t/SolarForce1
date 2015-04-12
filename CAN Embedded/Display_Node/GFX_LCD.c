@@ -3,6 +3,8 @@
 
 u8g_t u8g;
 
+extern volatile uint8_t CAN_Rx_Head;
+extern volatile uint8_t CAN_Rx_Tail;
 void u8g_setup(void)
 {
 	// Init CS pin
@@ -82,16 +84,16 @@ void GFX_Cnt(int i){
 
 
 void GFX_LCD_Draw(CANMessage* message){
-	//GFX_SELECT();
-	u8g_Begin(&u8g);
+	//u8g_Begin(&u8g);
 	u8g_FirstPage(&u8g);
-	u8g_prepare();
+	//u8g_prepare();
 	do
 	{
+		cli();
 		draw(message);
+		sei();
 
 	} while ( u8g_NextPage(&u8g) );
-	//GFX_UNSELECT();
 }
 
 void draw(CANMessage* msg){
@@ -99,14 +101,21 @@ void draw(CANMessage* msg){
 
 	CANMessage message = *msg;
 
-	//u8g_SetFont(&u8g, u8g_font_6x10);
-	//u8g_SetFontRefHeightExtendedText(&u8g);
-	//u8g_SetDefaultForegroundColor(&u8g);
-	//u8g_SetFontPosTop(&u8g);
+	u8g_SetFont(&u8g, u8g_font_6x10);
+	u8g_SetFontRefHeightExtendedText(&u8g);
+	u8g_SetDefaultForegroundColor(&u8g);
+	u8g_SetFontPosTop(&u8g);
 	// ID
 	itoa(message.id, buf, 10);
 	u8g_DrawStr(&u8g, 5, 0, "ID= ");
 	u8g_DrawStr(&u8g, 24, 0, buf);
+
+	itoa(CAN_Rx_Head, buf, 10);
+	u8g_DrawStr(&u8g, 64, 0, "H= ");
+	u8g_DrawStr(&u8g, 88, 0, buf);
+	itoa(CAN_Rx_Tail, buf, 10);
+	u8g_DrawStr(&u8g, 64, 15, "T= ");
+	u8g_DrawStr(&u8g, 88, 15, buf);
 
 
 	// L

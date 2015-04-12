@@ -81,7 +81,6 @@ volatile uint8_t Terminal_state;
 // Variable Definitions
 /*********************************************/
 extern volatile uint8_t flag;
-extern volatile CANMessage gMessage;
 
 // Function Prototypes
 /*********************************************/
