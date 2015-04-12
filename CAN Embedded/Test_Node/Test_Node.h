@@ -40,7 +40,7 @@
 
 
 
-#define UART_BAUD_RATE 9600
+#define UART_BAUD_RATE 38400
 #include "../lib/uart/uart.h"
 // Handy uart functions
 #include "../lib/uart/uart_CANFunc.h"

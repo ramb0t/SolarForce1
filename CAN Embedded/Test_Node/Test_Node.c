@@ -66,7 +66,7 @@ int main(void)
 	// for timing!
 	extern volatile uint16_t ms_Counter;
 	uint16_t oldtime = ms_Counter;
-	uint16_t waittime = 300; // delay time in ms
+	uint16_t waittime = 1000; // delay time in ms
 
 	BMS_init();
 
@@ -173,6 +173,15 @@ int main(void)
 				BMS_send_fake_data();
     			Terminal_state = TERMINAL_INIT;
 				break;
+
+    		case (TERMINAL_LOOPBMS):
+				if((ms_Counter - oldtime) > waittime){
+					oldtime = ms_Counter;
+
+					BMS_send_fake_data();
+				}
+				break;
+
     		default:
 
     			break;

@@ -78,15 +78,24 @@ void BMS_init(void){
 
 void BMS_send_fake_data(){
 	// We need to send a sequence of messages
-
+#define mstime	50
 	CAN_sendMessage(&MSG0);
+	_delay_ms(mstime);
 	CAN_sendMessage(&MSG1);
+	_delay_ms(mstime);
 	CAN_sendMessage(&MSG2);
+	_delay_ms(mstime);
 	CAN_sendMessage(&MSG3);
+	_delay_ms(mstime);
 	CAN_sendMessage(&MSG4);
+	_delay_ms(mstime);
 	CAN_sendMessage(&MSG5);
+	_delay_ms(mstime);
 	CAN_sendMessage(&MSG6);
+	_delay_ms(mstime);
 	CAN_sendMessage(&MSG7);
+	_delay_ms(mstime);
 	CAN_sendMessage(&MSG8);
+	_delay_ms(mstime);
 
 }
