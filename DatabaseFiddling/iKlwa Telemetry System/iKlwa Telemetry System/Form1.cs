@@ -87,7 +87,7 @@ namespace iKlwa_Telemetry_System
         private void button4_Click(object sender, EventArgs e)
         {
             //manually add some data and error packets - for testing purposes
-            d.simulateDataCapture("HE_Sensor1", "Speed", 103);
+            d.simulateDataCapture("HE_Sensor1", "Speed", new Random().Next(100));
             d.simulateDataCapture("HE_Sensor2", "Speed", 102);
             d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
            
@@ -106,17 +106,77 @@ namespace iKlwa_Telemetry_System
                 {
                     comboBox1.Items.Add(sensor.Key);
                 }
+            numericUpDown4.Value = DateTime.Now.Hour;
+            numericUpDown2.Value = DateTime.Now.Minute;
+            numericUpDown1.Value = DateTime.Now.Hour - 1;
+            numericUpDown3.Value = DateTime.Now.Minute;
         }
 
         //a test query - will remove and refine
         private void button5_Click(object sender, EventArgs e)
         {
-            var results = d.queryRange("17h30", "17h45");
+            var results = d.queryRange("13h00", "13h22");
             richTextBox1.Text = "Results found: " + results.Count().ToString() + "\n\n";
             foreach (var item in results)
             {
                 richTextBox1.AppendText(item.ToString() + "\n");
             }
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string sensor = comboBox1.SelectedItem.ToString();
+            if (sensor.Equals(null) == false)
+            {
+                var results = d.queryRange_valOnly(sensor, numericUpDown1.Value + "h" + numericUpDown3.Value, numericUpDown4.Value + "h" + numericUpDown2.Value);
+                richTextBox1.Text = "Results found: " + results.Count().ToString() + "\n\n";
+                foreach (var item in results)
+                {
+                    richTextBox1.AppendText(item.ToString() + "\n");
+                }
+            }
+            else MessageBox.Show("No sensor selected...");
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            button6.Enabled = true;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            GraphPane gp = zedGraphControl1.GraphPane;
+            gp.CurveList.Clear();
+            gp.Title.Text = "Speed vs Time";
+            gp.XAxis.Title.Text = "Time";
+            gp.YAxis.Title.Text = "Speed";
+
+            PointPairList listPoints = new PointPairList();
+            LineItem line_item;
+
+            var results = d.queryRange_valOnly("HE_Sensor1", numericUpDown1.Value + "h" + numericUpDown3.Value, numericUpDown4.Value + "h" + numericUpDown2.Value);
+            richTextBox1.Text = "Results found: " + results.Count().ToString() + "\n\n";
+            int x = 0;
+            foreach (var item in results)
+            {
+                foreach (var thing in item.Descendants("Value"))
+                {
+                    richTextBox1.AppendText(thing.Value + "\n");
+                    listPoints.Add(x++, Convert.ToDouble(thing.Value));
+                }
+            }
+            line_item = gp.AddCurve(null,listPoints,Color.LightSeaGreen,SymbolType.None);
+            line_item.Line.Width = 1;
+            zedGraphControl1.AxisChange();
+            zedGraphControl1.Invalidate();
+            zedGraphControl1.Refresh();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            TextFileManager txt = new TextFileManager();
+            txt.getAndWrite();
+        }
+
     }
 }

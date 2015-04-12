@@ -19,6 +19,11 @@ namespace iKlwa_Telemetry_System
         private const string DESCRIP_TAG = "Description";
         private const string VAL_TAG = "Value";
         private const string TIME_TAG = "Time";
+        private const string DATE_TAG = "Date";
+        private const string MSG_STATUS_TAG = "MessageStatus";
+
+        private const bool READ_STATUS = true;
+        private const bool UNREAD_STATUS = false;
 
         public TelemetryDatabase(string filename)
         {
@@ -39,6 +44,8 @@ namespace iKlwa_Telemetry_System
             if (value != null)
                 this.setChild(ref xe, VAL_TAG, value);
             this.setChild(ref xe, TIME_TAG, time);
+            this.setChild(ref xe, DATE_TAG, DateTime.Now.Day + "-" + DateTime.Now.Month);
+            this.setAttribute(ref xe, MSG_STATUS_TAG, UNREAD_STATUS);
             this.addNode(xe);
         }
 
@@ -72,25 +79,16 @@ namespace iKlwa_Telemetry_System
             return this.queryLvl2Group(SENSOR_TAG);
         }
 
+        //prototype functions 
         public IEnumerable<XElement> queryRange(string start_time, string end_time)
         {
             return this.queryLvl3Range(TIME_TAG, start_time, end_time);
         }
 
-        /*public string[,] getErrors()
+        public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time)
         {
-            int count = 0;
-            var errs = this.queryLvl1ByAttributes("Type", "Error");
-            string[,] errors = new string [errs.Count(),2];
-            foreach (var e in errs)
-            {
-                foreach (var v in e.Descendants())   
-                {
-                    errors[count, 0] = v.Name.ToString();
-                    errors[count, 1] = v.Value.ToString();
-                }
-            }
-            return errors;
-        }*/
+            return this.queryLvl3RangeAndTag(SENSOR_TAG, val, TIME_TAG, start_time, end_time);
+        }
+
     }
 }
