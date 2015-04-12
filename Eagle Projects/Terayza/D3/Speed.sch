@@ -11507,6 +11507,12 @@ to the inputs</text>
 <label x="160.02" y="-48.26" size="1.778" layer="95"/>
 </segment>
 </net>
+<net name="N$11" class="0">
+<segment>
+<pinref part="U3" gate="U$1" pin="PB0(ICP)"/>
+<wire x1="10.16" y1="-30.48" x2="15.24" y2="-30.48" width="0.1524" layer="91"/>
+</segment>
+</net>
 </nets>
 </sheet>
 <sheet>
