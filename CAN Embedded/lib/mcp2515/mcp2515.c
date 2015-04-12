@@ -162,7 +162,7 @@ uint8_t mcp2515_init(const uint8_t canSpeed)
 		*/
 
 		// Buffer 0: Receive all news
-		mcp2515_setRegister (MCP_RXB0CTRL, (1 << RXM1) | (1 << RXM0));
+		mcp2515_setRegister (MCP_RXB0CTRL, (1 << RXM1) | (1 << RXM0) | (1 << BUKT));
 
 		// Buffer 1: Receive all news
 		mcp2515_setRegister (MCP_RXB1CTRL, (1 << RXM1) | (1 << RXM0));
@@ -188,6 +188,9 @@ uint8_t mcp2515_init(const uint8_t canSpeed)
 
 		// Turn TXnRTS bits as inputs
 		mcp2515_setRegister (MCP_TXRTSCTRL, 0);
+
+		// Set receive interrupts
+		mcp2515_setRegister(MCP_CANINTE, (MCP_RX1IE|MCP_RX0IE));
 
 		// Device back to normal mode offset
 		mcp2515_modifyRegister (MCP_CANCTRL, 0xE0, 0);

@@ -9,6 +9,11 @@
 
 #include "uart_CANFunc.h"
 
+extern volatile uint16_t ms_Counter;
+
+// HACK TEMP
+uint16_t oldtime;
+
 
 /*************************************************************************
 Function: uart_SendCANMsg()
@@ -19,21 +24,21 @@ Returns:  None
 void uart_SendCANMsg(CANMessage* message){
 	char buffer[5]; // used to hold conversions
 
-	uart_puts("CAN Message: ID= ");
+	uart_puts("CAN Msg: ID= ");
 
 	itoa( message->id, buffer, 10);   // convert integer into string (decimal format)
 	uart_puts(buffer);        // and transmit string to UART
-	uart_puts(" | Len= ");
+	uart_puts(" |L= ");
 	itoa( message->length, buffer, 10);   // convert integer into string (decimal format)
 	uart_puts(buffer);        // and transmit string to UART
 
-	uart_puts(" | RTR= ");
-	itoa( message->rtr, buffer, 10);   // convert integer into string (decimal format)
-	uart_puts(buffer);        // and transmit string to UART
+	//uart_puts(" | RTR= ");
+	//itoa( message->rtr, buffer, 10);   // convert integer into string (decimal format)
+	//uart_puts(buffer);        // and transmit string to UART
 
 	for (int i = 0; i < message->length; i++){
 
-		char string[15] ="| D";
+		char string[15] ="|D";
 		itoa(i, buffer, 10);
 		strcat(string, buffer);
 		strcat(string, "= ");
@@ -42,6 +47,15 @@ void uart_SendCANMsg(CANMessage* message){
 		strcat(string, buffer);
 		uart_puts(string);        // and transmit string to UART
 	}
+	uart_puts(" |t= ");
+	ultoa(ms_Counter, buffer, 10); // get the ms time'
+	uart_puts(buffer);
+
+	uart_puts(" |delT= ");
+	ultoa(ms_Counter-oldtime, buffer, 10); // get the delta time
+	oldtime = ms_Counter;
+	uart_puts(buffer);
+
 	uart_puts("\n");
 
 }
@@ -59,9 +73,9 @@ void uart_SendCANMsgRAW(CANMessage* message){
 	itoa( message->id, buffer, 2);   // convert integer into string (decimal format)
 	uart_puts(buffer);        // and transmit string to UART
 
-	uart_puts(",");
-	itoa( message->rtr, buffer, 2);   // convert integer into string (decimal format)
-	uart_puts(buffer);        // and transmit string to UART
+	//uart_puts(",");
+	//itoa( message->rtr, buffer, 2);   // convert integer into string (decimal format)
+	//uart_puts(buffer);        // and transmit string to UART
 
 
 	uart_puts(",");

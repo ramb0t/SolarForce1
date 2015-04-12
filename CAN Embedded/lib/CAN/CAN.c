@@ -10,6 +10,16 @@
 #include "CAN.h"
 #include "../mcp2515/mcp2515.h"
 
+volatile CANMessage gMessage;
+volatile uint8_t 	flag;
+//WE NEED AN ISR!
+
+ISR(INT0_vect){
+	// WE HAVE A MESSAGE
+	CAN_readMessage(&gMessage);
+	flag = CAN_MSGAVAIL;
+}
+
 /*************************************************************************
 Function: CAN_Init()
 Purpose:  Init the CAN interface
@@ -24,6 +34,16 @@ uint8_t CAN_Init(uint8_t speedset)
 
 	if (res == MCP2515_OK) return CAN_OK;
 	else return CAN_FAILINIT;
+}
+
+
+void CAN_setupInt0(void){
+	// setup pin int
+	DDRD &= ~(1<<PD2);   //Set pin as input
+	PORTD |= (1<<PD2);
+	EICRA |= (1<<ISC01); //Falling edge of INT0
+	EIMSK |= (1<<INT0);  //enable int
+	flag = CAN_NOMSG;
 }
 
 

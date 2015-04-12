@@ -12,7 +12,7 @@ int main(void)
 {
 
 	// Init UART
-	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
+	uart_init( UART_BAUD_SELECT_DOUBLE_SPEED(UART_BAUD_RATE,F_CPU) );
 
 	// Enable Interrupts
 	sei();
@@ -26,6 +26,9 @@ int main(void)
 	// Init CAN
 	CAN_Init(CAN_125KBPS_16MHZ);
 	uart_puts("CAN Initialised\n");
+
+	// setup pin int
+	CAN_setupInt0();
 
     // Init LCD
     //u8g_setup();
@@ -91,17 +94,22 @@ int main(void)
 
     			break;
     		case (TERMINAL_LISTEN):
-    	    	rx_status = CAN_checkReceiveAvailable();
-
-    	    	if(rx_status == CAN_MSGAVAIL){
-    	    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
-
-    	    		//LCD_SELECT();
-    	    		//GFX_LCD_Draw(&message);
-    	    		//LCD_UNSELECT();
-    	    		// sends the message on the CAN interface.
-    	    		uart_SendCANMsg(&message);
-    	    	}
+//    	    	rx_status = CAN_checkReceiveAvailable();
+//
+//    	    	if(rx_status == CAN_MSGAVAIL){
+//    	    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
+//
+//    	    		//LCD_SELECT();
+//    	    		//GFX_LCD_Draw(&message);
+//    	    		//LCD_UNSELECT();
+//    	    		// sends the message on the CAN interface.
+//    	    		uart_SendCANMsg(&message);
+//    	    	}
+				if(flag == CAN_MSGAVAIL){
+					// reset the flag
+					flag = CAN_NOMSG;
+					uart_SendCANMsg(&gMessage);
+				}
 
     			break;
     		case (TERMINAL_LISTENRAW):

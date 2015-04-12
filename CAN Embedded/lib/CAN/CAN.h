@@ -11,6 +11,8 @@
 // Includes
 /*****************************************************************************/
 #include <inttypes.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
 
 
@@ -51,6 +53,7 @@ typedef struct {
 // Functions
 /*****************************************************************************/
 uint8_t CAN_Init(uint8_t speedset);
+void 	CAN_setupInt0(void);
 uint8_t CAN_sendMessage(const CANMessage* msg);
 uint8_t CAN_readMessage(CANMessage* msg);
 uint8_t CAN_checkReceiveAvailable(void);

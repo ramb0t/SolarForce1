@@ -78,7 +78,7 @@ void BMS_init(void){
 
 void BMS_send_fake_data(){
 	// We need to send a sequence of messages
-#define mstime	50
+#define mstime	1
 	CAN_sendMessage(&MSG0);
 	_delay_ms(mstime);
 	CAN_sendMessage(&MSG1);

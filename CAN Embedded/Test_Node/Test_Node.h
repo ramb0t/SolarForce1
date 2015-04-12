@@ -40,7 +40,7 @@
 
 
 
-#define UART_BAUD_RATE 38400
+#define UART_BAUD_RATE 115200
 #include "../lib/uart/uart.h"
 // Handy uart functions
 #include "../lib/uart/uart_CANFunc.h"
@@ -80,6 +80,8 @@ volatile uint8_t Terminal_state;
 
 // Variable Definitions
 /*********************************************/
+extern volatile uint8_t flag;
+extern volatile CANMessage gMessage;
 
 // Function Prototypes
 /*********************************************/
