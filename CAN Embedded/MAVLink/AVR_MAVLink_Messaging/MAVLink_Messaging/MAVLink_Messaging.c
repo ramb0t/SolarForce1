@@ -11,11 +11,6 @@
 
 //------------ISR for the Timer0-------------------------//
 
-ISR(TIMER0_OVF_vect)
-{
-
-};
-
 int main (void)
 {
 	/* -------port configuration----------------
@@ -23,9 +18,9 @@ int main (void)
 	Telemetry Serial O/P 3 = PORTD3
 	Telemetry Serial I/P 4 = PORTD4				*/
 	
-	//UART_DDR |= _BV(TELEMETRY_UART_OUT);	//output
-	//UART_DDR &=~_BV(GPS_UART_DATA_IN);	//input
-	//UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
+	UART_DDR |= _BV(TELEMETRY_UART_OUT);	//output
+	UART_DDR &=~_BV(GPS_UART_DATA_IN);	//input
+	UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
 	
 	//DDRB |= _BV(DDB5);
 	
@@ -87,10 +82,10 @@ int main (void)
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
 
-		uart_putc('a');				
-		//CAN_readData();
+		//uart_putc('a');				
+		CAN_readData();
 		
-		//MAV_msg_pack();
+		MAV_msg_pack();
 		//uart_puts("Hi!");
 		
 		//GPS_readData();
@@ -305,11 +300,7 @@ void CAN_readData()
 		//uart_puts(buff);
 //		_delay_ms(100);
 		
-		if(CAN_checkReceiveAvailable()==CAN_NOMSG)
-		{
-			//uart_puts("\nNo CAN message\n");
-		}
-	
+
 	//if (CAN_checkError()==CAN_CTRLERROR)
 	//{
 	//uart_puts("CAN Controller Error!");
