@@ -5,25 +5,51 @@
  *  Author: Terayza
  */ 
 
-#define F_CPU 16000000L
+#define F_CPU 16000000UL
 #define HES1 1
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "../lib/CAN/CAN.h"
+#include "../lib/mcp2515/mcp2515.h"
+#include "../lib/SPI/AVR_SPI.h"
 
-int half_rev;
 
 void magnet()
 {
 	if (PINB & (1 << PB1)) //((PinB & (1 << HES1)) == (1 << HES1))
 	{
 		//increase half_rev when magnet is detected
-		half_rev++;
+		//half_rev++;
 		UDR0 = 0x01; //print to serial as sign of detection
+		
+		CANMessage speed;	
+		
+		speed. id = 0x0101;
+		speed. rtr = 0 ;
+		speed. length = 2 ;
+		speed. data [ 0 ] = 0x06;
+		speed. data [ 1 ] = 0x09;
+		
+		CAN_sendMessage (&speed);
 	}
+	
 	//else 
 	//UDR0 = 0x02;
 	//_delay_ms(300);
+}
+
+/*ISR(INT0_vect)
+{
+	//to run when there is an interrupt from HES
+	half_rev++;
+}*/
+
+void initInterrupt0(void)
+{
+	EIMSK |= (1 << INT0); //enable INT0
+	EICRA |= (1 << ISC00); // trigger when button changes
+	sei(); // set (global) interrupt enable bit
 }
 
 void initComms(unsigned int baudRate)
@@ -36,16 +62,31 @@ void initComms(unsigned int baudRate)
 
 int main(void)
 {
-	//timerSetup();
+	//initializations
+	initInterrupt0();
 	initComms(12);
 	
-	DDRB = 0x00; //set port B as input pins
-	PORTB = 0xff; // set pullups
-		
-	int rpm = 0; //unsigned
-	int speed = 0; //unsigned
+	SPI_Init(); // setup SPI	
+	CAN_Init(CAN_125KBPS_16MHZ);
+	
+	DDRD = 0x00; //set port D as input pins
+	PORTD = 0xff; // set pull ups
+	
+	volatile int half_rev = 0;
+	unsigned int rpm = 0;
+	//unsigned int speed = 0;
 	
 	UDR0 = 0x04;
+	
+	CANMessage speed;
+	
+	speed. id = 0x0101;
+	speed. rtr = 0 ;
+	speed. length = 2 ;
+	speed. data [ 0 ] = 0x06;
+	speed. data [ 1 ] = 0x09;
+	
+	CAN_sendMessage (&speed);
 	
 	//while(1==1){
 	//	magnet();
@@ -56,6 +97,17 @@ int main(void)
         TCCR0A |= (1 << CS01) | (1 << CS00);
 		//set prescaler to 64 and start the timer
 		
+		
+		CANMessage speed;
+		
+		speed.id = 1053;
+		speed.rtr = 0 ;
+		speed.length = 2 ;
+		speed.data [ 0 ] = 0x06;
+		speed.data [ 1 ] = 0x09;
+		
+		CAN_sendMessage (&speed);
+		
 		while((TIFR0 & (1 << TOV0) ) == 0) //wait for first overflow event
 		{
 			magnet();
@@ -63,12 +115,12 @@ int main(void)
 		TIFR0 &= ~(1 << TOV0);
 		//reset the overflow flag
 		
-		if(half_rev >= 20){
+		/*if(half_rev >= 20){
 			rpm = 30*1000/1000*half_rev;
 			UDR0 = half_rev;
 			half_rev = 0;
 			speed = (rpm*(18*3.14)/60)*2;
 			UDR0 = speed;
+			}*/
 		}
-	}
 }

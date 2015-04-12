@@ -1,22 +1,11 @@
 /*
- * MPU6050.c
+ * GyroAcc.c
  *
- * Created: 31/03/2015 10:36:22 PM
+ * Created: 11/04/2015 10:50:49 PM
  *  Author: Terayza
  */ 
 
 #define F_CPU 16000000UL
-#include <avr/io.h>
-#include <util/delay.h>
-#include "I2C.h"
-#include <avr/interrupt.h>
-
-#include "lib/uart/uart.h"
-
-#include "../lib/CAN/CAN.h"
-#include "../lib/mcp2515/mcp2515.h"
-
-#include "../lib/SPI/AVR_SPI.h"
 
 // Standard AVR includes
 #include <avr/io.h>
@@ -27,6 +16,12 @@
 #include <avr/sleep.h>
 #include <avr/wdt.h>
 #include <avr/power.h>
+
+#include "I2C.h"
+#include "../lib/CAN/CAN.h"
+#include "../lib/mcp2515/mcp2515.h"
+#include "../lib/SPI/AVR_SPI.h"
+#include "../lib/uart/uart.h"
 
 #include <stdlib.h>
 
@@ -116,7 +111,7 @@ void initComms(unsigned int baudRate)
 {
 	//set baud rate to 4800
 	UBRR0H = (unsigned char)(baudRate>>8);
-	UBRR0L = (unsigned char) baudRate;	
+	UBRR0L = (unsigned char) baudRate;
 	UCSR0B = (1<<TXEN0);
 }
 
@@ -133,8 +128,8 @@ int main(void)
 	
 	UDR0 = 0x02;
 	
-    while(1)
-    {
+	while(1)
+	{
 		CANMessage gyro;
 		
 		gyro. id = 0x0011;
@@ -145,8 +140,8 @@ int main(void)
 		
 		CAN_sendMessage (&gyro);
 		
-        UDR0 = MPU6050_ReadGyro(0);
-		_delay_ms(100);
+		UDR0 = MPU6050_ReadGyro(0);
+		_delay_ms(1000);
 		
 		CANMessage acc;
 		
@@ -158,7 +153,9 @@ int main(void)
 		
 		CAN_sendMessage (&acc);
 		
+		/*removed for testing, showing 0 since
+		  obviously no acceleration
 		UDR0 = MPU6050_ReadAccel(0);
-		_delay_ms(100);
-    }
+		_delay_ms(1000);*/
+	}
 }

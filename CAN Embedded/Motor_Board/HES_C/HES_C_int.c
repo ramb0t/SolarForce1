@@ -10,7 +10,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include "../lib/CAN/CAN.h" //sort this shit out bitch
+//#include "../lib/CAN/CAN.h" //sort this shit out bitch
+#include "../lib/CAN/CAN.h"
 #include "main.h"
 #include "AVR_SPI.h"
 
