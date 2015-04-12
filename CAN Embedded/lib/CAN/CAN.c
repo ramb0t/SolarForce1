@@ -10,14 +10,44 @@
 #include "CAN.h"
 #include "../mcp2515/mcp2515.h"
 
-volatile CANMessage gMessage;
+
+// Setup the RX Buffer
+#define CAN_RX_BUFFER_MASK	(CAN_RX_BUFFER_SIZE - 1 )
+#if ( CAN_RX_BUFFER_SIZE & CAN_RX_BUFFER_MASK )
+#error RX buffer size is not a power of 2
+#endif
+
+// Create the buffer
+static volatile CANMessage CAN_Rx_Buffer[CAN_RX_BUFFER_SIZE];
+static volatile uint8_t CAN_Rx_Head;
+static volatile uint8_t CAN_Rx_Tail;
 volatile uint8_t 	flag;
 //WE NEED AN ISR!
 
 ISR(INT0_vect){
+	uint8_t tmphead;
+	//uint8_t lastRxError;
+
 	// WE HAVE A MESSAGE
-	CAN_readMessage(&gMessage);
-	flag = CAN_MSGAVAIL;
+	/* calculate buffer index */
+		tmphead = ( CAN_Rx_Head + 1) &CAN_RX_BUFFER_MASK;
+
+		if ( tmphead == CAN_Rx_Tail ) {
+			/* error: receive buffer overflow */
+		//	lastRxError = CAN_BUFFER_OVERFLOW >> 8;
+			flag = CAN_FAIL;
+		}else{
+			/* store new index */
+			CAN_Rx_Head = tmphead;
+			/* store received data in buffer */
+			CANMessage msg;
+			CAN_readMessage(&msg);
+			CAN_Rx_Buffer[tmphead] = msg;
+			flag = CAN_MSGAVAIL;
+		}
+		//CAN_LastRxError = lastRxError;
+
+
 }
 
 /*************************************************************************
@@ -28,6 +58,8 @@ Returns:  Ok / Fail
 **************************************************************************/
 uint8_t CAN_Init(uint8_t speedset)
 {
+	CAN_Rx_Head = 0;
+	CAN_Rx_Tail = 0;
 	uint8_t res;
 
 	res = mcp2515_init(speedset);
@@ -44,6 +76,29 @@ void CAN_setupInt0(void){
 	EICRA |= (1<<ISC01); //Falling edge of INT0
 	EIMSK |= (1<<INT0);  //enable int
 	flag = CAN_NOMSG;
+}
+
+uint8_t CAN_getMessage_Buffer(CANMessage *msg){
+    uint8_t tmptail, res;
+
+    if ( CAN_Rx_Head == CAN_Rx_Tail ) {
+    	res = CAN_NOMSG;
+    	flag = CAN_NOMSG;
+        return res;   /* no data available */
+    }
+
+    /* calculate /store buffer index */
+    tmptail = (CAN_Rx_Tail + 1) & CAN_RX_BUFFER_MASK;
+    CAN_Rx_Tail = tmptail;
+
+    /* get data from receive buffer */
+    //CANMessage message = CAN_Rx_Buffer[tmptail];
+    //msg = &message;
+    *msg = CAN_Rx_Buffer[tmptail];
+
+    res = CAN_OK;
+    return res;
+
 }
 
 

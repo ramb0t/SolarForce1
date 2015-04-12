@@ -10,7 +10,7 @@
 
 void BMS_init(void){
 	MSG0 = (CANMessage) {.id=CAN_ID+0,.rtr=0,.length=8,.data={
-				'E','L','I','T','H','I','O','n'
+				'E','L','I','T','H','I','O','N'
 		}};
 
 	MSG1 = (CANMessage) {.id=CAN_ID+1,.rtr=0,.length=8,.data={

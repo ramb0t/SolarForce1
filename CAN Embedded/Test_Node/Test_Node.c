@@ -106,9 +106,13 @@ int main(void)
 //    	    		uart_SendCANMsg(&message);
 //    	    	}
 				if(flag == CAN_MSGAVAIL){
-					// reset the flag
-					flag = CAN_NOMSG;
-					uart_SendCANMsg(&gMessage);
+					if(CAN_getMessage_Buffer(&message) == CAN_OK){
+						uart_SendCANMsg(&message);
+					}
+				}else if(flag == CAN_FAIL){
+					uart_puts("that");
+					CAN_getMessage_Buffer(&message);
+					uart_SendCANMsg(&message);
 				}
 
     			break;
