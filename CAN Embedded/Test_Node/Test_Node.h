@@ -49,8 +49,14 @@
 // Terminal / Console interface for test node.
 #include "Terminal.h"
 
+// Timer0
+#include "Timer0.h"
+
 // Timer1
-#include "Timer1.h"
+//#include "Timer1.h"
+
+//BMS Emulator
+#include "elithionBMS.h"
 
 // Pin Defines
 #include "pinDefines.h"
@@ -69,6 +75,10 @@
 
 
 // Structure Definitions
+/*********************************************/
+volatile uint8_t Terminal_state;
+
+// Variable Definitions
 /*********************************************/
 
 // Function Prototypes

@@ -137,7 +137,7 @@ int main(void)
     {
 		CANMessage gyro;
 		
-		gyro. id = 0x0012;
+		gyro. id = 0x0011;
 		gyro. rtr = 0 ;
 		gyro. length = 2 ;
 		gyro. data [ 0 ] = MPU6050_ReadGyro(0);
@@ -146,6 +146,19 @@ int main(void)
 		CAN_sendMessage (&gyro);
 		
         UDR0 = MPU6050_ReadGyro(0);
+		_delay_ms(100);
+		
+		CANMessage acc;
+		
+		gyro. id = 0x0012;
+		gyro. rtr = 0 ;
+		gyro. length = 2 ;
+		gyro. data [ 0 ] = MPU6050_ReadAccel(0);
+		gyro. data [ 1 ] = MPU6050_ReadAccel(1);
+		
+		CAN_sendMessage (&acc);
+		
+		UDR0 = MPU6050_ReadAccel(0);
 		_delay_ms(100);
     }
 }

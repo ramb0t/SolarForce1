@@ -37,11 +37,15 @@
 #include "GFX_LCD.h"
 // SPI Library used with CAN Controller
 #include "../lib/SPI/AVR_SPI.h"
+// Timer1
+#include "Timer1.h"
+
+// Pin Defines
+#include "pinDefines.h"
+#define LCD_SELECT() 	( LCD_SCKCTL_PORT |=  (1<<LCD_SCKCTL) )
+#define LCD_UNSELECT()  ( LCD_SCKCTL_PORT &= ~(1<<LCD_SCKCTL) )
 
 
-
-#define UART_BAUD_RATE 9600
-#include "../lib/uart/uart.h"
 #include <string.h>
 
 // These are optional, but nice to have around.

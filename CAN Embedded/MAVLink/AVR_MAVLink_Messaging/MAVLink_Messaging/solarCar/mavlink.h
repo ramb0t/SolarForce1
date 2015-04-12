@@ -23,6 +23,5 @@
 
 #include "version.h"
 #include "solarCar.h"
-#include "common.h"
 
 #endif // MAVLINK_H

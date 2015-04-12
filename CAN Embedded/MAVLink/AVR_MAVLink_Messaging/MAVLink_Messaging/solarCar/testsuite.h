@@ -78,7 +78,7 @@ static void mavlink_test_bms_data(uint8_t system_id, uint8_t component_id, mavli
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_bms_data_t packet_in = {
-		17.0,45.0,17651,{ 17755, 17756, 17757 },{ 18067, 18068, 18069 },199,'X',77,144,211,22,2
+		17235,17339,17443,{ 17547, 17548, 17549 },{ 17859, 17860, 17861 },187,'T',65,132,199,10,2
     };
 	mavlink_bms_data_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -451,7 +451,7 @@ static void mavlink_test_hall_effect(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_hall_effect_t packet_in = {
-		17.0,17,84
+		5,72,139
     };
 	mavlink_hall_effect_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));

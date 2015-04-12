@@ -6,7 +6,8 @@
 #include "mavlink_types.h"
 #include "mavlink_conversions.h"
 
-		  mavlink_system_t mavlink_system;
+//MANUALLY INCLUDED BY PROGRAMMER; REFERENCES INCLUSION IN MAVLINK_MESSAGING.H
+mavlink_system_t mavlink_system;
 
 #ifndef MAVLINK_HELPER
 #define MAVLINK_HELPER
@@ -75,7 +76,6 @@ MAVLINK_HELPER uint16_t mavlink_finalize_message_chan(mavlink_message_t* msg, ui
 #endif
 {
 	// This code part is the same for all messages;
-
 	msg->magic = MAVLINK_STX;
 	msg->len = length;
 	msg->sysid = system_id;

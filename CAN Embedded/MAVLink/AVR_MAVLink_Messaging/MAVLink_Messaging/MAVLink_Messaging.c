@@ -9,7 +9,6 @@
 
 #define DEBUG	1
 
-
 //------------ISR for the Timer0-------------------------//
 
 ISR(TIMER0_OVF_vect)
@@ -24,12 +23,16 @@ int main (void)
 	Telemetry Serial O/P 3 = PORTD3
 	Telemetry Serial I/P 4 = PORTD4				*/
 	
-	UART_DDR |= _BV(TELEMETRY_UART_OUT);	//output
-	UART_DDR &=~_BV(GPS_UART_DATA_IN);	//input
-	UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
+	//UART_DDR |= _BV(TELEMETRY_UART_OUT);	//output
+	//UART_DDR &=~_BV(GPS_UART_DATA_IN);	//input
+	//UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
 	
-	DDRB |= _BV(DDB5);
+	//DDRB |= _BV(DDB5);
 	
+	LED_DIAG_DDR |= (1<<LED_DIAG_GRN)|(1<<LED_DIAG_ORG); //setup diagnostic LEDs
+	
+	CANINT_DDR |= (1<<CANINT_LED);		//CAN interrupt LED
+			
 	/*----------CAN PORT INPUTS-----------------
 		Initialise SPI and CAN libraries
 		Name	CANPin	ArduinoPin		Port
@@ -42,11 +45,10 @@ int main (void)
 		
 		SPI_Init();
 		
-		while(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
+		if(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
 		{
 			CAN_Init(CAN_125KBPS_16MHZ);
-		}
-		;
+		};
 		
 	/*---------Timer Setup---------------------
 		*Overflow based
@@ -54,8 +56,8 @@ int main (void)
 	
 	TCNT0 = 0x00;
 	TCCR0A = 0x00;
-	TCCR0B = (1<<CS02)|(1<<CS00);
-	TIMSK0 = (1<<TOIE0);		//--enable later!
+	//TCCR0B = (1<<CS02)|(1<<CS00);
+	//TIMSK0 = (1<<TOIE0);		//--enable later!
 	
 	
 	/*---------UART Serial Init --------------------
@@ -74,21 +76,24 @@ int main (void)
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 		
-		if(TIFR0 &(1<<TOV0))
-		{
-			if (ctr2 == 15)
-			{
-			ctr2=0;
-			uart_puts("\n------------GPS start----------\n");
-			GPS_readData();
-			uart_puts("\n------------GPS done----------\n");
-			TIFR0 = (0<<TOV0);
-			}else ctr2++;
-		}
 
+	if (DEBUG)
+	{
+//		_delay_ms(500);
+		LED_DIAG_PORT |= (1<<LED_DIAG_ORG);
+		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
+		//_delay_ms(500);
+		LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
+		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
+	}	
+
+				
 		//CAN_readData();
 		
 		//MAV_msg_pack();
+		//uart_puts("Hi!");
+		
+		GPS_readData();
 		
 
 	}
@@ -116,104 +121,73 @@ void GPS_readData()
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
 	*/
-		uint8_t parseDone = 0;		
-		char NMEA[70];
-		unsigned int z=0;
-		unsigned int lgth=0;
-		unsigned int ctr = 0;
-		char gpsdata;
-
-
+		//char NMEA[72];
+		//unsigned int z=0;
+		//unsigned int lgth=0;
+		//unsigned int ctr = 0;
+		//char gpsdata;
+		
+		if(uart_available()){
+			uart_putc(uart_getc());
+		}
+	//UART_REG = TX_DISABLE;
+	//uart_flush();
+	//gpsdata = uart_getc();	
+//
+	//for (int i=0;i<30;i++)
+	//{
+		//gpsdata = uart_getc();
+		//NMEA[i] = gpsdata;
+	//}
+	//
+	////UART_REG = TX_ENABLE;
+	////uart_flush();
+	//
+	//for (int i=0;i<30;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
 		//uart_puts("\n---------GPS DATA---------\n");
-			
-				
-		//uart_puts("GPS Ready");
-		
-				if(DEBUG)
-				{
-						gpsdata = uart_getc();
-						while (gpsdata != '$')
-						{
-							gpsdata = uart_getc();							
-							uart_putc(gpsdata);
-							uart_puts("Invalid GPS data!");
-						}
-						
-							while (gpsdata != '\n')
-							{
-								gpsdata = uart_getc();	//store char in NMEA buffer
-								strcat(NMEA[ctr],gpsdata);
-							}
-							uart_puts(NMEA);				//print raw NMEA data
-
-							//PARSE TIME: hhmmss.ss
-							uart_puts("Time: ");
-							//hour
-							for(int i=0;i<2;i++)
-							{
-								uart_putc(NMEA[i]);
-							}
-							//minute
-							uart_puts("h:");
-							for(int i=2;i<4;i++)
-							{
-								uart_putc(NMEA[i]);
-							}
-							uart_puts(": ");
-							for(int i=4;i<6;i++)
-							{
-								uart_putc(NMEA[i]);
-							}
-							parseDone==1;
-						
-					
-
-						
-				}
-					
-
-				
-				//gpsdata = uart_getc();
-				//if(gpsdata != '\0')				//getting GPRMC data only
-				//{
-				//NMEA[z] = gpsdata;				//add to char array if not EOL
-				//z++;
-				//}else lgth=z; break;				//store string length
-			
-															////check each char for $GPRMC
-		//for(int i = 0;i<62;i++)
-		//{
-			//uart_putc(NMEA[i]);
-		//}
-
-
-		//z=0;
-		//
-		//while(NMEA[z]!='$' && z<10)			//search the string for '$'
-		//{
-				//z++;
-			//if(DEBUG)
-			//{
-				//if(NMEA[z]=='$')
-				//{
-					//uart_puts("Got$");
-					//if (NMEA[z+1]=="G")
-					//{
-						//uart_puts("GotG");
-					//}
-					//break;
-				//}
-				//break;
-			//}
-					//
-		//}
-		
-		////print GPS data to UART	
-		//uart_flush();
-		//for(ctr=z+1;ctr<lgth;ctr++)
-		//{
-			//uart_putc(NMEA[ctr]);
-		//}
+	//UART_REG = TX_DISABLE;			
+	//gpsdata = uart_getc();
+	//while (gpsdata != '$')
+	//{
+	//gpsdata = uart_getc();
+	//uart_putc(gpsdata);
+	//uart_puts("Invalid GPS data!");
+	//}
+//
+	//while (gpsdata != '*')
+	//{
+		//gpsdata = uart_getc();	//store char in NMEA buffer
+		//NMEA[ctr] = gpsdata;
+		//ctr++;
+	//}
+//
+	//for (int i=0;i<ctr;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+				////print raw NMEA data
+//
+	////PARSE TIME: hhmmss.ss
+	//uart_puts("Time: ");
+	////hour
+	//for(int i=0;i<2;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+	////minute
+	//uart_puts("h:");
+	//for(int i=2;i<4;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+	//uart_puts(": ");
+	//for(int i=4;i<6;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
 	
 }
 
@@ -221,7 +195,7 @@ void GPS_readData()
 void CAN_readData()
 {
 	uart_flush();
-	_delay_ms(20);
+//	_delay_ms(20);
 	uart_puts("<<<<START OF MESSAGE>>>>\n");
 	uart_puts("\n---------CAN DATA---------\n");
 	char buff[16] ;
@@ -233,7 +207,7 @@ void CAN_readData()
 		itoa(CAN_checkError(),buff,10);
 		uart_puts("CheckErr:");
 		uart_puts(buff);
-		_delay_ms(100);
+//		_delay_ms(100);
 		
 		if(CAN_checkReceiveAvailable()==CAN_NOMSG)
 		{
@@ -318,23 +292,127 @@ void MAV_msg_pack()
 			mavlink_message_t msg;
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-			//
-			////Assume CAN data 0 = motor controller temp
-			////		   data 1 = speed
+			
+			/*For all packaging, parameters 1,2,3 are the same */
+			
+			/*-----------------------------------------------------------------------
+			NAME: Motor Driver Data
+			DESCRIPTION: Speed from the motor driver RPM and error flags
+			..........................................................................
+				Parameters	 Value	Detail									Range/Type
+			...........................................................................				
+								4 = speed from motor driver (RPM)			0-255km/h
+								5 = uint8_t magnet_back missing?			0=no 1=yes
+								6 = uint8_t magnet_front missing?			0=no 1=yes
+			Assume CAN data 0 = motor controller temp
+							   data 1 = speed								*/
+			
 			mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			MAV_uart_send(buf,len);
-			//
-			////Assume CAN data 2 = speed
+			
+			/*-----------------------------------------------------------------------
+			NAME: Hall Effect Sensor Data
+			DESCRIPTION: Speed from the Hall Effect Sensors and error flags	
+			.........................................................................
+			Parameters		 Value	Detail									Range/Type
+			...........................................................................
+				Parameters		4 = speed from hall effect					0-255km/h
+								5 = uint8_t magnet_back missing?			0=no 1=yes
+								6 = uint8_t magnet_front missing?			0=no 1=yes
+			//TESTING		CAN 2 = speed to send							*/
+			
 			mavlink_msg_hall_effect_pack(100,200,&msg,CANBusInput.data[2],0,0);
 			MAV_uart_send(buf,len);
+			
+			/*-----------------------------------------------------------------------
+			NAME: BMS Data
+			DESCRIPTION: All data originating from the BMS, including error flags
+			.........................................................................
+				Parameters	 Value	Detail									Range/Type
+			...........................................................................
+								4 = uint8_t fault condition?				0=no 1=yes
+								5 = uint16_t source current					0-65535mA
+								6 = uint16_t load_current					0-65535mA
+								7 = char bat_fan_status						t=OK f=FAULT
+								8 = uint8_t LLIM_state						1=flag active 0=flag not active
+								9 = uint8_t HLIM_state						1=flag active 0=flag not active
+								10 = uint8_t state_of_chg (percentage)		0-100%
+								11 = uint16_t pack_voltage					0-65535V
+								12 = const uint16_t *cell_voltages [low,avg,high]	0-65535V per element
+								13 = const uint16_t *cell_temps [low,avg,high]		0-65535C per element
+								14 = uint8_t system_status							MAVLINK_ENUM
+								
+			*/
+			//mavlink_msg_bms_data_pack(100,200, &msg,uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, uint16_t pack_voltage, const uint16_t *cell_voltages, const uint16_t *cell_temps, uint8_t system_status)
 
+			/*-----------------------------------------------------------------------
+			NAME: Accelerometer/Gyroscope Data
+			DESCRIPTION: Yaw, Pitch, Roll and Acceleration data from MPU6050
+			.........................................................................
+			Parameters		Value	Detail									Range/Type
+			...........................................................................
+								4 = int8_t acceleration (m.s^-2)			-127 to 127 m.s^-2		
+								5 = uint8_t magnet_back missing? 			0=no 1=yes
+								6 = uint8_t magnet_front missing?			0=no 1=yes
+			//TESTING																	*/
+			
+//TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
+			MAV_uart_send(buf,len);
+			
+			/*-----------------------------------------------------------------------
+			NAME: GPS Data
+			DESCRIPTION: Location, speed and other GPS data 
+			.........................................................................
+			Parameters		Value	Detail									Range/Type
+			...........................................................................
+								4 = const char *latitude					12 characters max
+								5 = const char *longitude					12 characters max
+								6 = const char *time						12 characters max
+								7 = const char *date						12 characters max
+								8 = const char *lock_error					12 characters max "OK" or "INVALID"
+			//TESTING
+																					*/
+//TESTING	mavlink_msg_gps_pack(100,200,&msg,latitude,longitude,time,date,lock_error);
+			MAV_uart_send(buf,len);
+			
+			/*-----------------------------------------------------------------------
+			NAME: MPPT Data
+			DESCRIPTION: Telemetry data from the MPPT's. There a 4 definitions, one for each MPPT. All variable ranges and types are the same.
+			.........................................................................
+			Parameters(x4)		Value	Detail								Range/Type
+			...........................................................................
+								4 = 	uint16_t voltage_in					0-65535mV
+								5 =		uint16_t current_in					0-65535mA
+								6 =		uint8_t overtemp?					0=no 1=yes
+								7 =		uint8_t undervolt?					0=no 1=yes
+			//TESTING																		*/
+			
+//TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			MAV_uart_send(buf,len);
+			
+//TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			MAV_uart_send(buf,len);
+			
+//TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			MAV_uart_send(buf,len);
+			
+//TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			MAV_uart_send(buf,len);
+			
+			/*-----------------------------------------------------------------------
+			NAME: Heartbeat
+			DESCRIPTION: MAVLink heartbeat required to confirm a connection is active
+			.........................................................................
+			Parameters(x4)		Value	Detail								Range/Type
+			...........................................................................
+			Flags are fixed each time, standard to the MAVLink library. Not edited / written to.
+			//TESTING																		*/			
+			
 			uart_flush();
 			uart_puts("\n---------MAVLink Heartbeat---------\n");
-			// Pack the message
-			// mavlink_message_heartbeat_pack(system id, component id, message container, system type, MAV_AUTOPILOT_GENERIC)
 			mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
 			MAV_uart_send(buf,len);
-			//
+
 			uart_puts("\n<<<<END OF MESSAGE>>>>\n");
 			////_delay_ms(HEARTBEAT_DELAY);
 	

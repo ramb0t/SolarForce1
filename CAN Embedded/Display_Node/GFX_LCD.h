@@ -18,7 +18,7 @@
 // Hardware:
 #define GFX_CS_PORT PORTD
 #define GFX_CS_DDR  DDRD
-#define GFX_CS_BIT  PD3
+#define GFX_CS_BIT  PD7
 
 
 #define GFX_SELECT() 	( GFX_CS_PORT |=  (1<<GFX_CS_BIT) )
