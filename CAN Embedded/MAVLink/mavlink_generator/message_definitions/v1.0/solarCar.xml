@@ -187,39 +187,39 @@
           </message>
 	  <message id="150" name="BMS_DATA">
 		<field type="uint8_t" name="fault_condition">Value to indicate a fault condition ('1' = fault condition, '0' = no fault)</field>
-               <field type="float" name="source_current">Battery source current </field>
-		<field type="float" name="load_current">Battery load current </field>
+               <field type="uint16_t" name="source_current">Battery source current (0-65535mA) </field>
+		<field type="uint16_t" name="load_current">Battery load current (0-65535mA)</field>
 		<field type="char" name="bat_fan_status">Char to indicate battery fan status, 't' = okay; 'f' = fault condition</field>
 		<field type="uint8_t" name="LLIM_state">logic low limit flag for stopping discharging. '1'=flag active; '0'=flag not active </field>
 		<field type="uint8_t" name="HLIM_state">logic high limit flag for stopping charging. '1'=flag active; '0'=flag not active </field>
              	<field type="uint8_t" name="state_of_chg">Percentage battery charge, 0-100</field>
-		<field type="float" name="pack_voltage">Value to indicate the voltage of the pack</field>
-		<field type="float[3]" name="cell_voltages">cell voltage parameters [minimum, average, maximum]</field> 
-		<field type="float[3]" name="cell_temps">cell temperature parameters [minimum, average, maximum]</field>   
+		<field type="uint16_t" name="pack_voltage">Value to indicate the voltage of the pack (0-65536V)</field>
+		<field type="uint16_t[3]" name="cell_voltages">cell voltage parameters [minimum, average, maximum]</field> 
+		<field type="uint16_t[3]" name="cell_temps">cell temperature parameters [minimum, average, maximum]</field>   
                <field type="uint8_t" name="system_status">System status flag, see MAV_STATE ENUM</field>
                <field type="uint8_t_mavlink_version" name="mavlink_version">MAVLink version</field>
 	  </message>
 	  <message id="151" name="MPPT1_DATA">
-		<field type="float" name="voltage_in">Input voltage to MPPT</field>
-		<field type="float" name="current_in">Input current to MPPT</field>
+		<field type="uint16_t" name="voltage_in">Input voltage to MPPT (0-65535V)</field>
+		<field type="uint16_t" name="current_in">Input current to MPPT (0mA-6.5535kA)</field>
 		<field type="uint8_t" name="overtemp">Flag to indicate the MPPTs are over temperature ('1' = over temp; '0' = OK)</field>
 		<field type="uint8_t" name="undervolt">Flag to indicate the MPPTs are under voltage ('1' = over temp; '0' = OK)</field>
 	  </message>
 	  <message id="152" name="MPPT2_DATA">
-		<field type="float" name="voltage_in">Input voltage to MPPT</field>
-		<field type="float" name="current_in">Input current to MPPT</field>
+		<field type="uint16_t" name="voltage_in">Input voltage to MPPT (0-65535V)</field>
+		<field type="uint16_t" name="current_in">Input current to MPPT (0mA-6.5535kA)</field>
 		<field type="uint8_t" name="overtemp">Flag to indicate the MPPTs are over temperature ('1' = over temp; '0' = OK)</field>
 		<field type="uint8_t" name="undervolt">Flag to indicate the MPPTs are under voltage ('1' = over temp; '0' = OK)</field>
 	  </message>
 	  <message id="153" name="MPPT3_DATA">
-		<field type="float" name="voltage_in">Input voltage to MPPT</field>
-		<field type="float" name="current_in">Input current to MPPT</field>
+		<field type="uint16_t" name="voltage_in">Input voltage to MPPT (0-65535V)</field>
+		<field type="uint16_t" name="current_in">Input current to MPPT (0mA-6.5535kA)</field>
 		<field type="uint8_t" name="overtemp">Flag to indicate the MPPTs are over temperature ('1' = over temp; '0' = OK)</field>
 		<field type="uint8_t" name="undervolt">Flag to indicate the MPPTs are under voltage ('1' = over temp; '0' = OK)</field>
 	  </message>
 	  <message id="154" name="MPPT4_DATA">
-		<field type="float" name="voltage_in">Input voltage to MPPT</field>
-		<field type="float" name="current_in">Input current to MPPT</field>
+		<field type="uint16_t" name="voltage_in">Input voltage to MPPT (0-65535V)</field>
+		<field type="uint16_t" name="current_in">Input current to MPPT (0mA-6.5535kA)</field>
 		<field type="uint8_t" name="overtemp">Flag to indicate the MPPTs are over temperature ('1' = over temp; '0' = OK)</field>
 		<field type="uint8_t" name="undervolt">Flag to indicate the MPPTs are under voltage ('1' = over temp; '0' = OK)</field>
 	  </message>
@@ -235,11 +235,11 @@
 		<field type="char[12]" name="lock_error">Error message 'INVALID' broadcast if the GPS has not locked yet.</field>
 	  </message>
 	  <message id="157" name="ACCELO_GYRO">
-		<field type="float" name="acceleration">MPU6050 output value for acceleration in m.s^-2</field>
-		<field type="float" name="incline">MPU6050 output value for inclination in degrees</field>		
+		<field type="int8_t" name="acceleration">MPU6050 output value for acceleration in m.s^-2 (-127->127)</field>
+		<field type="int8_t" name="incline">MPU6050 output value for inclination in degrees signed (-127->127)</field>		
 	  </message>
 	  <message id="158" name="HALL_EFFECT">
-		<field type="float" name="speed">Hall Effect sensor averaged speed reading in km/h</field>
+		<field type="uint8_t" name="speed">Hall Effect sensor averaged speed reading in km/h (0-255km/h)</field>
 		<field type="uint8_t" name="left_magnet">flag for presence of left wheel Hall Effect magnet; '1' = present, '0' = missing</field>
 		<field type="uint8_t" name="right_magnet">flag for presence of right wheel Hall Effect magnet; '1' = present, '0' = missing</field>			
 	  </message>
