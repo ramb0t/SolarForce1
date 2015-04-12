@@ -69,6 +69,7 @@
     <Compile Include="ReliableCommsManager.cs" />
     <Compile Include="TelemetryDatabase.cs" />
     <Compile Include="TextFileManager.cs" />
+    <Compile Include="CanDecodeManager.cs" />
     <Compile Include="UserInterface.cs">
       <SubType>Form</SubType>
     </Compile>

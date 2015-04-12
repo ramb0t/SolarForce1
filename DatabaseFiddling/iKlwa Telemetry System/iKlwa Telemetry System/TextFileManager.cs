@@ -5,15 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+//this is a little bit of mucking around
 namespace iKlwa_Telemetry_System
 {
     class TextFileManager
     {
         private string filename;
-        //private BufferedStream text_stream;
         private TelemetryDatabase t = new TelemetryDatabase("textfile_things");
         private StreamReader reader;
         private StringBuilder stringb = new StringBuilder();
+
 
         public TextFileManager(string file = "TestText.txt")
         {
@@ -21,11 +23,6 @@ namespace iKlwa_Telemetry_System
                 file += ".txt";
             filename = file;
             t.NodeTag = "root";
-            /*
-            text_stream = new BufferedStream(
-                          new FileStream(file, FileMode.OpenOrCreate,
-                          FileAccess.ReadWrite, FileShare.None, 25, true));
-            */
             System.Windows.Forms.MessageBox.Show(file);
             reader = new StreamReader(file);
         }
@@ -49,7 +46,8 @@ namespace iKlwa_Telemetry_System
                 {
                     buffer[index] = reader.Read();
                     stringb.Append(Convert.ToChar(buffer[index]));
-                } while (buffer[index++] != '.');
+                } while (reader.Peek() != '.');
+                reader.Read();
 
                 //5 values expected: sensor, message, value, hour, minute.
                 string msg = stringb.ToString();
@@ -61,7 +59,7 @@ namespace iKlwa_Telemetry_System
                 pkt.message = chunks[1];
                 pkt.value = chunks[2];
                 pkt.hour = chunks[3];
-                pkt.minute = chunks[4].Substring(0,chunks[4].Length - 1);
+                pkt.minute = chunks[4].Substring(0,chunks[4].Length);
 
                 t.addDataCapture(pkt.sensor, pkt.hour + 'h' + pkt.minute, pkt.message, pkt.value);
 
