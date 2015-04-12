@@ -13,14 +13,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
-
+#include <util/delay.h>
 
 // Project Specific
 #include "../lib/uart/uart.h"
 
+
 // Defines:
 /*****************************************************************************/
-#define DEBUG
+//#define DEBUG
 
 #define TERMINAL_INIT					0
 #define TERMINAL_RUN					TERMINAL_INIT+1
@@ -31,6 +32,7 @@
 #define TERMINAL_SEND1					TERMINAL_INIT+5
 
 #define TERMINAL_SENDRANDOM				TERMINAL_INIT+7
+#define TERMINAL_SENDBMS				TERMINAL_INIT+8
 
 #define TERMINAL_MAX_INPUT_LENGTH		10
 
@@ -42,6 +44,7 @@
 #define TERMINAL_sSEND1					"4"
 
 #define TERMINAL_sSENDRANDOM			"6"
+#define TERMINAL_sSENDBMS				"7"
 
 
 // Variables:

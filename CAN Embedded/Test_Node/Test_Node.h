@@ -55,6 +55,9 @@
 // Timer1
 //#include "Timer1.h"
 
+//BMS Emulator
+#include "elithionBMS.h"
+
 // Pin Defines
 #include "pinDefines.h"
 #define LCD_SELECT() 	( LCD_SCKCTL_PORT |=  (1<<LCD_SCKCTL) )

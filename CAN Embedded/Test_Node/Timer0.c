@@ -9,6 +9,8 @@
 
 #include "Timer0.h"
 
+//extern volatile uint8_t Terminal_state;
+
 // Timer 0 OVF ISR
 ISR(TIMER0_OVF_vect)
 {
@@ -21,9 +23,9 @@ ISR(TIMER0_OVF_vect)
 		ms_Counter++;
 
 		// Count 1 sec
-		if(ms_Counter == 1000){ // 1 sec has passed?
-			ms_Counter = 0;
-		}
+		//if(ms_Counter == 1000){ // 1 sec has passed?
+		//	ms_Counter = 0;
+		//}
 
 		// Flash some LEDs ?
 		if(ms_Counter == 350){

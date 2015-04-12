@@ -17,6 +17,7 @@
 #include "../lib/uart/uart.h"
 
 // Project Specific
+#include "Terminal.h"
 
 // Defines:
 /*****************************************************************************/
@@ -35,7 +36,7 @@
 /*****************************************************************************/
 volatile uint8_t gMilliSecTick;
 volatile uint16_t ms_Counter;
-extern volatile uint8_t Terminal_state;
+//extern volatile uint8_t Terminal_state;
 
 
 // Function Prototypes:

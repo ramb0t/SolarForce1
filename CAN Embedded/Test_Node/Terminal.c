@@ -32,10 +32,11 @@ void Terminal_read(uint8_t* state){
 	// index pointer
 	uint8_t index = 0;
 
+
 	while(uart_available()){
 		input[index] = uart_getc(); // read a byte out
 		index++;
-
+		_delay_ms(2); // wait incase of another byte
 
 
 		if(index >= TERMINAL_MAX_INPUT_LENGTH){
@@ -55,12 +56,12 @@ void Terminal_read(uint8_t* state){
 
 	// Lets see if we can find a command?
 	if(strcasecmp(input, TERMINAL_sCANCEL) == 0){ // Cancel
-			*state = TERMINAL_RUN;
-			uart_puts("\n");
-			uart_puts("Cancelled\n");
-			uart_puts("\n");
-			Terminal_showMenu();
-			return;
+		*state = TERMINAL_RUN;
+		uart_puts("\n");
+		uart_puts("Cancelled\n");
+		uart_puts("\n");
+		Terminal_showMenu();
+		return;
 	}
 	else if(strcasecmp(input, TERMINAL_sHELP) == 0){ // Help
 		Terminal_showMenu();
@@ -99,6 +100,13 @@ void Terminal_read(uint8_t* state){
 		uart_puts("\n");
 		uart_puts("Sending Random CAN Messages \n");
 		uart_puts("Type 'c' to exit\n");
+		uart_puts("\n");
+		return;
+	}
+	else if(strcasecmp(input, TERMINAL_sSENDBMS) == 0){ // Mode 6
+		*state = TERMINAL_SENDBMS;
+		uart_puts("\n");
+		uart_puts("Sending BMS CAN Messages \n");
 		uart_puts("\n");
 		return;
 	}
@@ -171,6 +179,7 @@ static void Terminal_showMenu(void){
 	uart_puts("4: Send Single CAN Message\n");
 	uart_puts("5: Loop Single CAN Message\n");
 	uart_puts("6: Send Random CAN Messages\n");
+	uart_puts("7: Send BMS CAN Messages\n");
 	uart_puts("-------------------------------------\n");
 	uart_puts("\n");
 	uart_puts("Type 'help' to show this menu again\n");

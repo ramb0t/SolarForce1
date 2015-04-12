@@ -50,7 +50,7 @@ int main(void)
     uart_puts("-------------------------------------\n");
 
     // Create Terminal State
-    Terminal_state = TERMINAL_INIT;
+    Terminal_state = TERMINAL_RUN;
     // Init the Terminal
     Terminal_init();
 
@@ -63,7 +63,14 @@ int main(void)
 	// For working with strings
 		char buffer[10];
 
-    // Loop for all the time!
+	// for timing!
+	extern volatile uint16_t ms_Counter;
+	uint16_t oldtime = ms_Counter;
+	uint16_t waittime = 300; // delay time in ms
+
+	BMS_init();
+
+		// Loop for all the time!
     while(1) {
 
     	if(uart_available()){ // UART RX data waiting
@@ -76,6 +83,8 @@ int main(void)
 
     	switch (Terminal_state){
     		case (TERMINAL_INIT):
+    				Terminal_init();
+    				Terminal_state = TERMINAL_RUN;
 
     				break;
     		case (TERMINAL_RUN):
@@ -124,39 +133,45 @@ int main(void)
     			break;
 
     		case (TERMINAL_SENDRANDOM):
-				message.id = i;
-				i++;
-				if(i > 2047){
-					i = 0;
+				if((ms_Counter - oldtime) > waittime){
+					oldtime = ms_Counter;
+
+					message.id = i;
+					i++;
+					if(i > 2047){
+						i = 0;
+					}
+					message.length = (rand() / 0xfff)+1;
+
+					uart_puts("CAN Message: ID= ");
+					itoa( message.id, buffer, 10);   // convert integer into string (decimal format)
+					uart_puts(buffer);        // and transmit string to UART
+					uart_puts(" | Len= ");
+					itoa( message.length, buffer, 10);   // convert integer into string (decimal format)
+					uart_puts(buffer);        // and transmit string to UART
+
+
+					for (int i = 0; i < message.length; i++){
+						message.data[i] = (rand() >> 7);
+
+						char string[15] ="| D";
+						itoa(i, buffer, 10);
+						strcat(string, buffer);
+						strcat(string, "= ");
+
+						itoa(message.data[i], buffer, 10);
+						strcat(string, buffer);
+						uart_puts(string);        // and transmit string to UART
+					}
+					uart_puts("\n");
+
+					CAN_sendMessage ( &message ) ;
 				}
-				message.length = (rand() / 0xfff)+1;
+    			break;
 
-				uart_puts("CAN Message: ID= ");
-				itoa( message.id, buffer, 10);   // convert integer into string (decimal format)
-				uart_puts(buffer);        // and transmit string to UART
-				uart_puts(" | Len= ");
-				itoa( message.length, buffer, 10);   // convert integer into string (decimal format)
-				uart_puts(buffer);        // and transmit string to UART
-
-
-				for (int i = 0; i < message.length; i++){
-					message.data[i] = (rand() >> 7);
-
-					char string[15] ="| D";
-					itoa(i, buffer, 10);
-					strcat(string, buffer);
-					strcat(string, "= ");
-
-					itoa(message.data[i], buffer, 10);
-					strcat(string, buffer);
-					uart_puts(string);        // and transmit string to UART
-				}
-				uart_puts("\n");
-
-				CAN_sendMessage ( &message ) ;
-				_delay_ms(1000);
-
-
+    		case(TERMINAL_SENDBMS):
+				BMS_send_fake_data();
+    			Terminal_state = TERMINAL_INIT;
 				break;
     		default:
 
