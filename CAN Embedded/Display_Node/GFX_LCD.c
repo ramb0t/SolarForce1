@@ -41,7 +41,7 @@ void u8g_setup(void)
   */
    //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
 	//GFX_SELECT();
-	u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(3, 7), U8G_PIN_NONE, PN(3,4));
+	u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_4x_hw_spi, PN(3, 7), U8G_PIN_NONE, PN(3,4));
    //u8g_Init8Bit(&u8g, &u8g_dev_ks0108_128x64, PN(1, 2), PN(1, 1), PN(1, 0), PN(3, 7), PN(3, 6), PN(3, 5), PN(3, 4), PN(3, 3), PN(2, 5), PN(2, 1), PN(2, 0), PN(2,2), PN(2, 3), U8G_PIN_NONE);
 
    //U8GLIB_KS0108_128(d0, d1, d2, d3, d4, d5, d6, d7, en, cs1, cs2, di, rw [, reset])u8g_dev_ks0108_128x64
@@ -85,15 +85,18 @@ void GFX_Cnt(int i){
 
 void GFX_LCD_Draw(CANMessage* message){
 	//u8g_Begin(&u8g);
+	cli();
+	LCD_SELECT();
 	u8g_FirstPage(&u8g);
 	//u8g_prepare();
 	do
 	{
-		cli();
+
 		draw(message);
-		sei();
 
 	} while ( u8g_NextPage(&u8g) );
+	LCD_UNSELECT();
+	sei();
 }
 
 void draw(CANMessage* msg){

@@ -9,15 +9,15 @@
 
 
 void BMS_init(void){
-	MSG0 = (CANMessage) {.id=CAN_ID+0,.rtr=0,.length=8,.data={
+	BMS[0] = (CANMessage) {.id=CAN_ID+0,.rtr=0,.length=8,.data={
 				'E','L','I','T','H','I','O','N'
 		}};
 
-	MSG1 = (CANMessage) {.id=CAN_ID+1,.rtr=0,.length=8,.data={
+	BMS[1] = (CANMessage) {.id=CAN_ID+1,.rtr=0,.length=8,.data={
 				'2','C','N','F','2','.','2','6'
 		}};
 
-	MSG2 = (CANMessage) {.id=CAN_ID+2,.rtr=0,.length=7,.data={
+	BMS[2] = (CANMessage) {.id=CAN_ID+2,.rtr=0,.length=7,.data={
 			0b00000000,  //State
 			0b00000000, 0b00000000, // Timer
 			0b00000000,  //Flags
@@ -26,7 +26,7 @@ void BMS_init(void){
 			0b00000000   //Warnings
 		}};
 
-	MSG3 = (CANMessage) {.id=CAN_ID+3,.rtr=0,.length=6,.data={
+	BMS[3] = (CANMessage) {.id=CAN_ID+3,.rtr=0,.length=6,.data={
 			0b00000000, 0b00000000, //Pack Voltage
 			0b00000000,  //MinVTG
 			0b00000000,  //MinVTG #
@@ -34,18 +34,18 @@ void BMS_init(void){
 			0b00000000,  //MAXVTG #
 		}};
 
-	MSG4 = (CANMessage) {.id=CAN_ID+4,.rtr=0,.length=6,.data={
+	BMS[4] = (CANMessage) {.id=CAN_ID+4,.rtr=0,.length=6,.data={
 			0b00000000, 0b00000000, //Current
 			0b00000000, 0b00000000, //Charge Limit
 			0b00000000, 0b00000000, //Discharge Limit
 		}};
 
-	MSG5 = (CANMessage) {.id=CAN_ID+5,.rtr=0,.length=8,.data={
+	BMS[5] = (CANMessage) {.id=CAN_ID+5,.rtr=0,.length=8,.data={
 			0b00000000, 0b00000000, 0b00000000, 0b00000000, //Batt. Energy In
 			0b00000000, 0b00000000, 0b00000000, 0b00000000  //Batt. Energy Out
 		}};
 
-	MSG6 = (CANMessage) {.id=CAN_ID+6,.rtr=0,.length=7,.data={
+	BMS[6] = (CANMessage) {.id=CAN_ID+6,.rtr=0,.length=7,.data={
 			0b00000000,  //SOC
 			0b00000000, 0b00000000,  //DOD
 			0b00000000, 0b00000000,  //Capacity
@@ -53,7 +53,7 @@ void BMS_init(void){
 			0b00000000   //SOH
 		}};
 
-	MSG7 = (CANMessage) {.id=CAN_ID+7,.rtr=0,.length=6,.data={
+	BMS[7] = (CANMessage) {.id=CAN_ID+7,.rtr=0,.length=6,.data={
 			0b00000000,  //Temperature
 			0b00000000,  // -
 			0b00000000,  //Min Temp
@@ -63,7 +63,7 @@ void BMS_init(void){
 		}};
 
 
-	MSG8 = (CANMessage) {.id=CAN_ID+8,.rtr=0,.length=6,.data={
+	BMS[8] = (CANMessage) {.id=CAN_ID+8,.rtr=0,.length=6,.data={
 			0b00000000, 0b00000000,  //Pack Resistance
 			0b00000000,  //Min res
 			0b00000000,  //Min res #
@@ -78,24 +78,10 @@ void BMS_init(void){
 
 void BMS_send_fake_data(){
 	// We need to send a sequence of messages
-#define mstime	1
-	CAN_sendMessage(&MSG0);
-	_delay_ms(mstime);
-	CAN_sendMessage(&MSG1);
-	_delay_ms(mstime);
-	CAN_sendMessage(&MSG2);
-	_delay_ms(mstime);
-	CAN_sendMessage(&MSG3);
-	_delay_ms(mstime);
-	CAN_sendMessage(&MSG4);
-	_delay_ms(mstime);
-	CAN_sendMessage(&MSG5);
-	_delay_ms(mstime);
-	CAN_sendMessage(&MSG6);
-	_delay_ms(mstime);
-	CAN_sendMessage(&MSG7);
-	_delay_ms(mstime);
-	CAN_sendMessage(&MSG8);
-	_delay_ms(mstime);
+
+	for(uint8_t i = 0; i < 9; i++){
+		CAN_sendMessage(&BMS[i]);
+		//_delay_ms(50);
+	}
 
 }

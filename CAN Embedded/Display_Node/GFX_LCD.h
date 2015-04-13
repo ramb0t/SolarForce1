@@ -21,8 +21,10 @@
 #define GFX_CS_BIT  PD7
 
 
-#define GFX_SELECT() 	( GFX_CS_PORT |=  (1<<GFX_CS_BIT) )
-#define GFX_UNSELECT()  ( GFX_CS_PORT &= ~(1<<GFX_CS_BIT) )
+// Pin Defines
+#include "pinDefines.h"
+#define LCD_SELECT() 	( LCD_SCKCTL_PORT |=  (1<<LCD_SCKCTL) )
+#define LCD_UNSELECT()  ( LCD_SCKCTL_PORT &= ~(1<<LCD_SCKCTL) )
 
 void u8g_setup();
 void u8g_prepare();

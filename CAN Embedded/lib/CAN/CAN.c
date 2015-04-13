@@ -72,7 +72,7 @@ uint8_t CAN_fillBuffer(void){
 	uint8_t tmphead;
 	//uint8_t lastRxError;
 	// WE HAVE A MESSAGE?
-	if(CAN_checkReceiveAvailable() == CAN_MSGAVAIL){
+	while(CAN_checkReceiveAvailable() == CAN_MSGAVAIL){
 	/* calculate buffer index */
 		tmphead = ( CAN_Rx_Head + 1) &CAN_RX_BUFFER_MASK;
 
@@ -127,54 +127,55 @@ Returns:  Ok / Fail
 **************************************************************************/
 uint8_t CAN_sendMessage(const CANMessage* message)
 {
-	uint8_t length = message->length;
-
-	// ID set
-	mcp2515_setRegister ( MCP_TXB0SIDH, ( uint8_t ) ( message->id>> 3 ) ) ;
-	mcp2515_setRegister ( MCP_TXB0SIDL, ( uint8_t ) ( message->id<< 5 ) ) ;
-
-	// If the message is a "Remote Transmit Request"
-	if ( message->rtr )
-	{
-	/* Although A RTR message has a length, but no data */
-
-	// Set message length + RTR
-	mcp2515_setRegister( MCP_TXB0DLC, ( 1 <<RTR ) | length ) ;
-	}
-	else
-	{
-		// Set message length
-	mcp2515_setRegister( MCP_TXB0DLC, length ) ;
-
-	// Data
-	for ( uint8_t i= 0 ;i<length;i++ ) {
-	mcp2515_setRegister( MCP_TXB0D0 + i, message->data [ i ] ) ;
-	}
-	}
-
-	// Send CAN message
-	#define	SPI_RTS			0x80
-	MCP2515_SELECT();
-	SPI_ReadWrite( SPI_RTS | 0x01 ); // Sends the message!
-	MCP2515_UNSELECT();
-
-	return CAN_OK;
+	//TODO: NB NB Potential bug here!!!
+//	uint8_t length = message->length;
+//
+//	// ID set
+//	mcp2515_setRegister ( MCP_TXB0SIDH, ( uint8_t ) ( message->id>> 3 ) ) ;
+//	mcp2515_setRegister ( MCP_TXB0SIDL, ( uint8_t ) ( message->id<< 5 ) ) ;
+//
+//	// If the message is a "Remote Transmit Request"
+//	if ( message->rtr )
+//	{
+//	/* Although A RTR message has a length, but no data */
+//
+//	// Set message length + RTR
+//	mcp2515_setRegister( MCP_TXB0DLC, ( 1 <<RTR ) | length ) ;
+//	}
+//	else
+//	{
+//		// Set message length
+//	mcp2515_setRegister( MCP_TXB0DLC, length ) ;
+//
+//	// Data
+//	for ( uint8_t i= 0 ;i<length;i++ ) {
+//	mcp2515_setRegister( MCP_TXB0D0 + i, message->data [ i ] ) ;
+//	}
+//	}
+//
+//	// Send CAN message
+//	#define	SPI_RTS			0x80
+//	MCP2515_SELECT();
+//	SPI_ReadWrite( SPI_RTS | 0x01 ); // Sends the message!
+//	MCP2515_UNSELECT();
+//
+//	return CAN_OK;
 
 	//TODO: Implement this fancy stuff.. for now we use the germans!
-//	uint8_t res, txbuf_n;
+	uint8_t res, txbuf_n;
 //	uint8_t timeout = 0;
 //	uint16_t time;
 //	time = timebase_actTime();
 //
-//	do {
-//		res = mcp2515_getNextFreeTXBuf(&txbuf_n); // info = addr.
+	do {
+		res = mcp2515_getNextFreeTXBuf(&txbuf_n); // info = addr.
 //		if (timebase_passedTimeMS(time) > CANSENDTIMEOUT ) timeout = 1;
-//	} while (res == MCP_ALLTXBUSY && !timeout);
+	} while (res == MCP_ALLTXBUSY);
 //
 //	if (!timeout) {
-//		mcp2515_write_canMsg( txbuf_n, msg);
-//		mcp2515_start_transmit( txbuf_n );
-//		return CAN_OK;
+		mcp2515_write_canMsg( txbuf_n, message);
+		mcp2515_start_transmit( txbuf_n );
+		return CAN_OK;
 //	}
 //	else {
 //#if (CANDEBUG)

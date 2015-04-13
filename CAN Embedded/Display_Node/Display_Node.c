@@ -40,18 +40,24 @@ int main(void)
 	sei();
 
     while(1) {
+    	cli();
     	if(~(PINB & (1<<PB0))){
     		//PCIFR |= (1<<PCIF0); // fire ISR!
-    		cli();
-    		CAN_fillBuffer();
-    		sei();
+    		//while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL){
+    			CAN_fillBuffer();
+    		//}
+
     	}
+    	sei();
     	if(flag == CAN_MSGAVAIL){
+    		//cli();
 			if(CAN_getMessage_Buffer(&message) == CAN_OK){
-				LCD_SELECT();
+
+
 				GFX_LCD_Draw(&message);
-				LCD_UNSELECT();
+
 			}
+			//sei();
 		}else if(flag == CAN_FAIL){
 			flag = CAN_NOMSG;
 		}
@@ -68,8 +74,8 @@ int main(void)
 }
 
 ISR(PCINT0_vect){
-	LCD_UNSELECT();
+	//LCD_UNSELECT();
 	CAN_fillBuffer();
-	LCD_SELECT();
+	//LCD_SELECT();
 
 }
