@@ -50,6 +50,9 @@
 
 #include "mavlink_bridge_header.h"  //UART & convenience headers
 
+mavlink_status_t* mavlink_get_channel_status(uint8_t chan);
+mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
+
 
 //------------Library Objects----------------------------//
 

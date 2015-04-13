@@ -398,8 +398,7 @@ void MAV_msg_pack()
 			uart_puts("\n---------MAVLink Data---------\n");
 			//---------------MAVLink Data---------------------------//
 			//// Initialize the required buffers
-			   mavlink_system.sysid = 100; // System ID, 1-255
-			   mavlink_system.compid = 50; // Component/Subsystem ID, 1-255
+
 			mavlink_message_t msg;
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -523,26 +522,27 @@ void MAV_msg_pack()
 			uart_flush();
 			uart_puts("\n---------MAVLink Heartbeat---------\n");
 			
-			mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
-			MAV_uart_send(buf,len);
+			//mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
+			//MAV_uart_send(buf,len);
+			mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
 
 			uart_puts("\n<<<<END OF MESSAGE>>>>\n");
 			////_delay_ms(HEARTBEAT_DELAY);
 			
 			uart_puts("\n<<<<RX MESSAGE>>>>\n");
-			mavlink_motor_driver_t* MotorDriver;
-			mavlink_message_type_t* msgRx;
-			
-			msgRx = MAV_Rx_buff;
-			mavlink_msg_motor_driver_decode(&msgRx, MotorDriver);
-			
-			itoa(MotorDriver->controller_temp,buf,10);					//read ASCII-converted byte into buffer
-			uart_puts("\nTemperature:");
-			uart_puts(buf);
-			
-			itoa(MotorDriver->speed,buf,10);
-			uart_puts("\nSpeed:");
-			uart_puts(buf);
+			//mavlink_motor_driver_t* MotorDriver;
+			//mavlink_message_type_t* msgRx;
+			//
+			//msgRx = MAV_Rx_buff;
+			//mavlink_msg_motor_driver_decode(&msgRx, MotorDriver);
+			//
+			//itoa(MotorDriver->controller_temp,buf,10);					//read ASCII-converted byte into buffer
+			//uart_puts("\nTemperature:");
+			//uart_puts(buf);
+			//
+			//itoa(MotorDriver->speed,buf,10);
+			//uart_puts("\nSpeed:");
+			//uart_puts(buf);
 	
 }
 
