@@ -49,9 +49,6 @@
 #define MAVLINK_SEND_UART_BYTES mavlink_send_uart_bytes
 
 
-#define MAVLINK_GET_CHANNEL_BUFFER mavlink_get_channel_buffer
-#define MAVLINK_GET_CHANNEL_STATUS mavlink_get_channel_status
-
 #include "mavlink_types.h"
 
 /* Struct that stores the communication settings of this system.
@@ -65,7 +62,8 @@
    Lines also in your main.c, e.g. by reading these parameter from EEPROM.
  */
 	mavlink_system_t mavlink_system;
-
+			mavlink_system.sysid = 100; // System ID, 1-255
+			mavlink_system.compid = 50; // Component/Subsystem ID, 1-255
 
 
 /**
@@ -74,20 +72,28 @@
  * @param chan MAVLink channel to use, usually MAVLINK_COMM_0 = UART0
  * @param ch Character to send
  */
-static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const uint8_t *ch, int length);
+int uart;
+static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const uint8_t *ch, int length)
+{
 
-extern mavlink_status_t* mavlink_get_channel_status(uint8_t chan);
-mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
+    if (chan == MAVLINK_COMM_0)
+    {
+		for (int i=0;i<length;i++)
+		{
+			uart_putc(&ch);
+		}
+    }
+}
 
 static inline void comm_send_ch(mavlink_channel_t chan, uint8_t ch)
 {
 	if (chan == MAVLINK_COMM_0)
 	{
-		uart_putc(ch);
+		uart_putc((char)ch);
 	}
 	if (chan == MAVLINK_COMM_1)
 	{
-		uart_putc(ch);
+		uart_putc((char)ch);
 	}
 }
 
