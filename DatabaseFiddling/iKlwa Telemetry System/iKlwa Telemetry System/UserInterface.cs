@@ -24,5 +24,15 @@ namespace iKlwa_Telemetry_System
 
         }
 
+        /// <summary>
+        /// Event that occurs every 1s that will update the GUI
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void refresh_timer_Tick(object sender, EventArgs e)
+        {
+            
+        }
+
     }
 }
