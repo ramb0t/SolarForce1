@@ -57,6 +57,8 @@
 
 //BMS Emulator
 #include "elithionBMS.h"
+//Speed Emulator
+#include "speedEmulator.h"
 
 // Pin Defines
 #include "pinDefines.h"

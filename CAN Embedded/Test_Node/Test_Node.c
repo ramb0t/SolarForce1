@@ -69,9 +69,12 @@ int main(void)
 	// for timing!
 	extern volatile uint16_t ms_Counter;
 	uint16_t oldtime = ms_Counter;
-	uint16_t waittime = 1000; // delay time in ms
+	uint16_t waittime = 250; // delay time in ms
+
+	uint8_t spd = 0;
 
 	BMS_init();
+	SpeedEmu_init();
 
 		// Loop for all the time!
     while(1) {
@@ -191,6 +194,18 @@ int main(void)
 					oldtime = ms_Counter;
 
 					BMS_send_fake_data();
+				}
+				break;
+
+    		case (TERMINAL_LOOPSPEED):
+				if((ms_Counter - oldtime) > waittime){
+					oldtime = ms_Counter;
+					SpeedEmu_set_speed(spd);
+					spd = spd+1;
+					if(spd > 150){
+						spd = 0;
+					}
+					SpeedEmu_send_fake_data();
 				}
 				break;
 
