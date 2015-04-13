@@ -398,6 +398,8 @@ void MAV_msg_pack()
 			uart_puts("\n---------MAVLink Data---------\n");
 			//---------------MAVLink Data---------------------------//
 			//// Initialize the required buffers
+			   mavlink_system.sysid = 100; // System ID, 1-255
+			   mavlink_system.compid = 50; // Component/Subsystem ID, 1-255
 			mavlink_message_t msg;
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -432,8 +434,8 @@ void MAV_msg_pack()
 			
 			mavlink_msg_motor_driver_send(0, 72, CANBusInput.data[0]);
 			
-			uart_puts("RX");
-			uart_puts(MAV_Rx_buff);
+			//uart_puts("RX");
+			//uart_puts(MAV_Rx_buff);
 			/*-----------------------------------------------------------------------
 			NAME: BMS Data
 			DESCRIPTION: All data originating from the BMS, including error flags
