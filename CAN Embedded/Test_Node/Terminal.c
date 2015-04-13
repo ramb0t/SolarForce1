@@ -118,6 +118,14 @@ void Terminal_read(uint8_t* state){
 		uart_puts("\n");
 		return;
 	}
+	else if(strcasecmp(input, TERMINAL_sLOOPSPEED) == 0){ // Mode 9
+		*state = TERMINAL_LOOPSPEED;
+		uart_puts("\n");
+		uart_puts("Looping Speed CAN Messages \n");
+		uart_puts("Type 'c' to exit\n");
+		uart_puts("\n");
+		return;
+	}
 
 	else{
 		uart_puts("\n");
@@ -189,6 +197,7 @@ static void Terminal_showMenu(void){
 	uart_puts("6: Send Random CAN Messages\n");
 	uart_puts("7: Send BMS CAN Messages\n");
 	uart_puts("8: Loop BMS CAN Messages\n");
+	uart_puts("9: Loop Speed CAN Messages\n");
 	uart_puts("-------------------------------------\n");
 	uart_puts("\n");
 	uart_puts("Type 'help' to show this menu again\n");

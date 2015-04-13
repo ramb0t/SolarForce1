@@ -11,6 +11,8 @@
 // Includes
 /*****************************************************************************/
 #include <inttypes.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
 
 
@@ -28,6 +30,13 @@
 
 // What is the max length of the message
 #define CAN_MAX_CHAR_IN_MESSAGE (8)
+
+/** Size of the circular receive buffer, must be power of 2 */
+#ifndef CAN_RX_BUFFER_SIZE
+#define CAN_RX_BUFFER_SIZE 32
+#endif
+
+#define CAN_BUFFER_OVERFLOW  0x0200              /* receive ringbuffer overflow */
 
 // Structures
 /*****************************************************************************/
@@ -51,6 +60,10 @@ typedef struct {
 // Functions
 /*****************************************************************************/
 uint8_t CAN_Init(uint8_t speedset);
+void 	CAN_setupInt0(void);
+void 	CAN_setupPCINT0(void);
+uint8_t CAN_fillBuffer(void);
+uint8_t CAN_getMessage_Buffer(CANMessage* msg);
 uint8_t CAN_sendMessage(const CANMessage* msg);
 uint8_t CAN_readMessage(CANMessage* msg);
 uint8_t CAN_checkReceiveAvailable(void);

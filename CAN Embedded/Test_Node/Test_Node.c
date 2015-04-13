@@ -12,7 +12,7 @@ int main(void)
 {
 
 	// Init UART
-	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
+	uart_init( UART_BAUD_SELECT_DOUBLE_SPEED(UART_BAUD_RATE,F_CPU) );
 
 	// Enable Interrupts
 	sei();
@@ -26,6 +26,9 @@ int main(void)
 	// Init CAN
 	CAN_Init(CAN_125KBPS_16MHZ);
 	uart_puts("CAN Initialised\n");
+
+	// setup pin int
+	CAN_setupInt0();
 
     // Init LCD
     //u8g_setup();
@@ -57,7 +60,7 @@ int main(void)
 
 	// Create a new message
 	CANMessage message;
-	uint8_t rx_status = 0xff;
+	//uint8_t rx_status = 0xff;
 
 	uint16_t i = 0;
 	// For working with strings
@@ -66,9 +69,12 @@ int main(void)
 	// for timing!
 	extern volatile uint16_t ms_Counter;
 	uint16_t oldtime = ms_Counter;
-	uint16_t waittime = 1000; // delay time in ms
+	uint16_t waittime = 250; // delay time in ms
+
+	uint8_t spd = 0;
 
 	BMS_init();
+	SpeedEmu_init();
 
 		// Loop for all the time!
     while(1) {
@@ -91,17 +97,26 @@ int main(void)
 
     			break;
     		case (TERMINAL_LISTEN):
-    	    	rx_status = CAN_checkReceiveAvailable();
-
-    	    	if(rx_status == CAN_MSGAVAIL){
-    	    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
-
-    	    		//LCD_SELECT();
-    	    		//GFX_LCD_Draw(&message);
-    	    		//LCD_UNSELECT();
-    	    		// sends the message on the CAN interface.
-    	    		uart_SendCANMsg(&message);
-    	    	}
+//    	    	rx_status = CAN_checkReceiveAvailable();
+//
+//    	    	if(rx_status == CAN_MSGAVAIL){
+//    	    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
+//
+//    	    		//LCD_SELECT();
+//    	    		//GFX_LCD_Draw(&message);
+//    	    		//LCD_UNSELECT();
+//    	    		// sends the message on the CAN interface.
+//    	    		uart_SendCANMsg(&message);
+//    	    	}
+				if(flag == CAN_MSGAVAIL){
+					if(CAN_getMessage_Buffer(&message) == CAN_OK){
+						uart_SendCANMsg(&message);
+					}
+				}else if(flag == CAN_FAIL){
+					uart_puts("that");
+					CAN_getMessage_Buffer(&message);
+					uart_SendCANMsg(&message);
+				}
 
     			break;
     		case (TERMINAL_LISTENRAW):
@@ -179,6 +194,18 @@ int main(void)
 					oldtime = ms_Counter;
 
 					BMS_send_fake_data();
+				}
+				break;
+
+    		case (TERMINAL_LOOPSPEED):
+				if((ms_Counter - oldtime) > waittime){
+					oldtime = ms_Counter;
+					SpeedEmu_set_speed(spd);
+					spd = spd+1;
+					if(spd > 150){
+						spd = 0;
+					}
+					SpeedEmu_send_fake_data();
 				}
 				break;
 

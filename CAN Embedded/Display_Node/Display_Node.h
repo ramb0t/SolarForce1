@@ -57,6 +57,10 @@
 // Structure Definitions
 /*********************************************/
 
+// Variable Definitions
+/*********************************************/
+extern volatile uint8_t flag;
+
 // Function Prototypes
 /*********************************************/
 

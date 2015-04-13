@@ -178,5 +178,12 @@ namespace iKlwa_Telemetry_System
             txt.getAndWrite();
         }
 
+        private void button9_Click(object sender, EventArgs e)
+        {
+            CanDecodeManager can_can = new CanDecodeManager("Random_Sim.txt");
+            can_can.Delimeter = '\n';
+            can_can.get();
+        }
+
     }
 }

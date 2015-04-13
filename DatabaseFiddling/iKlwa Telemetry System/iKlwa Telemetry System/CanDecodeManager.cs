@@ -19,9 +19,21 @@ namespace iKlwa_Telemetry_System
         }
         private CAN cPkt;
 
-        private static StreamReader reader;
-        StringBuilder stringBuilder = new StringBuilder();
-        string filename;
+        private StreamReader reader;
+        private StringBuilder stringBuilder = new StringBuilder();
+        private string filename;
+        private char end_delimeter;
+        public char Delimeter
+        {
+            set
+            {
+                end_delimeter = value;
+            }
+            get
+            {
+                return end_delimeter;
+            }
+        }
 
         public CanDecodeManager(string filepath)
         {
@@ -30,7 +42,7 @@ namespace iKlwa_Telemetry_System
                 filepath += ".txt";
             try
             {
-                reader = new StreamReader(filename);
+                reader = new StreamReader(filepath);
             }
             catch (Exception e)
             {
@@ -39,12 +51,21 @@ namespace iKlwa_Telemetry_System
             filename = filepath;
         }
         
+        /// <summary>
+        /// Populates the CAN struct from an input string, with a given delimeter.
+        /// Assumed standard CAN frame structure.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="split_delimeter"></param>
+        /// <returns></returns>
         public CAN populatePacket(string message, char split_delimeter)
         {
             string[] fields = message.Split(split_delimeter);
-            cPkt.ID = Convert.ToInt16(fields[0]);
+            
+            cPkt.ID = Convert.ToInt16(fields[0], 2);
+
             cPkt.LENGTH = Convert.ToInt16(fields[1]);
-            cPkt.DATA = new string[fields.Length-2];
+            cPkt.DATA = new string[fields.Length - 2];
             Array.Copy(fields, 2, cPkt.DATA, 0, cPkt.LENGTH);
             return cPkt;
         }
@@ -62,6 +83,10 @@ namespace iKlwa_Telemetry_System
             MotorDvr_ID
         };
 
+        /// <summary>
+        /// Identifies sensor based on ID entered.
+        /// </summary>
+        /// <returns></returns>
         public string getID()
         {
             string id_string;
@@ -102,10 +127,13 @@ namespace iKlwa_Telemetry_System
             return id_string;
         }
 
-        //interpret things from payload according to the sensor 
+        /// <summary>
+        /// Decodes payload from CAN. Structure of payload depends on the CAN ID.
+        /// </summary>
+        /// <returns></returns>
         public object getPayloadData()
         {
-            string[] payloadData = new string[cPkt.LENGTH];
+            object payloadData = null;//payload will depend on what sensor is detected
             switch (cPkt.ID)
             {
                 case (int)SensorIds.BMS_ID:
@@ -140,6 +168,39 @@ namespace iKlwa_Telemetry_System
                     break;
             }
             return payloadData;
+        }
+
+        /// <summary>
+        /// Checks for the end delimeter of a CAN frame.
+        /// </summary>
+        /// <returns></returns>
+        public bool frameEnd()
+        {
+            return reader.Peek() == end_delimeter;
+        }
+
+        /// <summary>
+        /// Gets all the CAN messages from the text file
+        /// </summary>
+        public List<CAN> get()
+        {
+            List<CAN> allFrames = new List<CAN>();
+            while (!reader.EndOfStream)
+            {
+                //read text stream until end of frame delimeter
+                do
+                {
+                    stringBuilder.Append(Convert.ToChar(
+                                         reader.Read()));
+                } while (frameEnd() == false);
+                reader.Read(); //skips over the end of frame delimeter
+
+                string msg = stringBuilder.ToString();
+                stringBuilder.Clear();
+                populatePacket(msg, ',');
+                allFrames.Add(this.cPkt);
+            }
+            return allFrames;
         }
 
     }

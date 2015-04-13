@@ -3,6 +3,8 @@
 
 u8g_t u8g;
 
+extern volatile uint8_t CAN_Rx_Head;
+extern volatile uint8_t CAN_Rx_Tail;
 void u8g_setup(void)
 {
 	// Init CS pin
@@ -39,7 +41,7 @@ void u8g_setup(void)
   */
    //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
 	//GFX_SELECT();
-	u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(3, 7), U8G_PIN_NONE, PN(3,4));
+	u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_4x_hw_spi, PN(3, 7), U8G_PIN_NONE, PN(3,4));
    //u8g_Init8Bit(&u8g, &u8g_dev_ks0108_128x64, PN(1, 2), PN(1, 1), PN(1, 0), PN(3, 7), PN(3, 6), PN(3, 5), PN(3, 4), PN(3, 3), PN(2, 5), PN(2, 1), PN(2, 0), PN(2,2), PN(2, 3), U8G_PIN_NONE);
 
    //U8GLIB_KS0108_128(d0, d1, d2, d3, d4, d5, d6, d7, en, cs1, cs2, di, rw [, reset])u8g_dev_ks0108_128x64
@@ -82,57 +84,79 @@ void GFX_Cnt(int i){
 
 
 void GFX_LCD_Draw(CANMessage* message){
-	//GFX_SELECT();
-	u8g_Begin(&u8g);
+
+	cli();
+	LCD_SELECT();
 	u8g_FirstPage(&u8g);
-	u8g_prepare();
+	//u8g_prepare();
 	do
 	{
 		draw(message);
 
 	} while ( u8g_NextPage(&u8g) );
-	//GFX_UNSELECT();
+	LCD_UNSELECT();
+	sei();
 }
 
 void draw(CANMessage* msg){
 	char buf[10]; // used for forming strings to pass to the display ??
 
-	CANMessage message = *msg;
+	if(msg->id == 0x100){ //speed!
+		CANMessage message = *msg;
 
-	//u8g_SetFont(&u8g, u8g_font_6x10);
-	//u8g_SetFontRefHeightExtendedText(&u8g);
-	//u8g_SetDefaultForegroundColor(&u8g);
-	//u8g_SetFontPosTop(&u8g);
-	// ID
-	itoa(message.id, buf, 10);
-	u8g_DrawStr(&u8g, 5, 0, "ID= ");
-	u8g_DrawStr(&u8g, 24, 0, buf);
+		u8g_SetFont(&u8g, u8g_font_freedoomr25n);
+		u8g_SetFontRefHeightExtendedText(&u8g);
+		u8g_SetDefaultForegroundColor(&u8g);
+		u8g_SetFontPosTop(&u8g);
+		u8g_DrawFrame(&u8g,0,0,64,32);
+		itoa(message.data[0], buf, 10);
+		u8g_DrawStr(&u8g, 3, 4, buf);
+
+	}else{
+		CANMessage message = *msg;
+
+		u8g_SetFont(&u8g, u8g_font_6x10);
+		u8g_SetFontRefHeightExtendedText(&u8g);
+		u8g_SetDefaultForegroundColor(&u8g);
+		u8g_SetFontPosTop(&u8g);
+		// ID
+		itoa(message.id, buf, 10);
+		u8g_DrawStr(&u8g, 5, 0, "ID= ");
+		u8g_DrawStr(&u8g, 24, 0, buf);
+
+		itoa(CAN_Rx_Head, buf, 10);
+		u8g_DrawStr(&u8g, 64, 0, "H= ");
+		u8g_DrawStr(&u8g, 88, 0, buf);
+		itoa(CAN_Rx_Tail, buf, 10);
+		u8g_DrawStr(&u8g, 64, 15, "T= ");
+		u8g_DrawStr(&u8g, 88, 15, buf);
 
 
-	// L
-	itoa(message.length, buf, 10);
-	u8g_DrawStr(&u8g, 5, 15, "Length= ");
-	u8g_DrawStr(&u8g, 48, 15, buf);
+		// L
+		itoa(message.length, buf, 10);
+		u8g_DrawStr(&u8g, 5, 15, "Length= ");
+		u8g_DrawStr(&u8g, 48, 15, buf);
 
-	u8g_SetFont(&u8g, u8g_font_5x8);
-	  u8g_SetFontRefHeightExtendedText(&u8g);
-	  u8g_SetDefaultForegroundColor(&u8g);
-	  u8g_SetFontPosTop(&u8g);
+		u8g_SetFont(&u8g, u8g_font_5x8);
+		  u8g_SetFontRefHeightExtendedText(&u8g);
+		  u8g_SetDefaultForegroundColor(&u8g);
+		  u8g_SetFontPosTop(&u8g);
 
-	for(int i = 0 ; i < message.length; i++){
-		char string[15] ="D";
-		itoa(i, buf, 10);
-		strcat(string, buf);
-		strcat(string, "= ");
+		for(int i = 0 ; i < message.length; i++){
+			char string[15] ="D";
+			itoa(i, buf, 10);
+			strcat(string, buf);
+			strcat(string, "= ");
 
-		itoa(message.data[i], buf, 10);
-		strcat(string, buf);
+			itoa(message.data[i], buf, 10);
+			strcat(string, buf);
 
-		if(i%2){ // odd number
-			u8g_DrawStr(&u8g, 64, 30 + (i/2)*9, string);
-		}else{ // even number
-			u8g_DrawStr(&u8g, 0, 30 + (i/2)*9, string);
+			if(i%2){ // odd number
+				u8g_DrawStr(&u8g, 64, 30 + (i/2)*9, string);
+			}else{ // even number
+				u8g_DrawStr(&u8g, 0, 30 + (i/2)*9, string);
+			}
+
 		}
-
 	}
 }

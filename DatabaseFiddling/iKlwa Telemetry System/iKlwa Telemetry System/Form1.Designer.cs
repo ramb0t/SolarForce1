@@ -46,6 +46,7 @@
             this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -54,7 +55,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(238, 215);
+            this.button1.Location = new System.Drawing.Point(238, 196);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 35);
             this.button1.TabIndex = 0;
@@ -64,7 +65,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(238, 175);
+            this.button2.Location = new System.Drawing.Point(238, 156);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 34);
             this.button2.TabIndex = 1;
@@ -76,13 +77,13 @@
             // 
             this.richTextBox1.Location = new System.Drawing.Point(12, 93);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(179, 157);
+            this.richTextBox1.Size = new System.Drawing.Size(166, 157);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "";
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(238, 135);
+            this.button3.Location = new System.Drawing.Point(238, 116);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 34);
             this.button3.TabIndex = 4;
@@ -114,7 +115,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(238, 90);
+            this.button5.Location = new System.Drawing.Point(238, 71);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 39);
             this.button5.TabIndex = 7;
@@ -233,11 +234,22 @@
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(367, 215);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(79, 34);
+            this.button9.TabIndex = 21;
+            this.button9.Text = "Clever TxtFile Things";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(603, 262);
+            this.ClientSize = new System.Drawing.Size(624, 285);
+            this.Controls.Add(this.button9);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.zedGraphControl1);
@@ -286,6 +298,7 @@
         private ZedGraph.ZedGraphControl zedGraphControl1;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button9;
 
 
     }

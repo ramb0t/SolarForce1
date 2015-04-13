@@ -227,6 +227,17 @@ Changes M. Thomas:
 #define WAKFIL_ENABLE	0x40
 #define WAKFIL_DISABLE	0x00
 
+// CANINTE Register Bits
+
+#define MCP_RX0IE		0x01
+#define MCP_RX1IE		0x02
+#define MCP_TX0IE		0x04
+#define MCP_TX1IE		0x08
+#define MCP_TX2IE		0x10
+#define MCP_ERRIE		0x20
+#define MCP_WAKIE		0x40
+#define MCP_MERRE		0x80
+
 
 // CANINTF Register Bits
 

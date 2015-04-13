@@ -16,15 +16,7 @@
 #define Period			1000	// mS bettween messages
 #define CAN_ID			0x620   // CAN ID of the BMS
 
-CANMessage MSG0;
-CANMessage MSG1;
-CANMessage MSG2;
-CANMessage MSG3;
-CANMessage MSG4;
-CANMessage MSG5;
-CANMessage MSG6;
-CANMessage MSG7;
-CANMessage MSG8;
+CANMessage BMS[9];
 
 
 

@@ -14,6 +14,7 @@ int main(void)
 
 	// Init CAN
 	CAN_Init(CAN_125KBPS_16MHZ);
+	CAN_setupPCINT0();
 
 	// HACK
 	// LCD SCKCTL Output
@@ -33,20 +34,48 @@ int main(void)
 
 	// Create a new message
 	CANMessage message;
-	uint8_t rx_status = 0xff;
+	//uint8_t rx_status = 0xff;
 
 	// Enable Interrupts
 	sei();
 
     while(1) {
-    	rx_status = CAN_checkReceiveAvailable();
-
-    	if(rx_status == CAN_MSGAVAIL){
-    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
-    		LCD_SELECT();
-    		GFX_LCD_Draw(&message);
-    		LCD_UNSELECT();
+    	cli();
+    	if(~(PINB & (1<<PB0))){
+    		//PCIFR |= (1<<PCIF0); // fire ISR!
+    		//while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL){
+    			CAN_fillBuffer();
+    		//}
 
     	}
+    	sei();
+    	if(flag == CAN_MSGAVAIL){
+    		//cli();
+			if(CAN_getMessage_Buffer(&message) == CAN_OK){
+
+
+				GFX_LCD_Draw(&message);
+
+			}
+			//sei();
+		}else if(flag == CAN_FAIL){
+			flag = CAN_NOMSG;
+		}
+//    	rx_status = CAN_checkReceiveAvailable();
+//
+//    	if(rx_status == CAN_MSGAVAIL){
+//    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
+//    		LCD_SELECT();
+//    		GFX_LCD_Draw(&message);
+//    		LCD_UNSELECT();
+//
+//    	}
     }
+}
+
+ISR(PCINT0_vect){
+	//LCD_UNSELECT();
+	CAN_fillBuffer();
+	//LCD_SELECT();
+
 }

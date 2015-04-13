@@ -10,6 +10,27 @@
 #include "CAN.h"
 #include "../mcp2515/mcp2515.h"
 
+
+// Setup the RX Buffer
+#define CAN_RX_BUFFER_MASK	(CAN_RX_BUFFER_SIZE - 1 )
+#if ( CAN_RX_BUFFER_SIZE & CAN_RX_BUFFER_MASK )
+#error RX buffer size is not a power of 2
+#endif
+
+// Create the buffer
+static volatile CANMessage CAN_Rx_Buffer[CAN_RX_BUFFER_SIZE];
+volatile uint8_t CAN_Rx_Head;
+volatile uint8_t CAN_Rx_Tail;
+volatile uint8_t 	flag;
+//WE NEED AN ISR!
+
+ISR(INT0_vect){
+	CAN_fillBuffer();
+
+}
+
+//ISR(PCINT0_vect, ISR_ALIASOF(INT0_vect));
+
 /*************************************************************************
 Function: CAN_Init()
 Purpose:  Init the CAN interface
@@ -18,12 +39,83 @@ Returns:  Ok / Fail
 **************************************************************************/
 uint8_t CAN_Init(uint8_t speedset)
 {
+	CAN_Rx_Head = 0;
+	CAN_Rx_Tail = 0;
 	uint8_t res;
 
 	res = mcp2515_init(speedset);
 
 	if (res == MCP2515_OK) return CAN_OK;
 	else return CAN_FAILINIT;
+}
+
+
+void CAN_setupInt0(void){
+	// setup pin int
+	DDRD &= ~(1<<PD2);   //Set pin as input
+	PORTD |= (1<<PD2);   //Pullup
+	EICRA |= (1<<ISC01); //Falling edge of INT0
+	EIMSK |= (1<<INT0);  //enable int
+	flag = CAN_NOMSG;
+}
+
+void CAN_setupPCINT0(void){
+	// setup pin int
+	DDRB &= ~(1<<PB0);   //Set pin as input
+	PORTB |= (1<<PB0);   //Pullup
+	PCICR |= (1<<PCIE0); //Enable on PCINT0 pins
+	PCMSK0 |= (1<<PCINT0); //Mask PB0
+	flag = CAN_NOMSG;
+}
+
+uint8_t CAN_fillBuffer(void){
+	uint8_t tmphead;
+	//uint8_t lastRxError;
+	// WE HAVE A MESSAGE?
+	while(CAN_checkReceiveAvailable() == CAN_MSGAVAIL){
+	/* calculate buffer index */
+		tmphead = ( CAN_Rx_Head + 1) &CAN_RX_BUFFER_MASK;
+
+		if ( tmphead == CAN_Rx_Tail ) {
+			/* error: receive buffer overflow */
+		//	lastRxError = CAN_BUFFER_OVERFLOW >> 8;
+			flag = CAN_FAIL;
+			CAN_Rx_Head = CAN_Rx_Tail; // FLUSH!
+		}else{
+			/* store new index */
+			CAN_Rx_Head = tmphead;
+			/* store received data in buffer */
+			CANMessage msg;
+			CAN_readMessage(&msg);
+			CAN_Rx_Buffer[tmphead] = msg;
+			flag = CAN_MSGAVAIL;
+		}
+			//CAN_LastRxError = lastRxError;
+	}
+		return 0;
+}
+
+uint8_t CAN_getMessage_Buffer(CANMessage *msg){
+    uint8_t tmptail, res;
+
+    if ( CAN_Rx_Head == CAN_Rx_Tail ) {
+    	res = CAN_NOMSG;
+    	flag = CAN_NOMSG;
+        return res;   /* no data available */
+    }
+
+    /* calculate /store buffer index */
+    tmptail = (CAN_Rx_Tail + 1) & CAN_RX_BUFFER_MASK;
+    CAN_Rx_Tail = tmptail;
+
+    /* get data from receive buffer */
+    //CANMessage message = CAN_Rx_Buffer[tmptail];
+    //msg = &message;
+    *msg = CAN_Rx_Buffer[tmptail];
+
+    res = CAN_OK;
+    return res;
+
 }
 
 
@@ -35,54 +127,55 @@ Returns:  Ok / Fail
 **************************************************************************/
 uint8_t CAN_sendMessage(const CANMessage* message)
 {
-	uint8_t length = message->length;
-
-	// ID set
-	mcp2515_setRegister ( MCP_TXB0SIDH, ( uint8_t ) ( message->id>> 3 ) ) ;
-	mcp2515_setRegister ( MCP_TXB0SIDL, ( uint8_t ) ( message->id<< 5 ) ) ;
-
-	// If the message is a "Remote Transmit Request"
-	if ( message->rtr )
-	{
-	/* Although A RTR message has a length, but no data */
-
-	// Set message length + RTR
-	mcp2515_setRegister( MCP_TXB0DLC, ( 1 <<RTR ) | length ) ;
-	}
-	else
-	{
-		// Set message length
-	mcp2515_setRegister( MCP_TXB0DLC, length ) ;
-
-	// Data
-	for ( uint8_t i= 0 ;i<length;i++ ) {
-	mcp2515_setRegister( MCP_TXB0D0 + i, message->data [ i ] ) ;
-	}
-	}
-
-	// Send CAN message
-	#define	SPI_RTS			0x80
-	MCP2515_SELECT();
-	SPI_ReadWrite( SPI_RTS | 0x01 ); // Sends the message!
-	MCP2515_UNSELECT();
-
-	return CAN_OK;
+	//TODO: NB NB Potential bug here!!!
+//	uint8_t length = message->length;
+//
+//	// ID set
+//	mcp2515_setRegister ( MCP_TXB0SIDH, ( uint8_t ) ( message->id>> 3 ) ) ;
+//	mcp2515_setRegister ( MCP_TXB0SIDL, ( uint8_t ) ( message->id<< 5 ) ) ;
+//
+//	// If the message is a "Remote Transmit Request"
+//	if ( message->rtr )
+//	{
+//	/* Although A RTR message has a length, but no data */
+//
+//	// Set message length + RTR
+//	mcp2515_setRegister( MCP_TXB0DLC, ( 1 <<RTR ) | length ) ;
+//	}
+//	else
+//	{
+//		// Set message length
+//	mcp2515_setRegister( MCP_TXB0DLC, length ) ;
+//
+//	// Data
+//	for ( uint8_t i= 0 ;i<length;i++ ) {
+//	mcp2515_setRegister( MCP_TXB0D0 + i, message->data [ i ] ) ;
+//	}
+//	}
+//
+//	// Send CAN message
+//	#define	SPI_RTS			0x80
+//	MCP2515_SELECT();
+//	SPI_ReadWrite( SPI_RTS | 0x01 ); // Sends the message!
+//	MCP2515_UNSELECT();
+//
+//	return CAN_OK;
 
 	//TODO: Implement this fancy stuff.. for now we use the germans!
-//	uint8_t res, txbuf_n;
+	uint8_t res, txbuf_n;
 //	uint8_t timeout = 0;
 //	uint16_t time;
 //	time = timebase_actTime();
 //
-//	do {
-//		res = mcp2515_getNextFreeTXBuf(&txbuf_n); // info = addr.
+	do {
+		res = mcp2515_getNextFreeTXBuf(&txbuf_n); // info = addr.
 //		if (timebase_passedTimeMS(time) > CANSENDTIMEOUT ) timeout = 1;
-//	} while (res == MCP_ALLTXBUSY && !timeout);
+	} while (res == MCP_ALLTXBUSY);
 //
 //	if (!timeout) {
-//		mcp2515_write_canMsg( txbuf_n, msg);
-//		mcp2515_start_transmit( txbuf_n );
-//		return CAN_OK;
+		mcp2515_write_canMsg( txbuf_n, message);
+		mcp2515_start_transmit( txbuf_n );
+		return CAN_OK;
 //	}
 //	else {
 //#if (CANDEBUG)
