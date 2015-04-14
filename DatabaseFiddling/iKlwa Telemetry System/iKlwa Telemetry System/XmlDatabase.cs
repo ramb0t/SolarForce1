@@ -149,13 +149,21 @@ namespace iKlwa_Telemetry_System
             return results;
         }
 
-        //this is not useful... working on it
+        
         protected IEnumerable<XElement> queryLvl3RangeAndTag(string tag_field, string tag, string range_field, string start, string end)
         {
             IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
                                             where n.Element(range_field).Value.CompareTo(start) > 0
                                                   && n.Element(range_field).Value.CompareTo(end) < 0
                                                   && n.Element(tag_field).Value.Equals(tag)
+                                            select n;
+            return results;
+        }
+
+        protected IEnumerable<XElement> queryLvl3(string tag_field,string tag)
+        {
+            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
+                                            where n.Element(tag_field).Value.Equals(tag)
                                             select n;
             return results;
         }

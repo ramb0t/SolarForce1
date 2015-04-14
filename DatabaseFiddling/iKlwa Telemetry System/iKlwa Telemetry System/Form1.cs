@@ -14,7 +14,7 @@ namespace iKlwa_Telemetry_System
 {
     public partial class Form1 : Form
     {
-        private const string NO_SENSORS_MSG = "No sensors found...";
+        private const string NO_SENSORS_MSG = "No Sensors";
 
         private COM_Port_Select c = new COM_Port_Select(); //the COM Port Selection Form that may be opened
         private ReliableCommsManager comms = new ReliableCommsManager(); 
@@ -115,12 +115,7 @@ namespace iKlwa_Telemetry_System
         //a test query - will remove and refine
         private void button5_Click(object sender, EventArgs e)
         {
-            var results = d.queryRange("13h00", "13h22");
-            richTextBox1.Text = "Results found: " + results.Count().ToString() + "\n\n";
-            foreach (var item in results)
-            {
-                richTextBox1.AppendText(item.ToString() + "\n");
-            }
+            
         }
 
         private void button6_Click(object sender, EventArgs e)

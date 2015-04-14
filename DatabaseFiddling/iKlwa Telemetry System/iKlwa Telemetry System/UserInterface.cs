@@ -14,9 +14,16 @@ namespace iKlwa_Telemetry_System
 {
     public partial class UserInterface : Form
     {
+        private TelemetryDatabase d;
+        private int counter;//naughty
+        string[] list = new string[1];//naughty
+        private const string NO_SENSORS_MSG = "No sensors found...";
+
         public UserInterface()
         {
             InitializeComponent();
+            d = new TelemetryDatabase("DemoDb.xml");
+            d.NodeTag = "Capture";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -31,7 +38,141 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void refresh_timer_Tick(object sender, EventArgs e)
         {
+            getSensors();
+
+            //naughty things
+            if (counter!=list.Length)
+            lbl_instSpeed.Text = list[counter++];
             
+        }
+
+        /// <summary>
+        /// Secret Simulation/Debug Mode - generate data to textfile, read and store to database.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+            MessageBox.Show("Now Entering Simulation Mode.");
+            Simulator s = new Simulator();
+            s.simData();
+            MessageBox.Show("Simulation Data Generated.\n\nNow storing to database");
+            string[,] data = s.getData();
+
+            for (int rows = 0; rows<1438;rows++)
+            {
+                d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
+                d.addDataCapture("Speed_Sensor", data[rows, 2], data[rows, 0], data[rows, 3]);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //test error message query
+            var errors = d.getErrors();
+            List<string> headers = new List<string>(),
+                         values = new List<string>();
+            foreach (var err in errors)
+            {
+                foreach (var val in err.Descendants())
+                {
+                    if (!headers.Contains(val.Name.ToString()))
+                        headers.Add(val.Name.ToString());
+                    values.Add(val.Value);
+                }
+                //.Add(val.Name + ": " + val.Value + "\n");
+            }
+            ReportScreen output = new ReportScreen();
+            try 
+            {
+                output.Populate(headers, values);
+                output.ShowDialog();
+            }
+            catch(ArgumentException a)
+            { MessageBox.Show(a.Message); }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            GraphPane gp = zedGraphControl1.GraphPane;
+            gp.CurveList.Clear();
+            gp.Title.Text = "Speed vs Time";
+            gp.XAxis.Title.Text = "Time";
+            gp.YAxis.Title.Text = "Speed";
+
+            PointPairList listPoints = new PointPairList();
+            LineItem line_item;
+
+            var results = d.queryRange_valOnly(comboBox1.SelectedItem.ToString(),
+                                               numericUpDown1.Value + "h" + numericUpDown3.Value,
+                                               numericUpDown4.Value + "h" + numericUpDown2.Value);
+            //MessageBox.Show(results.Count().ToString());
+            //richTextBox1.Text = "Results found: " + results.Count().ToString() + "\n\n";
+            int x = 0;
+            foreach (var item in results)
+            {
+                foreach (var thing in item.Descendants("Value"))
+                {
+                    //richTextBox1.AppendText(thing.Value + "\n");
+                    listPoints.Add(x++, Convert.ToDouble(thing.Value));
+                }
+            }
+            line_item = gp.AddCurve(null, listPoints, Color.LightSeaGreen, SymbolType.None);
+            line_item.Line.Width = 1;
+            zedGraphControl1.AxisChange();
+            zedGraphControl1.Invalidate();
+            zedGraphControl1.Refresh();
+        }
+
+        private void getSensors()
+        {
+            if (comboBox1.Items.Contains(NO_SENSORS_MSG)) //if the no sensors message is in the combo box, remove it
+                comboBox1.Items.Remove(NO_SENSORS_MSG);
+            var sensorGroup = d.getSensors();
+            //richTextBox1.Text = "Sensors found: " + sensorGroup.Count().ToString() + "\n\n"; //indicate no. of sensors found
+            foreach (var sensor in sensorGroup)
+            {
+                if (comboBox1.Items.Contains(sensor.Key) == false)
+                    comboBox1.Items.Add(sensor.Key); //add sensors to combo box if they are not contained in there already
+                //richTextBox1.AppendText(sensor.Key + "\n"); //display sensor found
+            }
+            //richTextBox1.AppendText("\n");
+        }
+
+        private void UserInterface_Load(object sender, EventArgs e)
+        {
+            //naughy
+            var results = d.getLatest("Speed_Sensor");
+            int c = 0;
+            list = new string[results.Count()];
+            foreach (var item in results)
+            {
+                foreach (var thing in item.Descendants("Value"))
+                {
+                    list[c++] = thing.Value;
+                }
+            }
+            //end naughty
+
+            var sensorGroup = d.getSensors();
+            if (sensorGroup.Count() == 0) //check if any sensors found and display message if not
+            {
+                comboBox1.Items.Add(NO_SENSORS_MSG);
+            }
+            else //populate combo box
+                foreach (var sensor in sensorGroup)
+                {
+                    comboBox1.Items.Add(sensor.Key);
+                }
+            numericUpDown4.Value = DateTime.Now.Hour;
+            numericUpDown2.Value = DateTime.Now.Minute;
+            numericUpDown1.Value = DateTime.Now.Hour - 1;
+            numericUpDown3.Value = DateTime.Now.Minute;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            button6.Enabled = true;
         }
 
     }
