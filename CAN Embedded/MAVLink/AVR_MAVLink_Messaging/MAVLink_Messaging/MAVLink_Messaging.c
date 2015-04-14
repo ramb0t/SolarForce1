@@ -198,7 +198,7 @@ void GPS_readData()
 			}
 			
 	}
-
+//
 			
 			
 			
@@ -213,16 +213,8 @@ void GPS_readData()
 //
 			//}
 
-	
-		
-		
 
-
-		
-				
-
-
-}
+		}
 		
 		
 	//UART_REG = TX_DISABLE;
@@ -313,14 +305,14 @@ void CAN_readData()
 	if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
 		{
 			uart_puts("<<<<START OF MESSAGE>>>>\n");
-			uart_puts("\n---------CAN DATA---------\n");
+			uart_puts("\nCAN DATA\n");
 			
 			itoa(CAN_checkReceiveAvailable(), buff,10);
-			uart_puts("RXAvail:");
+			uart_puts("RX:");
 			uart_puts(buff);
 					
 			itoa(CAN_checkError(),buff,10);
-			uart_puts("CheckErr:");
+			uart_puts("Err:");
 			uart_puts(buff);
 			//-----------------Pull MPPT data----------------//
 			//CANBusInput.id = 0x711;
@@ -400,13 +392,22 @@ void MAV_msg_pack()
 
 			uart_puts("\n---------MAVLink Data---------\n");
 			//---------------MAVLink Data---------------------------//
-			//// Initialize the required buffers
+			// Initialize the required buffers
+			// Set correct buffer lengths
 
 			mavlink_message_t msg;
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 			
-			/*For all packaging, parameters 1,2,3 are the same */
+			/*FOR TEST WITH QGC SOFTWARE ONLY--------------------------------------------
+			This message sends "UAV" style messages for the QGC software. For testing only!
+			*/
+			if (DEBUG)
+			{
+				//mavlink_msg_sys_status_send(0,base_mode,custom_mode,system_status,15,4201,2,0);
+			}
+			//-----------------------------------------------------------------------
+			/*For all packaging, parameters 1 = MAVLink Channel */
 			
 			/*-----------------------------------------------------------------------
 			NAME: Motor Driver Data
@@ -414,14 +415,19 @@ void MAV_msg_pack()
 			..........................................................................
 				Parameters	 Value	Detail									Range/Type
 			...........................................................................				
-								4 = speed from motor driver (RPM)			0-255km/h
-								5 = uint8_t magnet_back missing?			0=no 1=yes
-								6 = uint8_t magnet_front missing?			0=no 1=yes
-			Assume CAN data 0 = motor controller temp
-							   data 1 = speed								*/
+								2 = temperature of motor controller			1,2,3,4
+																			1 = below 85; 
+																			2 = 85-95; 
+																			3 = 95-105; 
+																			4 = over 105
+								3 = speed from motor driver (RPM)			0-255km/h
+			Assume CAN data 2 = motor controller temp
+							3 =   data 1 = speed								*/
 			
 			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			//MAV_uart_send(buf,len);
+			
+			mavlink_msg_motor_driver_send(0, 72, CANBusInput.data[0]);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
@@ -429,12 +435,12 @@ void MAV_msg_pack()
 			.........................................................................
 			Parameters		 Value	Detail									Range/Type
 			...........................................................................
-				Parameters		4 = speed from hall effect					0-255km/h
-								5 = uint8_t magnet_back missing?			0=no 1=yes
-								6 = uint8_t magnet_front missing?			0=no 1=yes
+				Parameters		2 = speed from hall effect					0-255km/h
+								3 = uint8_t magnet_back missing?			0=no 1=yes
+								4 = uint8_t magnet_front missing?			0=no 1=yes
 			//TESTING		CAN 2 = speed to send							*/
 			
-			mavlink_msg_motor_driver_send(0, 72, CANBusInput.data[0]);
+			mavlink_msg_hall_effect_send(0, CANBusInput.data[0],0,0);
 			
 			//uart_puts("RX");
 			//uart_puts(MAV_Rx_buff);
@@ -444,20 +450,26 @@ void MAV_msg_pack()
 			.........................................................................
 				Parameters	 Value	Detail									Range/Type
 			...........................................................................
-								4 = uint8_t fault condition?				0=no 1=yes
-								5 = uint16_t source current					0-65535mA
-								6 = uint16_t load_current					0-65535mA
-								7 = char bat_fan_status						t=OK f=FAULT
-								8 = uint8_t LLIM_state						1=flag active 0=flag not active
-								9 = uint8_t HLIM_state						1=flag active 0=flag not active
-								10 = uint8_t state_of_chg (percentage)		0-100%
-								11 = uint16_t pack_voltage					0-65535V
-								12 = const uint16_t *cell_voltages [low,avg,high]	0-65535V per element
-								13 = const uint16_t *cell_temps [low,avg,high]		0-65535C per element
-								14 = uint8_t system_status							MAVLINK_ENUM
+								2 = uint8_t fault condition?				0=no 1=yes
+								3 = uint16_t source current					0-65535mA
+								4 = uint16_t load_current					0-65535mA
+								5 = char bat_fan_status						t=OK f=FAULT
+								6 = uint8_t LLIM_state						1=flag active 0=flag not active
+								7 = uint8_t HLIM_state						1=flag active 0=flag not active
+								8 = uint8_t state_of_chg (percentage)		0-100%
+								9= uint16_t pack_voltage					0-65535V
+								10 = const uint16_t *cell_voltages [low,avg,high]	0-65535V per element
+								11 = const uint16_t *cell_temps [low,avg,high]		0-65535C per element
+								12 = uint8_t system_status							MAVLINK_ENUM
 								
 			*/
-			//mavlink_msg_bms_data_pack(100,200, &msg,uint8_t fault_condition, float source_current, float load_current, char bat_fan_status, uint8_t LLIM_state, uint8_t HLIM_state, uint8_t state_of_chg, uint16_t pack_voltage, const uint16_t *cell_voltages, const uint16_t *cell_temps, uint8_t system_status)
+			//FOR TESTING ONLY. REPLACE VALUES WITH CAN ID POINTERS AS NEEDED!
+			uint16_t volt[] = {4,5,8};
+			uint16_t temp[] = {25,55,70};
+			uint16_t *cell_voltage = volt;	
+			uint16_t *cell_temp = temp;
+			
+			mavlink_msg_bms_data_send(0,0,1420,1550,'t',0,0,75,128,cell_voltage,cell_temp,MAV_STATE_ACTIVE);
 
 			/*-----------------------------------------------------------------------
 			NAME: Accelerometer/Gyroscope Data
@@ -523,16 +535,42 @@ void MAV_msg_pack()
 			//TESTING																		*/			
 			
 			uart_flush();
-			uart_puts("\n---------MAVLink Heartbeat---------\n");
+			//uart_puts("\n---------MAVLink Heartbeat---------\n");
 			
-			//mavlink_msg_heartbeat_pack(100, 200, &msg, system_type, autopilot_type,base_mode,custom_mode,system_status);
-			//MAV_uart_send(buf,len);
 			mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
 
-			uart_puts("\n<<<<END OF MESSAGE>>>>\n");
-			////_delay_ms(HEARTBEAT_DELAY);
+			//uart_puts("\n<<<<END OF MESSAGE>>>>\n");
 			
-			uart_puts("\n<<<<RX MESSAGE>>>>\n");
+			//-----FOR TESTING ONLY, LOOPBACK RECEIVE FUNCTION
+			//uart_puts("\n<<<<RX MESSAGE>>>>\n");
+			 
+			mavlink_message_t msg2 PROGMEM;
+			int chan = 0;
+			mavlink_status_t* mav_status;
+			
+			 while(uart_available()>0)
+			 {
+				uint8_t byte = uart_getc();
+				while( !(UCSR0A & (1<<UDRE0)) )
+				{
+					
+						byte = uart_getc() ;
+						if (mavlink_parse_char(chan, byte, &msg2,mav_status))
+						{
+							uart_puts("ID: ");
+							uart_putc(msg2.msgid);
+							uart_puts("\nSeq:");
+							uart_putc(msg2.seq);
+							uart_puts("\nCompo: " );
+							uart_putc(msg2.compid);
+							uart_puts("\nsys: ");
+							uart_putc(msg.sysid);
+						}
+					
+				}
+			}
+				
+			
 			//mavlink_motor_driver_t* MotorDriver;
 			//mavlink_message_type_t* msgRx;
 			//
