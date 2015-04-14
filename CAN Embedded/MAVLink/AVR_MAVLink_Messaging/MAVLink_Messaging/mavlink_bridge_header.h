@@ -62,8 +62,7 @@
    Lines also in your main.c, e.g. by reading these parameter from EEPROM.
  */
 	mavlink_system_t mavlink_system;
-			mavlink_system.sysid = 100; // System ID, 1-255
-			mavlink_system.compid = 50; // Component/Subsystem ID, 1-255
+
 
 
 /**
@@ -73,29 +72,31 @@
  * @param ch Character to send
  */
 int uart;
-static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const uint8_t *ch, int length)
+static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const char *ch, int length)
 {
 
     if (chan == MAVLINK_COMM_0)
     {
-		for (int i=0;i<length;i++)
+		if( !(UCSR0A & (1<<UDRE0)) )
 		{
-			uart_putc(&ch);
+			for(int i=0;i < length;i++){
+			uart_putc(ch[i]);
+			}
 		}
     }
 }
 
-static inline void comm_send_ch(mavlink_channel_t chan, uint8_t ch)
-{
-	if (chan == MAVLINK_COMM_0)
-	{
-		uart_putc((char)ch);
-	}
-	if (chan == MAVLINK_COMM_1)
-	{
-		uart_putc((char)ch);
-	}
-}
+//static inline void comm_send_ch(mavlink_channel_t chan, uint8_t ch)
+//{
+	//if (chan == MAVLINK_COMM_0)
+	//{
+		//if (uart_available())
+		//{
+			//uart_putc((char)ch);
+		//}
+//
+	//}
+//}
 
 #include "mavlink.h"				//MAVLink framework
 

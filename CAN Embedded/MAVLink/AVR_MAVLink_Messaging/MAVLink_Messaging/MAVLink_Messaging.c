@@ -66,6 +66,9 @@ int main (void)
 	//HACK: Sending GPS data and heartbeat
 	//TODO: Get interrupt-based heartbeats and GPS data integrated with CAN
 	
+				mavlink_system.sysid = 100; // System ID, 1-255
+				mavlink_system.compid = 200; // Component/Subsystem ID, 1-255
+	
 //---------------Operational Loop---------------------//
 	
 	while(1) {
