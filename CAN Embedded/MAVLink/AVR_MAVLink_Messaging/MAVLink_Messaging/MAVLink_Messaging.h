@@ -9,13 +9,13 @@
 #ifndef MAVLINK_MESSAGING_H_
 #define MAVLINK_MESSAGING_H_
 
-#define MAVLINK_SEND_UART_BYTES
+//#define MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
 //------------Port Naming/ System Defines-----------------//
 
 #define F_CPU 16000000UL
 #define UART_BAUD_RATE 9600
-#define MAVLINK_USE_CONVENIENCE_FUNCTIONS
+
 
 #define TELEMETRY_UART_OUT	DDD1
 #define GPS_UART_DATA_IN	DDD0
@@ -44,37 +44,32 @@
 #include <avr/pgmspace.h>
 #include <string.h>
 #include "../lib/uart/uart.h"					//UART library
-#include "mavlink.h"				//MAVLink framework
 
 #include "../lib/CAN/CAN.h"			//CAN Framework
 #include "../lib/mcp2515/mcp2515.h"	//bit timings for MCP2515
 
+#include "mavlink_bridge_header.h"  //UART & convenience headers
+
+mavlink_status_t* mavlink_get_channel_status(uint8_t chan);
+mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
+
+
 //------------Library Objects----------------------------//
 
 CANMessage CANBusInput;				//CAN library object
-mavlink_system_t mavlink_system;	//MAVLink system object
 
 volatile int counter=0;
 volatile int ctr2=0;
 
 char MAV_Rx_buff[10];
 
-//------------Enum for MAVLink Heartbeat delay-----------//
-enum {
-	HEARTBEAT_DELAY = 1000
-};
-
-// Define the system type (see solarCar.h for list of possible types)
-
-int system_type = MAV_TYPE_GROUND_ROVER;
-int autopilot_type = MAV_AUTOPILOT_GENERIC;
-int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
-int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
-int system_status = MAV_STATE_ACTIVE;
-//
-
-
 //------------Function Prototypes------------------------//
+
+		int system_type = MAV_TYPE_GROUND_ROVER;
+		int autopilot_type = MAV_AUTOPILOT_GENERIC;
+		int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
+		int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+		int system_status = MAV_STATE_ACTIVE;
 
 void CAN_readData(void);
 void MAV_msg_pack();
@@ -84,5 +79,6 @@ void GPS_readData(void);
 static inline void mavlink_msg_motor_driver_decode(const mavlink_message_t* msg, mavlink_motor_driver_t* motor_driver);
 
 
+ 
 
 #endif /* MAVLINK_MESSAGING_H_ */
