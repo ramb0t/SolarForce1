@@ -53,7 +53,7 @@ int main (void)
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 
 		MAV_msg_Unpack();
-		
+				
 
 	}
 	return 0;
@@ -74,7 +74,7 @@ void MAV_msg_Unpack()
   //--connect to QGC and observe output! */
 
 
-			uart_puts("\n---------MAVLink Data---------\n");
+			//uart_puts("\n-MAVLink Data---------\n");
 			//---------------MAVLink Data---------------------------//
 			// Initialize the required buffers
 			// Set correct buffer lengths
@@ -85,50 +85,80 @@ void MAV_msg_Unpack()
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 			
-			//uart_puts("\n<<<<RX MESSAGE>>>>\n");
+			uart_puts(" ");
 			 
 			mavlink_message_t msg2;
 			int chan = 0;
+			int ctr = 0;
+			int hb_lost = 0;
+			uint8_t c ;
 			mavlink_status_t* mav_status;
 
 			
 			// COMMUNICATION THROUGH EXTERNAL UART PORT
 			
-			while(uart_available())
+			while(!(UCSR0A & (1<<UDRE0)))									//poll data from the UART bus only while there is data on it
 			{
-				uint8_t c = uart_getc();
-				uart_putc(c);
-				// Try to get a new message
-				if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
-					// Handle message
+				while (ctr < MAVLINK_MAX_PACKET_LEN)						//while packet size < MAVLink packet
+				{
 					
-					switch(msg.msgid)
+					c=uart_getc();								//get another char
+					uart_putc(c);	
+					ctr++;										//TEST put out
+					// Try to get a new message
+					if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) //if packet matches defined MAVLink packet
 					{
-						case MAVLINK_MSG_ID_HEARTBEAT:
+						// Start Handler for message
+						
+						switch(msg.msgid)
 						{
-							uart_puts("HB");
-							// E.g. read GCS heartbeat and go into
-							// comm lost mode if timer times out
+							case MAVLINK_MSG_ID_HEARTBEAT:					//Is it heartbeat ID?
+							{
+								uart_puts("HB");
+								// E.g. read GCS heartbeat and go into
+								// comm lost mode if timer times out
+								
+							}
+							break;										//now check for next ID
+							case MAVLINK_MSG_ID_MOTOR_DRIVER:				//is it Motor Driver data?
+							{
+								//uart_puts("MD");
+							}
+							break;										//now check for next ID
+							case MAVLINK_MSG_ID_HALL_EFFECT:				//is it Hall Effect data?
+							{
+								uart_puts("HE");
+							}
+							break;										//now check for next ID
+							case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
+							{
+								uart_puts("BMS");
+							}
+							case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
+							{
+								//uart_puts("MPPT1");
+							}
+							default:
+							hb_lost++;
+							if (hb_lost > 100)
+							{
+								hb_lost = 0;
+								uart_puts("\nConnLost\n");
+							}
+							break;
 						}
-						break;
-						case MAVLINK_MSG_ID_MOTOR_DRIVER:
-					{
-						uart_puts("MD");
 					}
-						break;
-						default:
-						//Do nothing
-						break;
-					}
+					
+					// And get the next one
+				
 				}
 				
-				// And get the next one
 			}
 			
 			
 
 				//uint8_t byte = uart_getc();
-				//if( !(UCSR0A & (1<<UDRE0)) )
+			
 				//{
 					//if (uart_available())
 					//{
