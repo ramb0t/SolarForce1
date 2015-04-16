@@ -1,0 +1,53 @@
+VERSION "HIPBNYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY/4/%%%/4/'%**4YYY///"
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+
+BS_:
+
+BU_: SpeedNode RFNode DisplayNode BMS MPPT
+
+
+BO_ 100 Speed: 8 SpeedNode
+ SG_ SpeedValue : 0|8@1+ (1,0) [0|255] "kmph" Vector__XXX
+
+BO_ 1905 MPPTAnswer1: 7 MPPT
+ SG_ Iin : 17|10@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ Vin : 1|10@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ BVLR : 7|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ OVT : 6|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ NOC : 5|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ UNDV : 4|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Vout : 33|10@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ Tamb : 55|8@0+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 1809 MPPTRequest1: 0 Vector__XXX
+ SG_ RTRRequest M : 0|0@1+ (1,0) [0|0] "" Vector__XXX
+
+
+CM_ BU_ SpeedNode "Terayza";
+CM_ BU_ RFNode "Matt";
+CM_ BU_ DisplayNode "Ben";
+CM_ BO_ 100 "";
+CM_ SG_ 1905 Iin "";
+CM_ BO_ 1809 "RTR";
