@@ -65,11 +65,11 @@ char MAV_Rx_buff[10];
 
 //------------Function Prototypes------------------------//
 
-		int system_type = MAV_TYPE_GROUND_ROVER;
-		int autopilot_type = MAV_AUTOPILOT_GENERIC;
-		int base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
-		int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
-		int system_status = MAV_STATE_ACTIVE;
+		uint8_t system_type = MAV_TYPE_GROUND_ROVER;
+		uint8_t autopilot_type = MAV_AUTOPILOT_UDB;
+		uint8_t base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
+		uint8_t custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+		uint8_t system_status = MAV_STATE_ACTIVE;
 
 void CAN_readData(void);
 void MAV_msg_pack();

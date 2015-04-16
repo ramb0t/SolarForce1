@@ -86,17 +86,6 @@ static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const char *c
     }
 }
 
-//static inline void comm_send_ch(mavlink_channel_t chan, uint8_t ch)
-//{
-	//if (chan == MAVLINK_COMM_0)
-	//{
-		//if (uart_available())
-		//{
-			//uart_putc((char)ch);
-		//}
-//
-	//}
-//}
 
 #include "mavlink.h"				//MAVLink framework
 
