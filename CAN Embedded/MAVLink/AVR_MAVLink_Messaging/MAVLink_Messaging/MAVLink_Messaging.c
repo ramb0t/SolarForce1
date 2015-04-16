@@ -337,10 +337,10 @@ void CAN_readData()
 				//uart_puts(buff);								//output bytestring to UART
 				
 				//-----------------------Switches for detecting CAN ID--------------------------//
-				if (Input_Message.id ==MOTOR_DRIVER_CANID)
+				if (Input_Message.id ==MOTOR_DRIVER_CANID)		//Motor driver ID detected
 				{
 					uart_puts("\n");
-					uart_puts("CAN from ID:");
+					uart_puts("CAN from MD:");
 					uart_puts(Input_Message.id);
 					for (int i=0;i<4;i++)
 					{
@@ -350,10 +350,10 @@ void CAN_readData()
 
 				}
 				
-				if (Input_Message.id ==HALL_EFFECT_CANID)
+				if (Input_Message.id ==HALL_EFFECT_CANID)		//Hall effect data detected
 				{
 					uart_puts("\n");
-					uart_puts("CAN from ID:");
+					uart_puts("CAN from HE:");
 					uart_puts(Input_Message.id);
 					for (int i=4;i<8;i++)
 					{
@@ -363,6 +363,46 @@ void CAN_readData()
 
 				}
 				
+				if (Input_Message.id ==BMS_CANID)				//BMS data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from BMS:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<16;i++)						//16 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}
+				
+				if (Input_Message.id ==ACCELO_GYRO_CANID)				//Gyro/MPU6050 data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from ACGY:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<2;i++)						//2 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}
+				
+				if (Input_Message.id ==MPPT1_CANID)				//BMS data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from MPPT1:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<4;i++)						//4 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}
+				
+												
 				
 				
 				//uart_puts(",");
