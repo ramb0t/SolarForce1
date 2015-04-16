@@ -103,7 +103,7 @@ void MAV_msg_Unpack()
 				{
 					
 					c=uart_getc();								//get another char
-					uart_putc(c);	
+					uart_putc("");								//TESTING OUTPUT
 					ctr++;										//TEST put out
 					// Try to get a new message
 					if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) //if packet matches defined MAVLink packet
@@ -120,15 +120,27 @@ void MAV_msg_Unpack()
 								
 							}
 							break;										//now check for next ID
+							
+							/*--------Data general message structure-------------
+							>>XX,[comma separated fields]<<
+							^ ^ ^         ^				 ^
+							msg start
+							 ID
+								commadelim
+										data
+														end msg
+																				*/
+							
 							case MAVLINK_MSG_ID_MOTOR_DRIVER:				//is it Motor Driver data?
 							{
-								mavlink_motor_driver_t md;
-								mavlink_msg_motor_driver_decode(&msg,&md);
-								uart_puts_p(PSTR("MD>>"));
-								
-								uart_putc(md.speed);
-								uart_putc(md.controller_temp);
-								
+								mavlink_motor_driver_t md;					//instantiate object MD
+								mavlink_msg_motor_driver_decode(&msg,&md);	//encode message
+								uart_puts_p(PSTR("MD>>"));					//delimiter & ID
+								uart_putc(MD_TXID);
+								uart_puts_p(PSTR(","));
+								uart_putc(md.speed);						//avg. speed
+								uart_puts_p(PSTR(","));						//delim
+								uart_putc(md.controller_temp);				
 								uart_puts_p(PSTR("<<"));
 								break;									//now check for next ID
 							}break;
@@ -138,24 +150,27 @@ void MAV_msg_Unpack()
 								mavlink_hall_effect_t he;					//generate a struct object
 								mavlink_msg_hall_effect_decode(&msg,&he);	//decode MAVLink into data
 								uart_puts("HE>>");
-								
+								uart_putc(HE_TXID);
+								uart_puts_p(PSTR(","));
 								uart_putc(he.speed);
+								uart_puts_p(PSTR(","));
 								uart_putc(he.left_magnet);
+								uart_puts_p(PSTR(","));
 								uart_putc(he.right_magnet);
 								uart_puts_p(PSTR("<<"));
 								break;
-							}
+							}break;
 																	//now check for next ID
 							case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
 							{
 								uart_puts_p(PSTR("BMS"));
 								break;
-							}
+							}break;
 							case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
 							{
 								mavlink_accelo_gyro_t ac;
 								mavlink_msg_accelo_gyro_decode(&msg,&ac);
-								uart_puts_p(PSTR("AC>>"));
+								uart_puts_p(PSTR(">>AC,"));
 								
 								uart_putc(ac.acceleration);
 								uart_putc(ac.incline);

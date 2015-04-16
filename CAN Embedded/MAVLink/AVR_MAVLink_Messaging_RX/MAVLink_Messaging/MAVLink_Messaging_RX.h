@@ -41,7 +41,12 @@
 mavlink_status_t* mavlink_get_channel_status(uint8_t chan);
 mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
+//---------------CAN ID defines-----//
 
+#define MOTOR_DRIVER_CANID	0x420
+#define HALL_EFFECT_CANID	0x420
+#define HE_TXID				420
+#define MD_TXID				421
 //------------Library Objects----------------------------//
 
 volatile uint8_t counter=0;

@@ -38,6 +38,11 @@
 
 //------------Library and AVR Includes--------------------//
 
+//-------------CAN Defines----------------------------------//
+
+#define MOTOR_DRIVER_CANID	0x0420
+#define HALL_EFFECT_CANID	0x0420
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -56,7 +61,7 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //------------Library Objects----------------------------//
 
-CANMessage CANBusInput;				//CAN library object
+CANMessage Input_Message;				//CAN library object
 
 volatile int counter=0;
 volatile int ctr2=0;
