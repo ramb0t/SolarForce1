@@ -390,7 +390,7 @@ void MAV_msg_pack()
   //--connect to QGC and observe output! */
 
 
-			uart_puts("\n---------MAVLink Data---------\n");
+			uart_puts(" ");
 			//---------------MAVLink Data---------------------------//
 			// Initialize the required buffers
 			// Set correct buffer lengths
@@ -427,7 +427,7 @@ void MAV_msg_pack()
 			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			//MAV_uart_send(buf,len);
 			
-			mavlink_msg_motor_driver_send(0, 72, CANBusInput.data[0]);
+			mavlink_msg_motor_driver_send(0, 1, /*CANBusInput.data[0]*/72);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
@@ -440,7 +440,8 @@ void MAV_msg_pack()
 								4 = uint8_t magnet_front missing?			0=no 1=yes
 			//TESTING		CAN 2 = speed to send							*/
 			
-			mavlink_msg_hall_effect_send(0, CANBusInput.data[0],0,0);
+			//uart_flush();
+			mavlink_msg_hall_effect_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/60,0,0);
 			
 			//uart_puts("RX");
 			//uart_puts(MAV_Rx_buff);
@@ -469,7 +470,8 @@ void MAV_msg_pack()
 			uint16_t *cell_voltage = volt;	
 			uint16_t *cell_temp = temp;
 			
-			mavlink_msg_bms_data_send(0,0,1420,1550,'t',0,0,75,128,cell_voltage,cell_temp,MAV_STATE_ACTIVE);
+			//uart_flush();
+			//mavlink_msg_bms_data_send(MAVLINK_COMM_0,0,1420,1550,'t',0,0,75,128,cell_voltage,cell_temp,MAV_STATE_ACTIVE);
 
 			/*-----------------------------------------------------------------------
 			NAME: Accelerometer/Gyroscope Data
@@ -478,9 +480,10 @@ void MAV_msg_pack()
 			Parameters		Value	Detail									Range/Type
 			...........................................................................
 								4 = int8_t acceleration (m.s^-2)			-127 to 127 m.s^-2		
-								5 = uint8_t magnet_back missing? 			0=no 1=yes
-								6 = uint8_t magnet_front missing?			0=no 1=yes
+								5 = int8_t incline (degrees)				-127 to 127 (0-100 @ 10 counts per degree)
 			//TESTING																	*/
+			
+			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
 			
 //TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
 			//MAV_uart_send(buf,len);
@@ -515,15 +518,19 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
+			mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,2542,1011,0,0);
 			
 //TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
+			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,2500,1000,0,0);
 			
 //TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
+			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,2591,968,0,1);
 			
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
+			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
@@ -534,7 +541,7 @@ void MAV_msg_pack()
 			Flags are fixed each time, standard to the MAVLink library. Not edited / written to.
 			//TESTING																		*/			
 			
-			uart_flush();
+			//uart_flush();
 			//uart_puts("\n---------MAVLink Heartbeat---------\n");
 			
 			mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
@@ -544,31 +551,31 @@ void MAV_msg_pack()
 			//-----FOR TESTING ONLY, LOOPBACK RECEIVE FUNCTION
 			//uart_puts("\n<<<<RX MESSAGE>>>>\n");
 			 
-			mavlink_message_t msg2 PROGMEM;
-			int chan = 0;
-			mavlink_status_t* mav_status;
-			
-			 while(uart_available()>0)
-			 {
-				uint8_t byte = uart_getc();
-				while( !(UCSR0A & (1<<UDRE0)) )
-				{
-					
-						byte = uart_getc() ;
-						if (mavlink_parse_char(chan, byte, &msg2,mav_status))
-						{
-							uart_puts("ID: ");
-							uart_putc(msg2.msgid);
-							uart_puts("\nSeq:");
-							uart_putc(msg2.seq);
-							uart_puts("\nCompo: " );
-							uart_putc(msg2.compid);
-							uart_puts("\nsys: ");
-							uart_putc(msg.sysid);
-						}
-					
-				}
-			}
+			//mavlink_message_t msg2 PROGMEM;
+			//int chan = 0;
+			//mavlink_status_t* mav_status;
+			//
+			 //while(uart_available()>0)
+			 //{
+				//uint8_t byte = uart_getc();
+				//while( !(UCSR0A & (1<<UDRE0)) )
+				//{
+					//
+						//byte = uart_getc() ;
+						//if (mavlink_parse_char(chan, byte, &msg2,mav_status))
+						//{
+							//uart_puts("ID: ");
+							//uart_putc(msg2.msgid);
+							//uart_puts("\nSeq:");
+							//uart_putc(msg2.seq);
+							//uart_puts("\nCompo: " );
+							//uart_putc(msg2.compid);
+							//uart_puts("\nsys: ");
+							//uart_putc(msg.sysid);
+						//}
+					//
+				//}
+			//}
 				
 			
 			//mavlink_motor_driver_t* MotorDriver;
