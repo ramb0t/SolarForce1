@@ -251,7 +251,7 @@ MAVLINK_HELPER uint8_t mavlink_parse_char(uint8_t chan, uint8_t c, mavlink_messa
 {
         /*
 	  default message crc function. You can override this per-system to
-	  put this data in a different memory segment
+	  put this data in a different memory segment -USING PROGMEM here
 	*/
 #if MAVLINK_CRC_EXTRA
 #ifndef MAVLINK_MESSAGE_CRC

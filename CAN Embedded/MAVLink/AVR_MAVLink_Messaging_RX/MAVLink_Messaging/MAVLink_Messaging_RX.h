@@ -44,8 +44,9 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //------------Library Objects----------------------------//
 
-volatile int counter=0;
-volatile int ctr2=0;
+volatile uint8_t counter=0;
+volatile uint8_t ctr2=0;
+volatile uint8_t hb_lost = 0;
 
 char MAV_Rx_buff[10];
 
