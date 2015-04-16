@@ -9,10 +9,10 @@
 
 #include "uart_CANFunc.h"
 
-extern volatile uint16_t ms_Counter;
+extern volatile uint32_t ms_Counter;
 
 // HACK TEMP
-uint16_t oldtime;
+uint32_t oldtime;
 
 
 /*************************************************************************

@@ -448,15 +448,15 @@ void mcp2515_read_canMsg( const uint8_t buffer_sidh_addr,
 void mcp2515_write_can_id( const uint8_t mcp_addr, 
 	const uint8_t ext, const uint32_t can_id )
 {
-    uint16_t canid;
+    uint32_t canid;
     uint8_t tbufdata[4];
 	
-    canid = (uint16_t)(can_id & 0x0FFFF);
+    canid = (uint32_t)(can_id & 0x0FFFF);
     
 	if ( ext == 1) {
         tbufdata[MCP_EID0] = (uint8_t) (canid & 0xFF);
         tbufdata[MCP_EID8] = (uint8_t) (canid / 256);
-        canid = (uint16_t)( can_id / 0x10000L );
+        canid = (uint32_t)( can_id / 0x10000L );
         tbufdata[MCP_SIDL] = (uint8_t) (canid & 0x03);
         tbufdata[MCP_SIDL] += (uint8_t) ((canid & 0x1C )*8);
         tbufdata[MCP_SIDL] |= MCP_TXB_EXIDE_M;
