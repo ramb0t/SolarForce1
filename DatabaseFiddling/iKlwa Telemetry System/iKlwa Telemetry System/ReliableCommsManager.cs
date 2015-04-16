@@ -21,5 +21,27 @@ namespace iKlwa_Telemetry_System
                 this.writeByte(ACK);
             return pingFound;
         }
+
+        public struct Packet
+        {
+            public int ID;
+            public string[] PAYLOAD;
+        }
+        private Packet pkt;
+
+        public void MavLinkInit()
+        {
+            try
+            {
+                baud_rate = 9600;
+                data_bits = 8;
+                stop_bits = 1;
+                parity = (int)Parities.NoParity;
+                interrupt_bytes_threshold = 1;
+            }
+            catch (Exception e)
+            { System.Windows.Forms.MessageBox.Show(e.Message); }
+        }
+
     }
 }

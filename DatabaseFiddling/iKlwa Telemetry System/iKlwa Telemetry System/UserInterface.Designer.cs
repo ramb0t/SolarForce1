@@ -32,6 +32,21 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserInterface));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.lbl_MPPTPIn4 = new System.Windows.Forms.Label();
+            this.lbl_MPPTPIn2 = new System.Windows.Forms.Label();
+            this.lbl_MPPTPIn3 = new System.Windows.Forms.Label();
+            this.lbl_MPPTPIn1 = new System.Windows.Forms.Label();
+            this.lbl_MPPTFault = new System.Windows.Forms.Label();
+            this.lbl_BMSFault = new System.Windows.Forms.Label();
+            this.lbl_LLim = new System.Windows.Forms.Label();
+            this.lbl_HLim = new System.Windows.Forms.Label();
+            this.lbl_avgCellVoltage = new System.Windows.Forms.Label();
+            this.lbl_avgCellTemp = new System.Windows.Forms.Label();
+            this.lbl_SoC = new System.Windows.Forms.Label();
+            this.lbl_POut = new System.Windows.Forms.Label();
+            this.lvl_PIn = new System.Windows.Forms.Label();
+            this.lbl_dist = new System.Windows.Forms.Label();
+            this.lbl_instSpeed = new System.Windows.Forms.Label();
             this.lbl_avgSpeed = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
@@ -71,28 +86,6 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.taskbar_notification = new System.Windows.Forms.NotifyIcon(this.components);
-            this.button3 = new System.Windows.Forms.Button();
-            this.refresh_timer = new System.Windows.Forms.Timer(this.components);
-            this.lbl_instSpeed = new System.Windows.Forms.Label();
-            this.lbl_dist = new System.Windows.Forms.Label();
-            this.lvl_PIn = new System.Windows.Forms.Label();
-            this.lbl_POut = new System.Windows.Forms.Label();
-            this.lbl_SoC = new System.Windows.Forms.Label();
-            this.lbl_avgCellTemp = new System.Windows.Forms.Label();
-            this.lbl_avgCellVoltage = new System.Windows.Forms.Label();
-            this.lbl_HLim = new System.Windows.Forms.Label();
-            this.lbl_LLim = new System.Windows.Forms.Label();
-            this.lbl_BMSFault = new System.Windows.Forms.Label();
-            this.lbl_MPPTFault = new System.Windows.Forms.Label();
-            this.lbl_MPPTPIn1 = new System.Windows.Forms.Label();
-            this.lbl_MPPTPIn3 = new System.Windows.Forms.Label();
-            this.lbl_MPPTPIn2 = new System.Windows.Forms.Label();
-            this.lbl_MPPTPIn4 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label32 = new System.Windows.Forms.Label();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
@@ -101,17 +94,24 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.button6 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.taskbar_notification = new System.Windows.Forms.NotifyIcon(this.components);
+            this.button3 = new System.Windows.Forms.Button();
+            this.refresh_timer = new System.Windows.Forms.Timer(this.components);
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.tabPage5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -169,6 +169,156 @@
             this.tabPage6.Size = new System.Drawing.Size(500, 377);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "Summary";
+            // 
+            // lbl_MPPTPIn4
+            // 
+            this.lbl_MPPTPIn4.AutoSize = true;
+            this.lbl_MPPTPIn4.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_MPPTPIn4.Location = new System.Drawing.Point(450, 341);
+            this.lbl_MPPTPIn4.Name = "lbl_MPPTPIn4";
+            this.lbl_MPPTPIn4.Size = new System.Drawing.Size(45, 25);
+            this.lbl_MPPTPIn4.TabIndex = 41;
+            this.lbl_MPPTPIn4.Text = "___";
+            // 
+            // lbl_MPPTPIn2
+            // 
+            this.lbl_MPPTPIn2.AutoSize = true;
+            this.lbl_MPPTPIn2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_MPPTPIn2.Location = new System.Drawing.Point(450, 316);
+            this.lbl_MPPTPIn2.Name = "lbl_MPPTPIn2";
+            this.lbl_MPPTPIn2.Size = new System.Drawing.Size(45, 25);
+            this.lbl_MPPTPIn2.TabIndex = 40;
+            this.lbl_MPPTPIn2.Text = "___";
+            // 
+            // lbl_MPPTPIn3
+            // 
+            this.lbl_MPPTPIn3.AutoSize = true;
+            this.lbl_MPPTPIn3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_MPPTPIn3.Location = new System.Drawing.Point(195, 341);
+            this.lbl_MPPTPIn3.Name = "lbl_MPPTPIn3";
+            this.lbl_MPPTPIn3.Size = new System.Drawing.Size(67, 25);
+            this.lbl_MPPTPIn3.TabIndex = 39;
+            this.lbl_MPPTPIn3.Text = "_____";
+            // 
+            // lbl_MPPTPIn1
+            // 
+            this.lbl_MPPTPIn1.AutoSize = true;
+            this.lbl_MPPTPIn1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_MPPTPIn1.Location = new System.Drawing.Point(195, 316);
+            this.lbl_MPPTPIn1.Name = "lbl_MPPTPIn1";
+            this.lbl_MPPTPIn1.Size = new System.Drawing.Size(67, 25);
+            this.lbl_MPPTPIn1.TabIndex = 38;
+            this.lbl_MPPTPIn1.Text = "_____";
+            // 
+            // lbl_MPPTFault
+            // 
+            this.lbl_MPPTFault.AutoSize = true;
+            this.lbl_MPPTFault.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_MPPTFault.Location = new System.Drawing.Point(268, 254);
+            this.lbl_MPPTFault.Name = "lbl_MPPTFault";
+            this.lbl_MPPTFault.Size = new System.Drawing.Size(67, 25);
+            this.lbl_MPPTFault.TabIndex = 37;
+            this.lbl_MPPTFault.Text = "_____";
+            // 
+            // lbl_BMSFault
+            // 
+            this.lbl_BMSFault.AutoSize = true;
+            this.lbl_BMSFault.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_BMSFault.Location = new System.Drawing.Point(86, 283);
+            this.lbl_BMSFault.Name = "lbl_BMSFault";
+            this.lbl_BMSFault.Size = new System.Drawing.Size(67, 25);
+            this.lbl_BMSFault.TabIndex = 36;
+            this.lbl_BMSFault.Text = "_____";
+            // 
+            // lbl_LLim
+            // 
+            this.lbl_LLim.AutoSize = true;
+            this.lbl_LLim.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_LLim.Location = new System.Drawing.Point(268, 229);
+            this.lbl_LLim.Name = "lbl_LLim";
+            this.lbl_LLim.Size = new System.Drawing.Size(67, 25);
+            this.lbl_LLim.TabIndex = 35;
+            this.lbl_LLim.Text = "_____";
+            // 
+            // lbl_HLim
+            // 
+            this.lbl_HLim.AutoSize = true;
+            this.lbl_HLim.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_HLim.Location = new System.Drawing.Point(339, 283);
+            this.lbl_HLim.Name = "lbl_HLim";
+            this.lbl_HLim.Size = new System.Drawing.Size(67, 25);
+            this.lbl_HLim.TabIndex = 34;
+            this.lbl_HLim.Text = "_____";
+            // 
+            // lbl_avgCellVoltage
+            // 
+            this.lbl_avgCellVoltage.AutoSize = true;
+            this.lbl_avgCellVoltage.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_avgCellVoltage.Location = new System.Drawing.Point(268, 192);
+            this.lbl_avgCellVoltage.Name = "lbl_avgCellVoltage";
+            this.lbl_avgCellVoltage.Size = new System.Drawing.Size(67, 25);
+            this.lbl_avgCellVoltage.TabIndex = 33;
+            this.lbl_avgCellVoltage.Text = "_____";
+            // 
+            // lbl_avgCellTemp
+            // 
+            this.lbl_avgCellTemp.AutoSize = true;
+            this.lbl_avgCellTemp.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_avgCellTemp.Location = new System.Drawing.Point(268, 167);
+            this.lbl_avgCellTemp.Name = "lbl_avgCellTemp";
+            this.lbl_avgCellTemp.Size = new System.Drawing.Size(67, 25);
+            this.lbl_avgCellTemp.TabIndex = 32;
+            this.lbl_avgCellTemp.Text = "_____";
+            // 
+            // lbl_SoC
+            // 
+            this.lbl_SoC.AutoSize = true;
+            this.lbl_SoC.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_SoC.Location = new System.Drawing.Point(268, 142);
+            this.lbl_SoC.Name = "lbl_SoC";
+            this.lbl_SoC.Size = new System.Drawing.Size(67, 25);
+            this.lbl_SoC.TabIndex = 31;
+            this.lbl_SoC.Text = "_____";
+            // 
+            // lbl_POut
+            // 
+            this.lbl_POut.AutoSize = true;
+            this.lbl_POut.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_POut.Location = new System.Drawing.Point(268, 117);
+            this.lbl_POut.Name = "lbl_POut";
+            this.lbl_POut.Size = new System.Drawing.Size(67, 25);
+            this.lbl_POut.TabIndex = 30;
+            this.lbl_POut.Text = "_____";
+            // 
+            // lvl_PIn
+            // 
+            this.lvl_PIn.AutoSize = true;
+            this.lvl_PIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lvl_PIn.Location = new System.Drawing.Point(268, 92);
+            this.lvl_PIn.Name = "lvl_PIn";
+            this.lvl_PIn.Size = new System.Drawing.Size(67, 25);
+            this.lvl_PIn.TabIndex = 29;
+            this.lvl_PIn.Text = "_____";
+            // 
+            // lbl_dist
+            // 
+            this.lbl_dist.AutoSize = true;
+            this.lbl_dist.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_dist.Location = new System.Drawing.Point(268, 67);
+            this.lbl_dist.Name = "lbl_dist";
+            this.lbl_dist.Size = new System.Drawing.Size(67, 25);
+            this.lbl_dist.TabIndex = 28;
+            this.lbl_dist.Text = "_____";
+            // 
+            // lbl_instSpeed
+            // 
+            this.lbl_instSpeed.AutoSize = true;
+            this.lbl_instSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_instSpeed.Location = new System.Drawing.Point(268, 42);
+            this.lbl_instSpeed.Name = "lbl_instSpeed";
+            this.lbl_instSpeed.Size = new System.Drawing.Size(67, 25);
+            this.lbl_instSpeed.TabIndex = 27;
+            this.lbl_instSpeed.Text = "_____";
             // 
             // lbl_avgSpeed
             // 
@@ -568,229 +718,6 @@
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Graphs";
             // 
-            // zedGraphControl1
-            // 
-            this.zedGraphControl1.Location = new System.Drawing.Point(12, 11);
-            this.zedGraphControl1.Name = "zedGraphControl1";
-            this.zedGraphControl1.ScrollGrace = 0D;
-            this.zedGraphControl1.ScrollMaxX = 0D;
-            this.zedGraphControl1.ScrollMaxY = 0D;
-            this.zedGraphControl1.ScrollMaxY2 = 0D;
-            this.zedGraphControl1.ScrollMinX = 0D;
-            this.zedGraphControl1.ScrollMinY = 0D;
-            this.zedGraphControl1.ScrollMinY2 = 0D;
-            this.zedGraphControl1.Size = new System.Drawing.Size(473, 316);
-            this.zedGraphControl1.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button1.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(13, 232);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(191, 43);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Connect to Hardware";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button2.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(12, 302);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(191, 43);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Generate Error Report";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // taskbar_notification
-            // 
-            this.taskbar_notification.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Warning;
-            this.taskbar_notification.BalloonTipText = "The Solar Car Telemetry System has detected an error.";
-            this.taskbar_notification.BalloonTipTitle = "Unread Telemetry Warning Messages";
-            this.taskbar_notification.Icon = ((System.Drawing.Icon)(resources.GetObject("taskbar_notification.Icon")));
-            this.taskbar_notification.Text = "Unread Warning Messages";
-            // 
-            // button3
-            // 
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button3.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(13, 370);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(191, 43);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "No New Warnings";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // refresh_timer
-            // 
-            this.refresh_timer.Enabled = true;
-            this.refresh_timer.Interval = 1000;
-            this.refresh_timer.Tick += new System.EventHandler(this.refresh_timer_Tick);
-            // 
-            // lbl_instSpeed
-            // 
-            this.lbl_instSpeed.AutoSize = true;
-            this.lbl_instSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_instSpeed.Location = new System.Drawing.Point(268, 42);
-            this.lbl_instSpeed.Name = "lbl_instSpeed";
-            this.lbl_instSpeed.Size = new System.Drawing.Size(67, 25);
-            this.lbl_instSpeed.TabIndex = 27;
-            this.lbl_instSpeed.Text = "_____";
-            // 
-            // lbl_dist
-            // 
-            this.lbl_dist.AutoSize = true;
-            this.lbl_dist.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_dist.Location = new System.Drawing.Point(268, 67);
-            this.lbl_dist.Name = "lbl_dist";
-            this.lbl_dist.Size = new System.Drawing.Size(67, 25);
-            this.lbl_dist.TabIndex = 28;
-            this.lbl_dist.Text = "_____";
-            // 
-            // lvl_PIn
-            // 
-            this.lvl_PIn.AutoSize = true;
-            this.lvl_PIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lvl_PIn.Location = new System.Drawing.Point(268, 92);
-            this.lvl_PIn.Name = "lvl_PIn";
-            this.lvl_PIn.Size = new System.Drawing.Size(67, 25);
-            this.lvl_PIn.TabIndex = 29;
-            this.lvl_PIn.Text = "_____";
-            // 
-            // lbl_POut
-            // 
-            this.lbl_POut.AutoSize = true;
-            this.lbl_POut.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_POut.Location = new System.Drawing.Point(268, 117);
-            this.lbl_POut.Name = "lbl_POut";
-            this.lbl_POut.Size = new System.Drawing.Size(67, 25);
-            this.lbl_POut.TabIndex = 30;
-            this.lbl_POut.Text = "_____";
-            // 
-            // lbl_SoC
-            // 
-            this.lbl_SoC.AutoSize = true;
-            this.lbl_SoC.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SoC.Location = new System.Drawing.Point(268, 142);
-            this.lbl_SoC.Name = "lbl_SoC";
-            this.lbl_SoC.Size = new System.Drawing.Size(67, 25);
-            this.lbl_SoC.TabIndex = 31;
-            this.lbl_SoC.Text = "_____";
-            // 
-            // lbl_avgCellTemp
-            // 
-            this.lbl_avgCellTemp.AutoSize = true;
-            this.lbl_avgCellTemp.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_avgCellTemp.Location = new System.Drawing.Point(268, 167);
-            this.lbl_avgCellTemp.Name = "lbl_avgCellTemp";
-            this.lbl_avgCellTemp.Size = new System.Drawing.Size(67, 25);
-            this.lbl_avgCellTemp.TabIndex = 32;
-            this.lbl_avgCellTemp.Text = "_____";
-            // 
-            // lbl_avgCellVoltage
-            // 
-            this.lbl_avgCellVoltage.AutoSize = true;
-            this.lbl_avgCellVoltage.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_avgCellVoltage.Location = new System.Drawing.Point(268, 192);
-            this.lbl_avgCellVoltage.Name = "lbl_avgCellVoltage";
-            this.lbl_avgCellVoltage.Size = new System.Drawing.Size(67, 25);
-            this.lbl_avgCellVoltage.TabIndex = 33;
-            this.lbl_avgCellVoltage.Text = "_____";
-            // 
-            // lbl_HLim
-            // 
-            this.lbl_HLim.AutoSize = true;
-            this.lbl_HLim.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_HLim.Location = new System.Drawing.Point(339, 283);
-            this.lbl_HLim.Name = "lbl_HLim";
-            this.lbl_HLim.Size = new System.Drawing.Size(67, 25);
-            this.lbl_HLim.TabIndex = 34;
-            this.lbl_HLim.Text = "_____";
-            // 
-            // lbl_LLim
-            // 
-            this.lbl_LLim.AutoSize = true;
-            this.lbl_LLim.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LLim.Location = new System.Drawing.Point(268, 229);
-            this.lbl_LLim.Name = "lbl_LLim";
-            this.lbl_LLim.Size = new System.Drawing.Size(67, 25);
-            this.lbl_LLim.TabIndex = 35;
-            this.lbl_LLim.Text = "_____";
-            // 
-            // lbl_BMSFault
-            // 
-            this.lbl_BMSFault.AutoSize = true;
-            this.lbl_BMSFault.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_BMSFault.Location = new System.Drawing.Point(86, 283);
-            this.lbl_BMSFault.Name = "lbl_BMSFault";
-            this.lbl_BMSFault.Size = new System.Drawing.Size(67, 25);
-            this.lbl_BMSFault.TabIndex = 36;
-            this.lbl_BMSFault.Text = "_____";
-            // 
-            // lbl_MPPTFault
-            // 
-            this.lbl_MPPTFault.AutoSize = true;
-            this.lbl_MPPTFault.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_MPPTFault.Location = new System.Drawing.Point(268, 254);
-            this.lbl_MPPTFault.Name = "lbl_MPPTFault";
-            this.lbl_MPPTFault.Size = new System.Drawing.Size(67, 25);
-            this.lbl_MPPTFault.TabIndex = 37;
-            this.lbl_MPPTFault.Text = "_____";
-            // 
-            // lbl_MPPTPIn1
-            // 
-            this.lbl_MPPTPIn1.AutoSize = true;
-            this.lbl_MPPTPIn1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_MPPTPIn1.Location = new System.Drawing.Point(195, 316);
-            this.lbl_MPPTPIn1.Name = "lbl_MPPTPIn1";
-            this.lbl_MPPTPIn1.Size = new System.Drawing.Size(67, 25);
-            this.lbl_MPPTPIn1.TabIndex = 38;
-            this.lbl_MPPTPIn1.Text = "_____";
-            // 
-            // lbl_MPPTPIn3
-            // 
-            this.lbl_MPPTPIn3.AutoSize = true;
-            this.lbl_MPPTPIn3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_MPPTPIn3.Location = new System.Drawing.Point(195, 341);
-            this.lbl_MPPTPIn3.Name = "lbl_MPPTPIn3";
-            this.lbl_MPPTPIn3.Size = new System.Drawing.Size(67, 25);
-            this.lbl_MPPTPIn3.TabIndex = 39;
-            this.lbl_MPPTPIn3.Text = "_____";
-            // 
-            // lbl_MPPTPIn2
-            // 
-            this.lbl_MPPTPIn2.AutoSize = true;
-            this.lbl_MPPTPIn2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_MPPTPIn2.Location = new System.Drawing.Point(450, 316);
-            this.lbl_MPPTPIn2.Name = "lbl_MPPTPIn2";
-            this.lbl_MPPTPIn2.Size = new System.Drawing.Size(45, 25);
-            this.lbl_MPPTPIn2.TabIndex = 40;
-            this.lbl_MPPTPIn2.Text = "___";
-            // 
-            // lbl_MPPTPIn4
-            // 
-            this.lbl_MPPTPIn4.AutoSize = true;
-            this.lbl_MPPTPIn4.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_MPPTPIn4.Location = new System.Drawing.Point(450, 341);
-            this.lbl_MPPTPIn4.Name = "lbl_MPPTPIn4";
-            this.lbl_MPPTPIn4.Size = new System.Drawing.Size(45, 25);
-            this.lbl_MPPTPIn4.TabIndex = 41;
-            this.lbl_MPPTPIn4.Text = "___";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::iKlwa_Telemetry_System.Properties.Resources.ukzn_logo;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(192, 213);
-            this.pictureBox1.TabIndex = 3;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
-            // 
             // label32
             // 
             this.label32.AutoSize = true;
@@ -880,6 +807,79 @@
             this.comboBox1.Text = "Select Sensor";
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
+            // zedGraphControl1
+            // 
+            this.zedGraphControl1.Location = new System.Drawing.Point(12, 11);
+            this.zedGraphControl1.Name = "zedGraphControl1";
+            this.zedGraphControl1.ScrollGrace = 0D;
+            this.zedGraphControl1.ScrollMaxX = 0D;
+            this.zedGraphControl1.ScrollMaxY = 0D;
+            this.zedGraphControl1.ScrollMaxY2 = 0D;
+            this.zedGraphControl1.ScrollMinX = 0D;
+            this.zedGraphControl1.ScrollMinY = 0D;
+            this.zedGraphControl1.ScrollMinY2 = 0D;
+            this.zedGraphControl1.Size = new System.Drawing.Size(473, 316);
+            this.zedGraphControl1.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button1.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(13, 232);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(191, 43);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Connect to Hardware";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button2.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(12, 302);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(191, 43);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Generate Error Report";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // taskbar_notification
+            // 
+            this.taskbar_notification.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Warning;
+            this.taskbar_notification.BalloonTipText = "The Solar Car Telemetry System has detected an error.";
+            this.taskbar_notification.BalloonTipTitle = "Unread Telemetry Warning Messages";
+            this.taskbar_notification.Icon = ((System.Drawing.Icon)(resources.GetObject("taskbar_notification.Icon")));
+            this.taskbar_notification.Text = "Unread Warning Messages";
+            // 
+            // button3
+            // 
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button3.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(13, 370);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(191, 43);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "No New Warnings";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // refresh_timer
+            // 
+            this.refresh_timer.Enabled = true;
+            this.refresh_timer.Interval = 1000;
+            this.refresh_timer.Tick += new System.EventHandler(this.refresh_timer_Tick);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::iKlwa_Telemetry_System.Properties.Resources.ukzn_logo;
+            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(192, 213);
+            this.pictureBox1.TabIndex = 3;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
+            // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -907,11 +907,11 @@
             this.groupBox3.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using ZedGraph;
 using System.Xml.Linq;
@@ -15,6 +16,8 @@ namespace iKlwa_Telemetry_System
     public partial class UserInterface : Form
     {
         private TelemetryDatabase d;
+        private ReaderWriterLock protection = new ReaderWriterLock();
+        private ReportScreen output = new ReportScreen();
         private int counter;//naughty
         string[] list = new string[1];//naughty
         private const string NO_SENSORS_MSG = "No sensors found...";
@@ -53,23 +56,68 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
         {
-            MessageBox.Show("Now Entering Simulation Mode.");
-            Simulator s = new Simulator();
-            s.simData();
-            MessageBox.Show("Simulation Data Generated.\n\nNow storing to database");
-            string[,] data = s.getData();
-
-            for (int rows = 0; rows<1438;rows++)
+            try
             {
-                d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
-                d.addDataCapture("Speed_Sensor", data[rows, 2], data[rows, 0], data[rows, 3]);
+                protection.AcquireWriterLock(100);
+                try
+                {
+                    MessageBox.Show("Now Entering Simulation Mode.");
+                    Simulator s = new Simulator();
+                    s.simData();
+                    MessageBox.Show("Simulation Data Generated.\n\nNow storing to database");
+                    string[,] data = s.getData();
+
+                    for (int rows = 0; rows < 1438; rows++)
+                    {
+                        d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
+                        d.addDataCapture("Speed_Sensor", data[rows, 2], data[rows, 0], data[rows, 3]);
+                    }
+                }
+                finally
+                {
+                    protection.ReleaseWriterLock();
+                }
+            }
+            catch (ApplicationException error)
+            {
+                MessageBox.Show(error.Message);
             }
         }
+        #region not sure how to make this work...
+        private delegate IEnumerable<XElement> ReadReq(ref IEnumerable<XElement> xe);
+
+        private IEnumerable<XElement> DB_READ(ReadReq toDo)
+        {
+            IEnumerable<XElement> xe = null;
+            try
+            {
+                protection.AcquireReaderLock(100);
+                try {toDo(ref xe);}
+                finally {protection.ReleaseReaderLock();}
+            }
+            catch (ApplicationException app)
+            {
+                MessageBox.Show(app.Message);
+            }
+            return xe;
+        }
+        #endregion
 
         private void button2_Click(object sender, EventArgs e)
         {
             //test error message query
-            var errors = d.getErrors();
+            IEnumerable<XElement> errors = null;
+            try
+            {
+                protection.AcquireReaderLock(100);
+                try { errors = d.getErrors(); }
+                finally { protection.ReleaseReaderLock(); }
+            }
+            catch (ApplicationException app)
+            {
+                MessageBox.Show(app.Message);
+            }
+
             List<string> headers = new List<string>(),
                          values = new List<string>();
             foreach (var err in errors)
@@ -80,7 +128,6 @@ namespace iKlwa_Telemetry_System
                         headers.Add(val.Name.ToString());
                     values.Add(val.Value);
                 }
-                //.Add(val.Name + ": " + val.Value + "\n");
             }
             ReportScreen output = new ReportScreen();
             try 
@@ -96,24 +143,37 @@ namespace iKlwa_Telemetry_System
         {
             GraphPane gp = zedGraphControl1.GraphPane;
             gp.CurveList.Clear();
+            PointPairList listPoints = new PointPairList();
+            LineItem line_item;
+            IEnumerable<XElement> results = null;
+            try
+            {
+                protection.AcquireReaderLock(100);
+                try
+                {
+                    results = d.queryRange_valOnly(comboBox1.SelectedItem.ToString(),
+                                     numericUpDown1.Value + "h" + numericUpDown3.Value,
+                                     numericUpDown4.Value + "h" + numericUpDown2.Value);
+                }
+                finally
+                {
+                    protection.ReleaseReaderLock();
+                }
+
+            }
+            catch (ApplicationException err)
+            {
+                MessageBox.Show(err.Message);
+            }
             gp.Title.Text = "Speed vs Time";
             gp.XAxis.Title.Text = "Time";
             gp.YAxis.Title.Text = "Speed";
 
-            PointPairList listPoints = new PointPairList();
-            LineItem line_item;
-
-            var results = d.queryRange_valOnly(comboBox1.SelectedItem.ToString(),
-                                               numericUpDown1.Value + "h" + numericUpDown3.Value,
-                                               numericUpDown4.Value + "h" + numericUpDown2.Value);
-            //MessageBox.Show(results.Count().ToString());
-            //richTextBox1.Text = "Results found: " + results.Count().ToString() + "\n\n";
             int x = 0;
             foreach (var item in results)
             {
                 foreach (var thing in item.Descendants("Value"))
                 {
-                    //richTextBox1.AppendText(thing.Value + "\n");
                     listPoints.Add(x++, Convert.ToDouble(thing.Value));
                 }
             }
@@ -122,6 +182,27 @@ namespace iKlwa_Telemetry_System
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
             zedGraphControl1.Refresh();
+
+            List<string> headers = new List<string>(),
+                         values = new List<string>();
+            foreach (var res in results)
+            {
+                foreach (var val in res.Descendants())
+                {
+                    if (!headers.Contains(val.Name.ToString()))
+                        headers.Add(val.Name.ToString());
+                    values.Add(val.Value);
+                }
+            }
+
+            
+            try
+            {
+                output.Populate(headers, values);
+                output.Show();
+            }
+            catch (ArgumentException a)
+            { MessageBox.Show(a.Message); }
         }
 
         private void getSensors()
@@ -129,14 +210,11 @@ namespace iKlwa_Telemetry_System
             if (comboBox1.Items.Contains(NO_SENSORS_MSG)) //if the no sensors message is in the combo box, remove it
                 comboBox1.Items.Remove(NO_SENSORS_MSG);
             var sensorGroup = d.getSensors();
-            //richTextBox1.Text = "Sensors found: " + sensorGroup.Count().ToString() + "\n\n"; //indicate no. of sensors found
             foreach (var sensor in sensorGroup)
             {
                 if (comboBox1.Items.Contains(sensor.Key) == false)
-                    comboBox1.Items.Add(sensor.Key); //add sensors to combo box if they are not contained in there already
-                //richTextBox1.AppendText(sensor.Key + "\n"); //display sensor found
+                    comboBox1.Items.Add(sensor.Key); //add sensors to combo box if they are not contained in there 
             }
-            //richTextBox1.AppendText("\n");
         }
 
         private void UserInterface_Load(object sender, EventArgs e)
@@ -174,6 +252,5 @@ namespace iKlwa_Telemetry_System
         {
             button6.Enabled = true;
         }
-
     }
 }

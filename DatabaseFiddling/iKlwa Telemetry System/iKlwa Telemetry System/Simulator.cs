@@ -28,7 +28,7 @@ namespace iKlwa_Telemetry_System
                 string speed = gen.Next(0, 126).ToString();
                 textWrite.Write("speed"+","+date+","+time+","+speed+Environment.NewLine);
             }
-            textWrite.Close();
+            textWrite.Dispose();
         }
 
         public string[,] getData()

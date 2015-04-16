@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZedGraph;
@@ -90,7 +91,6 @@ namespace iKlwa_Telemetry_System
             d.simulateDataCapture("HE_Sensor1", "Speed", new Random().Next(100));
             d.simulateDataCapture("HE_Sensor2", "Speed", 102);
             d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
-           
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -178,6 +178,30 @@ namespace iKlwa_Telemetry_System
             CanDecodeManager can_can = new CanDecodeManager("Random_Sim.txt");
             can_can.Delimeter = '\n';
             can_can.get();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            comms.MavLinkInit();
+            //MessageBox.Show("YOU WILL SEE ERRORS IF YOU DIDNT CONNECT TO THE COM PORT!");
+            for (int a = 0; a < 40; a++)
+            {
+                comms.readTextUntil(">>");
+                string[] received = comms.readTextUntil("<<").Split(',');
+
+                foreach (string entry in received)
+                {
+                    //richTextBox1.Text += entry + ' ';
+                    char[] potato = entry.ToCharArray();
+                    foreach (var letter in potato)
+                    {
+                        if (String.IsNullOrWhiteSpace(letter + "") == false)
+                            richTextBox1.Text += ((int)letter).ToString() + ' ';
+                    }
+                }
+                richTextBox1.Text += '\n';
+            }
+
         }
 
     }

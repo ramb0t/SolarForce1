@@ -22,6 +22,8 @@ namespace iKlwa_Telemetry_System
         public void Populate(List<string> headers, List<string> values)
         {
             grid.Clear();
+            grid.Columns.Clear();
+            grid.Rows.Clear();
             foreach (string title in headers)
                 grid.Columns.Add(title);
             if (values.Count == 0)
@@ -29,7 +31,7 @@ namespace iKlwa_Telemetry_System
             string[] data = values.ToArray();//rework later
             for (int i = grid.Columns.Count -1; i < values.Count; i=i+5)
             {
-                grid.Rows.Add(data[i-4], data[i-3], data[i-2], data[i-1], data[i]);
+                grid.Rows.Add(data[i-4], data[i-3], data[i-2], data[i-1], data[i]);//little hacky?
             }
             dataGridView1.DataSource = grid;
         }

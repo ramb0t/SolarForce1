@@ -122,8 +122,12 @@ namespace iKlwa_Telemetry_System
         #region basic reading and writing functions
         public int readByte()
         {
-            int val = port.ReadByte();
-            return val;
+            return port.ReadByte();
+        }
+
+        public string readChar()
+        {
+            return Convert.ToChar(port.ReadChar()).ToString();
         }
 
         public byte[] readBytes()
@@ -140,6 +144,11 @@ namespace iKlwa_Telemetry_System
             char[] buffer = new char[values];
             port.Read(buffer, 0, values);
             return new String(buffer);
+        }
+
+        public string readTextUntil(string end_sequence)
+        {
+            return port.ReadTo(end_sequence);
         }
 
         public void writeBytes(byte[] values)

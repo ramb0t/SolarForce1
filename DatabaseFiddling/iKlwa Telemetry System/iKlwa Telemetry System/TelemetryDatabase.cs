@@ -92,7 +92,7 @@ namespace iKlwa_Telemetry_System
 
         public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time)
         {
-            return this.queryLvl3RangeAndTag(SENSOR_TAG, val, TIME_TAG, start_time, end_time);
+            return this.queryLvl3RangeAndTag_Ordered(SENSOR_TAG, val, TIME_TAG, start_time, end_time);
         }
 
     }
