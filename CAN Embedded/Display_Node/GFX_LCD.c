@@ -9,6 +9,7 @@ extern volatile uint8_t CAN_Rx_Head;
 extern volatile uint8_t CAN_Rx_Tail;
 uint8_t bms_soc;
 uint16_t speed;
+uint16_t gBMS_PackVoltage;
 void u8g_setup(void)
 {
 	// Init CS pin
@@ -120,17 +121,35 @@ void GFX_LCD_DrawMain(void){
 void drawMain(){
 	char buf[10]; // used for forming strings to pass to the display ??
 
-	// Draw A Frame
+	// Set The Font
 	u8g_SetFont(&u8g, u8g_font_freedoomr25n);
 	u8g_SetFontRefHeightExtendedText(&u8g);
 	u8g_SetDefaultForegroundColor(&u8g);
 	u8g_SetFontPosTop(&u8g);
+	// Draw a Frame
 	u8g_DrawFrame(&u8g,0,0,64,32);
 
 	// Draw the Speed
 	utoa(gSpeed, buf, 10);
 	u8g_DrawStr(&u8g, 3, 4, buf);
 
+	// Change the font
+	u8g_SetFont(&u8g, u8g_font_6x10);
+	u8g_SetFontRefHeightExtendedText(&u8g);
+	u8g_SetDefaultForegroundColor(&u8g);
+	u8g_SetFontPosTop(&u8g);
+
+	// write BMS SOC Label
+	u8g_DrawStr(&u8g, 66, 1, "BMS SOC:");
+	utoa(gBMS_soc, buf, 10);
+	strcat(buf,"%");
+	u8g_DrawStr(&u8g, 66, 10, buf);
+
+	// write BMS SOC Label
+	u8g_DrawStr(&u8g, 66, 21, "BMS Volts:");
+	utoa(gBMS_PackVoltage, buf, 10);
+	strcat(buf,"V");
+	u8g_DrawStr(&u8g, 66, 31, buf);
 
 }
 

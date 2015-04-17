@@ -22,7 +22,7 @@ CANMessage SpeedMsg;
 
 void SpeedEmu_init(void);
 void SpeedEmu_send_fake_data(void);
-void SpeedEmu_set_speed(uint8_t speed);
+void SpeedEmu_set_speed(uint16_t speed);
 
 
 #endif /* SPEEDEMULATOR_H_ */

@@ -66,6 +66,7 @@
 extern volatile uint8_t 	flag;
 extern 			uint16_t 	gSpeed;
 extern 			uint8_t		gBMS_soc;
+extern			uint16_t	gBMS_PackVoltage;
 
 // Function Prototypes
 /*********************************************/

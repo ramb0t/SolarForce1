@@ -71,7 +71,7 @@ int main(void)
 	uint16_t oldtime = ms_Counter;
 	uint16_t waittime = 250; // delay time in ms
 
-	uint8_t spd = 0;
+	uint16_t spd = 0;
 
 	BMS_init();
 	SpeedEmu_init();

@@ -84,4 +84,9 @@ void BMS_send_fake_data(){
 		//_delay_ms(50);
 	}
 
+	BMS[6].data[0]++; // SOC
+	if(BMS[6].data[0] >100){
+		BMS[6].data[0] = 0;
+	}
+
 }

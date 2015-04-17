@@ -79,18 +79,36 @@ int main(void)
 //CAN Message selective decoding
 uint8_t CAN_Decode(CANMessage *message){
 	uint8_t	decode_result;
-	switch(message->id){
 
+	// Decode the message into global external vars
+	switch(message->id){
 
 	case CANID_SPEED:
 		// We found a speed message!
 		// get the speed value;
-		gSpeed = message->data[0];
+		gSpeed = (message->data[0]<<8)|(message->data[1]);
 
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;
 
 	break; //CANID_SPEED
+
+
+	case CANID_BMS6:
+		//We found BMS Msg 7
+		gBMS_soc = message->data[0]; // State of charge
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_BMS6
+
+	case CANID_BMS3:
+		gBMS_PackVoltage = (message->data[0]<<8)|(message->data[1]);
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+	break;
 
 	default:
 		// We didn't find any message we are looking for...
