@@ -503,6 +503,7 @@
             this.tabPage1.Size = new System.Drawing.Size(500, 377);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Solar Car Motion";
+            this.tabPage1.Enter += new System.EventHandler(this.tabPage1_Enter);
             // 
             // groupBox4
             // 
@@ -683,6 +684,7 @@
             this.tabPage2.Size = new System.Drawing.Size(500, 377);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Solar Car Electrical";
+            this.tabPage2.Enter += new System.EventHandler(this.tabPage2_Enter);
             // 
             // tabPage3
             // 
@@ -692,6 +694,7 @@
             this.tabPage3.Size = new System.Drawing.Size(500, 377);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "RF Link";
+            this.tabPage3.Enter += new System.EventHandler(this.tabPage3_Enter);
             // 
             // tabPage4
             // 
@@ -701,6 +704,7 @@
             this.tabPage4.Size = new System.Drawing.Size(500, 377);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Support Car System";
+            this.tabPage4.Enter += new System.EventHandler(this.tabPage4_Enter);
             // 
             // tabPage5
             // 
@@ -855,7 +859,6 @@
             this.taskbar_notification.BalloonTipTitle = "Unread Telemetry Warning Messages";
             this.taskbar_notification.Icon = ((System.Drawing.Icon)(resources.GetObject("taskbar_notification.Icon")));
             this.taskbar_notification.Text = "Unread Warning Messages";
-            this.taskbar_notification.BalloonTipClicked += new System.EventHandler(this.btn_ErrorNotifications_Click);
             // 
             // btn_ErrorNotifications
             // 
@@ -867,7 +870,6 @@
             this.btn_ErrorNotifications.TabIndex = 6;
             this.btn_ErrorNotifications.Text = "No New Warnings";
             this.btn_ErrorNotifications.UseVisualStyleBackColor = true;
-            this.btn_ErrorNotifications.Click += new System.EventHandler(this.btn_ErrorNotifications_Click);
             // 
             // refresh_timer
             // 

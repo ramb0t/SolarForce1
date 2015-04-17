@@ -30,9 +30,6 @@ namespace iKlwa_Telemetry_System
                                   Motion = 3, Electrical = 4,
                                   Support = 5, RF = 6}
         private TABS selected_tab = TABS.Summary;
-
-        private int counter;//naughty
-        string[] list = new string[1];//naughty
         private const string NO_SENSORS_MSG = "No sensors found...";
 
         public UserInterface()
@@ -97,14 +94,14 @@ namespace iKlwa_Telemetry_System
 
             refreshGUI();
 
-            //unreadErrorCount++;//debugging purposes
-           /* if (unreadErrorCount > 0)//update error messages notifications
+            if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
+            if (unreadErrorCount > 0)//update error messages notifications
             {
-                btn_ErrorNotifications.Text = "You have " + unreadErrorCount + " New Error Messages.";
+                btn_ErrorNotifications.Text = unreadErrorCount + " New Warnings.";
                 btn_ErrorNotifications.ForeColor = Color.Red;
                 taskbar_notification.Visible = true;
                 taskbar_notification.ShowBalloonTip(100, "Solar Car Warning Message",
-                                                    "You have " + unreadErrorCount + " New Error Messages."+
+                                                    "You have " + unreadErrorCount + " New Warning Messages."+
                                                     "\n\nClick here to display.",
                                                     ToolTipIcon.Warning);
             }
@@ -114,9 +111,6 @@ namespace iKlwa_Telemetry_System
                 btn_ErrorNotifications.ForeColor = Color.Black;
                 taskbar_notification.Visible = false;
             }
-
-
-            */
 
             /*naughty things
             if (counter!=list.Length)
@@ -259,7 +253,6 @@ namespace iKlwa_Telemetry_System
                 }
             }
 
-            
             try
             {
                 output.Populate(headers, values);
@@ -291,19 +284,6 @@ namespace iKlwa_Telemetry_System
 
         private void UserInterface_Load(object sender, EventArgs e)
         {
-            //naughy
-            /*var results = d.getLatestValue("Speed_Sensor");
-            int c = 0;
-            list = new string[results.Count()];
-            foreach (var item in results)
-            {
-                foreach (var thing in item.Descendants("Value"))
-                {
-                    list[c++] = thing.Value;
-                }
-            }
-            //end naughty*/
-
             var sensorGroup = d.getSensors();
             if (sensorGroup.Count() == 0) //check if any sensors found and display message if not
             {
@@ -327,15 +307,22 @@ namespace iKlwa_Telemetry_System
             button6.Enabled = true;
         }
 
-        //test this!!!!
+        /// <summary>
+        /// Background Thread which handles reading from the COM Port and writing to the Database
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             comms.MavLinkInit();
+            const long timeoutVal = 100000;
+            long count = 0;
             try
             {
                 comms.OpenPort();
-                for (int i = 0; i < 100; i++)
+                while (count<timeoutVal)
                 {
+                    count++;
                     var packet = comms.readTelemetryInput();
                     try
                     {
@@ -354,7 +341,7 @@ namespace iKlwa_Telemetry_System
                                                      "Speed", (int)Convert.ToChar(packet.PAYLOAD.ElementAt(0)));
                                     break;
                             }
-                            taskbar_notification.Visible = true;
+                            count = 0;
                         }
                         finally
                         { protection.ReleaseWriterLock(); }//ensure WriterLock is always released
@@ -371,17 +358,7 @@ namespace iKlwa_Telemetry_System
         }
 
         /// <summary>
-        /// Display Error Notifications
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btn_ErrorNotifications_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        ///         /// Occurs when Graph control is activated. Populates all user-definable controls.
+        /// Occurs when Graph Tab is activated. Populates all user-definable controls.
         /// Also enables refreshing of user-definable controls every timer tick.
         /// </summary>
         /// <param name="sender"></param>
@@ -396,9 +373,54 @@ namespace iKlwa_Telemetry_System
             selected_tab = TABS.Graphing;
         }
 
+        /// <summary>
+        /// Occurs when Summary Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tabPage6_Enter(object sender, EventArgs e)
         {
             selected_tab = TABS.Summary;
+        }
+
+        /// <summary>
+        /// Occurs when Solar Car Motion Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage1_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.Motion;
+        }
+
+        /// <summary>
+        /// Occurs when Solar Car Electrical Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage2_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.Electrical;
+        }
+
+        /// <summary>
+        /// Occurs when Support Car Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage4_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.Support;
+        }
+
+        /// <summary>
+        /// Occurs when RF Link Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage3_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.RF;
         }
     }
 }
