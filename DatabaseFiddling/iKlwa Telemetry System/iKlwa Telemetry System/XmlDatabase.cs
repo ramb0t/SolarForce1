@@ -160,12 +160,31 @@ namespace iKlwa_Telemetry_System
             return results;
         }
 
+        protected IEnumerable<XElement> queryLvl3RangeAndTag_Ordered(string tag_field, string tag, string range_field, string start, string end)
+        {
+            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
+                                            where n.Element(range_field).Value.CompareTo(start) > 0
+                                                  && n.Element(range_field).Value.CompareTo(end) < 0
+                                                  && n.Element(tag_field).Value.Equals(tag)
+                                            orderby n.Element(range_field).Value
+                                            select n;
+            return results;
+        }
+
         protected IEnumerable<XElement> queryLvl3(string tag_field,string tag)
         {
             IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
                                             where n.Element(tag_field).Value.Equals(tag)
                                             select n;
             return results;
+        }
+
+        protected XElement getNewest(string tag_field1, string tag1)
+        {
+            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
+                                            where n.Element(tag_field1).Value.Equals(tag1)
+                                            select n;
+            return results.First();
         }
 
         #endregion

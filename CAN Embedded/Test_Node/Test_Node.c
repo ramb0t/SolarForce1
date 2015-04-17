@@ -120,15 +120,16 @@ int main(void)
 
     			break;
     		case (TERMINAL_LISTENRAW):
-
-
-    	    	while(CAN_checkReceiveAvailable() == CAN_MSGAVAIL){
-    	    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
-
-    	    		//GFX_LCD_Draw(&message);
-    	    		// sends the message on the CAN interface.
-    	    		uart_SendCANMsgRAW(&message);
-    	    	}
+				if(flag == CAN_MSGAVAIL){
+					if(CAN_getMessage_Buffer(&message) == CAN_OK){
+						// sends the message on the CAN interface.
+						uart_SendCANMsgRAW(&message);
+					}
+				}else if(flag == CAN_FAIL){
+					uart_puts("that");
+					CAN_getMessage_Buffer(&message);
+					uart_SendCANMsg(&message);
+				}
 
     			break;
     		case (TERMINAL_SEND1):

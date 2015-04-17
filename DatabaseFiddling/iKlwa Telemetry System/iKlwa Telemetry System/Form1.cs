@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZedGraph;
@@ -17,14 +18,14 @@ namespace iKlwa_Telemetry_System
         private const string NO_SENSORS_MSG = "No Sensors";
 
         private COM_Port_Select c = new COM_Port_Select(); //the COM Port Selection Form that may be opened
-        private ReliableCommsManager comms = new ReliableCommsManager(); 
+        private TelemetryCommsManager comms = new TelemetryCommsManager(); 
         private TelemetryDatabase d;
 
         public Form1()
         {
             InitializeComponent();
 
-            d = new TelemetryDatabase("xmlTrialDb_v3.xml");//loading XML file to be used when form opens
+            d = new TelemetryDatabase("xmlTrialDb_v4.xml");//loading XML file to be used when form opens
             d.NodeTag = "Packet"; //setting level 1 node name, I chose to call it "Packet"
         }
 
@@ -90,7 +91,6 @@ namespace iKlwa_Telemetry_System
             d.simulateDataCapture("HE_Sensor1", "Speed", new Random().Next(100));
             d.simulateDataCapture("HE_Sensor2", "Speed", 102);
             d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
-           
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -178,6 +178,46 @@ namespace iKlwa_Telemetry_System
             CanDecodeManager can_can = new CanDecodeManager("Random_Sim.txt");
             can_can.Delimeter = '\n';
             can_can.get();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            comms.MavLinkInit();
+            //MessageBox.Show("YOU WILL SEE ERRORS IF YOU DIDNT CONNECT TO THE COM PORT!");
+            for (int a = 0; a < 40; a++)
+            {
+                comms.readTextUntil(">>");
+                int header = (int)comms.readTextUntil(",").ToCharArray()[0];
+                richTextBox1.Text += header;
+                string[] received = comms.readTextUntil("<<").Split(',');
+
+                switch (header)
+                { 
+                    case 421:
+                        d.addDataCapture("Motor Driver",DateTime.Now.Hour+"h"+DateTime.Now.Minute,"Speed",(int)received[0].ToCharArray()[0]);
+                    break;
+                    case 420:
+                    {
+                        d.addDataCapture("Hall Effect 1", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
+                        //more things related to flags
+                    }
+                    break;
+                }
+                foreach (string entry in received)
+                {
+                    //richTextBox1.Text += entry + ' ';
+                    char[] potato = entry.ToCharArray();
+                    foreach (var letter in potato)
+                    {
+                        if (String.IsNullOrWhiteSpace(letter + "") == false)
+                        {
+                            richTextBox1.Text += ((int)letter).ToString() + ' ';
+                        }
+                    }
+                }
+                richTextBox1.Text += '\n';
+            }
+
         }
 
     }

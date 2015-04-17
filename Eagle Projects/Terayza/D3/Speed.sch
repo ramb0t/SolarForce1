@@ -10798,7 +10798,6 @@ diameter 5 mm, horizontal, grid 15.24 mm</description>
 <part name="SUPPLY9" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY10" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY11" library="supply2" deviceset="VCC" device=""/>
-<part name="C8" library="resistor" deviceset="C-EU" device="C0805"/>
 <part name="U$6" library="con-TE-EP" deviceset="HEADER-2WAY" device=""/>
 <part name="R9" library="resistor" deviceset="R-US_" device="M0805" value="680E"/>
 <part name="U3" library="SparkFun-DigitalIC" deviceset="ATMEGA328P_TQFP" device="" value="ATMEGA328P_TQFP"/>
@@ -10825,7 +10824,7 @@ diameter 5 mm, horizontal, grid 15.24 mm</description>
 <part name="R15" library="resistor" deviceset="R-US_" device="M0805"/>
 <part name="SUPPLY15" library="supply2" deviceset="GND" device=""/>
 <part name="OK1" library="optocoupler" deviceset="LTV816" device=""/>
-<part name="R16" library="resistor" deviceset="R-US_" device="M0805" value="10K"/>
+<part name="R16" library="resistor" deviceset="R-US_" device="M0805" value="1K"/>
 <part name="D1" library="diode" deviceset="SCHOTTKY-DIODE" device="SMD"/>
 <part name="SUPPLY16" library="supply2" deviceset="VCC" device=""/>
 <part name="SUPPLY17" library="supply2" deviceset="VCC" device=""/>
@@ -10899,7 +10898,6 @@ diameter 5 mm, horizontal, grid 15.24 mm</description>
 <instance part="SUPPLY9" gate="GND" x="-127" y="-35.56"/>
 <instance part="SUPPLY10" gate="GND" x="-104.14" y="17.78"/>
 <instance part="SUPPLY11" gate="G$1" x="-96.52" y="50.8"/>
-<instance part="C8" gate="G$1" x="-96.52" y="25.4" rot="R180"/>
 <instance part="U$6" gate="G$1" x="-144.78" y="30.48" rot="R180"/>
 <instance part="R9" gate="G$1" x="-129.54" y="33.02"/>
 <instance part="U3" gate="U$1" x="-12.7" y="-15.24"/>
@@ -10991,12 +10989,8 @@ diameter 5 mm, horizontal, grid 15.24 mm</description>
 </segment>
 <segment>
 <pinref part="SUPPLY10" gate="GND" pin="GND"/>
-<wire x1="-104.14" y1="20.32" x2="-104.14" y2="22.86" width="0.1524" layer="91"/>
-<pinref part="C8" gate="G$1" pin="1"/>
-<wire x1="-104.14" y1="22.86" x2="-96.52" y2="22.86" width="0.1524" layer="91"/>
 <pinref part="OK1" gate="G$1" pin="EMIT"/>
-<wire x1="-104.14" y1="22.86" x2="-104.14" y2="27.94" width="0.1524" layer="91"/>
-<junction x="-104.14" y="22.86"/>
+<wire x1="-104.14" y1="20.32" x2="-104.14" y2="27.94" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U3" gate="U$1" pin="GND@5"/>
@@ -11325,12 +11319,8 @@ diameter 5 mm, horizontal, grid 15.24 mm</description>
 <pinref part="OK1" gate="G$1" pin="COL"/>
 <wire x1="-104.14" y1="38.1" x2="-104.14" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="-104.14" y1="35.56" x2="-104.14" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="-104.14" y1="35.56" x2="-96.52" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="-104.14" y1="35.56" x2="-93.98" y2="35.56" width="0.1524" layer="91"/>
 <junction x="-104.14" y="35.56"/>
-<pinref part="C8" gate="G$1" pin="2"/>
-<wire x1="-96.52" y1="35.56" x2="-93.98" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="-96.52" y1="30.48" x2="-96.52" y2="35.56" width="0.1524" layer="91"/>
-<junction x="-96.52" y="35.56"/>
 <label x="-93.98" y="38.1" size="1.778" layer="95"/>
 </segment>
 <segment>

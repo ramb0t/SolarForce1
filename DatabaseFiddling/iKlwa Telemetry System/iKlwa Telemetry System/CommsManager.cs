@@ -122,8 +122,12 @@ namespace iKlwa_Telemetry_System
         #region basic reading and writing functions
         public int readByte()
         {
-            int val = port.ReadByte();
-            return val;
+            return port.ReadByte();
+        }
+
+        public string readChar()
+        {
+            return Convert.ToChar(port.ReadChar()).ToString();
         }
 
         public byte[] readBytes()
@@ -140,6 +144,11 @@ namespace iKlwa_Telemetry_System
             char[] buffer = new char[values];
             port.Read(buffer, 0, values);
             return new String(buffer);
+        }
+
+        public string readTextUntil(string end_sequence)
+        {
+            return port.ReadTo(end_sequence);
         }
 
         public void writeBytes(byte[] values)
@@ -160,7 +169,7 @@ namespace iKlwa_Telemetry_System
 
         #endregion
 
-        private SerialDataReceivedEventHandler current_DREH;
+        /*private SerialDataReceivedEventHandler current_DREH;
         public delegate void general_data_received_handler(object o, SerialDataReceivedEventArgs e);
         public void set_data_received_event_handler(general_data_received_handler data_received_handler)
         {
@@ -168,7 +177,7 @@ namespace iKlwa_Telemetry_System
                 port.DataReceived -= current_DREH;
             current_DREH = new SerialDataReceivedEventHandler(data_received_handler);
             port.DataReceived += current_DREH;
-        }
+        }*/
 
         public CommsManager()
         {
@@ -186,6 +195,7 @@ namespace iKlwa_Telemetry_System
                 stop_bits = 2;
                 parity = (int)Parities.Odd;
                 interrupt_bytes_threshold = 1;
+                port.ReadTimeout = 1000;
             }
             catch (Exception e)
             { MessageBox.Show(e.Message); }
