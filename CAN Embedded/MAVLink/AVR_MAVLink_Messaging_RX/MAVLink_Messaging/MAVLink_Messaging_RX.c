@@ -295,39 +295,6 @@ void MAV_msg_Unpack()
 			}
 			
 			
-
-										//byte = uart_getc() ;
-						////uart_putc(mavlink_parse_char(chan, byte, &msg2,mav_status));
-						//if (mavlink_parse_char(chan, byte, &msg2,mav_status))
-						//{
-							//uart_puts_p("ID: ");
-							//uart_putc(msg2.msgid);
-							//
-							////uart_puts_p("\nSeq:");
-							////uart_putc(msg2.seq);
-							////uart_puts_p("\nCompo: " );
-							////uart_putc(msg2.compid);
-							////uart_puts_p("\nsys: ");
-							////uart_putc(msg.sysid);
-						//}
-					//
-				//}
-	
-			
-			//mavlink_motor_driver_t* MotorDriver;
-			//mavlink_message_type_t* msgRx;
-			//
-			//msgRx = MAV_Rx_buff;
-			//mavlink_msg_motor_driver_decode(&msgRx, MotorDriver);
-			//
-			//itoa(MotorDriver->controller_temp,buf,10);					//read ASCII-converted byte into buffer
-			//uart_puts_p("\nTemperature:");
-			//uart_puts_p(buf);
-			//
-			//itoa(MotorDriver->speed,buf,10);
-			//uart_puts_p("\nSpeed:");
-			//uart_puts_p(buf);
-	
 }
 
 
