@@ -28,6 +28,29 @@ BS_:
 BU_: SpeedNode RFNode DisplayNode BMS MPPT
 
 
+BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
+ SG_ State : 0|1@0+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 1576 BMSSTPM9: 6 BMS
+
+BO_ 1575 BMSSTPM8: 6 BMS
+
+BO_ 1574 BMSSTPM7: 7 BMS
+
+BO_ 1573 BMSSTPM6: 8 BMS
+
+BO_ 1572 BMSSTPM5: 6 BMS
+
+BO_ 1571 BMSSTPM4: 6 BMS
+
+BO_ 1570 BMSSTPM3: 7 BMS
+ SG_ FaultState : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ContactorK1 : 1|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ContactorK2 : 2|1@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 1569 BMSSTPM2: 8 BMS
+ SG_ Rev : 7|64@0+ (1,0) [0|0] "" Vector__XXX
+
 BO_ 100 Speed: 8 SpeedNode
  SG_ SpeedValue : 0|8@1+ (1,0) [0|255] "kmph" Vector__XXX
 
@@ -41,13 +64,39 @@ BO_ 1905 MPPTAnswer1: 7 MPPT
  SG_ Vout : 33|10@0+ (1,0) [0|0] "" Vector__XXX
  SG_ Tamb : 55|8@0+ (1,0) [0|0] "" Vector__XXX
 
-BO_ 1809 MPPTRequest1: 0 Vector__XXX
- SG_ RTRRequest M : 0|0@1+ (1,0) [0|0] "" Vector__XXX
+BO_ 0 GPS: 8 RFNode
+
+BO_ 1568 BMSSTPM1: 8 BMS
+ SG_ ELITHION : 7|64@0+ (1,0) [0|0] "" Vector__XXX
 
 
 CM_ BU_ SpeedNode "Terayza";
 CM_ BU_ RFNode "Matt";
 CM_ BU_ DisplayNode "Ben";
-CM_ BO_ 100 "";
-CM_ SG_ 1905 Iin "";
-CM_ BO_ 1809 "RTR";
+CM_ BO_ 3221225472 "This is a message for not used signals, created by Vector CANdb++ DBC OLE DB Provider.";
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "cyclic","spontaneous";
+BA_DEF_ BO_  "GenMsgCycleTime" INT 2 50000;
+BA_DEF_ BO_  "GenMsgAutoGenSnd" ENUM  "No","Yes";
+BA_DEF_ BO_  "GenMsgAutoGenDsp" ENUM  "No","Yes";
+BA_DEF_ SG_  "GenSigAutoGenSnd" ENUM  "No","Yes";
+BA_DEF_ SG_  "GenSigAutoGenDsp" ENUM  "No","Yes";
+BA_DEF_ SG_  "GenSigEnvVarType" ENUM  "int","float","undef";
+BA_DEF_ SG_  "GenSigEVName" STRING ;
+BA_DEF_ BU_  "GenNodAutoGenSnd" ENUM  "No","Yes";
+BA_DEF_ BU_  "GenNodAutoGenDsp" ENUM  "No","Yes";
+BA_DEF_  "GenEnvVarEndingDsp" STRING ;
+BA_DEF_  "GenEnvVarEndingSnd" STRING ;
+BA_DEF_  "GenEnvVarPrefix" STRING ;
+BA_DEF_DEF_  "GenMsgSendType" "spontaneous";
+BA_DEF_DEF_  "GenMsgCycleTime" 100;
+BA_DEF_DEF_  "GenMsgAutoGenSnd" "Yes";
+BA_DEF_DEF_  "GenMsgAutoGenDsp" "Yes";
+BA_DEF_DEF_  "GenSigAutoGenSnd" "";
+BA_DEF_DEF_  "GenSigAutoGenDsp" "";
+BA_DEF_DEF_  "GenSigEnvVarType" "undef";
+BA_DEF_DEF_  "GenSigEVName" "";
+BA_DEF_DEF_  "GenNodAutoGenSnd" "Yes";
+BA_DEF_DEF_  "GenNodAutoGenDsp" "Yes";
+BA_DEF_DEF_  "GenEnvVarEndingDsp" "Dsp";
+BA_DEF_DEF_  "GenEnvVarEndingSnd" "Snd";
+BA_DEF_DEF_  "GenEnvVarPrefix" "Env";
