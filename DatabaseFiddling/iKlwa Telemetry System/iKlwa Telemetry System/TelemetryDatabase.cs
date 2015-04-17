@@ -79,15 +79,14 @@ namespace iKlwa_Telemetry_System
             return this.queryLvl2Group(SENSOR_TAG);
         }
 
-        //prototype functions 
         public IEnumerable<XElement> queryRange(string start_time, string end_time)
         {
             return this.queryLvl3Range(TIME_TAG, start_time, end_time);
         }
 
-        public IEnumerable<XElement> getLatest(string val)
+        public string getLatestValue(string sensor, string description)
         {
-            return this.queryLvl3(SENSOR_TAG, val);
+            return this.getNewest(SENSOR_TAG, sensor,DESCRIP_TAG,description).Value;
         }
 
         public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time)

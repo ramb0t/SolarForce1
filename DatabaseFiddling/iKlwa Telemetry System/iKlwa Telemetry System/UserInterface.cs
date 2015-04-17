@@ -16,8 +16,14 @@ namespace iKlwa_Telemetry_System
     public partial class UserInterface : Form
     {
         private TelemetryDatabase d;
+        private TelemetryCommsManager comms = new TelemetryCommsManager();
         private ReaderWriterLock protection = new ReaderWriterLock();
+        private enum SENSORS :int{HALL_EFFECT = 420, MOTOR_DRIVER = 421,
+                                  BMS, GYRO, MPPT1,
+                                  MPPT2, MPPT3, MPPT4,GPS,
+                                  SOLAR_CELL, ANEMOMETER};
         private ReportScreen output = new ReportScreen();
+        private bool sensor_update = false;
         private int counter;//naughty
         string[] list = new string[1];//naughty
         private const string NO_SENSORS_MSG = "No sensors found...";
@@ -25,13 +31,19 @@ namespace iKlwa_Telemetry_System
         public UserInterface()
         {
             InitializeComponent();
-            d = new TelemetryDatabase("DemoDb.xml");
-            d.NodeTag = "Capture";
         }
 
+        /// <summary>
+        /// Connects to the Follower Car Embedded System
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-
+            COM_Port_Select COM_Select = new COM_Port_Select();
+            COM_Select.ShowDialog();
+            comms.name = COM_Select.getPort();
+            backgroundWorker1.RunWorkerAsync();
         }
 
         /// <summary>
@@ -41,11 +53,14 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void refresh_timer_Tick(object sender, EventArgs e)
         {
-            getSensors();
+            if (sensor_update == true)
+                getSensors();//if sensor update flag is set, then update sensors every tick
+
 
             //naughty things
             if (counter!=list.Length)
             lbl_instSpeed.Text = list[counter++];
+            d.getLatestValue("Speed");
             
         }
 
@@ -55,34 +70,37 @@ namespace iKlwa_Telemetry_System
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
-        {
-            try
-            {
-                protection.AcquireWriterLock(100);
-                try
-                {
-                    MessageBox.Show("Now Entering Simulation Mode.");
-                    Simulator s = new Simulator();
-                    s.simData();
-                    MessageBox.Show("Simulation Data Generated.\n\nNow storing to database");
-                    string[,] data = s.getData();
-
-                    for (int rows = 0; rows < 1438; rows++)
-                    {
-                        d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
-                        d.addDataCapture("Speed_Sensor", data[rows, 2], data[rows, 0], data[rows, 3]);
-                    }
-                }
-                finally
-                {
-                    protection.ReleaseWriterLock();
-                }
-            }
-            catch (ApplicationException error)
-            {
-                MessageBox.Show(error.Message);
-            }
+        {/*
+          * Commented out to prevent accidental execution. This dev-only code!
+          *  try
+          *  {
+          *      protection.AcquireWriterLock(100);
+          *      try
+          *      {
+          *          MessageBox.Show("Now Entering Simulation Mode.");
+          *          Simulator s = new Simulator();
+          *          s.simData();
+          *          MessageBox.Show("Simulation Data Generated.\n\nNow storing to database");
+          *          string[,] data = s.getData();
+          *
+          *          for (int rows = 0; rows < 1438; rows++)
+          *          {
+          *              d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
+          *              d.addDataCapture("Speed_Sensor", data[rows, 2], data[rows, 0], data[rows, 3]);
+          *          }
+          *      }
+          *      finally
+          *      {
+          *          protection.ReleaseWriterLock();
+          *      }
+          *  }
+          *  catch (ApplicationException error)
+          *  {
+          *      MessageBox.Show(error.Message);
+          *  }
+          */
         }
+
         #region not sure how to make this work...
         private delegate IEnumerable<XElement> ReadReq(ref IEnumerable<XElement> xe);
 
@@ -103,6 +121,11 @@ namespace iKlwa_Telemetry_System
         }
         #endregion
 
+        /// <summary>
+        /// Generate an Error Messages Report
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
             //test error message query
@@ -220,7 +243,7 @@ namespace iKlwa_Telemetry_System
         private void UserInterface_Load(object sender, EventArgs e)
         {
             //naughy
-            var results = d.getLatest("Speed_Sensor");
+            /*var results = d.getLatestValue("Speed_Sensor");
             int c = 0;
             list = new string[results.Count()];
             foreach (var item in results)
@@ -230,7 +253,7 @@ namespace iKlwa_Telemetry_System
                     list[c++] = thing.Value;
                 }
             }
-            //end naughty
+            //end naughty*/
 
             var sensorGroup = d.getSensors();
             if (sensorGroup.Count() == 0) //check if any sensors found and display message if not
@@ -242,15 +265,78 @@ namespace iKlwa_Telemetry_System
                 {
                     comboBox1.Items.Add(sensor.Key);
                 }
+        }
+
+
+        /// <summary>
+        /// Occurs when the user has selected a sensor to query for graphing data. Enables the "Create Graph" report.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            button6.Enabled = true;
+        }
+
+        /// <summary>
+        /// Occurs when Graph control is activated. Populates all user-definable controls.
+        /// Also enables refreshing of user-definable controls every timer tick.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabControl1_Enter(object sender, EventArgs e)
+        {
+            getSensors();
             numericUpDown4.Value = DateTime.Now.Hour;
             numericUpDown2.Value = DateTime.Now.Minute;
             numericUpDown1.Value = DateTime.Now.Hour - 1;
             numericUpDown3.Value = DateTime.Now.Minute;
+            sensor_update = true;
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Occurs when the Graph control is de-activated.
+        /// Disables the auto-refreshing of user-definable parameters.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabControl1_Leave(object sender, EventArgs e)
         {
-            button6.Enabled = true;
+            sensor_update = false;
+        }
+
+        //test this!!!!
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            comms.MavLinkInit();
+            try
+            {
+                comms.OpenPort();
+                var packet = comms.readTelemetryInput();
+                try
+                {
+                    protection.AcquireWriterLock(250);
+                    try
+                    {
+                        switch(packet.ID)
+                        {
+                            case (int)SENSORS.MOTOR_DRIVER:
+                               //dodgy: d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
+                                d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                                 "Speed", (int)Convert.ToChar());
+                                break;
+                        }
+                    }
+                    finally
+                    { protection.ReleaseWriterLock(); }
+                }
+                catch (ApplicationException error)
+                { MessageBox.Show(error.Message); }
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message);
+            }
         }
     }
 }

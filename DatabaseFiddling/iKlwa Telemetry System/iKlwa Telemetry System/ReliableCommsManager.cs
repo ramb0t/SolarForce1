@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace iKlwa_Telemetry_System
 {
-    class ReliableCommsManager:CommsManager
+    class TelemetryCommsManager:CommsManager
     {
         private const byte PING = 0x05;
         private const byte ACK = 0x06;
+        private const string START = ">>";
+        private const string END = "<<";
+        private const char DELIMETER = ',';
 
-        public ReliableCommsManager() { }
+        public TelemetryCommsManager() { }
 
         public bool checkForPing()
         {
@@ -25,9 +28,32 @@ namespace iKlwa_Telemetry_System
         public struct Packet
         {
             public int ID;
-            public string[] PAYLOAD;
+            public List<object> PAYLOAD;
         }
-        private Packet pkt;
+
+        private void waitForStart()
+        {
+            this.readTextUntil(START);
+        }
+        private string getFrame()
+        {
+            return this.readTextUntil(END);
+        }
+
+        private Packet populate()
+        {
+            Packet pkt;
+            pkt.ID = (int)Convert.ToChar(this.readTextUntil(DELIMETER.ToString()));
+            pkt.PAYLOAD = this.getFrame().Split(DELIMETER).ToList<object>();
+            return pkt;
+        }
+
+        public Packet readTelemetryInput()
+        {
+            waitForStart();
+            return populate();
+        }
+
 
         public void MavLinkInit()
         {

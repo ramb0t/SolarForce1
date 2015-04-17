@@ -179,6 +179,14 @@ namespace iKlwa_Telemetry_System
             return results;
         }
 
+        protected XElement getNewest(string tag_field1, string tag1)
+        {
+            IEnumerable<XElement> results = from n in xml_file.Descendants(node_tag)
+                                            where n.Element(tag_field1).Value.Equals(tag1)
+                                            select n;
+            return results.First();
+        }
+
         #endregion
         
         public string NodeTag
