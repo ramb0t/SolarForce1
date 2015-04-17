@@ -52,6 +52,10 @@
 // Feel free to comment them out if you don't use them.
 
 #include "../lib/macros.h" // latest version maintained at https://github.com/robthepyro/AVR_Lib
+// Return Defines
+/*********************************************/
+#define CAN_NODECODE	0
+#define CAN_MSG_DECODED	1
 
 
 // Structure Definitions
@@ -59,11 +63,13 @@
 
 // Variable Definitions
 /*********************************************/
-extern volatile uint8_t flag;
+extern volatile uint8_t 	flag;
+extern 			uint16_t 	gSpeed;
+extern 			uint8_t		gBMS_soc;
 
 // Function Prototypes
 /*********************************************/
-
+uint8_t CAN_Decode(CANMessage *message);
 
 
 #endif /* DISPLAY_NODE_H_ */

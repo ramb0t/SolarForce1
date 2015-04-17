@@ -102,10 +102,43 @@ void GFX_LCD_Draw(CANMessage* message){
 	sei();
 }
 
+void GFX_LCD_DrawMain(void){
+
+	cli();
+	LCD_SELECT();
+	u8g_FirstPage(&u8g);
+	//u8g_prepare();
+	do
+	{
+		drawMain();
+
+	} while ( u8g_NextPage(&u8g) );
+	LCD_UNSELECT();
+	sei();
+}
+
+void drawMain(){
+	char buf[10]; // used for forming strings to pass to the display ??
+
+	// Draw A Frame
+	u8g_SetFont(&u8g, u8g_font_freedoomr25n);
+	u8g_SetFontRefHeightExtendedText(&u8g);
+	u8g_SetDefaultForegroundColor(&u8g);
+	u8g_SetFontPosTop(&u8g);
+	u8g_DrawFrame(&u8g,0,0,64,32);
+
+	// Draw the Speed
+	utoa(gSpeed, buf, 10);
+	u8g_DrawStr(&u8g, 3, 4, buf);
+
+
+}
+
+
 void draw(CANMessage* msg){
 	char buf[10]; // used for forming strings to pass to the display ??
 
-	if(msg->id == 0x100){ //speed!
+	if(msg->id == 0x0420){ //speed!
 		CANMessage message = *msg;
 
 		u8g_SetFont(&u8g, u8g_font_freedoomr25n);

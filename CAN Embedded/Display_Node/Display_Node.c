@@ -53,8 +53,11 @@ int main(void)
     		//cli();
 			if(CAN_getMessage_Buffer(&message) == CAN_OK){
 
-
-				GFX_LCD_Draw(&message);
+				if(CAN_Decode(&message) == CAN_MSG_DECODED){
+					//GFX_LCD_Draw(&message);
+					// call the update routine
+					GFX_LCD_DrawMain();
+				}
 
 			}
 			//sei();
@@ -71,6 +74,33 @@ int main(void)
 //
 //    	}
     }
+}
+
+//CAN Message selective decoding
+uint8_t CAN_Decode(CANMessage *message){
+	uint8_t	decode_result;
+	switch(message->id){
+
+
+	case CANID_SPEED:
+		// We found a speed message!
+		// get the speed value;
+		gSpeed = message->data[0];
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_SPEED
+
+	default:
+		// We didn't find any message we are looking for...
+		decode_result = CAN_NODECODE;
+	break;
+	}
+
+	// Let the caller know if we found something useful
+	return decode_result;
+
 }
 
 ISR(PCINT0_vect){

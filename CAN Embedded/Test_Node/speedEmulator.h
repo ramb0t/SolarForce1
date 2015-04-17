@@ -13,8 +13,8 @@
 #include <util/delay.h>
 // Defines for CAN messages
 
-#define Period			500	// mS bettween messages
-#define CAN_ID			0x100   // CAN ID of the Speed Message
+#define Period			250	// mS bettween messages
+#define CAN_ID			0x0420   // CAN ID of the Speed Message
 
 CANMessage SpeedMsg;
 
