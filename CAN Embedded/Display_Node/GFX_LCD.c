@@ -1,10 +1,14 @@
 
 #include "GFX_LCD.h"
 
+#define DEBUG
+
 u8g_t u8g;
 
 extern volatile uint8_t CAN_Rx_Head;
 extern volatile uint8_t CAN_Rx_Tail;
+uint8_t bms_soc;
+uint16_t speed;
 void u8g_setup(void)
 {
 	// Init CS pin
