@@ -10883,6 +10883,8 @@ go on pin19</text>
 <text x="190.754" y="-25.908" size="1.778" layer="94">MPU6050 Header</text>
 <text x="111.76" y="-27.94" size="1.778" layer="91">Add protection
 to the inputs</text>
+<text x="144.78" y="-35.56" size="1.778" layer="91">check if SPI can have
+resistors connected here</text>
 </plain>
 <instances>
 <instance part="Q1" gate="G$1" x="-50.8" y="-12.7" rot="R90"/>

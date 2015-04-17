@@ -103,7 +103,7 @@ void MAV_msg_Unpack()
 				{
 					
 					c=uart_getc();								//get another char
-					uart_putc(c);	
+					uart_putc("");								//TESTING OUTPUT
 					ctr++;										//TEST put out
 					// Try to get a new message
 					if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) //if packet matches defined MAVLink packet
@@ -120,15 +120,27 @@ void MAV_msg_Unpack()
 								
 							}
 							break;										//now check for next ID
+							
+							/*--------Data general message structure-------------
+							>>XX,[comma separated fields]<<
+							^ ^ ^         ^				 ^
+							msg start
+							 ID
+								commadelim
+										data
+														end msg
+																				*/
+							
 							case MAVLINK_MSG_ID_MOTOR_DRIVER:				//is it Motor Driver data?
 							{
-								mavlink_motor_driver_t md;
-								mavlink_msg_motor_driver_decode(&msg,&md);
-								uart_puts_p(PSTR("MD>>"));
-								
-								uart_putc(md.speed);
-								uart_putc(md.controller_temp);
-								
+								mavlink_motor_driver_t md;					//instantiate object MD
+								mavlink_msg_motor_driver_decode(&msg,&md);	//encode message
+								uart_puts_p(PSTR("MD>>"));					//delimiter & ID
+								uart_putc(MD_TXID);							
+								uart_puts_p(PSTR(","));
+								uart_putc(md.speed);						//avg. speed
+								uart_puts_p(PSTR(","));						//delim
+								uart_putc(md.controller_temp);				
 								uart_puts_p(PSTR("<<"));
 								break;									//now check for next ID
 							}break;
@@ -137,55 +149,137 @@ void MAV_msg_Unpack()
 							{
 								mavlink_hall_effect_t he;					//generate a struct object
 								mavlink_msg_hall_effect_decode(&msg,&he);	//decode MAVLink into data
-								uart_puts("HE>>");
-								
-								uart_putc(he.speed);
-								uart_putc(he.left_magnet);
+								uart_puts("HE>>");							//delimiter & ID
+								uart_putc(HE_TXID);
+								uart_puts_p(PSTR(","));
+								uart_putc(he.speed);						//speed data
+								uart_puts_p(PSTR(","));
+								uart_putc(he.left_magnet);					//magnet flags
+								uart_puts_p(PSTR(","));	
 								uart_putc(he.right_magnet);
 								uart_puts_p(PSTR("<<"));
 								break;
-							}
+							}break;
 																	//now check for next ID
 							case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
 							{
-								uart_puts_p(PSTR("BMS"));
+								mavlink_bms_data_t bms;
+								mavlink_msg_bms_data_decode(&msg,&bms);	//decode BMS data packet
+								uart_puts_p(PSTR("BMS>>"));					//delim and ID
+								uart_putc(BMS_TXID);	
+								uart_puts_p(PSTR(","));
+								//--------------BMS data  begin-----------//
+								uart_putc(bms.fault_condition);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.source_current);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.load_current);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.bat_fan_status);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.LLIM_state);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.HLIM_state);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.state_of_chg);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.pack_voltage);
+								uart_puts_p(PSTR(","));
+								for (int i=0;i<3;i++)
+								{
+									uart_putc(bms.cell_voltages[i]);	
+									uart_puts_p(PSTR(","));	
+								}
+								for (int i=0;i<3;i++)
+								{
+									uart_putc(bms.cell_temps[i]);
+									uart_puts_p(PSTR(","));
+								}
+								uart_putc(bms.system_status);
+								uart_puts_p(PSTR("<<"));					
 								break;
-							}
+							}break;
+							
 							case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
 							{
 								mavlink_accelo_gyro_t ac;
 								mavlink_msg_accelo_gyro_decode(&msg,&ac);
 								uart_puts_p(PSTR("AC>>"));
-								
+								uart_putc(AC_TXID);		
 								uart_putc(ac.acceleration);
+								uart_puts_p(PSTR(","));
 								uart_putc(ac.incline);
 								uart_puts_p(PSTR("<<"));
 								break;
-							}
+							}break;
 							
 							case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
 							{
-								uart_puts_p(PSTR("M1"));
+								mavlink_mppt1_data_t m1;
+								mavlink_msg_mppt1_data_decode(&msg,&m1);
+								uart_puts_p(PSTR("M1>>"));
+								uart_putc(MPPT1_TXID);
+								uart_puts_p(PSTR(","));		
+								uart_putc(m1.voltage_in);
+								uart_puts_p(PSTR(","));
+								uart_putc(m1.current_in);
+								uart_puts_p(PSTR(","));
+								uart_putc(m1.overtemp);
+								uart_puts_p(PSTR(","));
+								uart_putc(m1.undervolt);
 								break;
-							}
+							}break;
 							
 							case MAVLINK_MSG_ID_MPPT2_DATA:				//is it MPPT1 data?
 							{
-								uart_puts_p(PSTR("M2"));
+								mavlink_mppt1_data_t m2;
+								mavlink_msg_mppt1_data_decode(&msg,&m2);
+								uart_puts_p(PSTR("M2>>"));
+								uart_putc(MPPT2_TXID);
+								uart_puts_p(PSTR(","));
+								uart_putc(m2.voltage_in);
+								uart_puts_p(PSTR(","));
+								uart_putc(m2.current_in);
+								uart_puts_p(PSTR(","));
+								uart_putc(m2.overtemp);
+								uart_puts_p(PSTR(","));
+								uart_putc(m2.undervolt);
 								break;
-							}
+							}break;
 							
 							case MAVLINK_MSG_ID_MPPT3_DATA:				//is it MPPT1 data?
 							{
-								uart_puts_p(PSTR("M3"));
+								mavlink_mppt1_data_t m3;
+								mavlink_msg_mppt1_data_decode(&msg,&m3);
+								uart_puts_p(PSTR("M3>>"));
+								uart_putc(MPPT3_TXID);
+								uart_puts_p(PSTR(","));
+								uart_putc(m3.voltage_in);
+								uart_puts_p(PSTR(","));
+								uart_putc(m3.current_in);
+								uart_puts_p(PSTR(","));
+								uart_putc(m3.overtemp);
+								uart_puts_p(PSTR(","));
+								uart_putc(m3.undervolt);
 								break;
-							}
+							}break;
 							
 							case MAVLINK_MSG_ID_MPPT4_DATA:				//is it MPPT1 data?
 							{
-								uart_puts_p(PSTR("M4"));
+								mavlink_mppt1_data_t m4;
+								mavlink_msg_mppt1_data_decode(&msg,&m4);
+								uart_puts_p(PSTR("M4>>"));
+								uart_putc(MPPT4_TXID);
+								uart_puts_p(PSTR(","));
+								uart_putc(m4.voltage_in);
+								uart_puts_p(PSTR(","));
+								uart_putc(m4.current_in);
+								uart_puts_p(PSTR(","));
+								uart_putc(m4.overtemp);
+								uart_puts_p(PSTR(","));
+								uart_putc(m4.undervolt);
 								break;
-							}
+							}break;
 							default:
 							{
 								

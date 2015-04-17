@@ -304,16 +304,17 @@ void CAN_readData()
 	
 	if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
 		{
-			uart_puts("<<<<START OF MESSAGE>>>>\n");
-			uart_puts("\nCAN DATA\n");
+//TEST DISPLAY			uart_puts("<<<<START OF MESSAGE>>>>\n");
+//TEST DISPLAY			uart_puts("\nCAN DATA\n");
 			
 			itoa(CAN_checkReceiveAvailable(), buff,10);
-			uart_puts("RX:");
-			uart_puts(buff);
-					
+/*TEST DISPLAY*/		uart_puts("RX:");
+						uart_puts(buff);
+						uart_puts(",");
 			itoa(CAN_checkError(),buff,10);
-			uart_puts("Err:");
-			uart_puts(buff);
+/*TEST DISPLAY*/		uart_puts("Err:");
+						uart_puts(buff);
+						uart_puts(",");
 			//-----------------Pull MPPT data----------------//
 			//CANBusInput.id = 0x711;
 			//CANBusInput.rtr = 1;
@@ -323,53 +324,124 @@ void CAN_readData()
 			//CAN_sendMessage(&message);
 			
 			//-------------------Receive Data----------------//
-			
-			itoa(CANBusInput.extended_id,buff,10);
-			uart_putc(CANBusInput.id);
-			
+
+			uart_puts(",");
 			int rx_Result;
-			rx_Result = CAN_readMessage(&CANBusInput);			//read a byte of CAN data
+			rx_Result = CAN_readMessage(&Input_Message);			//read a byte of CAN data
 			
 			if (rx_Result == CAN_OK)							//if read correctly...
 			{
-				//buff[0] = "\0";
-				itoa(CANBusInput.extended_id,buff,10);					//read ASCII-converted byte into buffer
-				uart_puts("\nCAN ID:");
-				uart_puts(buff);								//output bytestring to UART
+				////buff[0] = "\0";
+				//itoa(Input_Message.id,buff,10);					//read ASCII-converted byte into buffer
+///*TEST DISPLAY*/uart_puts("\nCAN ID:");
+				//uart_puts(buff);								//output bytestring to UART
 				
-				itoa(CANBusInput.length,buff,10);
-				uart_puts("\nCAN Data Length:");
-				
-				if(CANBusInput.length==0)						//checks length
+				//-----------------------Switches for detecting CAN ID--------------------------//
+				if (Input_Message.id ==MOTOR_DRIVER_CANID)		//Motor driver ID detected
 				{
-					uart_puts("No CAN Data bits\n");			//Prints if no data bits present
-					}else{
-						
-					uart_puts(buff);
-					for(int j = 0; j< CANBusInput.length; j++)	//print byte for each data element
+					uart_puts("\n");
+					uart_puts("CAN from MD:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<4;i++)
 					{
-						uart_puts("\nCAN Data ");
-						itoa(j,buff,10);
+						itoa(Input_Message.data[i],buff,10);
 						uart_puts(buff);
-						uart_puts(": ");
-						
-						itoa(CANBusInput.data[j],buff,10);
-						
-						uart_puts(buff);
-						uart_puts(" ");
 					}
-				}//endif input length==0
+
+				}
 				
-				itoa(CANBusInput.rtr,buff,2);
-				uart_puts("\nIs this an RTR?: ");
-				if(CANBusInput.rtr==1)
+				if (Input_Message.id ==HALL_EFFECT_CANID)		//Hall effect data detected
 				{
-					uart_puts("Yes\n");
-				}else uart_puts("No\n");
+					uart_puts("\n");
+					uart_puts("CAN from HE:");
+					uart_puts(Input_Message.id);
+					for (int i=4;i<8;i++)
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}
+				
+				if (Input_Message.id ==BMS_CANID)				//BMS data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from BMS:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<16;i++)						//16 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}
+				
+				if (Input_Message.id ==ACCELO_GYRO_CANID)				//Gyro/MPU6050 data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from ACGY:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<2;i++)						//2 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}
+				
+				if (Input_Message.id ==MPPT1_CANID)				//BMS data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from MPPT1:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<4;i++)						//4 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}
+				
+												
+				
+				
+				//uart_puts(",");
+				//itoa(Input_Message.length,buff,10);
+///*TEST DISPLAY*/uart_puts("\nCAN Data Length:");
+				//uart_puts(",");
+				//if(Input_Message.length==0)						//checks length
+				//{
+///*TEST DISPLAY*/uart_puts("No CAN Data bits\n");			//Prints if no data bits present
+					//}else{
+						//
+					//uart_puts(buff);
+					//for(int j = 0; j< Input_Message.length; j++)	//print byte for each data element
+					//{
+///*TEST DISPLAY*/		uart_puts("\nCAN Data ");
+						//itoa(j,buff,10);
+						//uart_puts(buff);
+///*TEST DISPLAY*/			uart_puts(": ");
+						//
+						//itoa(Input_Message.data[j],buff,10);
+						//
+						//uart_puts(buff);
+						//uart_puts(",");
+					//}
+				//}//endif input length==0
+				//
+				//itoa(Input_Message.rtr,buff,2);
+///*TEST DISPLAY*/	uart_puts("\nIs this an RTR?: ");
+				//if(Input_Message.rtr==1)
+				//{
+					//uart_puts("Y,");
+				//}else uart_puts("N\n");
+				
+
+				
 				
 				
 			}//endif CAN_OK
-			uart_puts("\n-------\n CAN Done.\n");
+/*TEST DISPLAY*/ uart_puts("\n-------\n CAN Done.\n");
 		}//endif CAN_MSGAVAIL
 	}//endif DEBUG
 		
@@ -427,7 +499,7 @@ void MAV_msg_pack()
 			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			//MAV_uart_send(buf,len);
 			
-			mavlink_msg_motor_driver_send(0, 1, /*CANBusInput.data[0]*/72);
+			mavlink_msg_motor_driver_send(0, 1,85/*Input_Message.data[4],Input_Message.data[5]*/);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
@@ -471,7 +543,7 @@ void MAV_msg_pack()
 			uint16_t *cell_temp = temp;
 			
 			//uart_flush();
-			//mavlink_msg_bms_data_send(MAVLINK_COMM_0,0,1420,1550,'t',0,0,75,128,cell_voltage,cell_temp,MAV_STATE_ACTIVE);
+			mavlink_msg_bms_data_send(MAVLINK_COMM_0,0,1420,1550,'t',0,0,75,128,cell_voltage,cell_temp,MAV_STATE_ACTIVE);
 
 			/*-----------------------------------------------------------------------
 			NAME: Accelerometer/Gyroscope Data
@@ -483,7 +555,7 @@ void MAV_msg_pack()
 								5 = int8_t incline (degrees)				-127 to 127 (0-100 @ 10 counts per degree)
 			//TESTING																	*/
 			
-			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
+//			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
 			
 //TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
 			//MAV_uart_send(buf,len);
@@ -518,19 +590,19 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,2542,1011,0,0);
+//			mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,2542,1011,0,0);
 			
 //TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,2500,1000,0,0);
+//			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,2500,1000,0,0);
 			
 //TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,2591,968,0,1);
+//			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,2591,968,0,1);
 			
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
+//			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
