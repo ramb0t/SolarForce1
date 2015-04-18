@@ -85,19 +85,19 @@ int main (void)
 	}	
 
 		//uart_putc('a');				
-		CAN_readData();
-		MAV_msg_pack();
+		//CAN_readData();
+		//MAV_msg_pack();
 		
 		//uart_puts("Hi!");
 		
-		//GPS_readData();
+		GPS_readData();
 		
 
 	}
 	return 0;
 
 }
-
+ 
 void GPS_readData()
 {
 		//---------------GPS Parse--------------------------------//
@@ -118,7 +118,8 @@ void GPS_readData()
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
 	*/
-		char GPRMC[60];
+		char GPRMC[5];
+		char buffer[10];
 		//unsigned int z=0;
 		//unsigned int lgth=0;
 		uint8_t ctr = 0;
@@ -128,79 +129,40 @@ void GPS_readData()
 		
 		if(uart_available())
 		{
-			//uart_putc(uart_getc());
-			gpsdata = uart_getc();
-			//uart_putc(gpsdata);
-			if(gpsdata !='$')
+			while(!(UCSR0A & (1<<RXC0)))
 			{
-				gpsdata = uart_getc();
-				ctr++;
-				if (ctr > 500)
-				{
-					uart_flush();
-					uart_puts("GPS Invalid! Check wiring.");
-				}
-			}else{
-				uart_puts("Fnd$");
-				gpsdata = uart_getc();
-				uart_putc(gpsdata);
-				if (gpsdata == 'G')
-				{
-					uart_puts("FoundG");
-					gpsdata = uart_getc();
-					ctr2++;
-
-					if (gpsdata == 'P')
-					{
-						uart_puts("FoundP");
-						gpsdata = uart_getc();
-						//uart_putc(gpsdata);
-						strcat(GPRMC[ctr2],gpsdata);
-						ctr2++;
-						if (gpsdata == 'R')
-						{
-							uart_puts("FoundR");
+							//uart_putc(uart_getc());
 							gpsdata = uart_getc();
 							//uart_putc(gpsdata);
-							strcat(GPRMC[ctr2],gpsdata);
-							ctr2++;
-							if (gpsdata == 'M')
+							if(gpsdata =='$')
 							{
-								uart_puts("FoundM");
 								gpsdata = uart_getc();
-								//uart_putc(gpsdata);
-								strcat(GPRMC[ctr2],gpsdata);
-								ctr2++;
-								if (gpsdata == 'C')
-								{
-									uart_puts("FoundC");
-									gpsdata = uart_getc();
-									//uart_putc(gpsdata);
-									strcat(GPRMC[ctr2],gpsdata);
-									ctr2++;
-								}
-							}
-						}
-					}
-				}
-			}
-	}
+									while (gpsdata!=',')
+									{
+										_delay_ms(20);
+										gpsdata = uart_getc();
+										GPRMC[ctr] = gpsdata;
+										ctr++;
+									}
+									if (gpsdata==',')
+									{
+										uart_puts(GPRMC);
+										break;
+
+										ctr=0;	
+									}
+								
+								break;
+							}//if
+							break;	
+		}//while UART
+	break;
 	
-	while (!uart_available())
-	{
-			errctr++;
-			
-			if (errctr>500)
-			{
-				uart_puts("GPS Disconnected!");
-				errctr =0;
-			}
-			
-	}
-//
+	}//if UART available
+}//GPS get
 			
 			
-			
+
 			
 			
 			//while (uart_getc() != '$')
@@ -213,7 +175,7 @@ void GPS_readData()
 			//}
 
 
-		}
+
 		
 		
 	//UART_REG = TX_DISABLE;
@@ -715,18 +677,5 @@ void MAV_msg_pack()
 	
 }
 
-void MAV_uart_send(uint8_t buf[],uint8_t len)
-{
-
-	if( !(UCSR0A & (1<<UDRE0)) )
-	{
-		uart_flush();
-	for (int i = 0; i < len ; i++){
-		uart_putc(buf[i]);
-		MAV_Rx_buff[i] = buf[i];
-		}
-	}
-						
-}
 
 
