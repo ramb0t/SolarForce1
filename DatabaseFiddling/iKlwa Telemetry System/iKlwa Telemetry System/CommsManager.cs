@@ -198,7 +198,7 @@ namespace iKlwa_Telemetry_System
             defaultInit();
         }
 
-        protected void defaultInit()
+        public void defaultInit()
         {
             try
             {
@@ -208,7 +208,6 @@ namespace iKlwa_Telemetry_System
                 stop_bits = 2;
                 parity = (int)Parities.Odd;
                 interrupt_bytes_threshold = 1;
-                port.ReadTimeout = 1000;
             }
             catch (Exception e)
             { MessageBox.Show(e.Message); }

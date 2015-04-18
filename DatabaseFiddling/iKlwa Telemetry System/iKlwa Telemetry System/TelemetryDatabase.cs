@@ -86,8 +86,11 @@ namespace iKlwa_Telemetry_System
 
         public string getLatestValue(string sensor, string description)
         {
-            var latestNode = this.getNewest(SENSOR_TAG, sensor,DESCRIP_TAG,description).Element(VAL_TAG).Value;
-
+            string latestNode = null;
+            try
+            { latestNode = this.getNewest(SENSOR_TAG, sensor, DESCRIP_TAG, description).Element(VAL_TAG).Value; }
+            catch (NullReferenceException)
+            { throw; }
             return latestNode;
         }
 

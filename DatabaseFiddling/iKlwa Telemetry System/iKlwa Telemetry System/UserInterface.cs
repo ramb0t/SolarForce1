@@ -35,9 +35,11 @@ namespace iKlwa_Telemetry_System
         public UserInterface()
         {
             InitializeComponent();
-            d = new TelemetryDatabase("xmlDatabase_V5.xml");
-            d.NodeTag = "Capture";
+            //d = new TelemetryDatabase("xmlDatabase_V5.xml");
+            d = new TelemetryDatabase("SimDB.xml");
+            d.NodeTag = "SimInput";
             db_exists = true;
+            refresh_timer.Enabled = true;
         }
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace iKlwa_Telemetry_System
 
             refreshGUI();
 
-            if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
+            //if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
             if (unreadErrorCount > 0)//update error messages notifications
             {
                 btn_ErrorNotifications.Text = unreadErrorCount + " New Warnings.";
@@ -314,7 +316,8 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            comms.MavLinkInit();
+            //comms.MavLinkInit();
+            comms.defaultInit();
             const long timeoutVal = 100000;
             long count = 0;
             try
@@ -337,8 +340,10 @@ namespace iKlwa_Telemetry_System
                                                      "Speed", (int)Convert.ToChar(packet.PAYLOAD.ElementAt(0)));
                                     break;
                                 case (int)SENSORS.HALL_EFFECT:
+                                    string str = packet.PAYLOAD.ElementAt(0);
+                                    str = str.Substring(0, 1);
                                     d.addDataCapture("Hall Effect Sensor", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                                     "Speed", (int)Convert.ToChar(packet.PAYLOAD.ElementAt(0)));
+                                                     "Speed", (int)Convert.ToChar(str));
                                     break;
                             }
                             count = 0;

@@ -873,7 +873,6 @@
             // 
             // refresh_timer
             // 
-            this.refresh_timer.Enabled = true;
             this.refresh_timer.Interval = 1000;
             this.refresh_timer.Tick += new System.EventHandler(this.refresh_timer_Tick);
             // 
