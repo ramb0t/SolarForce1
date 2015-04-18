@@ -117,8 +117,7 @@ void GPS_readData()
 	11   = E or W of magnetic variation
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
-	*/
-		char GPRMC[5];
+	*/		
 		char buffer[10];
 		//unsigned int z=0;
 		//unsigned int lgth=0;
@@ -146,97 +145,90 @@ void GPS_readData()
 									}
 									if (gpsdata==',')
 									{
-										uart_puts(GPRMC);
-										break;
-
-										ctr=0;	
+										//uart_puts(GPRMC);
+										for (int i=0;i<ctr;i++)
+										{
+											uart_putc(GPRMC[i]);
+											
+										}
+											ctr=1;	
+										//----------get the time part--------//
+										gpsdata = uart_getc();
+										time[0] = gpsdata;
+										//for the time
+										while (gpsdata!=',')
+										{
+											_delay_ms(20);
+											gpsdata = uart_getc();
+											time[ctr] = gpsdata;
+											ctr++;
+										}
+										if (gpsdata==',')
+										{
+											//uart_puts(GPRMC);
+											for (int i=0;i<ctr;i++)
+											{
+												uart_putc(time[i]);
+											}
+											ctr=1;
+										//----------get data status--------//
+											gpsdata = uart_getc();
+											GPRMC[0] = gpsdata;
+											while (gpsdata!=',')
+											{
+												_delay_ms(20);
+												gpsdata = uart_getc();
+												GPRMC[ctr] = gpsdata;
+												ctr++;
+											}
+											if (gpsdata==',')
+											{
+												//uart_puts(GPRMC);
+												for (int i=0;i<ctr;i++)
+												{
+													uart_putc(GPRMC[i]);
+												}
+												ctr=1;
+											}
+										
+											}
+										}										
 									}
+
+										
+							}//if $
 								
-								break;
-							}//if
-							break;	
-		}//while UART
-	break;
+							
+					//while UART
+
 	
 	}//if UART available
 }//GPS get
 			
 			
+void GPSParse(char* GPRMC,char gpsdata)
+{
+	int ctr =1;
+	gpsdata = uart_getc();
+	GPRMC[0] = gpsdata;
+	while (gpsdata!=',')
+	{
+		_delay_ms(20);
+		gpsdata = uart_getc();
+		GPRMC[ctr] = gpsdata;
+		ctr++;
+	}
+	if (gpsdata==',')
+	{
+		//uart_puts(GPRMC);
+		for (int i=0;i<ctr;i++)
+		{
+			uart_putc(GPRMC[i]);
+		}
+		ctr=1;
+	}
+}
 
-			
-			
-			//while (uart_getc() != '$')
-			//{	
-					//gpsdata = uart_getc();
-					////uart_putc(gpsdata);
-				//ctr++;
-
-//
-			//}
-
-
-
-		
-		
-	//UART_REG = TX_DISABLE;
-	//uart_flush();
-	//gpsdata = uart_getc();	
-//
-	//for (int i=0;i<30;i++)
-	//{
-		//gpsdata = uart_getc();
-		//NMEA[i] = gpsdata;
-	//}
-	//
-	////UART_REG = TX_ENABLE;
-	////uart_flush();
-	//
-	//for (int i=0;i<30;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-		//uart_puts("\n---------GPS DATA---------\n");
-	//UART_REG = TX_DISABLE;			
-	//gpsdata = uart_getc();
-	//while (gpsdata != '$')
-	//{
-	//gpsdata = uart_getc();
-	//uart_putc(gpsdata);
-	//uart_puts("Invalid GPS data!");
-	//}
-//
-	//while (gpsdata != '*')
-	//{
-		//gpsdata = uart_getc();	//store char in NMEA buffer
-		//NMEA[ctr] = gpsdata;
-		//ctr++;
-	//}
-//
-	//for (int i=0;i<ctr;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-				////print raw NMEA data
-//
-	////PARSE TIME: hhmmss.ss
-	//uart_puts("Time: ");
-	////hour
-	//for(int i=0;i<2;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-	////minute
-	//uart_puts("h:");
-	//for(int i=2;i<4;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-	//uart_puts(": ");
-	//for(int i=4;i<6;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-	
 
 
 
@@ -586,6 +578,12 @@ void MAV_msg_pack()
 																					*/
 //TESTING	mavlink_msg_gps_pack(100,200,&msg,latitude,longitude,time,date,lock_error);
 			//MAV_uart_send(buf,len);
+			char * lockerr = "";
+			if (fix == "V")
+			{
+				lockerr = "OK";
+			}else {lockerr = "INVALID";}
+			mavlink_msg_gps_send(MAVLINK_COMM_0,lat,longitude,time,date,lockerr);
 			
 			/*-----------------------------------------------------------------------
 			NAME: MPPT Data

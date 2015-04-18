@@ -76,6 +76,19 @@ volatile int ctr2=0;
 
 char MAV_Rx_buff[10];
 
+//GPS vars to store data for MAV framing later
+
+		char GPRMC[10];
+		char time[6];
+		char fix;
+		char lat[7];
+		char lat_dir;
+		char longitude[8];
+		char long_dir;
+		char spd[3];
+		char tmd[3];
+		char date[6];
+
 //------------Function Prototypes------------------------//
 
 		uint8_t system_type = MAV_TYPE_GROUND_ROVER;
