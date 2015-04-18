@@ -36,6 +36,11 @@ namespace iKlwa_Telemetry_System
             dataGridView1.DataSource = grid;
         }
 
+        public void setTitle(string title)
+        {
+            this.Text = label1.Text = title;
+        }
+
         private void ReportScreen_Load(object sender, EventArgs e)
         {
 
