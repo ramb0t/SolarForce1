@@ -52,6 +52,10 @@
 // Feel free to comment them out if you don't use them.
 
 #include "../lib/macros.h" // latest version maintained at https://github.com/robthepyro/AVR_Lib
+// Return Defines
+/*********************************************/
+#define CAN_NODECODE	0
+#define CAN_MSG_DECODED	1
 
 
 // Structure Definitions
@@ -59,11 +63,24 @@
 
 // Variable Definitions
 /*********************************************/
-extern volatile uint8_t flag;
+// local vars
+//				uint8_t		LCD_BackLight_Val;  // Better to use a macro?
+#define			LCD_BackLight	OCR1A
+
+				uint8_t		flagUpdateLCD;		// sets if an update is needed.
+
+extern volatile uint8_t 	flag;
+// External vars for the display values we are interested in
+extern 			uint16_t 	gSpeed;
+extern 			uint8_t		gBMS_soc;
+extern			uint16_t	gBMS_PackVoltage;
+extern			int16_t		gBMS_PackCurrent;
+extern			int8_t		gBMS_Temp;
+extern			uint8_t 	gBMS_Flags;
 
 // Function Prototypes
 /*********************************************/
-
+uint8_t CAN_Decode(CANMessage *message);
 
 
 #endif /* DISPLAY_NODE_H_ */

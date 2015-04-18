@@ -1,10 +1,13 @@
 
 #include "GFX_LCD.h"
 
+#define DEBUG
+
 u8g_t u8g;
 
 extern volatile uint8_t CAN_Rx_Head;
 extern volatile uint8_t CAN_Rx_Tail;
+
 void u8g_setup(void)
 {
 	// Init CS pin
@@ -67,21 +70,6 @@ void u8g_prepare(void) {
   u8g_SetRot180(&u8g);
 }
 
-void GFX_Cnt(int i){
-	//GFX_SELECT();
-	u8g_FirstPage(&u8g);
-
-	do
-	{
-		char buf[10];
-		itoa(i, buf, 10);
-		u8g_prepare();
-		u8g_DrawStr(&u8g, 5, 15, buf);
-		//draw(message);
-	} while ( u8g_NextPage(&u8g) );
-	//GFX_UNSELECT();
-}
-
 
 void GFX_LCD_Draw(CANMessage* message){
 
@@ -98,10 +86,129 @@ void GFX_LCD_Draw(CANMessage* message){
 	sei();
 }
 
+void GFX_LCD_DrawMain(void){
+
+	cli();
+	LCD_SELECT();
+	u8g_FirstPage(&u8g);
+	//u8g_prepare();
+	do
+	{
+		drawMain();
+
+	} while ( u8g_NextPage(&u8g) );
+	LCD_UNSELECT();
+	sei();
+}
+
+void drawMain(){
+	char buf[10]; // used for forming strings to pass to the display ??
+	char string[15];
+
+	// Set The Font
+	u8g_SetFont(&u8g, u8g_font_freedoomr25n);
+	u8g_SetFontRefHeightExtendedText(&u8g);
+	u8g_SetDefaultForegroundColor(&u8g);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw a Frame
+	u8g_DrawHLine(&u8g, 0,30,65);
+	u8g_DrawHLine(&u8g, 0,31,65);
+	u8g_DrawVLine(&u8g, 65,0,64);
+	//u8g_DrawFrame(&u8g,0,0,64,32);
+
+	// Draw the Speed
+	utoa(gSpeed, buf, 10);
+	u8g_DrawStr(&u8g, 3, 4, buf);
+
+	// Change the font
+	u8g_SetFont(&u8g, u8g_font_6x10);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw Power In / Power Out
+	memset(string, 0, sizeof string);
+	strcat(string,"P:");
+
+	// First Calculate the power: P = V.I
+	int16_t  packPower  = gBMS_PackVoltage*gBMS_PackCurrent;
+	if(packPower > 0){
+		strcat(string,"+");
+	}
+	if(packPower >=1000 || packPower <=-1000){ // We need to go to kW
+		int8_t  iPackPower = packPower / 1000; // Get kW ints
+		uint8_t rPackPower = packPower % 1000; // Get kW dec
+		itoa(iPackPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,".");
+		utoa(rPackPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,"kW");
+	}else{
+		itoa(packPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,"W");
+	}
+	// Finally draw the power
+	u8g_DrawStr(&u8g, 0, 32, string);
+
+	// Change the font
+	u8g_SetFont(&u8g, u8g_font_5x8);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw Pack Voltage
+	utoa(gBMS_PackVoltage, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Volt:");
+	strcat(string,buf);
+	strcat(string,"V");
+	u8g_DrawStr(&u8g, 67, 1, string);
+
+	// Draw Temp
+	itoa(gBMS_Temp, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Temp:");
+	strcat(string,buf);
+	strcat(string,"'C");
+	u8g_DrawStr(&u8g, 67, 10, string);
+
+	// Draw HLIM
+	if(gBMS_Flags & BMSFLAG_HLIM){
+		u8g_DrawStr(&u8g, 67, 20, "HLIM!");
+	}
+	if(gBMS_Flags & BMSFLAG_LLIM){
+		u8g_DrawStr(&u8g, 67, 20, "LLIM!");
+	}
+
+	// Draw SOC Bar
+	u8g_DrawVLine(&u8g, 120,0,50);
+	u8g_DrawHLine(&u8g, 114,0,6);
+	u8g_DrawHLine(&u8g, 114,49,6);
+	// Draw the bar graph
+	u8g_DrawBox(&u8g, 122,50-(gBMS_soc/2)-1,6,(gBMS_soc/2)+1);
+
+	// write BMS SOC Label
+	u8g_SetFont(&u8g, u8g_font_5x7);
+	u8g_SetFontPosTop(&u8g);
+	utoa(gBMS_soc, buf, 10);
+	strcat(buf,"%");
+	u8g_DrawStr(&u8g, 114, 50, buf);
+	u8g_SetFontPosBottom(&u8g);
+	u8g_DrawStr(&u8g, 114, 65, "SOC");
+
+
+	// write BMS volt Label
+	//u8g_DrawStr(&u8g, 66, 21, "BMS Volts:");
+	//utoa(gBMS_PackVoltage, buf, 10);
+	//strcat(buf,"V");
+	//u8g_DrawStr(&u8g, 66, 31, buf);
+
+}
+
+
 void draw(CANMessage* msg){
 	char buf[10]; // used for forming strings to pass to the display ??
 
-	if(msg->id == 0x100){ //speed!
+	if(msg->id == 0x0420){ //speed!
 		CANMessage message = *msg;
 
 		u8g_SetFont(&u8g, u8g_font_freedoomr25n);
