@@ -33,8 +33,6 @@
 #include "../lib/CAN/CAN.h"
 // MCP2515 Library
 #include "../lib/mcp2515/mcp2515.h"
-// for the GFX lcd used
-#include "GFX_LCD.h"
 // SPI Library used with CAN Controller
 #include "../lib/SPI/AVR_SPI.h"
 

@@ -37,6 +37,8 @@
 #include "GFX_LCD.h"
 // SPI Library used with CAN Controller
 #include "../lib/SPI/AVR_SPI.h"
+// Timer0
+#include "Timer0.h"
 // Timer1
 #include "Timer1.h"
 
@@ -67,9 +69,12 @@
 //				uint8_t		LCD_BackLight_Val;  // Better to use a macro?
 #define			LCD_BackLight	OCR1A
 
-				uint8_t		flagUpdateLCD;		// sets if an update is needed.
+				 uint8_t	flagUpdateLCD;		// sets if an update is needed.
+extern  volatile uint8_t    flagTimerUpdateLCD; // allow the timer to determine update rate
+extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have passed
+		volatile uint16_t	int_mS;				// Keep track of when the last interupt was
 
-extern volatile uint8_t 	flag;
+extern	volatile uint8_t 	flag;
 // External vars for the display values we are interested in
 extern 			uint16_t 	gSpeed;
 extern 			uint8_t		gBMS_soc;

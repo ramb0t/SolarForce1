@@ -51,6 +51,9 @@ int16_t 	gBMS_PackCurrent;
 int8_t		gBMS_Temp;
 uint8_t		gBMS_Flags;
 
+// used for the timing / interrupts
+extern	volatile uint16_t	gMilliSecTick;
+extern	volatile uint16_t	int_mS;
 
 // Function Prototypes
 /*********************************************/

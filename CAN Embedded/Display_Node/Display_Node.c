@@ -33,6 +33,12 @@ int main(void)
 	LCD_BackLight = 64;		// Set the default backlight value
 	Timer1_PWM_On();			// Turn backlight on
 
+	// Init Timer0 for mS Counter
+	Timer0_init();
+
+	// Init Hardware
+	IOInit();
+
 	// Create a new message
 	CANMessage message;
 
@@ -65,20 +71,26 @@ int main(void)
 				flag = CAN_NOMSG;
 			}
 			// Improve buffer performance?
-			cli();
-			if(~CHECKBIT(PINB,PB0))
-			{
-				CAN_fillBuffer();
-			}
-			sei();
+			//cli();
+			//if(~CHECKBIT(PINB,PB0))
+			//{
+			//	CAN_fillBuffer();
+			//}
+			//sei();
     	}
 
-    	// If an LCD update is needed, then do it!
-    	if(flagUpdateLCD == TRUE){
-    		// Call the update function
-    		GFX_LCD_DrawMain();
-    		// reset the flag
-    		flagUpdateLCD = FALSE;
+    	// lockout for at least 10 mS after last interrupt
+    	if(gMilliSecTick - int_mS > 9){
+			// If an LCD update is needed, then do it!
+			if(flagTimerUpdateLCD == TRUE && flagUpdateLCD == TRUE){
+				// Call the update function
+				LED_ON(LED_1);
+				GFX_LCD_DrawMain();
+				LED_OFF(LED_1);
+				// reset the flag
+				flagUpdateLCD = FALSE;
+				flagTimerUpdateLCD = FALSE;
+			}
     	}
 
 
@@ -168,11 +180,13 @@ uint8_t CAN_Decode(CANMessage *message){
 
 }
 
+// CAN Interrupt ISR!
 ISR(PCINT0_vect){
-	LED_FLIP(LED_2);
-	//LCD_UNSELECT();
+
+	LED_ON(LED_2);
 	CAN_fillBuffer();
-	//LCD_SELECT();
+	int_mS = gMilliSecTick;
+	LED_OFF(LED_2);
 
 }
 
