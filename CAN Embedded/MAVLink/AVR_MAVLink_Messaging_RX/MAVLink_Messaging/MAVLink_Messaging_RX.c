@@ -85,26 +85,37 @@ void MAV_msg_Unpack()
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 			
-			uart_puts_p(PSTR(" "));
+			//uart_puts_p(PSTR(" "));
 			 
 			mavlink_message_t msg2;
 			int chan = 0;
-			int ctr = 0;
-
 			uint8_t c ;
 			mavlink_status_t* mav_status;
 
 			
 			// COMMUNICATION THROUGH EXTERNAL UART PORT
+			if (uart_available() == UART_NO_DATA)
+			{
+				counter++;
+				if (counter > 1000)
+				{
+					uart_puts_p(PSTR("Connection fail!"));
+				}
+			}
 			
-			while(!(UCSR0A & (1<<UDRE0)))									//poll data from the UART bus only while there is data on it
+			while(!(UCSR0A & (1<<RXC0)))									//poll data from the UART bus only while there is data on it
 			{
 				while (ctr < MAVLINK_MAX_PACKET_LEN)						//while packet size < MAVLink packet
 				{
 					
 					c=uart_getc();								//get another char
-					uart_putc("");								//TESTING OUTPUT
-					ctr++;										//TEST put out
+					//uart_putc(c);								//TESTING OUTPUT
+					hb_lost++;										//TEST put out
+					if (hb_lost > 1000)
+					{
+						uart_puts_p(PSTR("Heartbeat fail!"));
+						hb_lost = 0;
+					}
 					// Try to get a new message
 					if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) //if packet matches defined MAVLink packet
 					{
@@ -117,7 +128,7 @@ void MAV_msg_Unpack()
 								uart_puts_p(PSTR("HB"));
 								// E.g. read GCS heartbeat and go into
 								// comm lost mode if timer times out
-								
+								ctr = 0; //reset heartbeat counter
 							}
 							break;										//now check for next ID
 							

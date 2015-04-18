@@ -45,21 +45,22 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 #define MOTOR_DRIVER_CANID	0x420
 #define HALL_EFFECT_CANID	0x420
+
 #define HE_TXID				420
 #define MD_TXID				421
 
-#define BMS_TXID			422
-#define AC_TXID				500
-#define MPPT1_TXID			600
-#define MPPT2_TXID			601
-#define MPPT3_TXID			602
-#define MPPT4_TXID			603
+#define BMS_TXID			800
+#define AC_TXID				200
+#define MPPT1_TXID			711
+#define MPPT2_TXID			712
+#define MPPT3_TXID			713
+#define MPPT4_TXID			714
 
 //------------Library Objects----------------------------//
 
-volatile uint8_t counter=0;
-volatile uint8_t ctr2=0;
-volatile uint8_t hb_lost = 0;
+volatile uint8_t counter=0;				//counts data on UART bus for connection check
+volatile uint8_t ctr2=0;				//counts bytes passing thru MAVLink frame for length check
+volatile uint8_t hb_lost = 0;			//counts cycles since last heartbeat
 
 char MAV_Rx_buff[10];
 
