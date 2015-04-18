@@ -99,6 +99,13 @@ uint8_t CAN_Decode(CANMessage *message){
 
 	break; //CANID_SPEED
 
+	case CANID_BMS2:
+		gBMS_Flags = message->data[3];
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+	break; //CANID_BMS2
+
 	case CANID_BMS3:
 		gBMS_PackVoltage = (message->data[0]<<8)|(message->data[1]);
 
@@ -120,6 +127,15 @@ uint8_t CAN_Decode(CANMessage *message){
 		decode_result = CAN_MSG_DECODED;
 
 	break; //CANID_BMS6
+
+	case CANID_BMS7:
+		gBMS_Temp = message->data[0]; // Average Temp
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_BMS7
+
 
 	default:
 		// We didn't find any message we are looking for...

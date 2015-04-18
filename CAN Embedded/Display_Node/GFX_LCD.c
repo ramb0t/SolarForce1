@@ -70,21 +70,6 @@ void u8g_prepare(void) {
   u8g_SetRot180(&u8g);
 }
 
-void GFX_Cnt(int i){
-	//GFX_SELECT();
-	u8g_FirstPage(&u8g);
-
-	do
-	{
-		char buf[10];
-		itoa(i, buf, 10);
-		u8g_prepare();
-		u8g_DrawStr(&u8g, 5, 15, buf);
-		//draw(message);
-	} while ( u8g_NextPage(&u8g) );
-	//GFX_UNSELECT();
-}
-
 
 void GFX_LCD_Draw(CANMessage* message){
 
@@ -127,9 +112,9 @@ void drawMain(){
 	u8g_SetFontPosTop(&u8g);
 
 	// Draw a Frame
-	u8g_DrawHLine(&u8g, 0,31,64);
-	u8g_DrawHLine(&u8g, 0,32,64);
-	u8g_DrawVLine(&u8g, 64,0,64);
+	u8g_DrawHLine(&u8g, 0,30,65);
+	u8g_DrawHLine(&u8g, 0,31,65);
+	u8g_DrawVLine(&u8g, 65,0,64);
 	//u8g_DrawFrame(&u8g,0,0,64,32);
 
 	// Draw the Speed
@@ -141,15 +126,30 @@ void drawMain(){
 	u8g_SetFontPosTop(&u8g);
 
 	// Draw Power In / Power Out
-	// First Calculate the power: P = V.I
-	// TODO: Check scaling of this value.. need kW ?
-	int16_t packPower = gBMS_PackVoltage*gBMS_PackCurrent;
-	utoa(packPower, buf, 10);
 	memset(string, 0, sizeof string);
-	strcat(string,"Pwr:");
-	strcat(string,buf);
-	strcat(string,"W");
-	u8g_DrawStr(&u8g, 66, 1, string);
+	strcat(string,"P:");
+
+	// First Calculate the power: P = V.I
+	int16_t  packPower  = gBMS_PackVoltage*gBMS_PackCurrent;
+	if(packPower > 0){
+		strcat(string,"+");
+	}
+	if(packPower >=1000 || packPower <=-1000){ // We need to go to kW
+		int8_t  iPackPower = packPower / 1000; // Get kW ints
+		uint8_t rPackPower = packPower % 1000; // Get kW dec
+		itoa(iPackPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,".");
+		utoa(rPackPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,"kW");
+	}else{
+		itoa(packPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,"W");
+	}
+	// Finally draw the power
+	u8g_DrawStr(&u8g, 0, 32, string);
 
 	// Change the font
 	u8g_SetFont(&u8g, u8g_font_5x8);
@@ -161,7 +161,7 @@ void drawMain(){
 	strcat(string,"Volt:");
 	strcat(string,buf);
 	strcat(string,"V");
-	u8g_DrawStr(&u8g, 66, 15, string);
+	u8g_DrawStr(&u8g, 67, 1, string);
 
 	// Draw Temp
 	itoa(gBMS_Temp, buf, 10);
@@ -169,7 +169,15 @@ void drawMain(){
 	strcat(string,"Temp:");
 	strcat(string,buf);
 	strcat(string,"'C");
-	u8g_DrawStr(&u8g, 66, 25, string);
+	u8g_DrawStr(&u8g, 67, 10, string);
+
+	// Draw HLIM
+	if(gBMS_Flags & BMSFLAG_HLIM){
+		u8g_DrawStr(&u8g, 67, 20, "HLIM!");
+	}
+	if(gBMS_Flags & BMSFLAG_LLIM){
+		u8g_DrawStr(&u8g, 67, 20, "LLIM!");
+	}
 
 	// Draw SOC Bar
 	u8g_DrawVLine(&u8g, 120,0,50);

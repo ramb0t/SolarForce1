@@ -76,6 +76,7 @@ extern 			uint8_t		gBMS_soc;
 extern			uint16_t	gBMS_PackVoltage;
 extern			int16_t		gBMS_PackCurrent;
 extern			int8_t		gBMS_Temp;
+extern			uint8_t 	gBMS_Flags;
 
 // Function Prototypes
 /*********************************************/
