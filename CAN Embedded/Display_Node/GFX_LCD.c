@@ -135,8 +135,8 @@ void drawMain(){
 		strcat(string,"+");
 	}
 	if(packPower >=1000 || packPower <=-1000){ // We need to go to kW
-		int8_t  iPackPower = packPower / 1000; // Get kW ints
-		uint8_t rPackPower = packPower % 1000; // Get kW dec
+		int16_t  iPackPower = packPower / 1000; // Get kW ints
+		uint16_t rPackPower = packPower % 1000; // Get kW dec
 		itoa(iPackPower, buf, 10);
 		strcat(string,buf);
 		strcat(string,".");

@@ -25,32 +25,50 @@
 
 #define TERMINAL_INIT					0
 #define TERMINAL_RUN					TERMINAL_INIT+1
-#define TERMINAL_LISTEN					TERMINAL_INIT+2
-#define TERMINAL_LISTENRAW				TERMINAL_INIT+3
-#define TERMINAL_LISTENFILTER			TERMINAL_INIT+4
 
-#define TERMINAL_SEND1					TERMINAL_INIT+5
+#define TERMINAL_LISTENSUB				0x10
+#define TERMINAL_LISTEN					0x11
+#define TERMINAL_LISTENRAW				0x12
+#define TERMINAL_LISTENFILTER			0x14
 
-#define TERMINAL_SENDRANDOM				TERMINAL_INIT+7
-#define TERMINAL_SENDBMS				TERMINAL_INIT+8
-#define TERMINAL_LOOPBMS				TERMINAL_INIT+9
+#define TERMINAL_SENDSUB				0x20
+#define TERMINAL_SEND1					0x21
 
-#define TERMINAL_LOOPSPEED				TERMINAL_INIT+10
+#define TERMINAL_SENDRANDOM				0x22
+#define TERMINAL_SENDBMS				0x23
+#define TERMINAL_LOOPBMS				0x24
+
+#define TERMINAL_LOOPSPEED				0x25
 
 #define TERMINAL_MAX_INPUT_LENGTH		10
 
 #define TERMINAL_sCANCEL				"c"
 #define TERMINAL_sHELP					"help"
-#define TERMINAL_sLISTEN				"1"
-#define TERMINAL_sLISTENRAW				"2"
 
-#define TERMINAL_sSEND1					"4"
+#define TERMINAL_cBACK					0
 
-#define TERMINAL_sSENDRANDOM			"6"
-#define TERMINAL_sSENDBMS				"7"
-#define TERMINAL_sLOOPBMS				"8"
-#define TERMINAL_sLOOPSPEED				"9"
+#define TERMINAL_cLISTENSUB				1
+#define TERMINAL_cLISTEN				1
+#define TERMINAL_cLISTENRAW				2
+#define TERMINAL_cLISTENFILTER			3
 
+#define TERMINAL_cSENDSUB				2
+//#define TERMINAL_cLISTEN				1
+//#define TERMINAL_cLISTENRAW				2
+#define TERMINAL_cSENDRANDOM			3
+#define TERMINAL_cSENDBMS				4
+#define TERMINAL_cLOOPBMS				5
+#define TERMINAL_cLOOPSPEED				6
+
+#define TERMINAL_s1						"1"
+#define TERMINAL_s2						"2"
+#define TERMINAL_s3						"3"
+#define TERMINAL_s4						"4"
+#define TERMINAL_s5						"5"
+#define TERMINAL_s6						"6"
+#define TERMINAL_s7						"7"
+#define TERMINAL_s8						"8"
+#define TERMINAL_s9						"9"
 
 // Variables:
 /*****************************************************************************/
@@ -59,10 +77,12 @@
 // Function Prototypes:
 /*****************************************************************************/
 void Terminal_init(void);
-void Terminal_read(uint8_t* state);
-void Terminal_run(uint8_t* state);
+void Terminal_read(volatile uint8_t* state);
+void Terminal_run(volatile uint8_t* state);
 
 static void Terminal_showMenu(void);
+static void Terminal_showListenMenu(void);
+static void Terminal_showSendMenu(void);
 
 
 #endif /* TERMINAL_H_ */

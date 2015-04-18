@@ -186,8 +186,10 @@ int main(void)
     			break;
 
     		case(TERMINAL_SENDBMS):
+    			// send 1 message
 				BMS_send_fake_data();
-    			Terminal_state = TERMINAL_INIT;
+    			// goback to submenu!
+    			Terminal_state = TERMINAL_SENDSUB;
 				break;
 
     		case (TERMINAL_LOOPBMS):
