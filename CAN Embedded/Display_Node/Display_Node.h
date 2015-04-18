@@ -80,6 +80,7 @@ extern			uint8_t 	gBMS_Flags;
 
 // Function Prototypes
 /*********************************************/
+void 	IOInit(void);
 uint8_t CAN_Decode(CANMessage *message);
 
 

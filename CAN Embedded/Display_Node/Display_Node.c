@@ -43,12 +43,12 @@ int main(void)
     while(1) {
     	// If the int pin is held low then we wont have an ISR!
     	// Disable the interrupts and process all outstanding buffer calls
-    	cli();
-    	if(~CHECKBIT(PINB,PB0))
-    	{
-    		CAN_fillBuffer();
-    	}
-    	sei();
+    	//cli();
+    	//while(~CHECKBIT(PINB,PB0))
+    	//{
+    	//	CAN_fillBuffer();
+    	//}
+    	//sei();
 
     	// Check if there are any messages in the buffer, loop on more messages
     	while(flag == CAN_MSGAVAIL){
@@ -85,6 +85,22 @@ int main(void)
 
     } // FOREVER LOOP :0
 } // Life...
+
+
+// Sets up the IO...
+void 	IOInit(void){
+	// LEDs Outputs
+	LED_DDR |= (1<<LED_1)|(1<<LED_2);
+	LED_ON(LED_1);
+	LED_OFF(LED_2);
+
+	// Btn inputs
+	BTN_DDR &= ~((1<<BTN_1)|(1<<BTN_2)|(1<<BTN_3)|(1<<BTN_4));
+	// Btn Pullups
+	BTN_PORT |= (1<<BTN_1)|(1<<BTN_2)|(1<<BTN_3)|(1<<BTN_4);
+
+
+}
 
 //CAN Message selective decoding
 uint8_t CAN_Decode(CANMessage *message){
@@ -153,6 +169,7 @@ uint8_t CAN_Decode(CANMessage *message){
 }
 
 ISR(PCINT0_vect){
+	LED_FLIP(LED_2);
 	//LCD_UNSELECT();
 	CAN_fillBuffer();
 	//LCD_SELECT();

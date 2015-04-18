@@ -163,20 +163,28 @@ void drawMain(){
 	strcat(string,"V");
 	u8g_DrawStr(&u8g, 67, 1, string);
 
+	// Draw Pack Current
+	itoa(gBMS_PackCurrent, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Curr:");
+	strcat(string,buf);
+	strcat(string,"A");
+	u8g_DrawStr(&u8g, 67, 10, string);
+
 	// Draw Temp
 	itoa(gBMS_Temp, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"Temp:");
 	strcat(string,buf);
 	strcat(string,"'C");
-	u8g_DrawStr(&u8g, 67, 10, string);
+	u8g_DrawStr(&u8g, 67, 19, string);
 
 	// Draw HLIM
 	if(gBMS_Flags & BMSFLAG_HLIM){
-		u8g_DrawStr(&u8g, 67, 20, "HLIM!");
+		u8g_DrawStr(&u8g, 67, 27, "HLIM!");
 	}
 	if(gBMS_Flags & BMSFLAG_LLIM){
-		u8g_DrawStr(&u8g, 67, 20, "LLIM!");
+		u8g_DrawStr(&u8g, 67, 27, "LLIM!");
 	}
 
 	// Draw SOC Bar

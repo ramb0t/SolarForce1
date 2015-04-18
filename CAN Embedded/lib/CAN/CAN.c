@@ -9,7 +9,8 @@
 
 #include "CAN.h"
 #include "../mcp2515/mcp2515.h"
-
+//hack
+//#include <util/delay.h>
 
 // Setup the RX Buffer
 #define CAN_RX_BUFFER_MASK	(CAN_RX_BUFFER_SIZE - 1 )
@@ -85,12 +86,13 @@ uint8_t CAN_fillBuffer(void){
 			/* store new index */
 			CAN_Rx_Head = tmphead;
 			/* store received data in buffer */
-			CANMessage msg;
-			CAN_readMessage(&msg);
-			CAN_Rx_Buffer[tmphead] = msg;
+			CAN_readMessage(&CAN_Rx_Buffer[tmphead]);
 			flag = CAN_MSGAVAIL;
 		}
 			//CAN_LastRxError = lastRxError;
+
+		// Hack to improve buffer response
+		//_delay_us(100);
 	}
 		return 0;
 }
