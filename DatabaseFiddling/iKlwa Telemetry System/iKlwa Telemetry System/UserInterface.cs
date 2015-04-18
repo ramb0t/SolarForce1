@@ -16,25 +16,32 @@ namespace iKlwa_Telemetry_System
     public partial class UserInterface : Form
     {
         private TelemetryDatabase d;
+        private bool db_exists = false;
+        private int unreadErrorCount = 0;
         private TelemetryCommsManager comms = new TelemetryCommsManager();
         private ReaderWriterLock protection = new ReaderWriterLock();
-        private enum SENSORS :int{HALL_EFFECT = 420, MOTOR_DRIVER = 421,
+        private enum SENSORS :int{HALL_EFFECT = 0xa4, MOTOR_DRIVER = 0xa5,
                                   BMS, GYRO, MPPT1,
                                   MPPT2, MPPT3, MPPT4,GPS,
                                   SOLAR_CELL, ANEMOMETER};
         private ReportScreen output = new ReportScreen();
-        private bool sensor_update = false;
-        private int counter;//naughty
-        string[] list = new string[1];//naughty
+
+        private enum TABS : byte {Summary = 1, Graphing = 2,
+                                  Motion = 3, Electrical = 4,
+                                  Support = 5, RF = 6}
+        private TABS selected_tab = TABS.Summary;
         private const string NO_SENSORS_MSG = "No sensors found...";
 
         public UserInterface()
         {
             InitializeComponent();
+            d = new TelemetryDatabase("xmlDatabase_V5.xml");
+            d.NodeTag = "Capture";
+            db_exists = true;
         }
 
         /// <summary>
-        /// Connects to the Follower Car Embedded System
+        /// Connects to the Follower Car Embedded System and starts COM Ports reading
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -43,7 +50,38 @@ namespace iKlwa_Telemetry_System
             COM_Port_Select COM_Select = new COM_Port_Select();
             COM_Select.ShowDialog();
             comms.name = COM_Select.getPort();
-            backgroundWorker1.RunWorkerAsync();
+            SerialReadingThread.RunWorkerAsync();
+        }
+
+        private void refreshGUI()
+        {
+            if (db_exists == true)
+            try
+            {
+                protection.AcquireReaderLock(100);
+                try
+                {
+                    switch (selected_tab)
+                    {
+                        case TABS.Graphing:
+                            {
+                                getSensors();
+                            }
+                            break;
+
+                        case TABS.Summary:
+                            {
+                                var x = d.getLatestValue("Hall Effect Sensor", "Speed");
+                                if (x.Equals(null)==false)
+                                lbl_instSpeed.Text = x;
+                            }
+                            break;
+                    }
+                }
+                finally { protection.ReleaseReaderLock(); }
+            }
+            catch(ApplicationException xx)
+            { MessageBox.Show(xx.Message); }
         }
 
         /// <summary>
@@ -53,14 +91,31 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void refresh_timer_Tick(object sender, EventArgs e)
         {
-            if (sensor_update == true)
-                getSensors();//if sensor update flag is set, then update sensors every tick
 
+            refreshGUI();
 
-            //naughty things
+            if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
+            if (unreadErrorCount > 0)//update error messages notifications
+            {
+                btn_ErrorNotifications.Text = unreadErrorCount + " New Warnings.";
+                btn_ErrorNotifications.ForeColor = Color.Red;
+                taskbar_notification.Visible = true;
+                taskbar_notification.ShowBalloonTip(100, "Solar Car Warning Message",
+                                                    "You have " + unreadErrorCount + " New Warning Messages."+
+                                                    "\n\nClick here to display.",
+                                                    ToolTipIcon.Warning);
+            }
+            else
+            {
+                btn_ErrorNotifications.Text = "No New Error Messages";
+                btn_ErrorNotifications.ForeColor = Color.Black;
+                taskbar_notification.Visible = false;
+            }
+
+            /*naughty things
             if (counter!=list.Length)
             lbl_instSpeed.Text = list[counter++];
-            d.getLatestValue("Speed");
+            d.getLatestValue("Speed");*/
             
         }
 
@@ -100,26 +155,6 @@ namespace iKlwa_Telemetry_System
           *  }
           */
         }
-
-        #region not sure how to make this work...
-        private delegate IEnumerable<XElement> ReadReq(ref IEnumerable<XElement> xe);
-
-        private IEnumerable<XElement> DB_READ(ReadReq toDo)
-        {
-            IEnumerable<XElement> xe = null;
-            try
-            {
-                protection.AcquireReaderLock(100);
-                try {toDo(ref xe);}
-                finally {protection.ReleaseReaderLock();}
-            }
-            catch (ApplicationException app)
-            {
-                MessageBox.Show(app.Message);
-            }
-            return xe;
-        }
-        #endregion
 
         /// <summary>
         /// Generate an Error Messages Report
@@ -218,7 +253,6 @@ namespace iKlwa_Telemetry_System
                 }
             }
 
-            
             try
             {
                 output.Populate(headers, values);
@@ -228,33 +262,28 @@ namespace iKlwa_Telemetry_System
             { MessageBox.Show(a.Message); }
         }
 
+        /// <summary>
+        /// gets the available sensors and populates the sensor select combo box
+        /// </summary>
         private void getSensors()
         {
             if (comboBox1.Items.Contains(NO_SENSORS_MSG)) //if the no sensors message is in the combo box, remove it
                 comboBox1.Items.Remove(NO_SENSORS_MSG);
-            var sensorGroup = d.getSensors();
-            foreach (var sensor in sensorGroup)
+            try
             {
-                if (comboBox1.Items.Contains(sensor.Key) == false)
-                    comboBox1.Items.Add(sensor.Key); //add sensors to combo box if they are not contained in there 
+                var sensorGroup = d.getSensors();
+                foreach (var sensor in sensorGroup)
+                {
+                    if (comboBox1.Items.Contains(sensor.Key) == false)
+                        comboBox1.Items.Add(sensor.Key); //add sensors to combo box if they are not contained in there 
+                }
             }
+            catch   (Exception e)
+            { MessageBox.Show(e.Message); }
         }
 
         private void UserInterface_Load(object sender, EventArgs e)
         {
-            //naughy
-            /*var results = d.getLatestValue("Speed_Sensor");
-            int c = 0;
-            list = new string[results.Count()];
-            foreach (var item in results)
-            {
-                foreach (var thing in item.Descendants("Value"))
-                {
-                    list[c++] = thing.Value;
-                }
-            }
-            //end naughty*/
-
             var sensorGroup = d.getSensors();
             if (sensorGroup.Count() == 0) //check if any sensors found and display message if not
             {
@@ -279,64 +308,119 @@ namespace iKlwa_Telemetry_System
         }
 
         /// <summary>
-        /// Occurs when Graph control is activated. Populates all user-definable controls.
+        /// Background Thread which handles reading from the COM Port and writing to the Database
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            comms.MavLinkInit();
+            const long timeoutVal = 100000;
+            long count = 0;
+            try
+            {
+                comms.OpenPort();
+                while (count<timeoutVal)
+                {
+                    count++;
+                    var packet = comms.readTelemetryInput();
+                    try
+                    {
+                        protection.AcquireWriterLock(100);
+                        try
+                        {
+                            switch (packet.ID)
+                            {
+                                case (int)SENSORS.MOTOR_DRIVER:
+                                    //dodgy: d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
+                                    d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                                     "Speed", (int)Convert.ToChar(packet.PAYLOAD.ElementAt(0)));
+                                    break;
+                                case (int)SENSORS.HALL_EFFECT:
+                                    d.addDataCapture("Hall Effect Sensor", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                                     "Speed", (int)Convert.ToChar(packet.PAYLOAD.ElementAt(0)));
+                                    break;
+                            }
+                            count = 0;
+                        }
+                        finally
+                        { protection.ReleaseWriterLock(); }//ensure WriterLock is always released
+                    }
+                    catch (ApplicationException error)//Exception from WriterLockTimeout
+                    { MessageBox.Show(error.Message); } 
+                }
+                MessageBox.Show("thread completed");//debug msg
+            }
+            catch (Exception err)//Exception from opening COM Port
+            {
+                MessageBox.Show(err.Message);
+            }
+        }
+
+        /// <summary>
+        /// Occurs when Graph Tab is activated. Populates all user-definable controls.
         /// Also enables refreshing of user-definable controls every timer tick.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void tabControl1_Enter(object sender, EventArgs e)
+        private void tabPage5_Enter(object sender, EventArgs e)
         {
             getSensors();
             numericUpDown4.Value = DateTime.Now.Hour;
             numericUpDown2.Value = DateTime.Now.Minute;
             numericUpDown1.Value = DateTime.Now.Hour - 1;
             numericUpDown3.Value = DateTime.Now.Minute;
-            sensor_update = true;
+            selected_tab = TABS.Graphing;
         }
 
         /// <summary>
-        /// Occurs when the Graph control is de-activated.
-        /// Disables the auto-refreshing of user-definable parameters.
+        /// Occurs when Summary Tab is activated.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void tabControl1_Leave(object sender, EventArgs e)
+        private void tabPage6_Enter(object sender, EventArgs e)
         {
-            sensor_update = false;
+            selected_tab = TABS.Summary;
         }
 
-        //test this!!!!
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        /// <summary>
+        /// Occurs when Solar Car Motion Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage1_Enter(object sender, EventArgs e)
         {
-            comms.MavLinkInit();
-            try
-            {
-                comms.OpenPort();
-                var packet = comms.readTelemetryInput();
-                try
-                {
-                    protection.AcquireWriterLock(250);
-                    try
-                    {
-                        switch(packet.ID)
-                        {
-                            case (int)SENSORS.MOTOR_DRIVER:
-                               //dodgy: d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
-                                d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                                 "Speed", (int)Convert.ToChar());
-                                break;
-                        }
-                    }
-                    finally
-                    { protection.ReleaseWriterLock(); }
-                }
-                catch (ApplicationException error)
-                { MessageBox.Show(error.Message); }
-            }
-            catch (Exception err)
-            {
-                MessageBox.Show(err.Message);
-            }
+            selected_tab = TABS.Motion;
+        }
+
+        /// <summary>
+        /// Occurs when Solar Car Electrical Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage2_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.Electrical;
+        }
+
+        /// <summary>
+        /// Occurs when Support Car Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage4_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.Support;
+        }
+
+        /// <summary>
+        /// Occurs when RF Link Tab is activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage3_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.RF;
         }
     }
 }
