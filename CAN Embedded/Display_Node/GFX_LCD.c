@@ -127,7 +127,10 @@ void drawMain(){
 	u8g_SetDefaultForegroundColor(&u8g);
 	u8g_SetFontPosTop(&u8g);
 	// Draw a Frame
-	u8g_DrawFrame(&u8g,0,0,64,32);
+	u8g_DrawHLine(&u8g, 0,31,120);
+	u8g_DrawHLine(&u8g, 0,32,120);
+	u8g_DrawVLine(&u8g, 64,0,32);
+	//u8g_DrawFrame(&u8g,0,0,64,32);
 
 	// Draw the Speed
 	utoa(gSpeed, buf, 10);
@@ -139,17 +142,23 @@ void drawMain(){
 	u8g_SetDefaultForegroundColor(&u8g);
 	u8g_SetFontPosTop(&u8g);
 
-	// write BMS SOC Label
-	u8g_DrawStr(&u8g, 66, 1, "BMS SOC:");
-	utoa(gBMS_soc, buf, 10);
-	strcat(buf,"%");
-	u8g_DrawStr(&u8g, 66, 10, buf);
+	// Draw SOC Bar
+	u8g_DrawVLine(&u8g, 120,0,64);
+	u8g_DrawHLine(&u8g, 117,0,3);
+	u8g_DrawHLine(&u8g, 117,50,3);
+	u8g_DrawBox(&u8g, 122,50,6,50);
 
 	// write BMS SOC Label
-	u8g_DrawStr(&u8g, 66, 21, "BMS Volts:");
-	utoa(gBMS_PackVoltage, buf, 10);
-	strcat(buf,"V");
-	u8g_DrawStr(&u8g, 66, 31, buf);
+	//u8g_DrawStr(&u8g, 66, 1, "BMS SOC:");
+	//utoa(gBMS_soc, buf, 10);
+	//strcat(buf,"%");
+	//u8g_DrawStr(&u8g, 66, 10, buf);
+
+	// write BMS volt Label
+	//u8g_DrawStr(&u8g, 66, 21, "BMS Volts:");
+	//utoa(gBMS_PackVoltage, buf, 10);
+	//strcat(buf,"V");
+	//u8g_DrawStr(&u8g, 66, 31, buf);
 
 }
 
