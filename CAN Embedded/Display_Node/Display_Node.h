@@ -67,6 +67,8 @@
 //				uint8_t		LCD_BackLight_Val;  // Better to use a macro?
 #define			LCD_BackLight	OCR1A
 
+				uint8_t		flagUpdateLCD;		// sets if an update is needed.
+
 extern volatile uint8_t 	flag;
 // External vars for the display values we are interested in
 extern 			uint16_t 	gSpeed;

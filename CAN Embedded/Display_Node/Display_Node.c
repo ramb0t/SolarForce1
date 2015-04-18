@@ -26,6 +26,8 @@ int main(void)
 	u8g_setup();				// Call u8glib setup for the LCD
 	LCD_UNSELECT();				// Disable sck of LCD to prevent crap being displayed when
 								// Talking to other things on SPI
+	flagUpdateLCD = TRUE; 		// Signal that an update is needed;
+
 	// Init LCD Backlight
 	Timer1_init();				// Setup the timer for PWM
 	LCD_BackLight = 64;		// Set the default backlight value
@@ -42,41 +44,43 @@ int main(void)
     	// If the int pin is held low then we wont have an ISR!
     	// Disable the interrupts and process all outstanding buffer calls
     	cli();
-    	if(~(PINB & (1<<PB0))){
+    	if(~CHECKBIT(PINB,PB0))
+    	{
     		//PCIFR |= (1<<PCIF0); // fire ISR!
     		//while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL){
     		CAN_fillBuffer();
     		//}
-
     	}
     	sei();
 
-    	if(flag == CAN_MSGAVAIL){
-    		//cli();
+    	// Check if there are any messages in the buffer, loop on more messages
+    	while(flag == CAN_MSGAVAIL){
+    		// Fetch a message and if valid, decode it
 			if(CAN_getMessage_Buffer(&message) == CAN_OK){
-
+				// Decode a message and if a field of importance is found, signal LCD update
 				if(CAN_Decode(&message) == CAN_MSG_DECODED){
-					//GFX_LCD_Draw(&message);
-					// call the update routine
-					GFX_LCD_DrawMain();
+					// Set the LCD update flag
+					flagUpdateLCD = TRUE;
 				}
-
+			// no valid message, reset the CAN Buffer flag ?
+			//TODO: There might be a logic fail here that leads to an overflow... must check..
+			}else if(flag == CAN_FAIL){
+				flag = CAN_NOMSG;
 			}
-			//sei();
-		}else if(flag == CAN_FAIL){
-			flag = CAN_NOMSG;
-		}
-//    	rx_status = CAN_checkReceiveAvailable();
-//
-//    	if(rx_status == CAN_MSGAVAIL){
-//    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
-//    		LCD_SELECT();
-//    		GFX_LCD_Draw(&message);
-//    		LCD_UNSELECT();
-//
-//    	}
-    }
-}
+    	}
+
+    	// If an LCD update is needed, then do it!
+    	if(flagUpdateLCD == TRUE){
+    		// Call the update function
+    		GFX_LCD_DrawMain();
+    		// reset the flag
+    		flagUpdateLCD = FALSE;
+    	}
+
+
+
+    } // FOREVER LOOP :0
+} // Life...
 
 //CAN Message selective decoding
 uint8_t CAN_Decode(CANMessage *message){
