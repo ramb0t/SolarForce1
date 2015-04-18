@@ -7,7 +7,7 @@
 
 #include "MAVLink_Messaging.h"
 
-#define DEBUG	1
+#define DEBUG	0
 
 //------------ISR for the Timer0-------------------------//
 
@@ -63,7 +63,6 @@ int main (void)
 				
 		sei();	//interrupts ON
 	
-	//HACK: Sending GPS data and heartbeat
 	//TODO: Get interrupt-based heartbeats and GPS data integrated with CAN
 	
 				mavlink_system.sysid = 100; // System ID, 1-255
@@ -87,8 +86,8 @@ int main (void)
 
 		//uart_putc('a');				
 		CAN_readData();
-		
 		MAV_msg_pack();
+		
 		//uart_puts("Hi!");
 		
 		//GPS_readData();
@@ -281,11 +280,6 @@ void GPS_readData()
 
 void CAN_readData()
 {
-	uart_flush();
-//	_delay_ms(20);
-	
-	char buff[10] ;
-	if(DEBUG){
 		//itoa(CAN_checkReceiveAvailable(), buff,10);
 		//uart_puts("RXAvail:");
 		//uart_puts(buff);
@@ -302,10 +296,18 @@ void CAN_readData()
 	////TODO: Set flag for controller error in GUI
 	//}else if (CAN_checkError()==CAN_OK)
 	
+		uart_flush();
+		//	_delay_ms(20);
+		
+		char buff[10] ;
+	
 	if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
 		{
-//TEST DISPLAY			uart_puts("<<<<START OF MESSAGE>>>>\n");
-//TEST DISPLAY			uart_puts("\nCAN DATA\n");
+	//-------------------DEBUG CODE!-------------------------//
+	if(DEBUG)
+	{
+			uart_puts("<<<<START OF MESSAGE>>>>\n");
+			uart_puts("\nCAN DATA\n");
 			
 			itoa(CAN_checkReceiveAvailable(), buff,10);
 /*TEST DISPLAY*/		uart_puts("RX:");
@@ -315,17 +317,20 @@ void CAN_readData()
 /*TEST DISPLAY*/		uart_puts("Err:");
 						uart_puts(buff);
 						uart_puts(",");
-			//-----------------Pull MPPT data----------------//
-			//CANBusInput.id = 0x711;
-			//CANBusInput.rtr = 1;
-			//CANBusInput.length = 0;
-
-			// Send the request
-			//CAN_sendMessage(&message);
-			
-			//-------------------Receive Data----------------//
-
 			uart_puts(",");
+			
+}//-------------------END DEBUG CODE!-------------------------//
+	
+				//-----------------Pull MPPT data----------------//
+				//CANBusInput.id = 0x711;
+				//CANBusInput.rtr = 1;
+				//CANBusInput.length = 0;
+
+				// Send the request
+				//CAN_sendMessage(&message);
+				
+				//-------------------Receive Data----------------//
+			
 			int rx_Result;
 			rx_Result = CAN_readMessage(&Input_Message);			//read a byte of CAN data
 			
@@ -400,50 +405,94 @@ void CAN_readData()
 						uart_puts(buff);
 					}
 
-				}
+				}//endif MPPT1
 				
-												
+				if (Input_Message.id ==MPPT2_CANID)				//BMS data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from MPPT2:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<4;i++)						//4 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}//endif MPPT1
 				
+				if (Input_Message.id ==MPPT3_CANID)				//BMS data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from MPPT3:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<4;i++)						//4 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}//endif MPPT1
+								
+				if (Input_Message.id ==MPPT4_CANID)				//BMS data detected
+				{
+					uart_puts("\n");
+					uart_puts("CAN from MPPT4:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<4;i++)						//4 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						uart_puts(buff);
+					}
+
+				}//endif MPPT1
 				
-				//uart_puts(",");
-				//itoa(Input_Message.length,buff,10);
-///*TEST DISPLAY*/uart_puts("\nCAN Data Length:");
-				//uart_puts(",");
-				//if(Input_Message.length==0)						//checks length
-				//{
-///*TEST DISPLAY*/uart_puts("No CAN Data bits\n");			//Prints if no data bits present
-					//}else{
-						//
-					//uart_puts(buff);
-					//for(int j = 0; j< Input_Message.length; j++)	//print byte for each data element
-					//{
-///*TEST DISPLAY*/		uart_puts("\nCAN Data ");
-						//itoa(j,buff,10);
-						//uart_puts(buff);
-///*TEST DISPLAY*/			uart_puts(": ");
-						//
-						//itoa(Input_Message.data[j],buff,10);
-						//
-						//uart_puts(buff);
-						//uart_puts(",");
-					//}
-				//}//endif input length==0
-				//
-				//itoa(Input_Message.rtr,buff,2);
-///*TEST DISPLAY*/	uart_puts("\nIs this an RTR?: ");
-				//if(Input_Message.rtr==1)
-				//{
-					//uart_puts("Y,");
-				//}else uart_puts("N\n");
+			
 				
+			
+	if (DEBUG)
+	{
+				uart_puts(",");
+				itoa(Input_Message.length,buff,10);
+				/*TEST DISPLAY*/uart_puts("\nCAN Data Length:");
+				uart_puts(",");
+				if(Input_Message.length==0)						//checks length
+				{
+					/*TEST DISPLAY*/uart_puts("No CAN Data bits\n");			//Prints if no data bits present
+					}else{
+								
+					uart_puts(buff);
+					for(int j = 0; j< Input_Message.length; j++)	//print byte for each data element
+					{
+						/*TEST DISPLAY*/		uart_puts("\nCAN Data ");
+						itoa(j,buff,10);
+						uart_puts(buff);
+						/*TEST DISPLAY*/			uart_puts(": ");
+									
+						itoa(Input_Message.data[j],buff,10);
+									
+						uart_puts(buff);
+						uart_puts(",");
+					}
+				}//endif input length==0
+							
+				itoa(Input_Message.rtr,buff,2);
+				/*TEST DISPLAY*/	uart_puts("\nIs this an RTR?: ");
+				if(Input_Message.rtr==1)
+				{
+					uart_puts("Y,");
+				}else uart_puts("N\n");
+							
+	}
+					
+
+
 
 				
-				
-				
+					
+					
 			}//endif CAN_OK
 /*TEST DISPLAY*/ uart_puts("\n-------\n CAN Done.\n");
 		}//endif CAN_MSGAVAIL
-	}//endif DEBUG
 		
 }//end CAN_readData
 
@@ -513,7 +562,7 @@ void MAV_msg_pack()
 			//TESTING		CAN 2 = speed to send							*/
 			
 			//uart_flush();
-			mavlink_msg_hall_effect_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/60,0,0);
+			mavlink_msg_hall_effect_send(MAVLINK_COMM_0, /*Input_Message.data[0]*/60,0,0);
 			
 			//uart_puts("RX");
 			//uart_puts(MAV_Rx_buff);
@@ -555,7 +604,7 @@ void MAV_msg_pack()
 								5 = int8_t incline (degrees)				-127 to 127 (0-100 @ 10 counts per degree)
 			//TESTING																	*/
 			
-//			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
+			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
 			
 //TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
 			//MAV_uart_send(buf,len);
@@ -590,19 +639,19 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-//			mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,2542,1011,0,0);
+			mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,2542,1011,0,0);
 			
 //TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-//			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,2500,1000,0,0);
+			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,2500,1000,0,0);
 			
 //TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-//			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,2591,968,0,1);
+			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,2591,968,0,1);
 			
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-//			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
+			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
