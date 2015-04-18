@@ -88,10 +88,10 @@ void GFX_LCD_Draw(CANMessage* message){
 
 void GFX_LCD_DrawMain(void){
 
+	// Generate strings for each field?
 	cli();
 	LCD_SELECT();
 	u8g_FirstPage(&u8g);
-	//u8g_prepare();
 	do
 	{
 		drawMain();

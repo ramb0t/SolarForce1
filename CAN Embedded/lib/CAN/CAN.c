@@ -23,14 +23,27 @@ static volatile CANMessage CAN_Rx_Buffer[CAN_RX_BUFFER_SIZE];
 volatile uint8_t CAN_Rx_Head;
 volatile uint8_t CAN_Rx_Tail;
 volatile uint8_t 	flag;
-//WE NEED AN ISR!
 
+/*  WE NEED AN ISR!
+* Include one of the following in your main.c file and call the relevant init function from this library
 ISR(INT0_vect){
 	CAN_fillBuffer();
 
 }
 
-//ISR(PCINT0_vect, ISR_ALIASOF(INT0_vect));
+Associated Init:
+CAN_setupInt0();
+
+
+ISR(PCINT0_vect){
+	CAN_fillBuffer();
+
+}
+
+Associated Init:
+CAN_setupPCINT0();
+
+*/
 
 /*************************************************************************
 Function: CAN_Init()

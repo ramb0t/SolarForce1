@@ -222,3 +222,10 @@ int main(void)
 
     } // while
 } // main
+
+
+// Int0 ISR for CAN buffer...
+ISR(INT0_vect){
+	CAN_fillBuffer();
+
+}

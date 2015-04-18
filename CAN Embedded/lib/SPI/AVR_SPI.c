@@ -22,6 +22,7 @@ void SPI_Init(void){
 
 	SPCR |= (1 << MSTR); /* clockmaster */
 	SPCR |= (1 << SPE); /* enable */
+	// Double Speed because YOLO SWAG
 	SPSR = ( 1 <<SPI2X ) ; /* fosc = fclk / 2 */
 
 	// INIT interface, Master, set clock rate fck/128 TODO: check prescaler
