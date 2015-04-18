@@ -32,8 +32,11 @@
 // Variable Definitions
 /*********************************************/
 // Used for the display...
-uint16_t gSpeed;
-uint8_t gBMS_soc;
+uint16_t	gSpeed;
+uint8_t 	gBMS_soc;
+uint16_t 	gBMS_PackVoltage;
+int16_t 	gBMS_PackCurrent;
+int8_t		gBMS_Temp;
 
 
 // Function Prototypes

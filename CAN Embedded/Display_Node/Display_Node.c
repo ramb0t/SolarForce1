@@ -9,46 +9,48 @@
 
 int main(void)
 {
+	// HACK
+	// LCD SCKCTL Output
+	LCD_SCKCTL_DDR |= (1<<LCD_SCKCTL);
+	LCD_UNSELECT();				// Disable the sck line of LCD to bypass ST7920 bug
+
 	// Init SPI
 	SPI_Init();
 
 	// Init CAN
-	CAN_Init(CAN_125KBPS_16MHZ);
-	CAN_setupPCINT0();
-
-	// HACK
-	// LCD SCKCTL Output
-	LCD_SCKCTL_DDR |= (1<<LCD_SCKCTL);
-	LCD_SELECT();
+	CAN_Init(CAN_125KBPS_16MHZ); // Setup CAN Bus with our desired speed
+	CAN_setupPCINT0();			 // Setup CAN Message buffer using PCINT ISR
 
 	// Init LCD
-	u8g_setup();
-	LCD_UNSELECT();
-
+	LCD_SELECT();				// Enable the sck line of LCD to bypass ST7920 bug
+	u8g_setup();				// Call u8glib setup for the LCD
+	LCD_UNSELECT();				// Disable sck of LCD to prevent crap being displayed when
+								// Talking to other things on SPI
 	// Init LCD Backlight
-	Timer1_init();
-	OCR1A = 0;
-	Timer1_PWM_Off();
-	OCR1A = 128;
-	Timer1_PWM_On();
+	Timer1_init();				// Setup the timer for PWM
+	LCD_BackLight = 64;		// Set the default backlight value
+	Timer1_PWM_On();			// Turn backlight on
 
 	// Create a new message
 	CANMessage message;
-	//uint8_t rx_status = 0xff;
 
 	// Enable Interrupts
 	sei();
 
+	// Loop for all the time ever!!! (Hopefully...)
     while(1) {
+    	// If the int pin is held low then we wont have an ISR!
+    	// Disable the interrupts and process all outstanding buffer calls
     	cli();
     	if(~(PINB & (1<<PB0))){
     		//PCIFR |= (1<<PCIF0); // fire ISR!
     		//while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL){
-    			CAN_fillBuffer();
+    		CAN_fillBuffer();
     		//}
 
     	}
     	sei();
+
     	if(flag == CAN_MSGAVAIL){
     		//cli();
 			if(CAN_getMessage_Buffer(&message) == CAN_OK){
@@ -93,22 +95,27 @@ uint8_t CAN_Decode(CANMessage *message){
 
 	break; //CANID_SPEED
 
+	case CANID_BMS3:
+		gBMS_PackVoltage = (message->data[0]<<8)|(message->data[1]);
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+	break; //CANID_BMS3
+
+	case CANID_BMS4:
+		gBMS_PackCurrent = (message->data[0]<<8)|(message->data[1]);
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+	break; //CANID_BMS4
 
 	case CANID_BMS6:
-		//We found BMS Msg 7
 		gBMS_soc = message->data[0]; // State of charge
 
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;
 
 	break; //CANID_BMS6
-
-	case CANID_BMS3:
-		gBMS_PackVoltage = (message->data[0]<<8)|(message->data[1]);
-
-		// let the caller know we found something!
-		decode_result = CAN_MSG_DECODED;
-	break;
 
 	default:
 		// We didn't find any message we are looking for...
@@ -127,3 +134,5 @@ ISR(PCINT0_vect){
 	//LCD_SELECT();
 
 }
+
+

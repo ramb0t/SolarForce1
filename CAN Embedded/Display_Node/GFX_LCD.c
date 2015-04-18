@@ -7,9 +7,7 @@ u8g_t u8g;
 
 extern volatile uint8_t CAN_Rx_Head;
 extern volatile uint8_t CAN_Rx_Tail;
-uint8_t bms_soc;
-uint16_t speed;
-uint16_t gBMS_PackVoltage;
+
 void u8g_setup(void)
 {
 	// Init CS pin
@@ -120,16 +118,18 @@ void GFX_LCD_DrawMain(void){
 
 void drawMain(){
 	char buf[10]; // used for forming strings to pass to the display ??
+	char string[15];
 
 	// Set The Font
 	u8g_SetFont(&u8g, u8g_font_freedoomr25n);
 	u8g_SetFontRefHeightExtendedText(&u8g);
 	u8g_SetDefaultForegroundColor(&u8g);
 	u8g_SetFontPosTop(&u8g);
+
 	// Draw a Frame
-	u8g_DrawHLine(&u8g, 0,31,120);
-	u8g_DrawHLine(&u8g, 0,32,120);
-	u8g_DrawVLine(&u8g, 64,0,32);
+	u8g_DrawHLine(&u8g, 0,31,64);
+	u8g_DrawHLine(&u8g, 0,32,64);
+	u8g_DrawVLine(&u8g, 64,0,64);
 	//u8g_DrawFrame(&u8g,0,0,64,32);
 
 	// Draw the Speed
@@ -138,21 +138,55 @@ void drawMain(){
 
 	// Change the font
 	u8g_SetFont(&u8g, u8g_font_6x10);
-	u8g_SetFontRefHeightExtendedText(&u8g);
-	u8g_SetDefaultForegroundColor(&u8g);
 	u8g_SetFontPosTop(&u8g);
 
+	// Draw Power In / Power Out
+	// First Calculate the power: P = V.I
+	// TODO: Check scaling of this value.. need kW ?
+	int16_t packPower = gBMS_PackVoltage*gBMS_PackCurrent;
+	utoa(packPower, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Pwr:");
+	strcat(string,buf);
+	strcat(string,"W");
+	u8g_DrawStr(&u8g, 66, 1, string);
+
+	// Change the font
+	u8g_SetFont(&u8g, u8g_font_5x8);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw Pack Voltage
+	utoa(gBMS_PackVoltage, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Volt:");
+	strcat(string,buf);
+	strcat(string,"V");
+	u8g_DrawStr(&u8g, 66, 15, string);
+
+	// Draw Temp
+	itoa(gBMS_Temp, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Temp:");
+	strcat(string,buf);
+	strcat(string,"'C");
+	u8g_DrawStr(&u8g, 66, 25, string);
+
 	// Draw SOC Bar
-	u8g_DrawVLine(&u8g, 120,0,64);
-	u8g_DrawHLine(&u8g, 117,0,3);
-	u8g_DrawHLine(&u8g, 117,50,3);
-	u8g_DrawBox(&u8g, 122,50,6,50);
+	u8g_DrawVLine(&u8g, 120,0,50);
+	u8g_DrawHLine(&u8g, 114,0,6);
+	u8g_DrawHLine(&u8g, 114,49,6);
+	// Draw the bar graph
+	u8g_DrawBox(&u8g, 122,50-(gBMS_soc/2)-1,6,(gBMS_soc/2)+1);
 
 	// write BMS SOC Label
-	//u8g_DrawStr(&u8g, 66, 1, "BMS SOC:");
-	//utoa(gBMS_soc, buf, 10);
-	//strcat(buf,"%");
-	//u8g_DrawStr(&u8g, 66, 10, buf);
+	u8g_SetFont(&u8g, u8g_font_5x7);
+	u8g_SetFontPosTop(&u8g);
+	utoa(gBMS_soc, buf, 10);
+	strcat(buf,"%");
+	u8g_DrawStr(&u8g, 114, 50, buf);
+	u8g_SetFontPosBottom(&u8g);
+	u8g_DrawStr(&u8g, 114, 65, "SOC");
+
 
 	// write BMS volt Label
 	//u8g_DrawStr(&u8g, 66, 21, "BMS Volts:");

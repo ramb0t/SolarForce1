@@ -63,10 +63,17 @@
 
 // Variable Definitions
 /*********************************************/
+// local vars
+//				uint8_t		LCD_BackLight_Val;  // Better to use a macro?
+#define			LCD_BackLight	OCR1A
+
 extern volatile uint8_t 	flag;
+// External vars for the display values we are interested in
 extern 			uint16_t 	gSpeed;
 extern 			uint8_t		gBMS_soc;
 extern			uint16_t	gBMS_PackVoltage;
+extern			int16_t		gBMS_PackCurrent;
+extern			int8_t		gBMS_Temp;
 
 // Function Prototypes
 /*********************************************/
