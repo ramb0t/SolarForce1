@@ -548,7 +548,7 @@ void MAV_msg_pack()
 			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			//MAV_uart_send(buf,len);
 			
-			mavlink_msg_motor_driver_send(0, 1,85/*Input_Message.data[4],Input_Message.data[5]*/);
+			mavlink_msg_motor_driver_send(MAVLINK_COMM_0, 1,85/*Input_Message.data[4],Input_Message.data[5]*/);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
