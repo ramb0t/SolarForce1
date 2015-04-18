@@ -46,10 +46,7 @@ int main(void)
     	cli();
     	if(~CHECKBIT(PINB,PB0))
     	{
-    		//PCIFR |= (1<<PCIF0); // fire ISR!
-    		//while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL){
     		CAN_fillBuffer();
-    		//}
     	}
     	sei();
 
@@ -67,6 +64,13 @@ int main(void)
 			}else if(flag == CAN_FAIL){
 				flag = CAN_NOMSG;
 			}
+			// Improve buffer performance?
+			cli();
+			if(~CHECKBIT(PINB,PB0))
+			{
+				CAN_fillBuffer();
+			}
+			sei();
     	}
 
     	// If an LCD update is needed, then do it!

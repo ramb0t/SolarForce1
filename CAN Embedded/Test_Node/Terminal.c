@@ -67,7 +67,7 @@ void Terminal_read(volatile uint8_t* state){
 
 
 		// now do state machine logic
-		switch(*state){
+		switch(*state && 0xf0){ // select higher nibble for primary state
 		case TERMINAL_RUN :
 			// Main Menu
 			switch(command){
@@ -172,7 +172,7 @@ void Terminal_read(volatile uint8_t* state){
 
 			case TERMINAL_cLOOPBMS:
 				// loop BMS Data
-				*state = TERMINAL_LOOPBMS;
+				*state |= TERMINAL_LOOPBMS;
 				uart_puts("\n");
 				uart_puts("Looping BMS CAN Messages \n");
 				uart_puts("Type 'c' to exit\n");
@@ -182,7 +182,7 @@ void Terminal_read(volatile uint8_t* state){
 
 			case TERMINAL_cLOOPSPEED:
 				// loop Speed Data
-				*state = TERMINAL_LOOPSPEED;
+				*state |= TERMINAL_LOOPSPEED;
 				uart_puts("\n");
 				uart_puts("Looping Speed CAN Messages \n");
 				uart_puts("Type 'c' to exit\n");

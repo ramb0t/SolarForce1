@@ -68,8 +68,10 @@ int main(void)
 
 	// for timing!
 	extern volatile uint16_t ms_Counter;
-	uint16_t oldtime = ms_Counter;
-	uint16_t waittime = 250; // delay time in ms
+		uint16_t oldBMSTime = ms_Counter;
+		uint16_t oldSpeedTime = ms_Counter-50; // add a small offset
+#define	waitBMSTime 1000 // delay time in ms
+#define waitSpeedTime 200
 
 	uint16_t spd = 0;
 
@@ -149,8 +151,8 @@ int main(void)
     			break;
 
     		case (TERMINAL_SENDRANDOM):
-				if((ms_Counter - oldtime) > waittime){
-					oldtime = ms_Counter;
+				if((ms_Counter - oldBMSTime) > waitBMSTime){
+					oldBMSTime = ms_Counter;
 
 					message.id = i;
 					i++;
@@ -192,30 +194,31 @@ int main(void)
     			Terminal_state = TERMINAL_SENDSUB;
 				break;
 
-    		case (TERMINAL_LOOPBMS):
-				if((ms_Counter - oldtime) > waittime){
-					oldtime = ms_Counter;
 
-					BMS_send_fake_data();
-				}
-				break;
-
-    		case (TERMINAL_LOOPSPEED):
-				if((ms_Counter - oldtime) > waittime){
-					oldtime = ms_Counter;
-					SpeedEmu_set_speed(spd);
-					spd = spd+1;
-					if(spd > 150){
-						spd = 0;
-					}
-					SpeedEmu_send_fake_data();
-				}
-				break;
 
     		default:
 
     			break;
-    		}
+    		}// State Switch
 
-    }
-}
+    	if (Terminal_state && TERMINAL_LOOPBMS){
+			if((ms_Counter - oldBMSTime) > waitBMSTime){
+				oldBMSTime = ms_Counter;
+				BMS_send_fake_data();
+			}
+    	}
+
+    	if (Terminal_state && TERMINAL_LOOPSPEED){
+			if((ms_Counter - oldSpeedTime) > waitSpeedTime){
+				oldSpeedTime = ms_Counter;
+				SpeedEmu_set_speed(spd);
+				spd = spd+1;
+				if(spd > 250){
+					spd = 0;
+				}
+				SpeedEmu_send_fake_data();
+			}
+    	}
+
+    } // while
+} // main
