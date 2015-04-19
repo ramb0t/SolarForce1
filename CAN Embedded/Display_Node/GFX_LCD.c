@@ -136,16 +136,28 @@ void drawMain(){
 	strcat(string,"P:");
 
 	// First Calculate the power: P = V.I
-	int16_t  packPower  = gBMS_PackVoltage*gBMS_PackCurrent;
+	int32_t packPower = gBMS_PackVoltage ;
+	packPower = packPower * gBMS_PackCurrent;
+
 	if(packPower > 0){
 		strcat(string,"+");
 	}
 	if(packPower >=1000 || packPower <=-1000){ // We need to go to kW
 		int16_t  iPackPower = packPower / 1000; // Get kW ints
 		uint16_t rPackPower = packPower % 1000; // Get kW dec
+		if(packPower < 0){ // need to flip the sign of the remainder... twos comp?
+			rPackPower = ~rPackPower + 1;
+		}
 		itoa(iPackPower, buf, 10);
 		strcat(string,buf);
 		strcat(string,".");
+		// Sort out Zeros etc
+		if(rPackPower < 100){
+			strcat(string,"0");
+			if(rPackPower < 10){
+				strcat(string,"0");
+			}
+		}
 		utoa(rPackPower, buf, 10);
 		strcat(string,buf);
 		strcat(string,"kW");
