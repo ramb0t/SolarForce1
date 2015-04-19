@@ -606,7 +606,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(105, 47);
+            this.label1.Location = new System.Drawing.Point(125, 47);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 13);
             this.label1.TabIndex = 7;
@@ -617,9 +617,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(17, 47);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 13);
+            this.label2.Size = new System.Drawing.Size(93, 13);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Time Received:";
+            this.label2.Text = "Hall Effect Speed:";
             // 
             // label8
             // 
@@ -660,7 +660,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(65, 25);
+            this.label12.Location = new System.Drawing.Point(125, 25);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(55, 13);
             this.label12.TabIndex = 1;
@@ -671,9 +671,9 @@
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(17, 25);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(41, 13);
+            this.label13.Size = new System.Drawing.Size(102, 13);
             this.label13.TabIndex = 0;
-            this.label13.Text = "Speed:";
+            this.label13.Text = "Motor Driver Speed:";
             // 
             // tabPage2
             // 
@@ -827,7 +827,6 @@
             this.zedGraphControl1.ScrollMinY2 = 0D;
             this.zedGraphControl1.Size = new System.Drawing.Size(473, 316);
             this.zedGraphControl1.TabIndex = 0;
-            this.zedGraphControl1.Load += new System.EventHandler(this.zedGraphControl1_Load);
             // 
             // btn_COMPortConnect
             // 
@@ -911,6 +910,7 @@
             this.Name = "UserInterface";
             this.Text = "UKZN Solar Car Telemetry System";
             this.TransparencyKey = System.Drawing.Color.Maroon;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UserInterface_FormClosing);
             this.Load += new System.EventHandler(this.UserInterface_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);

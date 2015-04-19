@@ -25,7 +25,7 @@ namespace iKlwa_Telemetry_System
                                   MPPT2, MPPT3, MPPT4,GPS,
                                   SOLAR_CELL, ANEMOMETER};
         private ReportScreen output;// = new ReportScreen();
-
+        private bool safe_to_close = true;
         private enum TABS : byte {Summary = 1, Graphing = 2,
                                   Motion = 3, Electrical = 4,
                                   Support = 5, RF = 6}
@@ -36,7 +36,6 @@ namespace iKlwa_Telemetry_System
         {
             InitializeComponent();
             d = new TelemetryDatabase("xmlDatabase_V5.xml");
-            //d = new TelemetryDatabase("SimDB.xml");
             d.NodeTag = "Capture";
             db_exists = true;
             refresh_timer.Enabled = true;
@@ -66,6 +65,7 @@ namespace iKlwa_Telemetry_System
                 protection.AcquireReaderLock(10000);//lock reader
                 try
                 {
+                    string x = null;
                     //refreshing takes place based on selected tab
                     //this prevents querying data from the database that won't need to be displayed
                     //less data queried at a time = better performance
@@ -79,13 +79,16 @@ namespace iKlwa_Telemetry_System
 
                         case TABS.Summary:
                             {
-                                string x = null;
                                 //this is under test. currently only shows HE Speed on a label
-                                try { x = d.getLatestValue("Motor Driver", "Speed"); }
-                                catch (Exception error)
-                                { MessageBox.Show(error.Message); }
-                                if (x.Equals(null)==false)//check for null value, just in case... shouldn't ever happen
+                                try
+                                {
+                                    x = d.getLatestValue("Motor Driver", "Speed");
                                     lbl_instSpeed.Text = x;
+                                }
+                                catch (Exception error)
+                                {
+                                    //MessageBox.Show(error.Message);
+                                }
                             }
                             break;
 
@@ -93,6 +96,18 @@ namespace iKlwa_Telemetry_System
                             break;
 
                         case TABS.Motion:
+                                //this is under test. currently only shows HE Speed on a label
+                                try
+                                {
+                                    x = d.getLatestValue("Motor Driver", "Speed");
+                                    label12.Text = x;
+                                    x = d.getLatestValue("Hall Effect Sensor", "Speed");
+                                    label1.Text = x;
+                                }
+                                catch (Exception error)
+                                {
+                                    //MessageBox.Show(error.Message);
+                                }
                             break;
 
                         case TABS.Support:
@@ -351,6 +366,7 @@ namespace iKlwa_Telemetry_System
                         protection.AcquireWriterLock(100);//lock writer
                         try
                         {
+                            safe_to_close = false;
                             switch (packet.ID)//determine sensor based on packet ID
                             {
                                 case (int)SENSORS.MOTOR_DRIVER:
@@ -396,7 +412,10 @@ namespace iKlwa_Telemetry_System
                             count = 0;//if code reaches here, there was a successful write and the timeout counter is cleared.
                         }
                         finally
-                        { protection.ReleaseWriterLock(); }//ensure WriterLock is always released
+                        {
+                            protection.ReleaseWriterLock();//ensure WriterLock is always released
+                            safe_to_close = true;
+                        }
                     }
                     catch (ApplicationException error)//Exception from WriterLockTimeout
                     { MessageBox.Show(error.Message); } 
@@ -496,9 +515,10 @@ namespace iKlwa_Telemetry_System
             taskbar_notification.Visible = false;
         }
 
-        private void zedGraphControl1_Load(object sender, EventArgs e)
+        private void UserInterface_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            while (safe_to_close == false);//nop nop nop!!
         }
+
     }
 }
