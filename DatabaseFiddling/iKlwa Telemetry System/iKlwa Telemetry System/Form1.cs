@@ -52,7 +52,7 @@ namespace iKlwa_Telemetry_System
         private void button1_Click(object sender, EventArgs e)
         {
             c.ShowDialog(); //open the COM Port Select form
-            string COM_port = c.getPort(); //get the selected port, if valid
+            string COM_port = c.Port; //get the selected port, if valid
             comms.name = COM_port.ToString();
             comms.OpenPort();
         }

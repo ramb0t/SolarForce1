@@ -29,15 +29,15 @@ namespace iKlwa_Telemetry_System
         private enum TABS : byte {Summary = 1, Graphing = 2,
                                   Motion = 3, Electrical = 4,
                                   Support = 5, RF = 6}
-        private TABS selected_tab = TABS.Summary;
+        private TABS selected_tab = TABS.Summary;//keeps track of which tab is selected
         private const string NO_SENSORS_MSG = "No sensors found...";
 
         public UserInterface()
         {
             InitializeComponent();
-            //d = new TelemetryDatabase("xmlDatabase_V5.xml");
-            d = new TelemetryDatabase("SimDB.xml");
-            d.NodeTag = "SimInput";
+            d = new TelemetryDatabase("xmlDatabase_V5.xml");
+            //d = new TelemetryDatabase("SimDB.xml");
+            d.NodeTag = "Capture";
             db_exists = true;
             refresh_timer.Enabled = true;
         }
@@ -51,8 +51,11 @@ namespace iKlwa_Telemetry_System
         {
             COM_Port_Select COM_Select = new COM_Port_Select();
             COM_Select.ShowDialog();
-            comms.name = COM_Select.getPort();
-            SerialReadingThread.RunWorkerAsync();
+            if (COM_Select.NoPortsFound == false)
+            {
+                comms.name = COM_Select.Port;
+                SerialReadingThread.RunWorkerAsync();
+            }
         }
 
         private void refreshGUI()
@@ -60,27 +63,46 @@ namespace iKlwa_Telemetry_System
             if (db_exists == true)
             try
             {
-                protection.AcquireReaderLock(100);
+                protection.AcquireReaderLock(100);//lock reader
                 try
                 {
+                    //refreshing takes place based on selected tab
+                    //this prevents querying data from the database that won't need to be displayed
+                    //less data queried at a time = better performance
                     switch (selected_tab)
                     {
                         case TABS.Graphing:
                             {
-                                getSensors();
+                                getSensors();//keep repopulating sensors
                             }
                             break;
 
                         case TABS.Summary:
                             {
-                                var x = d.getLatestValue("Hall Effect Sensor", "Speed");
-                                if (x.Equals(null)==false)
-                                lbl_instSpeed.Text = x;
+                                string x = null;
+                                //this is under test. currently only shows HE Speed on a label
+                                try { x = d.getLatestValue("Hall Effect Sensor", "Speed"); }
+                                catch (Exception error)
+                                { MessageBox.Show(error.Message); }
+                                if (x.Equals(null)==false)//check for null value, just in case... shouldn't ever happen
+                                    lbl_instSpeed.Text = x;
                             }
+                            break;
+
+                        case TABS.Electrical:
+                            break;
+
+                        case TABS.Motion:
+                            break;
+
+                        case TABS.Support:
+                            break;
+
+                        case TABS.RF:
                             break;
                     }
                 }
-                finally { protection.ReleaseReaderLock(); }
+                finally { protection.ReleaseReaderLock(); } //ensure reader lock is released
             }
             catch(ApplicationException xx)
             { MessageBox.Show(xx.Message); }
@@ -94,24 +116,14 @@ namespace iKlwa_Telemetry_System
         private void refresh_timer_Tick(object sender, EventArgs e)
         {
 
-            refreshGUI();
+            refreshGUI();//refresh GUI method
 
-            //if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
+            if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
             if (unreadErrorCount > 0)//update error messages notifications
             {
-                btn_ErrorNotifications.Text = unreadErrorCount + " New Warnings.";
                 btn_ErrorNotifications.ForeColor = Color.Red;
+                btn_ErrorNotifications.Text = unreadErrorCount + " New Warnings.";
                 taskbar_notification.Visible = true;
-                taskbar_notification.ShowBalloonTip(100, "Solar Car Warning Message",
-                                                    "You have " + unreadErrorCount + " New Warning Messages."+
-                                                    "\n\nClick here to display.",
-                                                    ToolTipIcon.Warning);
-            }
-            else
-            {
-                btn_ErrorNotifications.Text = "No New Error Messages";
-                btn_ErrorNotifications.ForeColor = Color.Black;
-                taskbar_notification.Visible = false;
             }
 
             /*naughty things
@@ -259,6 +271,7 @@ namespace iKlwa_Telemetry_System
             {
                 output.Populate(headers, values);
                 output.Show();
+                output.setTitle("Raw Data Entries");
             }
             catch (ArgumentException a)
             { MessageBox.Show(a.Message); }
@@ -316,23 +329,23 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            //comms.MavLinkInit();
-            comms.defaultInit();
-            const long timeoutVal = 100000;
-            long count = 0;
+            comms.MavLinkInit();
+            //comms.defaultInit();
+            const long timeoutVal = 100000;//if cannot receive a packet after this number of trials, probably a loss of connection. Test?
+            long count = 0;//to compare to timeoutVal
             try
             {
-                comms.OpenPort();
+                comms.OpenPort();//open COM Port
                 while (count<timeoutVal)
                 {
-                    count++;
-                    var packet = comms.readTelemetryInput();
+                    count++;//increment timeout counter
+                    var packet = comms.readTelemetryInput(); //read telemetry input
                     try
                     {
-                        protection.AcquireWriterLock(100);
+                        protection.AcquireWriterLock(100);//lock writer
                         try
                         {
-                            switch (packet.ID)
+                            switch (packet.ID)//determine sensor based on packet ID
                             {
                                 case (int)SENSORS.MOTOR_DRIVER:
                                     //dodgy: d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
@@ -345,8 +358,36 @@ namespace iKlwa_Telemetry_System
                                     d.addDataCapture("Hall Effect Sensor", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
                                                      "Speed", (int)Convert.ToChar(str));
                                     break;
+
+                                case (int)SENSORS.BMS:
+                                    break;
+
+                                case (int)SENSORS.GYRO:
+                                    break;
+                                
+                                case (int)SENSORS.MPPT1:
+                                case (int)SENSORS.MPPT2:
+                                case (int)SENSORS.MPPT3:
+                                case (int)SENSORS.MPPT4:
+                                    //look to implement generic MPPT function with a different code for each of the 4
+                                    //structure of MPPT data entry will essentially be the same
+                                    break;
+
+                                case (int)SENSORS.GPS:
+                                    break;
+
+                                case (int)SENSORS.SOLAR_CELL:
+                                    break;
+
+                                case (int)SENSORS.ANEMOMETER:
+                                    break;
+
+                                default:
+                                    d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                        "Sensor packet with invalid ID detected.");
+                                    break;
                             }
-                            count = 0;
+                            count = 0;//if code reaches here, there was a successful write and the timeout counter is cleared.
                         }
                         finally
                         { protection.ReleaseWriterLock(); }//ensure WriterLock is always released
@@ -354,9 +395,9 @@ namespace iKlwa_Telemetry_System
                     catch (ApplicationException error)//Exception from WriterLockTimeout
                     { MessageBox.Show(error.Message); } 
                 }
-                MessageBox.Show("thread completed");//debug msg
+                //MessageBox.Show("thread completed");//debug msg
             }
-            catch (Exception err)//Exception from opening COM Port
+            catch (Exception err)//Exception from opening COM Port or any other event that wasn't considered
             {
                 MessageBox.Show(err.Message);
             }
@@ -370,12 +411,14 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void tabPage5_Enter(object sender, EventArgs e)
         {
-            getSensors();
+            getSensors();//populate sensor select combo box
+
+            //set numeric updowns so that the default is for the last hour of receiving data
             numericUpDown4.Value = DateTime.Now.Hour;
             numericUpDown2.Value = DateTime.Now.Minute;
             numericUpDown1.Value = DateTime.Now.Hour - 1;
             numericUpDown3.Value = DateTime.Now.Minute;
-            selected_tab = TABS.Graphing;
+            selected_tab = TABS.Graphing;//indicate that the graphing tab was selected
         }
 
         /// <summary>
@@ -385,7 +428,7 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void tabPage6_Enter(object sender, EventArgs e)
         {
-            selected_tab = TABS.Summary;
+            selected_tab = TABS.Summary;//indicate that the summary tab was selected
         }
 
         /// <summary>
@@ -426,6 +469,25 @@ namespace iKlwa_Telemetry_System
         private void tabPage3_Enter(object sender, EventArgs e)
         {
             selected_tab = TABS.RF;
+        }
+
+        private void btn_ErrorNotifications_TextChanged(object sender, EventArgs e)
+        {
+            if (btn_ErrorNotifications.ForeColor.Equals(Color.Red))
+            {
+                taskbar_notification.ShowBalloonTip(10, "Solar Car Warning Message",
+                                                    "You have " + unreadErrorCount + " New Warning Messages." +
+                                                    "\n\nClick here to display.",
+                                                    ToolTipIcon.Warning);
+            }
+        }
+
+        private void btn_ErrorNotifications_Click(object sender, EventArgs e)
+        {
+            unreadErrorCount = 0;
+            btn_ErrorNotifications.Text = "No New Warnings";
+            btn_ErrorNotifications.ForeColor = Color.Black;
+            taskbar_notification.Visible = false;
         }
     }
 }

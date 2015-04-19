@@ -859,6 +859,8 @@
             this.taskbar_notification.BalloonTipTitle = "Unread Telemetry Warning Messages";
             this.taskbar_notification.Icon = ((System.Drawing.Icon)(resources.GetObject("taskbar_notification.Icon")));
             this.taskbar_notification.Text = "Unread Warning Messages";
+            this.taskbar_notification.Visible = true;
+            this.taskbar_notification.BalloonTipClicked += new System.EventHandler(this.btn_ErrorNotifications_Click);
             // 
             // btn_ErrorNotifications
             // 
@@ -870,6 +872,8 @@
             this.btn_ErrorNotifications.TabIndex = 6;
             this.btn_ErrorNotifications.Text = "No New Warnings";
             this.btn_ErrorNotifications.UseVisualStyleBackColor = true;
+            this.btn_ErrorNotifications.TextChanged += new System.EventHandler(this.btn_ErrorNotifications_TextChanged);
+            this.btn_ErrorNotifications.Click += new System.EventHandler(this.btn_ErrorNotifications_Click);
             // 
             // refresh_timer
             // 
