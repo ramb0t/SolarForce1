@@ -10,11 +10,15 @@
 
 #include "../lib/u8glib/src/u8g.h"
 #include "../lib/CAN/CAN.h" // CANMessage Struct?
+<<<<<<< HEAD
+#include <string.h>
+=======
 #include "../lib/CAN/CAN_defs.h"
 #include <string.h>			// strcat etc
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 #include <avr/io.h>
 #include <stdio.h>
-#include <stdlib.h>         // itoa etc
+#include <stdlib.h>
 
 // Hardware:
 #define GFX_CS_PORT PORTD
@@ -27,6 +31,8 @@
 #define LCD_SELECT() 	( LCD_SCKCTL_PORT |=  (1<<LCD_SCKCTL) )
 #define LCD_UNSELECT()  ( LCD_SCKCTL_PORT &= ~(1<<LCD_SCKCTL) )
 
+<<<<<<< HEAD
+=======
 // Structure Definitions
 /*********************************************/
 
@@ -55,11 +61,11 @@ extern	volatile uint16_t	int_mS;
 
 // Function Prototypes
 /*********************************************/
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 void u8g_setup();
 void u8g_prepare();
+void GFX_Cnt(int);
 void GFX_LCD_Draw(CANMessage*);
-void GFX_LCD_DrawMain(void);
-void drawMain(void);
 void draw(CANMessage*);
 
 #endif /* GFX_LCD_H_ */

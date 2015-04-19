@@ -9,21 +9,21 @@ namespace iKlwa_Telemetry_System
 {
     class TelemetryDatabase:XmlDatabase
     {
-        private const string DATA_TYPE = "Data";
-        private const string ERROR_TYPE = "Error";
+        public const string DATA_TYPE = "Data";
+        public const string ERROR_TYPE = "Error";
 
-        private const string ROOT_TAG = "TelemDb";
-        
-        private const string SENSOR_TAG = "Sensor";
-        private const string TYPE_TAG = "Type";
-        private const string DESCRIP_TAG = "Description";
-        private const string VAL_TAG = "Value";
-        private const string TIME_TAG = "Time";
-        private const string DATE_TAG = "Date";
-        private const string MSG_STATUS_TAG = "MessageStatus";
+        public const string ROOT_TAG = "TelemDb";
 
-        private const bool READ_STATUS = true;
-        private const bool UNREAD_STATUS = false;
+        public const string SENSOR_TAG = "Sensor";
+        public const string TYPE_TAG = "Type";
+        public const string DESCRIP_TAG = "Description";
+        public const string VAL_TAG = "Value";
+        public const string TIME_TAG = "Time";
+        public const string DATE_TAG = "Date";
+        public const string MSG_STATUS_TAG = "MessageStatus";
+
+        public const bool READ_STATUS = true;
+        public const bool UNREAD_STATUS = false;
 
         public TelemetryDatabase(string filename)
         {
@@ -86,12 +86,16 @@ namespace iKlwa_Telemetry_System
 
         public string getLatestValue(string sensor, string description)
         {
+<<<<<<< HEAD
+            return this.getNewest(SENSOR_TAG, sensor,DESCRIP_TAG,description).Value;
+=======
             string latestNode = null;
             try
             { latestNode = this.getNewest(SENSOR_TAG, sensor, DESCRIP_TAG, description).Element(VAL_TAG).Value; }
             catch (NullReferenceException)
             { throw; }
             return latestNode;
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         }
 
         public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time)

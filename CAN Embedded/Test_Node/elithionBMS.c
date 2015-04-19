@@ -84,13 +84,4 @@ void BMS_send_fake_data(){
 		_delay_us(1000);
 	}
 
-	BMS[6].data[0]++; // SOC
-	if(BMS[6].data[0] >100){
-		BMS[6].data[0] = 0;
-	}
-
-	BMS[3].data[1]++; // Voltage
-	BMS[4].data[1]++; // Current
-	BMS[7].data[0]++; // Temperature
-
 }

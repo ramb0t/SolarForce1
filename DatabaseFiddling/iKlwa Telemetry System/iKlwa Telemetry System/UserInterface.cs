@@ -16,34 +16,45 @@ namespace iKlwa_Telemetry_System
     public partial class UserInterface : Form
     {
         private TelemetryDatabase d;
-        private bool db_exists = false;
-        private int unreadErrorCount = 0;
         private TelemetryCommsManager comms = new TelemetryCommsManager();
         private ReaderWriterLock protection = new ReaderWriterLock();
-        private enum SENSORS :int{HALL_EFFECT = 0xa4, MOTOR_DRIVER = 0xa5,
+        private enum SENSORS :int{HALL_EFFECT = 420, MOTOR_DRIVER = 421,
                                   BMS, GYRO, MPPT1,
                                   MPPT2, MPPT3, MPPT4,GPS,
                                   SOLAR_CELL, ANEMOMETER};
+<<<<<<< HEAD
+        private ReportScreen output;// = new ReportScreen();
+        private bool safe_to_close = true;
+=======
         private ReportScreen output = new ReportScreen();
+<<<<<<< HEAD
+        private bool sensor_update = false;
+        private int counter;//naughty
+        string[] list = new string[1];//naughty
+=======
 
+>>>>>>> 95d4848eea9709491c671064b8b4e85f3335c08d
         private enum TABS : byte {Summary = 1, Graphing = 2,
                                   Motion = 3, Electrical = 4,
                                   Support = 5, RF = 6}
         private TABS selected_tab = TABS.Summary;//keeps track of which tab is selected
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         private const string NO_SENSORS_MSG = "No sensors found...";
 
         public UserInterface()
         {
             InitializeComponent();
+<<<<<<< HEAD
+=======
             d = new TelemetryDatabase("xmlDatabase_V5.xml");
-            //d = new TelemetryDatabase("SimDB.xml");
             d.NodeTag = "Capture";
             db_exists = true;
             refresh_timer.Enabled = true;
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         }
 
         /// <summary>
-        /// Connects to the Follower Car Embedded System and starts COM Ports reading
+        /// Connects to the Follower Car Embedded System
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -51,9 +62,15 @@ namespace iKlwa_Telemetry_System
         {
             COM_Port_Select COM_Select = new COM_Port_Select();
             COM_Select.ShowDialog();
+<<<<<<< HEAD
+            comms.name = COM_Select.getPort();
+            backgroundWorker1.RunWorkerAsync();
+=======
             if (COM_Select.NoPortsFound == false)
             {
                 comms.name = COM_Select.Port;
+                btn_COMPortConnect.ForeColor = Color.Green;
+                btn_COMPortConnect.Text = "Connected";
                 SerialReadingThread.RunWorkerAsync();
             }
         }
@@ -63,9 +80,10 @@ namespace iKlwa_Telemetry_System
             if (db_exists == true)
             try
             {
-                protection.AcquireReaderLock(100);//lock reader
+                protection.AcquireReaderLock(10000);//lock reader
                 try
                 {
+                    string x = null;
                     //refreshing takes place based on selected tab
                     //this prevents querying data from the database that won't need to be displayed
                     //less data queried at a time = better performance
@@ -79,13 +97,16 @@ namespace iKlwa_Telemetry_System
 
                         case TABS.Summary:
                             {
-                                string x = null;
                                 //this is under test. currently only shows HE Speed on a label
-                                try { x = d.getLatestValue("Hall Effect Sensor", "Speed"); }
-                                catch (Exception error)
-                                { MessageBox.Show(error.Message); }
-                                if (x.Equals(null)==false)//check for null value, just in case... shouldn't ever happen
+                                try
+                                {
+                                    x = d.getLatestValue("Motor Driver", "Speed");
                                     lbl_instSpeed.Text = x;
+                                }
+                                catch (Exception error)
+                                {
+                                    //MessageBox.Show(error.Message);
+                                }
                             }
                             break;
 
@@ -93,6 +114,17 @@ namespace iKlwa_Telemetry_System
                             break;
 
                         case TABS.Motion:
+                                try
+                                {
+                                    x = d.getLatestValue("Motor Driver", "Speed");
+                                    label12.Text = x;
+                                    x = d.getLatestValue("Hall Effect Sensor", "Speed");
+                                    label1.Text = x;
+                                }
+                                catch (Exception error)
+                                {
+                                    //MessageBox.Show(error.Message);
+                                }
                             break;
 
                         case TABS.Support:
@@ -106,6 +138,7 @@ namespace iKlwa_Telemetry_System
             }
             catch(ApplicationException xx)
             { MessageBox.Show(xx.Message); }
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         }
 
         /// <summary>
@@ -115,7 +148,13 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void refresh_timer_Tick(object sender, EventArgs e)
         {
+            if (sensor_update == true)
+                getSensors();//if sensor update flag is set, then update sensors every tick
 
+<<<<<<< HEAD
+
+            //naughty things
+=======
             refreshGUI();//refresh GUI method
 
             if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
@@ -127,9 +166,10 @@ namespace iKlwa_Telemetry_System
             }
 
             /*naughty things
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
             if (counter!=list.Length)
             lbl_instSpeed.Text = list[counter++];
-            d.getLatestValue("Speed");*/
+            d.getLatestValue("Speed");
             
         }
 
@@ -170,6 +210,26 @@ namespace iKlwa_Telemetry_System
           */
         }
 
+        #region not sure how to make this work...
+        private delegate IEnumerable<XElement> ReadReq(ref IEnumerable<XElement> xe);
+
+        private IEnumerable<XElement> DB_READ(ReadReq toDo)
+        {
+            IEnumerable<XElement> xe = null;
+            try
+            {
+                protection.AcquireReaderLock(100);
+                try {toDo(ref xe);}
+                finally {protection.ReleaseReaderLock();}
+            }
+            catch (ApplicationException app)
+            {
+                MessageBox.Show(app.Message);
+            }
+            return xe;
+        }
+        #endregion
+
         /// <summary>
         /// Generate an Error Messages Report
         /// </summary>
@@ -204,6 +264,7 @@ namespace iKlwa_Telemetry_System
             ReportScreen output = new ReportScreen();
             try 
             {
+                output.setTitle("Error Report");
                 output.Populate(headers, values);
                 output.ShowDialog();
             }
@@ -237,20 +298,23 @@ namespace iKlwa_Telemetry_System
             {
                 MessageBox.Show(err.Message);
             }
-            gp.Title.Text = "Speed vs Time";
-            gp.XAxis.Title.Text = "Time";
-            gp.YAxis.Title.Text = "Speed";
-
             int x = 0;
             foreach (var item in results)
             {
-                foreach (var thing in item.Descendants("Value"))
+                foreach (var thing in item.Descendants(TelemetryDatabase.VAL_TAG))
                 {
                     listPoints.Add(x++, Convert.ToDouble(thing.Value));
+                }
+                foreach (var thing in item.Descendants(TelemetryDatabase.DESCRIP_TAG))
+                {
+                    gp.YAxis.Title.Text = thing.Value;
                 }
             }
             line_item = gp.AddCurve(null, listPoints, Color.LightSeaGreen, SymbolType.None);
             line_item.Line.Width = 1;
+            gp.Title.Text = gp.YAxis.Title.Text + " vs Time";
+            gp.XAxis.Title.Text = "Time";
+            //gp.YAxis.Title.Text = y_axis;
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
             zedGraphControl1.Refresh();
@@ -267,8 +331,10 @@ namespace iKlwa_Telemetry_System
                 }
             }
 
+            
             try
             {
+                output = new ReportScreen();
                 output.Populate(headers, values);
                 output.Show();
                 output.setTitle("Raw Data Entries");
@@ -277,28 +343,33 @@ namespace iKlwa_Telemetry_System
             { MessageBox.Show(a.Message); }
         }
 
-        /// <summary>
-        /// gets the available sensors and populates the sensor select combo box
-        /// </summary>
         private void getSensors()
         {
             if (comboBox1.Items.Contains(NO_SENSORS_MSG)) //if the no sensors message is in the combo box, remove it
                 comboBox1.Items.Remove(NO_SENSORS_MSG);
-            try
+            var sensorGroup = d.getSensors();
+            foreach (var sensor in sensorGroup)
             {
-                var sensorGroup = d.getSensors();
-                foreach (var sensor in sensorGroup)
-                {
-                    if (comboBox1.Items.Contains(sensor.Key) == false)
-                        comboBox1.Items.Add(sensor.Key); //add sensors to combo box if they are not contained in there 
-                }
+                if (comboBox1.Items.Contains(sensor.Key) == false)
+                    comboBox1.Items.Add(sensor.Key); //add sensors to combo box if they are not contained in there 
             }
-            catch   (Exception e)
-            { MessageBox.Show(e.Message); }
         }
 
         private void UserInterface_Load(object sender, EventArgs e)
         {
+            //naughy
+            /*var results = d.getLatestValue("Speed_Sensor");
+            int c = 0;
+            list = new string[results.Count()];
+            foreach (var item in results)
+            {
+                foreach (var thing in item.Descendants("Value"))
+                {
+                    list[c++] = thing.Value;
+                }
+            }
+            //end naughty*/
+
             var sensorGroup = d.getSensors();
             if (sensorGroup.Count() == 0) //check if any sensors found and display message if not
             {
@@ -323,6 +394,9 @@ namespace iKlwa_Telemetry_System
         }
 
         /// <summary>
+<<<<<<< HEAD
+        /// Occurs when Graph control is activated. Populates all user-definable controls.
+=======
         /// Background Thread which handles reading from the COM Port and writing to the Database
         /// </summary>
         /// <param name="sender"></param>
@@ -342,9 +416,12 @@ namespace iKlwa_Telemetry_System
                     var packet = comms.readTelemetryInput(); //read telemetry input
                     try
                     {
+                        //may want to implement writer lock in addDataCapture...?
+
                         protection.AcquireWriterLock(100);//lock writer
                         try
                         {
+                            safe_to_close = false;
                             switch (packet.ID)//determine sensor based on packet ID
                             {
                                 case (int)SENSORS.MOTOR_DRIVER:
@@ -384,13 +461,16 @@ namespace iKlwa_Telemetry_System
 
                                 default:
                                     d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                        "Sensor packet with invalid ID detected.");
+                                        "Sensor packet with invalid ID detected.","Data Error");
                                     break;
                             }
                             count = 0;//if code reaches here, there was a successful write and the timeout counter is cleared.
                         }
                         finally
-                        { protection.ReleaseWriterLock(); }//ensure WriterLock is always released
+                        {
+                            protection.ReleaseWriterLock();//ensure WriterLock is always released
+                            safe_to_close = true;
+                        }
                     }
                     catch (ApplicationException error)//Exception from WriterLockTimeout
                     { MessageBox.Show(error.Message); } 
@@ -405,11 +485,12 @@ namespace iKlwa_Telemetry_System
 
         /// <summary>
         /// Occurs when Graph Tab is activated. Populates all user-definable controls.
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         /// Also enables refreshing of user-definable controls every timer tick.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void tabPage5_Enter(object sender, EventArgs e)
+        private void tabControl1_Enter(object sender, EventArgs e)
         {
             getSensors();//populate sensor select combo box
 
@@ -418,6 +499,9 @@ namespace iKlwa_Telemetry_System
             numericUpDown2.Value = DateTime.Now.Minute;
             numericUpDown1.Value = DateTime.Now.Hour - 1;
             numericUpDown3.Value = DateTime.Now.Minute;
+<<<<<<< HEAD
+            sensor_update = true;
+=======
             selected_tab = TABS.Graphing;//indicate that the graphing tab was selected
         }
 
@@ -439,36 +523,52 @@ namespace iKlwa_Telemetry_System
         private void tabPage1_Enter(object sender, EventArgs e)
         {
             selected_tab = TABS.Motion;
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         }
 
         /// <summary>
-        /// Occurs when Solar Car Electrical Tab is activated.
+        /// Occurs when the Graph control is de-activated.
+        /// Disables the auto-refreshing of user-definable parameters.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void tabPage2_Enter(object sender, EventArgs e)
+        private void tabControl1_Leave(object sender, EventArgs e)
         {
-            selected_tab = TABS.Electrical;
+            sensor_update = false;
         }
 
-        /// <summary>
-        /// Occurs when Support Car Tab is activated.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tabPage4_Enter(object sender, EventArgs e)
+        //test this!!!!
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            selected_tab = TABS.Support;
-        }
-
-        /// <summary>
-        /// Occurs when RF Link Tab is activated.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tabPage3_Enter(object sender, EventArgs e)
-        {
-            selected_tab = TABS.RF;
+            comms.MavLinkInit();
+            try
+            {
+                comms.OpenPort();
+                var packet = comms.readTelemetryInput();
+                try
+                {
+                    protection.AcquireWriterLock(250);
+                    try
+                    {
+                        switch(packet.ID)
+                        {
+                            case (int)SENSORS.MOTOR_DRIVER:
+                               //dodgy: d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
+                                d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                                 "Speed", (int)Convert.ToChar());
+                                break;
+                        }
+                    }
+                    finally
+                    { protection.ReleaseWriterLock(); }
+                }
+                catch (ApplicationException error)
+                { MessageBox.Show(error.Message); }
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message);
+            }
         }
 
         private void btn_ErrorNotifications_TextChanged(object sender, EventArgs e)
@@ -489,5 +589,11 @@ namespace iKlwa_Telemetry_System
             btn_ErrorNotifications.ForeColor = Color.Black;
             taskbar_notification.Visible = false;
         }
+
+        private void UserInterface_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            while (safe_to_close == false);//nop nop nop!!
+        }
+
     }
 }

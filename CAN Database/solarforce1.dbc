@@ -51,10 +51,8 @@ BO_ 1570 BMSSTPM3: 7 BMS
 BO_ 1569 BMSSTPM2: 8 BMS
  SG_ Rev : 7|64@0+ (1,0) [0|0] "" Vector__XXX
 
-BO_ 1056 Speed: 8 SpeedNode
- SG_ SpeedValue : 7|16@0+ (1,0) [0|2047] "kmph" Vector__XXX
- SG_ SpeedFaults : 63|8@0+ (1,0) [0|0] "" Vector__XXX
- SG_ MotorRPM : 47|16@0+ (1,0) [0|2000] "RPM" Vector__XXX
+BO_ 100 Speed: 8 SpeedNode
+ SG_ SpeedValue : 0|8@1+ (1,0) [0|255] "kmph" Vector__XXX
 
 BO_ 1905 MPPTAnswer1: 7 MPPT
  SG_ Iin : 17|10@0+ (1,0) [0|0] "" Vector__XXX
@@ -102,4 +100,3 @@ BA_DEF_DEF_  "GenNodAutoGenDsp" "Yes";
 BA_DEF_DEF_  "GenEnvVarEndingDsp" "Dsp";
 BA_DEF_DEF_  "GenEnvVarEndingSnd" "Snd";
 BA_DEF_DEF_  "GenEnvVarPrefix" "Env";
-VAL_ 1568 ELITHION 0 "ELITHION" ;

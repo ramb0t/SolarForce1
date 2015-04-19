@@ -9,9 +9,6 @@
 #ifndef MYFUNCTIONS_H_
 #define MYFUNCTIONS_H_
 
-#define FALSE	0
-#define	TRUE	1
-
 // from AVR035: Efficient C Coding for AVR
 
 #define SETBIT(ADDRESS,BIT) (ADDRESS |= (1<<BIT))

@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Combo", "Combo\Combo.cproj", "{ABF6FE0D-45E6-448F-BF29-F99E4E4D2931}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABF6FE0D-45E6-448F-BF29-F99E4E4D2931}.Debug|AVR.ActiveCfg = Debug|AVR
+		{ABF6FE0D-45E6-448F-BF29-F99E4E4D2931}.Debug|AVR.Build.0 = Debug|AVR
+		{ABF6FE0D-45E6-448F-BF29-F99E4E4D2931}.Release|AVR.ActiveCfg = Release|AVR
+		{ABF6FE0D-45E6-448F-BF29-F99E4E4D2931}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -14,8 +14,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-// CAN Bus ID Definitions
-#include "CAN_defs.h"
 
 
 // Defines
