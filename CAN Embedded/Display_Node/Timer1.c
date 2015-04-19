@@ -12,7 +12,7 @@ void Timer1_init(void) {
 	// Timer 1 A,B
 	TCCR1A |= (1 << WGM10); /* Fast PWM mode, 8-bit */
 	TCCR1B |= (1 << WGM12); /* Fast PWM mode, pt.2 */
-	TCCR1B |= (1 << CS11) | (1 << CS10); /* PWM Freq = F_CPU/64/256 ~975Hz */
+	TCCR1B |= (1 << CS11); /* PWM Freq = F_CPU/8/256 */
 	TCCR1A |= (1 << COM1A1); /* PWM output on OCR1A */
 	//TCCR1A |= (1 << COM1B1); /* PWM output on OCR1B */
 

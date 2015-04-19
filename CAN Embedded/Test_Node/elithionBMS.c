@@ -18,12 +18,12 @@ void BMS_init(void){
 		}};
 
 	BMS[2] = (CANMessage) {.id=CAN_ID+2,.rtr=0,.length=7,.data={
-			0b00000000,  //State
+			0b00000001,  //State
 			0b00000000, 0b00000000, // Timer
-			0b00000000,  //Flags
-			0b00000000,  //Fault Code
+			0b00100000,  //Flags
+			0b00010100,  //Fault Code
 			0b00000000,  //Level Fault
-			0b00000000   //Warnings
+			0b01000000   //Warnings
 		}};
 
 	BMS[3] = (CANMessage) {.id=CAN_ID+3,.rtr=0,.length=6,.data={
@@ -83,14 +83,5 @@ void BMS_send_fake_data(){
 		CAN_sendMessage(&BMS[i]);
 		_delay_us(1000);
 	}
-
-	BMS[6].data[0]++; // SOC
-	if(BMS[6].data[0] >100){
-		BMS[6].data[0] = 0;
-	}
-
-	BMS[3].data[1]++; // Voltage
-	BMS[4].data[1]++; // Current
-	BMS[7].data[0]++; // Temperature
 
 }

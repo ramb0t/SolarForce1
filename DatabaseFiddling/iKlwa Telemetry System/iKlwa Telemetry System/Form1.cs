@@ -182,48 +182,42 @@ namespace iKlwa_Telemetry_System
 
         private void button10_Click(object sender, EventArgs e)
         {
-            try
+            comms.MavLinkInit();
+            //MessageBox.Show("YOU WILL SEE ERRORS IF YOU DIDNT CONNECT TO THE COM PORT!");
+            for (int a = 0; a < 40; a++)
             {
-                comms.MavLinkInit();
-                comms.read_timeout = 5000;
-                //MessageBox.Show("YOU WILL SEE ERRORS IF YOU DIDNT CONNECT TO THE COM PORT!");
-                for (int a = 0; a < 40; a++)
-                {
-                    comms.readTextUntil(">>");
-                    int header = comms.readByte();
-                    string head = comms.readTextUntil(",");
-                    //int header = (int)head.ToCharArray()[0];
-                    richTextBox1.Text += header;
-                    string[] received = comms.readTextUntil("<<").Split(',');
+                comms.readTextUntil(">>");
+                int header = (int)comms.readTextUntil(",").ToCharArray()[0];
+                richTextBox1.Text += header;
+                string[] received = comms.readTextUntil("<<").Split(',');
 
-                    switch (header)
+                switch (header)
+                { 
+                    case 421:
+                        d.addDataCapture("Motor Driver",DateTime.Now.Hour+"h"+DateTime.Now.Minute,"Speed",(int)received[0].ToCharArray()[0]);
+                    break;
+                    case 420:
                     {
-                        case 421:
-                            d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
-                            break;
-                        case 0xa4:
-                            {
-                                d.addDataCapture("Hall Effect 1", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
-                                //more things related to flags
-                            }
-                            break;
+                        d.addDataCapture("Hall Effect 1", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
+                        //more things related to flags
                     }
-                    foreach (string entry in received)
+                    break;
+                }
+                foreach (string entry in received)
+                {
+                    //richTextBox1.Text += entry + ' ';
+                    char[] potato = entry.ToCharArray();
+                    foreach (var letter in potato)
                     {
-                        //richTextBox1.Text += entry + ' ';
-                        char[] potato = entry.ToCharArray();
-                        foreach (var letter in potato)
+                        if (String.IsNullOrWhiteSpace(letter + "") == false)
                         {
-                            if (String.IsNullOrWhiteSpace(letter + "") == false)
-                            {
-                                richTextBox1.Text += ((int)letter).ToString() + ' ';
-                            }
+                            richTextBox1.Text += ((int)letter).ToString() + ' ';
                         }
                     }
-                    richTextBox1.Text += '\n';
                 }
+                richTextBox1.Text += '\n';
             }
-            catch (TimeoutException) { MessageBox.Show("oops"); }
+
         }
 
     }

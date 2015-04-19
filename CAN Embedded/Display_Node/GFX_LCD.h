@@ -10,10 +10,15 @@
 
 #include "../lib/u8glib/src/u8g.h"
 #include "../lib/CAN/CAN.h" // CANMessage Struct?
+<<<<<<< HEAD
+#include <string.h>
+=======
+#include "../lib/CAN/CAN_defs.h"
 #include <string.h>			// strcat etc
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 #include <avr/io.h>
 #include <stdio.h>
-#include <stdlib.h>         // itoa etc
+#include <stdlib.h>
 
 // Hardware:
 #define GFX_CS_PORT PORTD
@@ -26,25 +31,13 @@
 #define LCD_SELECT() 	( LCD_SCKCTL_PORT |=  (1<<LCD_SCKCTL) )
 #define LCD_UNSELECT()  ( LCD_SCKCTL_PORT &= ~(1<<LCD_SCKCTL) )
 
+<<<<<<< HEAD
+=======
 // Structure Definitions
 /*********************************************/
 
 // Definitions
 /*********************************************/
-
-// State Byte Masks
-#define 	BMSSTATE_FAULT 	0x01
-#define 	BMSSTATE_RFAULT	0x10
-
-// Flag byte Masks
-#define 	BMSFLAG_FAN		0x80
-#define 	BMSFLAG_LLIM	0x40
-#define 	BMSFLAG_HLIM	0x20
-#define 	BMSFLAG_CANC	0x10
-#define 	BMSFLAG_HWC		0x08
-#define 	BMSFLAG_INTT	0x04
-#define 	BMSFLAG_PL		0x02
-#define 	BMSFLAG_PS		0x01
 
 // Variable Definitions
 /*********************************************/
@@ -68,11 +61,11 @@ extern	volatile uint16_t	int_mS;
 
 // Function Prototypes
 /*********************************************/
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 void u8g_setup();
 void u8g_prepare();
+void GFX_Cnt(int);
 void GFX_LCD_Draw(CANMessage*);
-void GFX_LCD_DrawMain(void);
-void drawMain(void);
 void draw(CANMessage*);
 
 #endif /* GFX_LCD_H_ */

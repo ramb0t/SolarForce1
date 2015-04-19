@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>6.2</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.C</ToolchainName>
-    <ProjectGuid>{22881ef9-2aeb-41ee-bdc3-89301dbc6f2b}</ProjectGuid>
+    <ProjectGuid>{abf6fe0d-45e6-448f-bf29-f99e4e4d2931}</ProjectGuid>
     <avrdevice>ATmega328P</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
@@ -12,19 +12,19 @@
     <OutputFileName>$(MSBuildProjectName)</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <AssemblyName>HES_C</AssemblyName>
-    <Name>HES_C</Name>
-    <RootNamespace>HES_C</RootNamespace>
+    <AssemblyName>Combo</AssemblyName>
+    <Name>Combo</Name>
+    <RootNamespace>Combo</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
     <ProgFlashFromRam>true</ProgFlashFromRam>
-    <RamSnippetAddress>0x20000000</RamSnippetAddress>
+    <RamSnippetAddress />
     <UncachedRange />
-    <OverrideVtorValue>exception_table</OverrideVtorValue>
+    <OverrideVtorValue />
     <BootSegment>2</BootSegment>
-    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <eraseonlaunchrule>1</eraseonlaunchrule>
     <AsfFrameworkConfig>
       <framework-data xmlns="">
         <options />
@@ -37,20 +37,6 @@
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
-    <com_atmel_avrdbg_tool_simulator>
-      <ToolOptions xmlns="">
-        <InterfaceProperties>
-          <JtagEnableExtResetOnStartSession>false</JtagEnableExtResetOnStartSession>
-        </InterfaceProperties>
-        <InterfaceName>
-        </InterfaceName>
-      </ToolOptions>
-      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
-      <ToolNumber xmlns="">
-      </ToolNumber>
-      <ToolName xmlns="">Simulator</ToolName>
-    </com_atmel_avrdbg_tool_simulator>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -96,7 +82,7 @@
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>../../../../../lib</Value>
+            <Value>../../../../lib</Value>
           </ListValues>
         </avrgcc.compiler.directories.IncludePaths>
         <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -114,55 +100,58 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\lib\CAN\CAN.c">
+    <Compile Include="..\..\..\lib\CAN\CAN.c">
       <SubType>compile</SubType>
       <Link>lib\CAN\CAN.c</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\CAN\CAN.h">
+    <Compile Include="..\..\..\lib\CAN\CAN.h">
       <SubType>compile</SubType>
       <Link>lib\CAN\CAN.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\mcp2515\mcp2515.c">
+    <Compile Include="..\..\..\lib\mcp2515\mcp2515.c">
       <SubType>compile</SubType>
       <Link>lib\mcp2515\mcp2515.c</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\mcp2515\mcp2515.h">
+    <Compile Include="..\..\..\lib\mcp2515\mcp2515.h">
       <SubType>compile</SubType>
       <Link>lib\mcp2515\mcp2515.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\mcp2515\mcp2515_bittime.h">
+    <Compile Include="..\..\..\lib\mcp2515\mcp2515_bittime.h">
       <SubType>compile</SubType>
       <Link>lib\mcp2515\mcp2515_bittime.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\mcp2515\mcp2515_defs.h">
+    <Compile Include="..\..\..\lib\mcp2515\mcp2515_defs.h">
       <SubType>compile</SubType>
       <Link>lib\mcp2515\mcp2515_defs.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\SPI\AVR_SPI.c">
+    <Compile Include="..\..\..\lib\SPI\AVR_SPI.c">
       <SubType>compile</SubType>
       <Link>lib\SPI\AVR_SPI.c</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\SPI\AVR_SPI.h">
+    <Compile Include="..\..\..\lib\SPI\AVR_SPI.h">
       <SubType>compile</SubType>
       <Link>lib\SPI\AVR_SPI.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\uart\uart.c">
+    <Compile Include="..\..\..\lib\uart\uart.c">
       <SubType>compile</SubType>
       <Link>lib\uart\uart.c</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\uart\uart.h">
+    <Compile Include="..\..\..\lib\uart\uart.h">
       <SubType>compile</SubType>
       <Link>lib\uart\uart.h</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\uart\uart_CANFunc.c">
+    <Compile Include="..\..\..\lib\uart\uart_CANFunc.c">
       <SubType>compile</SubType>
       <Link>lib\uart\uart_CANFunc.c</Link>
     </Compile>
-    <Compile Include="..\..\..\..\lib\uart\uart_CANFunc.h">
+    <Compile Include="..\..\..\lib\uart\uart_CANFunc.h">
       <SubType>compile</SubType>
       <Link>lib\uart\uart_CANFunc.h</Link>
     </Compile>
-    <Compile Include="HES_C.c">
+    <Compile Include="Combo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="timer2.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="timer0.c">
@@ -172,9 +161,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="timer2.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="timer2.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

@@ -70,7 +70,7 @@ Returns:  None
 void uart_SendCANMsgRAW(CANMessage* message){
 	char buffer[50]; // used to hold conversions
 
-	itoa( message->id, buffer, 2);   // convert integer into string (decimal format)
+	utoa( message->id, buffer, 2);   // convert integer into string (decimal format)
 	uart_puts(buffer);        // and transmit string to UART
 
 	//uart_puts(",");
@@ -79,7 +79,7 @@ void uart_SendCANMsgRAW(CANMessage* message){
 
 
 	uart_puts(",");
-	itoa( message->length, buffer, 10);   // convert integer into string (decimal format)
+	utoa( message->length, buffer, 10);   // convert integer into string (decimal format)
 	uart_puts(buffer);        // and transmit string to UART
 
 
@@ -87,7 +87,34 @@ void uart_SendCANMsgRAW(CANMessage* message){
 	for (int i = 0; i < message->length; i++){
 
 		char string[15] =",";
-		itoa(message->data[i], buffer, 2);
+		// add padding zeros
+		if(message->data[i] < 0x80){
+			strcat(string,"0");
+			if(message->data[i] < 0x40){
+				strcat(string,"0");
+				if(message->data[i] < 0x20){
+					strcat(string,"0");
+					if(message->data[i] < 0x10){
+						strcat(string,"0");
+						if(message->data[i] < 0x08){
+							strcat(string,"0");
+							if(message->data[i] < 0x04){
+								strcat(string,"0");
+								if(message->data[i] < 0x02){
+									strcat(string,"0");
+									if(message->data[i] < 0x01){
+										strcat(string,"0");
+										        // So Prettttyyyyyyyyyyyyyyyyy
+									}
+
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		utoa(message->data[i], buffer, 2);
 		strcat(string, buffer);
 		uart_puts(string);        // and transmit string to UART
 	}

@@ -40,6 +40,16 @@
 
 //-------------CAN Defines----------------------------------//
 
+<<<<<<< HEAD
+#define MOTOR_DRIVER_CANID	0x0420
+#define HALL_EFFECT_CANID	0x0420
+#define BMS_CANID			0x0800
+#define ACCELO_GYRO_CANID   0x0200
+#define MPPT1_CANID			0x0300
+#define MPPT2_CANID			0x0301
+#define MPPT3_CANID			0x0302
+#define MPPT4_CANID			0x0303
+=======
 #define MOTOR_DRIVER_CANID	0x1056
 #define HALL_EFFECT_CANID	0x1056
 
@@ -49,6 +59,7 @@
 #define MPPT2_CANID			0x1906
 #define MPPT3_CANID			0x1907
 #define MPPT4_CANID			0x1908
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -69,7 +80,6 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 //------------Library Objects----------------------------//
 
 CANMessage Input_Message;				//CAN library object
-CANMessage Input_Buffered_Msg;			//Buffered CAN input msg
 
 volatile int counter=0;
 volatile int ctr2=0;

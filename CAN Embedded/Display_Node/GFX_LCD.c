@@ -1,5 +1,6 @@
 
 #include "GFX_LCD.h"
+#include "../lib/CAN/CAN_defs.h"
 
 #define DEBUG
 
@@ -7,7 +8,8 @@ u8g_t u8g;
 
 extern volatile uint8_t CAN_Rx_Head;
 extern volatile uint8_t CAN_Rx_Tail;
-
+uint8_t bms_soc;
+uint16_t speed;
 void u8g_setup(void)
 {
 	// Init CS pin
@@ -70,23 +72,23 @@ void u8g_prepare(void) {
   u8g_SetRot180(&u8g);
 }
 
-
-void GFX_LCD_Draw(CANMessage* message){
-
-	cli();
-	LCD_SELECT();
+void GFX_Cnt(int i){
+	//GFX_SELECT();
 	u8g_FirstPage(&u8g);
-	//u8g_prepare();
+
 	do
 	{
-		draw(message);
-
+		char buf[10];
+		itoa(i, buf, 10);
+		u8g_prepare();
+		u8g_DrawStr(&u8g, 5, 15, buf);
+		//draw(message);
 	} while ( u8g_NextPage(&u8g) );
-	LCD_UNSELECT();
-	sei();
+	//GFX_UNSELECT();
 }
 
-void GFX_LCD_DrawMain(void){
+
+void GFX_LCD_Draw(CANMessage* message){
 
 	// Generate strings for each field?
 	cli();
@@ -94,6 +96,10 @@ void GFX_LCD_DrawMain(void){
 	u8g_FirstPage(&u8g);
 	do
 	{
+<<<<<<< HEAD
+		draw(message);
+
+=======
 		drawMain();
 //		LCD_UNSELECT();
 //		sei();
@@ -102,11 +108,14 @@ void GFX_LCD_DrawMain(void){
 //		//while(gMilliSecTick - int_mS > 4){}
 //		cli();
 //		LCD_SELECT();
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 	} while ( u8g_NextPage(&u8g) );
 	LCD_UNSELECT();
 	sei();
 }
 
+<<<<<<< HEAD
+=======
 void drawMain(){
 	char buf[10]; // used for forming strings to pass to the display ??
 	char string[15];
@@ -207,18 +216,18 @@ void drawMain(){
 
 	// Fault Condition! Power cycle needed?
 	if((gBMS_State & BMSSTATE_FAULT) || (gBMS_State & BMSSTATE_RFAULT)){
-		u8g_DrawStr(&u8g, 67, 36, "FAULT!");
+		u8g_DrawStr(&u8g, 67, 35, "FAULT!");
 		// Prob wise to draw the stored fault code byte?
 		utoa(gBMS_Faults,buf,2);
-		u8g_DrawStr(&u8g, 67, 44, buf);
+		u8g_DrawStr(&u8g, 67, 43, buf);
 	}
 
 	// Warnings!
 	if(gBMS_Warnings){
-		u8g_DrawStr(&u8g, 67, 54, "Warning!");
+		u8g_DrawStr(&u8g, 67, 50, "Warning!");
 		// Prob wise to draw the stored warning code byte?
 		utoa(gBMS_Warnings,buf,2);
-		u8g_DrawStr(&u8g, 67, 61, buf);
+		u8g_DrawStr(&u8g, 67, 57, buf);
 	}
 
 	// Draw SOC Bar
@@ -247,10 +256,11 @@ void drawMain(){
 }
 
 
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 void draw(CANMessage* msg){
 	char buf[10]; // used for forming strings to pass to the display ??
 
-	if(msg->id == 0x0420){ //speed!
+	if(msg->id == 0x100){ //speed!
 		CANMessage message = *msg;
 
 		u8g_SetFont(&u8g, u8g_font_freedoomr25n);

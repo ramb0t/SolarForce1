@@ -9,29 +9,28 @@
 
 int main(void)
 {
-	// HACK
-	// LCD SCKCTL Output
-	LCD_SCKCTL_DDR |= (1<<LCD_SCKCTL);
-	LCD_UNSELECT();				// Disable the sck line of LCD to bypass ST7920 bug
-
 	// Init SPI
 	SPI_Init();
 
 	// Init CAN
-	CAN_Init(CAN_125KBPS_16MHZ); // Setup CAN Bus with our desired speed
-	CAN_setupPCINT0();			 // Setup CAN Message buffer using PCINT ISR
+	CAN_Init(CAN_125KBPS_16MHZ);
+	CAN_setupPCINT0();
+
+	// HACK
+	// LCD SCKCTL Output
+	LCD_SCKCTL_DDR |= (1<<LCD_SCKCTL);
+	LCD_SELECT();
 
 	// Init LCD
-	LCD_SELECT();				// Enable the sck line of LCD to bypass ST7920 bug
-	u8g_setup();				// Call u8glib setup for the LCD
-	LCD_UNSELECT();				// Disable sck of LCD to prevent crap being displayed when
-								// Talking to other things on SPI
-	flagUpdateLCD = TRUE; 		// Signal that an update is needed;
+	u8g_setup();
+	LCD_UNSELECT();
 
 	// Init LCD Backlight
-	Timer1_init();				// Setup the timer for PWM
-	LCD_BackLight = 64;		// Set the default backlight value
-	Timer1_PWM_On();			// Turn backlight on
+	Timer1_init();
+	OCR1A = 0;
+	Timer1_PWM_Off();
+	OCR1A = 128;
+	Timer1_PWM_On();
 
 	// Init Timer0 for mS Counter
 	Timer0_init();
@@ -41,12 +40,30 @@ int main(void)
 
 	// Create a new message
 	CANMessage message;
+<<<<<<< HEAD
+	//uint8_t rx_status = 0xff;
+=======
+	heartbeat_Msg = (CANMessage) {.id=0x0888,.rtr=0,.length=5,.data={'A','L','I','V','E'}};
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 
 	// Enable Interrupts
 	sei();
 
-	// Loop for all the time ever!!! (Hopefully...)
     while(1) {
+<<<<<<< HEAD
+    	cli();
+    	if(~(PINB & (1<<PB0))){
+    		//PCIFR |= (1<<PCIF0); // fire ISR!
+    		//while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL){
+    			CAN_fillBuffer();
+    		//}
+
+    	}
+    	sei();
+    	if(flag == CAN_MSGAVAIL){
+    		//cli();
+			if(CAN_getMessage_Buffer(&message) == CAN_OK){
+=======
     	// If the int pin is held low then we wont have an ISR!
     	// Disable the interrupts and process all outstanding buffer calls
     	//cli();
@@ -93,6 +110,11 @@ int main(void)
 			}
     	}
 
+    	if(gMilliSecTick - heartbeat_mS > HEATBEAT_MS){ // shoot off a heatbeat message
+    		heartbeat_mS = gMilliSecTick;
+    		CAN_sendMessage(&heartbeat_Msg);
+    	}
+
 
 
     } // FOREVER LOOP :0
@@ -120,12 +142,12 @@ uint8_t CAN_Decode(CANMessage *message){
 
 	// Decode the message into global external vars
 	switch(message->id){
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 
-	case CANID_SPEED:
-		// We found a speed message!
-		// get the speed value;
-		gSpeed = (message->data[0]<<8)|(message->data[1]);
 
+<<<<<<< HEAD
+				GFX_LCD_Draw(&message);
+=======
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;
 
@@ -181,7 +203,23 @@ uint8_t CAN_Decode(CANMessage *message){
 
 	// Let the caller know if we found something useful
 	return decode_result;
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 
+			}
+			//sei();
+		}else if(flag == CAN_FAIL){
+			flag = CAN_NOMSG;
+		}
+//    	rx_status = CAN_checkReceiveAvailable();
+//
+//    	if(rx_status == CAN_MSGAVAIL){
+//    		CAN_readMessage(&message); //gets msg from bus (pointer to the object of CanMessage type)
+//    		LCD_SELECT();
+//    		GFX_LCD_Draw(&message);
+//    		LCD_UNSELECT();
+//
+//    	}
+    }
 }
 
 // CAN Interrupt ISR!
@@ -193,5 +231,3 @@ ISR(PCINT0_vect){
 	LED_OFF(LED_2);
 
 }
-
-

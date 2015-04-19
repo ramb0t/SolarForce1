@@ -51,9 +51,9 @@ int main (void)
 	
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
-		uart_putc('s');
+
 		MAV_msg_Unpack();
-		uart_putc('f');		
+				
 
 	}
 	return 0;
@@ -63,7 +63,7 @@ int main (void)
 
 void MAV_msg_Unpack()
 {
-	////---------------MAVLink Setup---------------------------//
+				////---------------MAVLink Setup---------------------------//
 	///*MAVLINK asks to set all system statuses as integers. For human readibility ENUMS are used in the appropriate headers
 	//these enums convert text for states to integers sent & interpreted. 3 phases to a message:
   //--define the enum types you'll need and use friendly names e.g. value_name = MAV_ENUM_VALUE_NAME
@@ -72,6 +72,7 @@ void MAV_msg_Unpack()
   //--pass the values or enum friendly names to the functions
   //--this ensures the message goes to MAVLink frame
   //--connect to QGC and observe output! */
+
 
 			//uart_puts_p("\n-MAVLink Data---------\n");
 			//---------------MAVLink Data---------------------------//
@@ -83,33 +84,32 @@ void MAV_msg_Unpack()
 			mavlink_status_t status;
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-						
+			
 			uart_puts_p(PSTR(" "));
 			 
 			mavlink_message_t msg2;
-			
-			uint8_t c;
+			int chan = 0;
+			int ctr = 0;
+
+			uint8_t c ;
 			mavlink_status_t* mav_status;
 
 			
-			while(!(UCSR0A & (1<<RXC0)))									//poll data from the UART bus only while there is data on it
+			// COMMUNICATION THROUGH EXTERNAL UART PORT
+			
+			while(!(UCSR0A & (1<<UDRE0)))									//poll data from the UART bus only while there is data on it
 			{
-				uart_putc('a');
-				while (ctr2 < MAVLINK_MAX_PACKET_LEN)						//while packet size < MAVLink packet
+				while (ctr < MAVLINK_MAX_PACKET_LEN)						//while packet size < MAVLink packet
 				{
-					hb_lost++;										//TEST put out
-					if (hb_lost > 1000)
-					{
-						uart_puts_p(PSTR("Heartbeat fail!"));
-						hb_lost = 0;
-					}
-					// Try to get a new message
+					
 					c=uart_getc();								//get another char
-					//uart_putc(c);								//TESTING OUTPUT	
-					ctr2++;				
+					uart_putc("");								//TESTING OUTPUT
+					ctr++;										//TEST put out
+					// Try to get a new message
 					if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) //if packet matches defined MAVLink packet
 					{
 						// Start Handler for message
+						
 						switch(msg.msgid)
 						{
 							case MAVLINK_MSG_ID_HEARTBEAT:					//Is it heartbeat ID?
@@ -117,8 +117,9 @@ void MAV_msg_Unpack()
 								uart_puts_p(PSTR("HB"));
 								// E.g. read GCS heartbeat and go into
 								// comm lost mode if timer times out
-								hb_lost = 0; //reset heartbeat counter
-							}break;										//now check for next ID
+								
+							}
+							break;										//now check for next ID
 							
 							/*--------Data general message structure-------------
 							>>XX,[comma separated fields]<<
@@ -141,7 +142,7 @@ void MAV_msg_Unpack()
 								uart_puts_p(PSTR(","));						//delim
 								uart_putc(md.controller_temp);				
 								uart_puts_p(PSTR("<<"));
-							//now check for next ID
+								break;									//now check for next ID
 							}break;
 																		
 							case MAVLINK_MSG_ID_HALL_EFFECT:				//is it Hall Effect data?
@@ -157,6 +158,7 @@ void MAV_msg_Unpack()
 								uart_puts_p(PSTR(","));	
 								uart_putc(he.right_magnet);
 								uart_puts_p(PSTR("<<"));
+								break;
 							}break;
 																	//now check for next ID
 							case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
@@ -195,6 +197,7 @@ void MAV_msg_Unpack()
 								}
 								uart_putc(bms.system_status);
 								uart_puts_p(PSTR("<<"));					
+								break;
 							}break;
 							
 							case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
@@ -207,6 +210,7 @@ void MAV_msg_Unpack()
 								uart_puts_p(PSTR(","));
 								uart_putc(ac.incline);
 								uart_puts_p(PSTR("<<"));
+								break;
 							}break;
 							
 							case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
@@ -223,7 +227,7 @@ void MAV_msg_Unpack()
 								uart_putc(m1.overtemp);
 								uart_puts_p(PSTR(","));
 								uart_putc(m1.undervolt);
-								uart_puts_p(PSTR("<<"));
+								break;
 							}break;
 							
 							case MAVLINK_MSG_ID_MPPT2_DATA:				//is it MPPT1 data?
@@ -240,7 +244,7 @@ void MAV_msg_Unpack()
 								uart_putc(m2.overtemp);
 								uart_puts_p(PSTR(","));
 								uart_putc(m2.undervolt);
-								uart_puts_p(PSTR("<<"));
+								break;
 							}break;
 							
 							case MAVLINK_MSG_ID_MPPT3_DATA:				//is it MPPT1 data?
@@ -257,7 +261,7 @@ void MAV_msg_Unpack()
 								uart_putc(m3.overtemp);
 								uart_puts_p(PSTR(","));
 								uart_putc(m3.undervolt);
-								uart_puts_p(PSTR("<<"));
+								break;
 							}break;
 							
 							case MAVLINK_MSG_ID_MPPT4_DATA:				//is it MPPT1 data?
@@ -274,24 +278,57 @@ void MAV_msg_Unpack()
 								uart_putc(m4.overtemp);
 								uart_puts_p(PSTR(","));
 								uart_putc(m4.undervolt);
-								uart_puts_p(PSTR("<<"));
+								break;
 							}break;
 							default:
 							{
-	
+								
 							}
+							
 						}
-					}//end mavlink_parse_char
-					
+					}
 					
 					// And get the next one
-							
-				}//end while counter
-				ctr2=0;
-			}//endif RXC0
+				
+				}
+				
+			}
 			
 			
-}//end upacks
+
+										//byte = uart_getc() ;
+						////uart_putc(mavlink_parse_char(chan, byte, &msg2,mav_status));
+						//if (mavlink_parse_char(chan, byte, &msg2,mav_status))
+						//{
+							//uart_puts_p("ID: ");
+							//uart_putc(msg2.msgid);
+							//
+							////uart_puts_p("\nSeq:");
+							////uart_putc(msg2.seq);
+							////uart_puts_p("\nCompo: " );
+							////uart_putc(msg2.compid);
+							////uart_puts_p("\nsys: ");
+							////uart_putc(msg.sysid);
+						//}
+					//
+				//}
+	
+			
+			//mavlink_motor_driver_t* MotorDriver;
+			//mavlink_message_type_t* msgRx;
+			//
+			//msgRx = MAV_Rx_buff;
+			//mavlink_msg_motor_driver_decode(&msgRx, MotorDriver);
+			//
+			//itoa(MotorDriver->controller_temp,buf,10);					//read ASCII-converted byte into buffer
+			//uart_puts_p("\nTemperature:");
+			//uart_puts_p(buf);
+			//
+			//itoa(MotorDriver->speed,buf,10);
+			//uart_puts_p("\nSpeed:");
+			//uart_puts_p(buf);
+	
+}
 
 
 

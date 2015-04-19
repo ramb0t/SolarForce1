@@ -95,13 +95,13 @@
             this.button6 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
-            this.btn_COMPortConnect = new System.Windows.Forms.Button();
-            this.btn_ErrorReportGenerate = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.taskbar_notification = new System.Windows.Forms.NotifyIcon(this.components);
-            this.btn_ErrorNotifications = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.refresh_timer = new System.Windows.Forms.Timer(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.SerialReadingThread = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.tabControl1.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -129,6 +129,8 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(508, 406);
             this.tabControl1.TabIndex = 2;
+            this.tabControl1.Enter += new System.EventHandler(this.tabControl1_Enter);
+            this.tabControl1.Leave += new System.EventHandler(this.tabControl1_Leave);
             // 
             // tabPage6
             // 
@@ -170,7 +172,6 @@
             this.tabPage6.Size = new System.Drawing.Size(500, 377);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "Summary";
-            this.tabPage6.Enter += new System.EventHandler(this.tabPage6_Enter);
             // 
             // lbl_MPPTPIn4
             // 
@@ -503,7 +504,6 @@
             this.tabPage1.Size = new System.Drawing.Size(500, 377);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Solar Car Motion";
-            this.tabPage1.Enter += new System.EventHandler(this.tabPage1_Enter);
             // 
             // groupBox4
             // 
@@ -684,7 +684,6 @@
             this.tabPage2.Size = new System.Drawing.Size(500, 377);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Solar Car Electrical";
-            this.tabPage2.Enter += new System.EventHandler(this.tabPage2_Enter);
             // 
             // tabPage3
             // 
@@ -694,7 +693,6 @@
             this.tabPage3.Size = new System.Drawing.Size(500, 377);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "RF Link";
-            this.tabPage3.Enter += new System.EventHandler(this.tabPage3_Enter);
             // 
             // tabPage4
             // 
@@ -704,7 +702,6 @@
             this.tabPage4.Size = new System.Drawing.Size(500, 377);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Support Car System";
-            this.tabPage4.Enter += new System.EventHandler(this.tabPage4_Enter);
             // 
             // tabPage5
             // 
@@ -723,7 +720,6 @@
             this.tabPage5.Size = new System.Drawing.Size(500, 377);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Graphs";
-            this.tabPage5.Enter += new System.EventHandler(this.tabPage5_Enter);
             // 
             // label32
             // 
@@ -828,29 +824,29 @@
             this.zedGraphControl1.Size = new System.Drawing.Size(473, 316);
             this.zedGraphControl1.TabIndex = 0;
             // 
-            // btn_COMPortConnect
+            // button1
             // 
-            this.btn_COMPortConnect.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btn_COMPortConnect.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_COMPortConnect.Location = new System.Drawing.Point(13, 232);
-            this.btn_COMPortConnect.Name = "btn_COMPortConnect";
-            this.btn_COMPortConnect.Size = new System.Drawing.Size(191, 43);
-            this.btn_COMPortConnect.TabIndex = 4;
-            this.btn_COMPortConnect.Text = "Connect to Hardware";
-            this.btn_COMPortConnect.UseVisualStyleBackColor = true;
-            this.btn_COMPortConnect.Click += new System.EventHandler(this.button1_Click);
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button1.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(13, 232);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(191, 43);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Connect to Hardware";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // btn_ErrorReportGenerate
+            // button2
             // 
-            this.btn_ErrorReportGenerate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btn_ErrorReportGenerate.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_ErrorReportGenerate.Location = new System.Drawing.Point(12, 284);
-            this.btn_ErrorReportGenerate.Name = "btn_ErrorReportGenerate";
-            this.btn_ErrorReportGenerate.Size = new System.Drawing.Size(191, 43);
-            this.btn_ErrorReportGenerate.TabIndex = 5;
-            this.btn_ErrorReportGenerate.Text = "Generate Error Report";
-            this.btn_ErrorReportGenerate.UseVisualStyleBackColor = true;
-            this.btn_ErrorReportGenerate.Click += new System.EventHandler(this.button2_Click);
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button2.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(12, 302);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(191, 43);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Generate Error Report";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // taskbar_notification
             // 
@@ -862,8 +858,18 @@
             this.taskbar_notification.Visible = true;
             this.taskbar_notification.BalloonTipClicked += new System.EventHandler(this.btn_ErrorNotifications_Click);
             // 
-            // btn_ErrorNotifications
+            // button3
             // 
+<<<<<<< HEAD
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button3.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(13, 370);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(191, 43);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "No New Warnings";
+            this.button3.UseVisualStyleBackColor = true;
+=======
             this.btn_ErrorNotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btn_ErrorNotifications.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_ErrorNotifications.Location = new System.Drawing.Point(12, 335);
@@ -874,6 +880,7 @@
             this.btn_ErrorNotifications.UseVisualStyleBackColor = true;
             this.btn_ErrorNotifications.TextChanged += new System.EventHandler(this.btn_ErrorNotifications_TextChanged);
             this.btn_ErrorNotifications.Click += new System.EventHandler(this.btn_ErrorNotifications_Click);
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
             // 
             // refresh_timer
             // 
@@ -890,9 +897,9 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
             // 
-            // SerialReadingThread
+            // backgroundWorker1
             // 
-            this.SerialReadingThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
             // UserInterface
             // 
@@ -900,9 +907,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(726, 425);
-            this.Controls.Add(this.btn_ErrorNotifications);
-            this.Controls.Add(this.btn_ErrorReportGenerate);
-            this.Controls.Add(this.btn_COMPortConnect);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -952,8 +959,8 @@
         private System.Windows.Forms.TabPage tabPage5;
         private ZedGraph.ZedGraphControl zedGraphControl1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button btn_COMPortConnect;
-        private System.Windows.Forms.Button btn_ErrorReportGenerate;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label3;
@@ -961,7 +968,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NotifyIcon taskbar_notification;
-        private System.Windows.Forms.Button btn_ErrorNotifications;
+        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Timer refresh_timer;
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.Label lbl_avgSpeed;
@@ -1004,7 +1011,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.ComboBox comboBox1;
-        private System.ComponentModel.BackgroundWorker SerialReadingThread;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
 
     }
 }
