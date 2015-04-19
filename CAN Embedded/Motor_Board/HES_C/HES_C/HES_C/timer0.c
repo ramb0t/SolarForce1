@@ -30,7 +30,9 @@ void timer0_init(void)
 	TCCR0B = (0<<CS02) | (1<<CS01) | (1<<CS00); // prescaler: 64
 	TCNT0 = TIMEBASE_RELOAD0; // set initial reload-value
 	TIFR0  |= (1<<TOV0);  // clear overflow int.
-	TIMSK0 |= (1<<TOIE0); // enable overflow-interrup
+	TIMSK0 |= (1<<TOIE0); // enable overflow-interrupt
+	
+	sei(); 	// set (global) interrupt enable bit
 }
 
 

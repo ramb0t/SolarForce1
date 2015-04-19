@@ -12,9 +12,9 @@
 //timer0 overflow
 ISR(TIMER2_OVF_vect)
 {
+	count2++;
 	TCNT2 = TIMEBASE_RELOAD2; //reload timer
 	//timer will be reloaded to the highest value(overflow value) - 0.5ms
-	count2++;
 }
 
 //timer2 setup
