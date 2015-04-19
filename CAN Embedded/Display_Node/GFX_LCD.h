@@ -31,6 +31,11 @@
 
 // Definitions
 /*********************************************/
+
+// State Byte Masks
+#define 	BMSSTATE_FAULT 	0x01
+#define 	BMSSTATE_RFAULT	0x10
+
 // Flag byte Masks
 #define 	BMSFLAG_FAN		0x80
 #define 	BMSFLAG_LLIM	0x40
@@ -45,11 +50,17 @@
 /*********************************************/
 // Used for the display...
 uint16_t	gSpeed;
+uint8_t		gBMS_State;
+uint8_t		gBMS_Flags;
+uint8_t		gBMS_Faults;
+uint8_t		gBMS_LevelFaults;
+uint8_t		gBMS_Warnings;
 uint8_t 	gBMS_soc;
 uint16_t 	gBMS_PackVoltage;
 int16_t 	gBMS_PackCurrent;
 int8_t		gBMS_Temp;
-uint8_t		gBMS_Flags;
+
+
 
 // used for the timing / interrupts
 extern	volatile uint16_t	gMilliSecTick;

@@ -132,7 +132,11 @@ uint8_t CAN_Decode(CANMessage *message){
 	break; //CANID_SPEED
 
 	case CANID_BMS2:
-		gBMS_Flags = message->data[3];
+		gBMS_State  	 = message->data[0];
+		gBMS_Flags  	 = message->data[3];
+		gBMS_Faults 	 = message->data[4];
+		gBMS_LevelFaults = message->data[5];
+		gBMS_Warnings    = message->data[6];
 
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;

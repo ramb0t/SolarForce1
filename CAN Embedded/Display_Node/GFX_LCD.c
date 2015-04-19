@@ -205,6 +205,22 @@ void drawMain(){
 		u8g_DrawStr(&u8g, 67, 27, "LLIM!");
 	}
 
+	// Fault Condition! Power cycle needed?
+	if((gBMS_State & BMSSTATE_FAULT) || (gBMS_State & BMSSTATE_RFAULT)){
+		u8g_DrawStr(&u8g, 67, 36, "FAULT!");
+		// Prob wise to draw the stored fault code byte?
+		utoa(gBMS_Faults,buf,2);
+		u8g_DrawStr(&u8g, 67, 44, buf);
+	}
+
+	// Warnings!
+	if(gBMS_Warnings){
+		u8g_DrawStr(&u8g, 67, 54, "Warning!");
+		// Prob wise to draw the stored warning code byte?
+		utoa(gBMS_Warnings,buf,2);
+		u8g_DrawStr(&u8g, 67, 61, buf);
+	}
+
 	// Draw SOC Bar
 	u8g_DrawVLine(&u8g, 120,0,50);
 	u8g_DrawHLine(&u8g, 114,0,6);
