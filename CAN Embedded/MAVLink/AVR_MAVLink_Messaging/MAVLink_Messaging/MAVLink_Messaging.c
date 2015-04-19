@@ -280,6 +280,8 @@ void GPS_readData()
 
 void CAN_readData()
 {
+	//CANMessage Input_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;
+	//zCANMessage Speed_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;	
 		//itoa(CAN_checkReceiveAvailable(), buff,10);
 		//uart_puts("RXAvail:");
 		//uart_puts(buff);
@@ -322,12 +324,12 @@ void CAN_readData()
 }//-------------------END DEBUG CODE!-------------------------//
 	
 				//-----------------Pull MPPT data----------------//
-				Input_Message.id = 0x771;
-				Input_Message.rtr = 1;
-				Input_Message.length = 0;
-
-				 //Send the request
-				CAN_sendMessage(&Input_Message);
+				//Input_Message.id = 0x771;
+				//Input_Message.rtr = 1;
+				//Input_Message.length = 0;
+//
+				 ////Send the request
+				//CAN_sendMessage(&Input_Message);
 				
 				//-------------------Receive Data----------------//
 			
@@ -352,6 +354,7 @@ void CAN_readData()
 					{
 						uart_puts(":");
 						itoa(Input_Message.data[i],buff,10);
+						Speed_Message.data[i] = Input_Message.data[i]; 
 						uart_puts(buff);
 					}
 
@@ -370,7 +373,7 @@ void CAN_readData()
 //
 				//}
 				
-				if (Input_Message.id ==BMS_CANID)				//BMS data detected
+				if (Input_Message.id ==BMS_1_CANID)				//BMS data detected
 				{
 					uart_puts("\n");
 					uart_puts("CAN from BMS:");
@@ -550,7 +553,7 @@ void MAV_msg_pack()
 			
 			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_motor_driver_send(0,/*0,66*/Input_Message.data[0],Input_Message.data[1]);
+			mavlink_msg_motor_driver_send(0,/*0,66*/Speed_Message.data[1],Speed_Message.data[1]);
 
 			
 			/*-----------------------------------------------------------------------
@@ -595,7 +598,7 @@ void MAV_msg_pack()
 			uint16_t *cell_temp = temp;
 			
 			//uart_flush();
-			mavlink_msg_bms_data_send(MAVLINK_COMM_0,0,1420,1550,'t',0,0,75,128,cell_voltage,cell_temp,MAV_STATE_ACTIVE);
+			//mavlink_msg_bms_data_send(MAVLINK_COMM_0,0,1420,1550,'t',0,0,75,128,cell_voltage,cell_temp,MAV_STATE_ACTIVE);
 
 			/*-----------------------------------------------------------------------
 			NAME: Accelerometer/Gyroscope Data
@@ -607,7 +610,7 @@ void MAV_msg_pack()
 								5 = int8_t incline (degrees)				-127 to 127 (0-100 @ 10 counts per degree)
 			//TESTING																	*/
 			
-			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
+			//mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
 			
 //TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
 			//MAV_uart_send(buf,len);
@@ -643,19 +646,19 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,2542,1011,0,0);
+			//mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,2542,1011,0,0);
 			
 //TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,2500,1000,0,0);
+			//mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,2500,1000,0,0);
 			
 //TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,2591,968,0,1);
+			//mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,2591,968,0,1);
 			
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
+			//mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
 			
 			
 			/*-----------------------------------------------------------------------

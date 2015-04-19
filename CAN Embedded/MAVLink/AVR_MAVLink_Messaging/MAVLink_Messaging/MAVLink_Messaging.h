@@ -43,7 +43,7 @@
 #define MOTOR_DRIVER_CANID	0x0420
 #define HALL_EFFECT_CANID	0x0420
 
-#define BMS_CANID			0x0621
+#define BMS_1_CANID			0x0621
 #define ACCELO_GYRO_CANID   0x00C8
 #define MPPT1_CANID			0x0771
 #define MPPT2_CANID			0x0772
@@ -68,9 +68,9 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //------------Library Objects----------------------------//
 
-CANMessage Input_Message;				//CAN library object
-CANMessage Input_Buffered_Msg;			//Buffered CAN input msg
-
+			//CAN library object
+CANMessage Input_Message;			//Buffered CAN input msg
+CANMessage Speed_Message;
 volatile int counter=0;
 volatile int ctr2=0;
 
