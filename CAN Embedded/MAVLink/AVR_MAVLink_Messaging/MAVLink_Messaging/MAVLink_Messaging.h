@@ -40,15 +40,15 @@
 
 //-------------CAN Defines----------------------------------//
 
-#define MOTOR_DRIVER_CANID	0x0420
-#define HALL_EFFECT_CANID	0x0420
+#define MOTOR_DRIVER_CANID	0x1056
+#define HALL_EFFECT_CANID	0x1056
 
-#define BMS_CANID			0x0800
+#define BMS_CANID			0x1569
 #define ACCELO_GYRO_CANID   0x0200
-#define MPPT1_CANID			0x0711
-#define MPPT2_CANID			0x0712
-#define MPPT3_CANID			0x0713
-#define MPPT4_CANID			0x0714
+#define MPPT1_CANID			0x1905
+#define MPPT2_CANID			0x1906
+#define MPPT3_CANID			0x1907
+#define MPPT4_CANID			0x1908
 
 #include <avr/io.h>
 #include <util/delay.h>

@@ -10,6 +10,10 @@
 #define DEBUG	0
 
 //------------ISR for the Timer0-------------------------//
+ISR(INT0_vect){
+	CAN_fillBuffer();
+
+}
 
 int main (void)
 {
@@ -58,7 +62,7 @@ int main (void)
 	/*---------UART Serial Init --------------------
 		*uses UART.h library
 		*interrupt-based					*/
-	
+		CAN_setupInt0();
 		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
 				
 		sei();	//interrupts ON
@@ -69,7 +73,7 @@ int main (void)
 				mavlink_system.compid = 200; // Component/Subsystem ID, 1-255
 	
 //---------------Operational Loop---------------------//
-	
+	_delay_ms(100);
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 		
@@ -83,14 +87,15 @@ int main (void)
 		LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
-
-		//uart_putc('a');				
-		//CAN_readData();
-		//MAV_msg_pack();
 		
+		//uart_putc('a');
+		
+		CAN_readData();
+		MAV_msg_pack();
+		GPS_readData();
 		//uart_puts("Hi!");
 		
-		GPS_readData();
+
 		
 
 	}
@@ -148,7 +153,7 @@ void GPS_readData()
 										//uart_puts(GPRMC);
 										for (int i=0;i<ctr;i++)
 										{
-											uart_putc(GPRMC[i]);
+											//uart_putc(GPRMC[i]);
 											
 										}
 											ctr=1;	
@@ -168,17 +173,33 @@ void GPS_readData()
 											//uart_puts(GPRMC);
 											for (int i=0;i<ctr;i++)
 											{
-												uart_putc(time[i]);
+												//uart_putc(time[i]);
 											}
 											ctr=1;
 										//----------get data status--------//
 											gpsdata = uart_getc();
-											GPRMC[0] = gpsdata;
+											GPRMC[0]= gpsdata;
+											fix = GPRMC[0];
 											while (gpsdata!=',')
 											{
 												_delay_ms(20);
 												gpsdata = uart_getc();
-												GPRMC[ctr] = gpsdata;
+												//fix = gpsdata;
+											}
+											if (gpsdata==',')
+											{
+													//uart_putc(fix);
+											}
+												ctr=1;
+											//----------get the latitude--------//
+											gpsdata = uart_getc();
+											lat[0] = gpsdata;
+											//for the time
+											while (gpsdata!=',')
+											{
+												_delay_ms(20);
+												gpsdata = uart_getc();
+												lat[ctr] = gpsdata;
 												ctr++;
 											}
 											if (gpsdata==',')
@@ -186,20 +207,22 @@ void GPS_readData()
 												//uart_puts(GPRMC);
 												for (int i=0;i<ctr;i++)
 												{
-													uart_putc(GPRMC[i]);
+													//uart_putc(lat[i]);
 												}
-												ctr=1;
+												ctr=1;	
 											}
+										}
 										
-											}
-										}										
 									}
+									break;
+							}
+			}
 
 										
-							}//if $
+
 								
 							
-					//while UART
+
 
 	
 	}//if UART available
@@ -250,7 +273,8 @@ void CAN_readData()
 	////TODO: Set flag for controller error in GUI
 	//}else if (CAN_checkError()==CAN_OK)
 	
-		uart_flush();
+	uart_flush();		//<-------may be important
+	
 		//	_delay_ms(20);
 		
 		char buff[10] ;
@@ -314,7 +338,7 @@ void CAN_readData()
 					uart_puts("\n");
 					uart_puts("CAN from HE:");
 					uart_puts(Input_Message.id);
-					for (int i=4;i<8;i++)
+					for (int i=0;i<4;i++)
 					{
 						itoa(Input_Message.data[i],buff,10);
 						uart_puts(buff);
@@ -502,7 +526,7 @@ void MAV_msg_pack()
 			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			//MAV_uart_send(buf,len);
 			
-			mavlink_msg_motor_driver_send(MAVLINK_COMM_0, 1,85/*Input_Message.data[4],Input_Message.data[5]*/);
+			mavlink_msg_motor_driver_send(MAVLINK_COMM_0, Input_Message.data[0],Input_Message.data[1]);
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
@@ -516,7 +540,7 @@ void MAV_msg_pack()
 			//TESTING		CAN 2 = speed to send							*/
 			
 			//uart_flush();
-			mavlink_msg_hall_effect_send(MAVLINK_COMM_0, /*Input_Message.data[0]*/60,0,0);
+			mavlink_msg_hall_effect_send(MAVLINK_COMM_0, Input_Message.data[2],0,0);
 			
 			//uart_puts("RX");
 			//uart_puts(MAV_Rx_buff);
