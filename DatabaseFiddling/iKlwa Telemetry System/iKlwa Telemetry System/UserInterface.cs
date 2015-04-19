@@ -24,7 +24,7 @@ namespace iKlwa_Telemetry_System
                                   BMS, GYRO, MPPT1,
                                   MPPT2, MPPT3, MPPT4,GPS,
                                   SOLAR_CELL, ANEMOMETER};
-        private ReportScreen output = new ReportScreen();
+        private ReportScreen output;// = new ReportScreen();
 
         private enum TABS : byte {Summary = 1, Graphing = 2,
                                   Motion = 3, Electrical = 4,
@@ -63,7 +63,7 @@ namespace iKlwa_Telemetry_System
             if (db_exists == true)
             try
             {
-                protection.AcquireReaderLock(100);//lock reader
+                protection.AcquireReaderLock(10000);//lock reader
                 try
                 {
                     //refreshing takes place based on selected tab
@@ -81,7 +81,7 @@ namespace iKlwa_Telemetry_System
                             {
                                 string x = null;
                                 //this is under test. currently only shows HE Speed on a label
-                                try { x = d.getLatestValue("Hall Effect Sensor", "Speed"); }
+                                try { x = d.getLatestValue("Motor Driver", "Speed"); }
                                 catch (Exception error)
                                 { MessageBox.Show(error.Message); }
                                 if (x.Equals(null)==false)//check for null value, just in case... shouldn't ever happen
@@ -237,20 +237,23 @@ namespace iKlwa_Telemetry_System
             {
                 MessageBox.Show(err.Message);
             }
-            gp.Title.Text = "Speed vs Time";
-            gp.XAxis.Title.Text = "Time";
-            gp.YAxis.Title.Text = "Speed";
-
             int x = 0;
             foreach (var item in results)
             {
-                foreach (var thing in item.Descendants("Value"))
+                foreach (var thing in item.Descendants(TelemetryDatabase.VAL_TAG))
                 {
                     listPoints.Add(x++, Convert.ToDouble(thing.Value));
+                }
+                foreach (var thing in item.Descendants(TelemetryDatabase.DESCRIP_TAG))
+                {
+                    gp.YAxis.Title.Text = thing.Value;
                 }
             }
             line_item = gp.AddCurve(null, listPoints, Color.LightSeaGreen, SymbolType.None);
             line_item.Line.Width = 1;
+            gp.Title.Text = gp.YAxis.Title.Text + " vs Time";
+            gp.XAxis.Title.Text = "Time";
+            //gp.YAxis.Title.Text = y_axis;
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
             zedGraphControl1.Refresh();
@@ -269,6 +272,7 @@ namespace iKlwa_Telemetry_System
 
             try
             {
+                output = new ReportScreen();
                 output.Populate(headers, values);
                 output.Show();
                 output.setTitle("Raw Data Entries");
@@ -342,6 +346,8 @@ namespace iKlwa_Telemetry_System
                     var packet = comms.readTelemetryInput(); //read telemetry input
                     try
                     {
+                        //may want to implement writer lock in addDataCapture...?
+
                         protection.AcquireWriterLock(100);//lock writer
                         try
                         {
@@ -384,7 +390,7 @@ namespace iKlwa_Telemetry_System
 
                                 default:
                                     d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                        "Sensor packet with invalid ID detected.");
+                                        "Sensor packet with invalid ID detected.","Data Error");
                                     break;
                             }
                             count = 0;//if code reaches here, there was a successful write and the timeout counter is cleared.
@@ -488,6 +494,11 @@ namespace iKlwa_Telemetry_System
             btn_ErrorNotifications.Text = "No New Warnings";
             btn_ErrorNotifications.ForeColor = Color.Black;
             taskbar_notification.Visible = false;
+        }
+
+        private void zedGraphControl1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
