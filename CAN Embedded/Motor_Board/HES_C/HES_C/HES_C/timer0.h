@@ -16,11 +16,13 @@
 #include <avr/interrupt.h>
 #include "../lib/uart/uart.h"
 
+extern volatile uint16_t count0;
+
 // timebase on timer0 serves a 1ms tick
 // for 16MHz System and Prescaler 64
-#define TIMEBASE_PRESCALE (64) // prescaler value
-#define TIMEBASE_HITS_PER_1MS ( F_CPU/TIMEBASE_PRESCALE/1000 ) //number of timer ovf per 1mS
-#define TIMEBASE_RELOAD ((uint8_t)(0xff-TIMEBASE_HITS_PER_1MS+1)) // value to reload timer with
+#define TIMEBASE_PRESCALE0 (64) // prescaler value
+#define TIMEBASE_HITS_PER_1MS ( F_CPU/TIMEBASE_PRESCALE0/1000 ) //number of timer ovf per 1mS
+#define TIMEBASE_RELOAD0 ((uint8_t)(0xff-TIMEBASE_HITS_PER_1MS+1)) // value to reload timer with
 
 void timer0_init(void);
 
