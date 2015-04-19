@@ -53,6 +53,8 @@ namespace iKlwa_Telemetry_System
             if (COM_Select.NoPortsFound == false)
             {
                 comms.name = COM_Select.Port;
+                btn_COMPortConnect.ForeColor = Color.Green;
+                btn_COMPortConnect.Text = "Connected";
                 SerialReadingThread.RunWorkerAsync();
             }
         }
@@ -96,7 +98,6 @@ namespace iKlwa_Telemetry_System
                             break;
 
                         case TABS.Motion:
-                                //this is under test. currently only shows HE Speed on a label
                                 try
                                 {
                                     x = d.getLatestValue("Motor Driver", "Speed");
@@ -219,6 +220,7 @@ namespace iKlwa_Telemetry_System
             ReportScreen output = new ReportScreen();
             try 
             {
+                output.setTitle("Error Report");
                 output.Populate(headers, values);
                 output.ShowDialog();
             }
