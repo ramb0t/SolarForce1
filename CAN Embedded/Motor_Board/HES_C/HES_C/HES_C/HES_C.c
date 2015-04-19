@@ -14,11 +14,19 @@
 #include "../lib/mcp2515/mcp2515.h"
 #include "../lib/SPI/AVR_SPI.h"
 #include "timer0.h"
+#include "timer2.h"
 
-volatile int half_rev;
-volatile int rpm = 0;
+volatile uint16_t count0 = 0;
+volatile uint16_t count2 = 0;
+volatile uint16_t Capt2 = 0;
+volatile uint16_t step2 = 0;
+volatile uint16_t hallRev = 0;
+volatile uint16_t avgCountH = 0;
+volatile uint16_t totalCountH = 0;
+volatile uint16_t rpm = 0;
 volatile uint16_t step = 0;
 volatile uint8_t hSpeed = 0;
+
 
 /*void send()
 {
@@ -36,30 +44,52 @@ volatile uint8_t hSpeed = 0;
 	//_delay_ms(200);
 }*/
 
+
 void speedCalcs ()
 {	
 	//fix this calculation to keep accuracy
 	//the way Ben showed for the motor one
 	//rpm = 30*1000/1000*half_rev;
 	//hSpeed = (rpm*(18*3.14)/60)*2;
-	rpm = 30*half_rev;
-	step = rpm*126; //126 is diameter*314 for pi
-	hSpeed = step/300; //this value has the decimal point in the value, must divide by 10 on other side
-	
-	/*CANMessage test;
-	
-	test. id = 0x0006;
-	test. rtr = 0 ;
-	test. length = 4 ;
-	test. data [ 0 ] = half_rev;
-	test. data [ 1 ] = rpm;
-	test. data [ 2 ] = step;
-	test. data [ 3 ] = hSpeed;
-	
-	CAN_sendMessage (&test);*/
-	
+	//rpm = 30*half_rev;
+	//rpm/60 = rps, rps*161 = m/s, m/s*3.6 = km/h
+	//step = rpm*161; //161 is circumference in cm
+	//hSpeed = step/300; //this value has the decimal point in the value, must divide by 10 on other side
 	//half_rev = 0; //reset to 0	
 	//send();
+	
+	
+	if (hallRev > 0)
+	{
+		avgCountH = totalCountH/step2; 
+	}
+		else
+	{
+		avgCountH = 0;
+	}
+	
+	totalCountH = 0;
+	Capt2 = 0;
+	
+	hSpeed = 40000/avgCountH;
+	
+	
+	CANMessage tryit;
+	
+	tryit. id = 0x0006;
+	tryit. rtr = 0 ;
+	tryit. length = 7 ;
+	tryit. data [ 0 ] = 0x04;
+	tryit. data [ 1 ] = hSpeed;
+	/*test. data [ 0 ] = half_rev>>8;
+	test. data [ 1 ] = half_rev;
+	test. data [ 2 ] = rpm>>8;
+	test. data [ 3 ] = rpm;
+	test. data [ 4 ] = step>>8;
+	test. data [ 5 ] = step;
+	test. data [ 6 ] = hSpeed;*/
+	
+	CAN_sendMessage (&tryit);
 }
 
 ISR(INT0_vect)
@@ -68,16 +98,22 @@ ISR(INT0_vect)
 	//increment the value of the count by one each time
 	//the magnet is detected
 	//use this value to calculate the rpms
-	half_rev++;
+	//half_rev = half_rev + 1;
 	
-	/*CANMessage test1;
+	//need debouncing here!!!!
+	//if magnet passes by slowly, picks up more than one interrupt
 	
-	test1. id = 0x0001;
-	test1. rtr = 0 ;
-	test1. length = 1 ;
-	test1. data [ 0 ] = half_rev;
+	step2 = count2*5; //number of overflows*0.5ms
+	Capt2 = Capt2/10; //5 divided by 10 = 0.5
 	
-	CAN_sendMessage (&test1);*/
+	totalCountH = totalCountH + Capt2;
+	
+	hallRev++;
+	
+	if (totalCountH > 50000)
+	{
+		speedCalcs();
+	}
 }
 
 void initInterrupt0(void)
@@ -100,6 +136,7 @@ int main(void)
 	//initComms(12); //for own testing
 	initInterrupt0();
 	timer0_init();
+	timer2_init();
 		
 	SPI_Init(); // setup SPI	
 	CAN_Init(CAN_125KBPS_16MHZ);
@@ -109,6 +146,6 @@ int main(void)
 	
     while(1)
     {
-        //do something
+	
 	}
 }
