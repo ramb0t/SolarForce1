@@ -9,7 +9,8 @@
 
 #include "CAN.h"
 #include "../mcp2515/mcp2515.h"
-
+//hack
+//#include <util/delay.h>
 
 // Setup the RX Buffer
 #define CAN_RX_BUFFER_MASK	(CAN_RX_BUFFER_SIZE - 1 )
@@ -22,14 +23,27 @@ static volatile CANMessage CAN_Rx_Buffer[CAN_RX_BUFFER_SIZE];
 volatile uint8_t CAN_Rx_Head;
 volatile uint8_t CAN_Rx_Tail;
 volatile uint8_t 	flag;
-//WE NEED AN ISR!
 
+/*  WE NEED AN ISR!
+* Include one of the following in your main.c file and call the relevant init function from this library
 ISR(INT0_vect){
 	CAN_fillBuffer();
 
 }
 
-//ISR(PCINT0_vect, ISR_ALIASOF(INT0_vect));
+Associated Init:
+CAN_setupInt0();
+
+
+ISR(PCINT0_vect){
+	CAN_fillBuffer();
+
+}
+
+Associated Init:
+CAN_setupPCINT0();
+
+*/
 
 /*************************************************************************
 Function: CAN_Init()
@@ -85,12 +99,13 @@ uint8_t CAN_fillBuffer(void){
 			/* store new index */
 			CAN_Rx_Head = tmphead;
 			/* store received data in buffer */
-			CANMessage msg;
-			CAN_readMessage(&msg);
-			CAN_Rx_Buffer[tmphead] = msg;
+			CAN_readMessage(&CAN_Rx_Buffer[tmphead]);
 			flag = CAN_MSGAVAIL;
 		}
 			//CAN_LastRxError = lastRxError;
+
+		// Hack to improve buffer response
+		//_delay_us(100);
 	}
 		return 0;
 }
@@ -163,26 +178,31 @@ uint8_t CAN_sendMessage(const CANMessage* message)
 
 	//TODO: Implement this fancy stuff.. for now we use the germans!
 	uint8_t res, txbuf_n;
-//	uint8_t timeout = 0;
+	uint16_t dirtyCounter = 0;
+	uint8_t timeout = 0;
 //	uint16_t time;
 //	time = timebase_actTime();
 //
 	do {
 		res = mcp2515_getNextFreeTXBuf(&txbuf_n); // info = addr.
 //		if (timebase_passedTimeMS(time) > CANSENDTIMEOUT ) timeout = 1;
-	} while (res == MCP_ALLTXBUSY);
-//
-//	if (!timeout) {
+		dirtyCounter++;
+		if(dirtyCounter > 100){ // expire...
+			timeout =1;
+		}
+	} while (res == MCP_ALLTXBUSY && !timeout);
+
+	if (!timeout) {
 		mcp2515_write_canMsg( txbuf_n, message);
 		mcp2515_start_transmit( txbuf_n );
 		return CAN_OK;
-//	}
-//	else {
+	}
+	else {
 //#if (CANDEBUG)
 //		term_puts_P("Transmit timeout\n");
 //#endif
-//		return CAN_FAILTX;
-//	}
+		return CAN_FAILTX;
+	}
 }
 
 /*************************************************************************

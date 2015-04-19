@@ -1,7 +1,7 @@
 /*
- * timer2.h
+ * timer.h
  *
- * Created: 19/04/2015 02:51:56 AM
+ * Created: 19/04/2015 12:17:49 PM
  *  Author: Terayza
  */ 
 
@@ -25,7 +25,5 @@ extern volatile uint16_t count2;
 #define TIMEBASE_RELOAD2 ((uint8_t)(0xff-TIMEBASE_HITS_PER_05MS+1)) // value to reload timer with
 
 void timer2_init(void);
-
-
 
 #endif /* TIMER2_H_ */

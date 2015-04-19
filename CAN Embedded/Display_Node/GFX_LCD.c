@@ -1,5 +1,6 @@
 
 #include "GFX_LCD.h"
+#include "../lib/CAN/CAN_defs.h"
 
 #define DEBUG
 
@@ -45,7 +46,7 @@ void u8g_setup(void)
   */
    //u8g_InitSPI(&u8g, &u8g_dev_st7920_128x64_sw_spi, PN(2, 0), PN(2, 1), PN(2, 2), U8G_PIN_NONE, U8G_PIN_NONE);
 	//GFX_SELECT();
-	u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_4x_hw_spi, PN(3, 7), U8G_PIN_NONE, PN(3,4));
+	u8g_InitHWSPI(&u8g, &u8g_dev_st7920_128x64_hw_spi, PN(3, 7), U8G_PIN_NONE, PN(3,4));
    //u8g_Init8Bit(&u8g, &u8g_dev_ks0108_128x64, PN(1, 2), PN(1, 1), PN(1, 0), PN(3, 7), PN(3, 6), PN(3, 5), PN(3, 4), PN(3, 3), PN(2, 5), PN(2, 1), PN(2, 0), PN(2,2), PN(2, 3), U8G_PIN_NONE);
 
    //U8GLIB_KS0108_128(d0, d1, d2, d3, d4, d5, d6, d7, en, cs1, cs2, di, rw [, reset])u8g_dev_ks0108_128x64
@@ -89,19 +90,173 @@ void GFX_Cnt(int i){
 
 void GFX_LCD_Draw(CANMessage* message){
 
+	// Generate strings for each field?
 	cli();
 	LCD_SELECT();
 	u8g_FirstPage(&u8g);
-	//u8g_prepare();
 	do
 	{
+<<<<<<< HEAD
 		draw(message);
 
+=======
+		drawMain();
+//		LCD_UNSELECT();
+//		sei();
+//		LED_FLIP(LED_1);
+//		// wait 4 mS if we caught anything...
+//		//while(gMilliSecTick - int_mS > 4){}
+//		cli();
+//		LCD_SELECT();
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 	} while ( u8g_NextPage(&u8g) );
 	LCD_UNSELECT();
 	sei();
 }
 
+<<<<<<< HEAD
+=======
+void drawMain(){
+	char buf[10]; // used for forming strings to pass to the display ??
+	char string[15];
+
+	// Set The Font
+	u8g_SetFont(&u8g, u8g_font_freedoomr25n);
+	u8g_SetFontRefHeightExtendedText(&u8g);
+	u8g_SetDefaultForegroundColor(&u8g);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw a Frame
+	u8g_DrawHLine(&u8g, 0,30,65);
+	u8g_DrawHLine(&u8g, 0,31,65);
+	u8g_DrawVLine(&u8g, 65,0,64);
+	//u8g_DrawFrame(&u8g,0,0,64,32);
+
+	// Draw the Speed
+	utoa(gSpeed, buf, 10);
+	u8g_DrawStr(&u8g, 3, 4, buf);
+
+	// Change the font
+	u8g_SetFont(&u8g, u8g_font_6x10);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw Power In / Power Out
+	memset(string, 0, sizeof string);
+	strcat(string,"P:");
+
+	// First Calculate the power: P = V.I
+	int32_t packPower = gBMS_PackVoltage ;
+	packPower = packPower * gBMS_PackCurrent;
+
+	if(packPower > 0){
+		strcat(string,"+");
+	}
+	if(packPower >=1000 || packPower <=-1000){ // We need to go to kW
+		int16_t  iPackPower = packPower / 1000; // Get kW ints
+		uint16_t rPackPower = packPower % 1000; // Get kW dec
+		if(packPower < 0){ // need to flip the sign of the remainder... twos comp?
+			rPackPower = ~rPackPower + 1;
+		}
+		itoa(iPackPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,".");
+		// Sort out Zeros etc
+		if(rPackPower < 100){
+			strcat(string,"0");
+			if(rPackPower < 10){
+				strcat(string,"0");
+			}
+		}
+		utoa(rPackPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,"kW");
+	}else{
+		itoa(packPower, buf, 10);
+		strcat(string,buf);
+		strcat(string,"W");
+	}
+	// Finally draw the power
+	u8g_DrawStr(&u8g, 0, 32, string);
+
+	// Change the font
+	u8g_SetFont(&u8g, u8g_font_5x8);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw Pack Voltage
+	utoa(gBMS_PackVoltage, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Volt:");
+	strcat(string,buf);
+	strcat(string,"V");
+	u8g_DrawStr(&u8g, 67, 1, string);
+
+	// Draw Pack Current
+	itoa(gBMS_PackCurrent, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Curr:");
+	strcat(string,buf);
+	strcat(string,"A");
+	u8g_DrawStr(&u8g, 67, 10, string);
+
+	// Draw Temp
+	itoa(gBMS_Temp, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Temp:");
+	strcat(string,buf);
+	strcat(string,"'C");
+	u8g_DrawStr(&u8g, 67, 19, string);
+
+	// Draw HLIM
+	if(gBMS_Flags & BMSFLAG_HLIM){
+		u8g_DrawStr(&u8g, 67, 27, "HLIM!");
+	}
+	if(gBMS_Flags & BMSFLAG_LLIM){
+		u8g_DrawStr(&u8g, 67, 27, "LLIM!");
+	}
+
+	// Fault Condition! Power cycle needed?
+	if((gBMS_State & BMSSTATE_FAULT) || (gBMS_State & BMSSTATE_RFAULT)){
+		u8g_DrawStr(&u8g, 67, 35, "FAULT!");
+		// Prob wise to draw the stored fault code byte?
+		utoa(gBMS_Faults,buf,2);
+		u8g_DrawStr(&u8g, 67, 43, buf);
+	}
+
+	// Warnings!
+	if(gBMS_Warnings){
+		u8g_DrawStr(&u8g, 67, 50, "Warning!");
+		// Prob wise to draw the stored warning code byte?
+		utoa(gBMS_Warnings,buf,2);
+		u8g_DrawStr(&u8g, 67, 57, buf);
+	}
+
+	// Draw SOC Bar
+	u8g_DrawVLine(&u8g, 120,0,50);
+	u8g_DrawHLine(&u8g, 114,0,6);
+	u8g_DrawHLine(&u8g, 114,49,6);
+	// Draw the bar graph
+	u8g_DrawBox(&u8g, 122,50-(gBMS_soc/2)-1,6,(gBMS_soc/2)+1);
+
+	// write BMS SOC Label
+	u8g_SetFont(&u8g, u8g_font_5x7);
+	u8g_SetFontPosTop(&u8g);
+	utoa(gBMS_soc, buf, 10);
+	strcat(buf,"%");
+	u8g_DrawStr(&u8g, 114, 50, buf);
+	u8g_SetFontPosBottom(&u8g);
+	u8g_DrawStr(&u8g, 114, 65, "SOC");
+
+
+	// write BMS volt Label
+	//u8g_DrawStr(&u8g, 66, 21, "BMS Volts:");
+	//utoa(gBMS_PackVoltage, buf, 10);
+	//strcat(buf,"V");
+	//u8g_DrawStr(&u8g, 66, 31, buf);
+
+}
+
+
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 void draw(CANMessage* msg){
 	char buf[10]; // used for forming strings to pass to the display ??
 

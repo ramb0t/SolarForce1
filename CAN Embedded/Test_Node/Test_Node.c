@@ -213,7 +213,39 @@ int main(void)
     		default:
 
     			break;
+<<<<<<< HEAD
     		}
 
     }
+=======
+    		}// State Switch
+
+    	if ((Terminal_state & TERMINAL_LOOPBMS)&0x0f){
+			if((ms_Counter - oldBMSTime) > waitBMSTime){
+				oldBMSTime = ms_Counter;
+				BMS_send_fake_data();
+			}
+    	}
+
+    	if ((Terminal_state & TERMINAL_LOOPSPEED)&0x0f){
+			if((ms_Counter - oldSpeedTime) > waitSpeedTime){
+				oldSpeedTime = ms_Counter;
+				SpeedEmu_set_speed(spd);
+				spd = spd+1;
+				if(spd > 250){
+					spd = 0;
+				}
+				SpeedEmu_send_fake_data();
+			}
+    	}
+
+    } // while
+} // main
+
+
+// Int0 ISR for CAN buffer...
+ISR(INT0_vect){
+	CAN_fillBuffer();
+
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 }

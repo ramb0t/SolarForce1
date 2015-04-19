@@ -37,6 +37,8 @@
 #include "GFX_LCD.h"
 // SPI Library used with CAN Controller
 #include "../lib/SPI/AVR_SPI.h"
+// Timer0
+#include "Timer0.h"
 // Timer1
 #include "Timer1.h"
 
@@ -59,11 +61,44 @@
 
 // Variable Definitions
 /*********************************************/
+<<<<<<< HEAD
 extern volatile uint8_t flag;
 
 // Function Prototypes
 /*********************************************/
 
+=======
+// local vars
+//				uint8_t		LCD_BackLight_Val;  // Better to use a macro?
+#define			LCD_BackLight	OCR1A
+
+				 uint8_t	flagUpdateLCD;		// sets if an update is needed.
+extern  volatile uint8_t    flagTimerUpdateLCD; // allow the timer to determine update rate
+extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have passed
+		volatile uint16_t	int_mS;				// Keep track of when the last interupt was
+				 uint16_t	heartbeat_mS;		// Keep track of when to send the next heartbeat
+#define 	HEATBEAT_MS		1111                // arb to keep things interesting
+				 CANMessage heartbeat_Msg;
+
+extern	volatile uint8_t 	flag;
+// External vars for the display values we are interested in
+extern 			uint16_t 	gSpeed;
+extern			uint8_t		gBMS_State;
+extern			uint8_t		gBMS_Flags;
+extern			uint8_t		gBMS_Faults;
+extern			uint8_t		gBMS_LevelFaults;
+extern			uint8_t		gBMS_Warnings;
+extern 			uint8_t		gBMS_soc;
+extern			uint16_t	gBMS_PackVoltage;
+extern			int16_t		gBMS_PackCurrent;
+extern			int8_t		gBMS_Temp;
+
+
+// Function Prototypes
+/*********************************************/
+void 	IOInit(void);
+uint8_t CAN_Decode(CANMessage *message);
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 
 
 #endif /* DISPLAY_NODE_H_ */

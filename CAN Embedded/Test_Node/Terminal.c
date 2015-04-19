@@ -84,6 +84,7 @@ void Terminal_read(uint8_t* state){
 		return;
 	}
 
+<<<<<<< HEAD
 
 	else if(strcasecmp(input, TERMINAL_sSEND1) == 0){ // Mode 4
 		*state = TERMINAL_SEND1;
@@ -92,6 +93,173 @@ void Terminal_read(uint8_t* state){
 		uart_puts("\n");
 		return;
 	}
+=======
+	// Lets see if we can find a command?
+	uint8_t command = 0;
+	if(input[0] >=48 && input[0] <= 57){ // in the range of 0-9 .. decode
+		command = input[0] - 48;
+
+		utoa(*state,input,16);
+		uart_puts(input);
+		// now do state machine logic
+		switch(*state & 0xf0){ // select higher nibble for primary state
+		case TERMINAL_RUN :
+			// Main Menu
+			switch(command){
+			case TERMINAL_cLISTENSUB:
+				// Go to listen submenu
+				*state = TERMINAL_LISTENSUB;
+				uart_puts("\n");
+				uart_puts("Entering Listen Submenu\n");
+				Terminal_showListenMenu();
+				uart_puts("\n");
+				return;
+				break;
+
+			case TERMINAL_cSENDSUB:
+				// Go to send submenu
+				*state = TERMINAL_SENDSUB;
+				uart_puts("\n");
+				uart_puts("Entering Send Submenu\n");
+				Terminal_showSendMenu();
+				uart_puts("\n");
+				return;
+				break;
+
+
+			default:
+				// Unknown Command
+				uart_puts("\n");
+				uart_puts("Unknown command!\n");
+				Terminal_showMenu();
+				uart_puts("\n");
+				return;
+				break;
+			} // Main Command Switch
+			break;
+
+		case TERMINAL_LISTENSUB :
+			// Listen Submenu
+			switch(command){
+			case TERMINAL_cLISTEN:
+				// Go to Normal Listen Mode
+				*state = TERMINAL_LISTEN;
+				uart_puts("\n");
+				uart_puts("Entering Listen Mode\n");
+				uart_puts("Type 'c' to exit\n");
+				uart_puts("\n");
+				return;
+				break;
+
+			case TERMINAL_cLISTENRAW:
+				// Go to RAW Listen Mode
+				*state = TERMINAL_LISTENRAW;
+				uart_puts("\n");
+				uart_puts("Entering Listen Mode RAW\n");
+				uart_puts("Type 'c' to exit\n");
+				uart_puts("\n");
+				return;
+				break;
+
+			case TERMINAL_cBACK:
+				// Go Back To Main Menu
+				*state = TERMINAL_RUN;
+				uart_puts("\n");
+				uart_puts("Back to Main Menu..\n");
+				uart_puts("\n");
+				Terminal_showMenu();
+				return;
+				break;
+
+			default:
+				// Unknown Command
+				uart_puts("\n");
+				uart_puts("Unknown command!\n");
+				Terminal_showListenMenu();
+				uart_puts("\n");
+				return;
+				break;
+			} // Listen Command Switch
+			break; // Listen Submenu
+
+
+			case TERMINAL_SENDSUB :
+			// Send Submenu
+			switch(command){
+			case TERMINAL_cSENDRANDOM:
+				// Send Random Data
+				*state = TERMINAL_SENDRANDOM;
+				uart_puts("\n");
+				uart_puts("Sending Random CAN Messages \n");
+				uart_puts("Type 'c' to exit\n");
+				uart_puts("\n");
+				return;
+				break;
+
+			case TERMINAL_cSENDBMS:
+				// Send BMS Data
+				*state = TERMINAL_SENDBMS;
+				uart_puts("\n");
+				uart_puts("Sending BMS CAN Messages \n");
+				uart_puts("\n");
+				return;
+				break;
+
+			case TERMINAL_cLOOPBMS:
+				// loop BMS Data
+				*state |= TERMINAL_LOOPBMS;
+				uart_puts("\n");
+				uart_puts("Looping BMS CAN Messages \n");
+				uart_puts("Type 'c' to exit\n");
+				uart_puts("\n");
+				return;
+				break;
+
+			case TERMINAL_cLOOPSPEED:
+				// loop Speed Data
+				*state |= TERMINAL_LOOPSPEED;
+				uart_puts("\n");
+				uart_puts("Looping Speed CAN Messages \n");
+				uart_puts("Type 'c' to exit\n");
+				uart_puts("\n");
+				return;
+				break;
+
+			case TERMINAL_cBACK:
+				// Go Back To Main Menu
+				*state = TERMINAL_RUN;
+				uart_puts("\n");
+				uart_puts("Back to Main Menu..\n");
+				uart_puts("\n");
+				Terminal_showMenu();
+				return;
+				break;
+
+			default:
+				// Unknown Command
+				uart_puts("\n");
+				uart_puts("Unknown command!\n");
+				Terminal_showSendMenu();
+				uart_puts("\n");
+				return;
+				break;
+			} // Send Command Switch
+			break; // Send Submenu
+
+		default:
+			// error? No state found ?
+			*state = TERMINAL_INIT; // reboot!
+			uart_puts("\n");
+			uart_puts("Unknown state! Program Crash? :((((\n");
+			utoa(*state,input,16);
+			uart_puts(input);
+			uart_puts("\nAttempting reboot \n");
+			uart_puts("\n");
+			return;
+			break;
+		} // State Switch
+	} // command if
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 
 
 

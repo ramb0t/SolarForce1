@@ -40,6 +40,7 @@
 
 //-------------CAN Defines----------------------------------//
 
+<<<<<<< HEAD
 #define MOTOR_DRIVER_CANID	0x0420
 #define HALL_EFFECT_CANID	0x0420
 #define BMS_CANID			0x0800
@@ -48,6 +49,17 @@
 #define MPPT2_CANID			0x0301
 #define MPPT3_CANID			0x0302
 #define MPPT4_CANID			0x0303
+=======
+#define MOTOR_DRIVER_CANID	0x1056
+#define HALL_EFFECT_CANID	0x1056
+
+#define BMS_CANID			0x1569
+#define ACCELO_GYRO_CANID   0x0200
+#define MPPT1_CANID			0x1905
+#define MPPT2_CANID			0x1906
+#define MPPT3_CANID			0x1907
+#define MPPT4_CANID			0x1908
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -73,6 +85,19 @@ volatile int counter=0;
 volatile int ctr2=0;
 
 char MAV_Rx_buff[10];
+
+//GPS vars to store data for MAV framing later
+
+		char GPRMC[10];
+		char time[6];
+		char fix;
+		char lat[7];
+		char lat_dir;
+		char longitude[8];
+		char long_dir;
+		char spd[3];
+		char tmd[3];
+		char date[6];
 
 //------------Function Prototypes------------------------//
 

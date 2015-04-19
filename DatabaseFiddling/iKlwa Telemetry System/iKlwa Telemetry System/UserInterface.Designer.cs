@@ -855,9 +855,12 @@
             this.taskbar_notification.BalloonTipTitle = "Unread Telemetry Warning Messages";
             this.taskbar_notification.Icon = ((System.Drawing.Icon)(resources.GetObject("taskbar_notification.Icon")));
             this.taskbar_notification.Text = "Unread Warning Messages";
+            this.taskbar_notification.Visible = true;
+            this.taskbar_notification.BalloonTipClicked += new System.EventHandler(this.btn_ErrorNotifications_Click);
             // 
             // button3
             // 
+<<<<<<< HEAD
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button3.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button3.Location = new System.Drawing.Point(13, 370);
@@ -866,10 +869,21 @@
             this.button3.TabIndex = 6;
             this.button3.Text = "No New Warnings";
             this.button3.UseVisualStyleBackColor = true;
+=======
+            this.btn_ErrorNotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btn_ErrorNotifications.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_ErrorNotifications.Location = new System.Drawing.Point(12, 335);
+            this.btn_ErrorNotifications.Name = "btn_ErrorNotifications";
+            this.btn_ErrorNotifications.Size = new System.Drawing.Size(191, 43);
+            this.btn_ErrorNotifications.TabIndex = 6;
+            this.btn_ErrorNotifications.Text = "No New Warnings";
+            this.btn_ErrorNotifications.UseVisualStyleBackColor = true;
+            this.btn_ErrorNotifications.TextChanged += new System.EventHandler(this.btn_ErrorNotifications_TextChanged);
+            this.btn_ErrorNotifications.Click += new System.EventHandler(this.btn_ErrorNotifications_Click);
+>>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
             // 
             // refresh_timer
             // 
-            this.refresh_timer.Enabled = true;
             this.refresh_timer.Interval = 1000;
             this.refresh_timer.Tick += new System.EventHandler(this.refresh_timer_Tick);
             // 
