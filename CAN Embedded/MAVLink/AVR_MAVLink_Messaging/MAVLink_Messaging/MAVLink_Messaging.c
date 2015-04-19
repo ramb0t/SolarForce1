@@ -10,10 +10,6 @@
 #define DEBUG	0
 
 //------------ISR for the Timer0-------------------------//
-ISR(INT0_vect){
-	CAN_fillBuffer();
-
-}
 
 int main (void)
 {
@@ -62,7 +58,7 @@ int main (void)
 	/*---------UART Serial Init --------------------
 		*uses UART.h library
 		*interrupt-based					*/
-		CAN_setupInt0();
+	
 		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
 				
 		sei();	//interrupts ON
@@ -73,7 +69,7 @@ int main (void)
 				mavlink_system.compid = 200; // Component/Subsystem ID, 1-255
 	
 //---------------Operational Loop---------------------//
-	_delay_ms(100);
+	
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 		
@@ -87,22 +83,21 @@ int main (void)
 		LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
-		
-		//uart_putc('a');
-		
+
+		//uart_putc('a');				
 		CAN_readData();
 		MAV_msg_pack();
-		GPS_readData();
+		
 		//uart_puts("Hi!");
 		
-
+		//GPS_readData();
 		
 
 	}
 	return 0;
 
 }
- 
+
 void GPS_readData()
 {
 		//---------------GPS Parse--------------------------------//
@@ -122,8 +117,8 @@ void GPS_readData()
 	11   = E or W of magnetic variation
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum
-	*/		
-		char buffer[10];
+	*/
+		char GPRMC[60];
 		//unsigned int z=0;
 		//unsigned int lgth=0;
 		uint8_t ctr = 0;
@@ -133,125 +128,153 @@ void GPS_readData()
 		
 		if(uart_available())
 		{
-			while(!(UCSR0A & (1<<RXC0)))
+			//uart_putc(uart_getc());
+			gpsdata = uart_getc();
+			//uart_putc(gpsdata);
+			if(gpsdata !='$')
 			{
-							//uart_putc(uart_getc());
+				gpsdata = uart_getc();
+				ctr++;
+				if (ctr > 500)
+				{
+					uart_flush();
+					uart_puts("GPS Invalid! Check wiring.");
+				}
+			}else{
+				uart_puts("Fnd$");
+				gpsdata = uart_getc();
+				uart_putc(gpsdata);
+				if (gpsdata == 'G')
+				{
+					uart_puts("FoundG");
+					gpsdata = uart_getc();
+					ctr2++;
+
+					if (gpsdata == 'P')
+					{
+						uart_puts("FoundP");
+						gpsdata = uart_getc();
+						//uart_putc(gpsdata);
+						strcat(GPRMC[ctr2],gpsdata);
+						ctr2++;
+						if (gpsdata == 'R')
+						{
+							uart_puts("FoundR");
 							gpsdata = uart_getc();
 							//uart_putc(gpsdata);
-							if(gpsdata =='$')
+							strcat(GPRMC[ctr2],gpsdata);
+							ctr2++;
+							if (gpsdata == 'M')
 							{
+								uart_puts("FoundM");
 								gpsdata = uart_getc();
-									while (gpsdata!=',')
-									{
-										_delay_ms(20);
-										gpsdata = uart_getc();
-										GPRMC[ctr] = gpsdata;
-										ctr++;
-									}
-									if (gpsdata==',')
-									{
-										//uart_puts(GPRMC);
-										for (int i=0;i<ctr;i++)
-										{
-											//uart_putc(GPRMC[i]);
-											
-										}
-											ctr=1;	
-										//----------get the time part--------//
-										gpsdata = uart_getc();
-										time[0] = gpsdata;
-										//for the time
-										while (gpsdata!=',')
-										{
-											_delay_ms(20);
-											gpsdata = uart_getc();
-											time[ctr] = gpsdata;
-											ctr++;
-										}
-										if (gpsdata==',')
-										{
-											//uart_puts(GPRMC);
-											for (int i=0;i<ctr;i++)
-											{
-												//uart_putc(time[i]);
-											}
-											ctr=1;
-										//----------get data status--------//
-											gpsdata = uart_getc();
-											GPRMC[0]= gpsdata;
-											fix = GPRMC[0];
-											while (gpsdata!=',')
-											{
-												_delay_ms(20);
-												gpsdata = uart_getc();
-												//fix = gpsdata;
-											}
-											if (gpsdata==',')
-											{
-													//uart_putc(fix);
-											}
-												ctr=1;
-											//----------get the latitude--------//
-											gpsdata = uart_getc();
-											lat[0] = gpsdata;
-											//for the time
-											while (gpsdata!=',')
-											{
-												_delay_ms(20);
-												gpsdata = uart_getc();
-												lat[ctr] = gpsdata;
-												ctr++;
-											}
-											if (gpsdata==',')
-											{
-												//uart_puts(GPRMC);
-												for (int i=0;i<ctr;i++)
-												{
-													//uart_putc(lat[i]);
-												}
-												ctr=1;	
-											}
-										}
-										
-									}
-									break;
+								//uart_putc(gpsdata);
+								strcat(GPRMC[ctr2],gpsdata);
+								ctr2++;
+								if (gpsdata == 'C')
+								{
+									uart_puts("FoundC");
+									gpsdata = uart_getc();
+									//uart_putc(gpsdata);
+									strcat(GPRMC[ctr2],gpsdata);
+									ctr2++;
+								}
 							}
+						}
+					}
+				}
 			}
-
-										
-
-								
-							
-
-
+	}
 	
-	}//if UART available
-}//GPS get
+	while (!uart_available())
+	{
+			errctr++;
+			
+			if (errctr>500)
+			{
+				uart_puts("GPS Disconnected!");
+				errctr =0;
+			}
+			
+	}
+//
 			
 			
-void GPSParse(char* GPRMC,char gpsdata)
-{
-	int ctr =1;
-	gpsdata = uart_getc();
-	GPRMC[0] = gpsdata;
-	while (gpsdata!=',')
-	{
-		_delay_ms(20);
-		gpsdata = uart_getc();
-		GPRMC[ctr] = gpsdata;
-		ctr++;
-	}
-	if (gpsdata==',')
-	{
-		//uart_puts(GPRMC);
-		for (int i=0;i<ctr;i++)
-		{
-			uart_putc(GPRMC[i]);
-		}
-		ctr=1;
-	}
-}
+			
+			
+			
+			//while (uart_getc() != '$')
+			//{	
+					//gpsdata = uart_getc();
+					////uart_putc(gpsdata);
+				//ctr++;
 
+//
+			//}
+
+
+		}
+		
+		
+	//UART_REG = TX_DISABLE;
+	//uart_flush();
+	//gpsdata = uart_getc();	
+//
+	//for (int i=0;i<30;i++)
+	//{
+		//gpsdata = uart_getc();
+		//NMEA[i] = gpsdata;
+	//}
+	//
+	////UART_REG = TX_ENABLE;
+	////uart_flush();
+	//
+	//for (int i=0;i<30;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+		//uart_puts("\n---------GPS DATA---------\n");
+	//UART_REG = TX_DISABLE;			
+	//gpsdata = uart_getc();
+	//while (gpsdata != '$')
+	//{
+	//gpsdata = uart_getc();
+	//uart_putc(gpsdata);
+	//uart_puts("Invalid GPS data!");
+	//}
+//
+	//while (gpsdata != '*')
+	//{
+		//gpsdata = uart_getc();	//store char in NMEA buffer
+		//NMEA[ctr] = gpsdata;
+		//ctr++;
+	//}
+//
+	//for (int i=0;i<ctr;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+				////print raw NMEA data
+//
+	////PARSE TIME: hhmmss.ss
+	//uart_puts("Time: ");
+	////hour
+	//for(int i=0;i<2;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+	////minute
+	//uart_puts("h:");
+	//for(int i=2;i<4;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+	//uart_puts(": ");
+	//for(int i=4;i<6;i++)
+	//{
+		//uart_putc(NMEA[i]);
+	//}
+	
 
 
 
@@ -273,8 +296,7 @@ void CAN_readData()
 	////TODO: Set flag for controller error in GUI
 	//}else if (CAN_checkError()==CAN_OK)
 	
-	uart_flush();		//<-------may be important
-	
+		uart_flush();
 		//	_delay_ms(20);
 		
 		char buff[10] ;
@@ -300,12 +322,12 @@ void CAN_readData()
 }//-------------------END DEBUG CODE!-------------------------//
 	
 				//-----------------Pull MPPT data----------------//
-				//CANBusInput.id = 0x711;
-				//CANBusInput.rtr = 1;
-				//CANBusInput.length = 0;
+				Input_Message.id = 0x771;
+				Input_Message.rtr = 1;
+				Input_Message.length = 0;
 
-				// Send the request
-				//CAN_sendMessage(&message);
+				 //Send the request
+				CAN_sendMessage(&Input_Message);
 				
 				//-------------------Receive Data----------------//
 			
@@ -325,26 +347,28 @@ void CAN_readData()
 					uart_puts("\n");
 					uart_puts("CAN from MD:");
 					uart_puts(Input_Message.id);
-					for (int i=0;i<4;i++)
+					uart_puts(":");
+					for (int i=0;i<8;i++)
 					{
+						uart_puts(":");
 						itoa(Input_Message.data[i],buff,10);
 						uart_puts(buff);
 					}
 
 				}
 				
-				if (Input_Message.id ==HALL_EFFECT_CANID)		//Hall effect data detected
-				{
-					uart_puts("\n");
-					uart_puts("CAN from HE:");
-					uart_puts(Input_Message.id);
-					for (int i=0;i<4;i++)
-					{
-						itoa(Input_Message.data[i],buff,10);
-						uart_puts(buff);
-					}
-
-				}
+				//if (Input_Message.id ==HALL_EFFECT_CANID)		//Hall effect data detected
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from HE:");
+					//uart_puts(Input_Message.id);
+					//for (int i=4;i<8;i++)
+					//{
+						//itoa(Input_Message.data[i],buff,10);
+						//uart_puts(buff);
+					//}
+//
+				//}
 				
 				if (Input_Message.id ==BMS_CANID)				//BMS data detected
 				{
@@ -497,6 +521,7 @@ void MAV_msg_pack()
 			mavlink_message_t msg;
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+			char buff[10];
 			
 			/*FOR TEST WITH QGC SOFTWARE ONLY--------------------------------------------
 			This message sends "UAV" style messages for the QGC software. For testing only!
@@ -525,8 +550,8 @@ void MAV_msg_pack()
 			
 			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
 			//MAV_uart_send(buf,len);
-			
-			mavlink_msg_motor_driver_send(MAVLINK_COMM_0, Input_Message.data[0],Input_Message.data[1]);
+			mavlink_msg_motor_driver_send(0,/*0,66*/Input_Message.data[0],Input_Message.data[1]);
+
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
@@ -540,7 +565,7 @@ void MAV_msg_pack()
 			//TESTING		CAN 2 = speed to send							*/
 			
 			//uart_flush();
-			mavlink_msg_hall_effect_send(MAVLINK_COMM_0, Input_Message.data[2],0,0);
+			//mavlink_msg_hall_effect_send(MAVLINK_COMM_0, Input_Message.data[2],Input_Message.data[7],0);
 			
 			//uart_puts("RX");
 			//uart_puts(MAV_Rx_buff);
@@ -552,14 +577,14 @@ void MAV_msg_pack()
 			...........................................................................
 								2 = uint8_t fault condition?				0=no 1=yes
 								3 = uint16_t source current					0-65535mA
-								4 = uint16_t load_current					0-65535mA
+							-->	4 = uint16_t net_current (load)				0-65535mA
 								5 = char bat_fan_status						t=OK f=FAULT
 								6 = uint8_t LLIM_state						1=flag active 0=flag not active
 								7 = uint8_t HLIM_state						1=flag active 0=flag not active
 								8 = uint8_t state_of_chg (percentage)		0-100%
-								9= uint16_t pack_voltage					0-65535V
+							-->	9= uint16_t pack_voltage					0-65535V
 								10 = const uint16_t *cell_voltages [low,avg,high]	0-65535V per element
-								11 = const uint16_t *cell_temps [low,avg,high]		0-65535C per element
+							-->	11 = const uint16_t *cell_temps [low,avg,high]		0-65535C per element
 								12 = uint8_t system_status							MAVLINK_ENUM
 								
 			*/
@@ -602,12 +627,7 @@ void MAV_msg_pack()
 																					*/
 //TESTING	mavlink_msg_gps_pack(100,200,&msg,latitude,longitude,time,date,lock_error);
 			//MAV_uart_send(buf,len);
-			char * lockerr = "";
-			if (fix == "V")
-			{
-				lockerr = "OK";
-			}else {lockerr = "INVALID";}
-			mavlink_msg_gps_send(MAVLINK_COMM_0,lat,longitude,time,date,lockerr);
+
 			
 			/*-----------------------------------------------------------------------
 			NAME: MPPT Data
@@ -636,6 +656,7 @@ void MAV_msg_pack()
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
 			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
+			
 			
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
@@ -699,5 +720,17 @@ void MAV_msg_pack()
 	
 }
 
+void MAV_uart_send(uint8_t buf[],uint8_t len)
+{
 
+	if( !(UCSR0A & (1<<UDRE0)) )
+	{
+		uart_flush();
+	for (int i = 0; i < len ; i++){
+		uart_putc(buf[i]);
+		MAV_Rx_buff[i] = buf[i];
+		}
+	}
+						
+}
 
