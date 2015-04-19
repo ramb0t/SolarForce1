@@ -73,6 +73,9 @@
 extern  volatile uint8_t    flagTimerUpdateLCD; // allow the timer to determine update rate
 extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have passed
 		volatile uint16_t	int_mS;				// Keep track of when the last interupt was
+				 uint16_t	heartbeat_mS;		// Keep track of when to send the next heartbeat
+#define 	HEATBEAT_MS		1111                // arb to keep things interesting
+				 CANMessage heartbeat_Msg;
 
 extern	volatile uint8_t 	flag;
 // External vars for the display values we are interested in

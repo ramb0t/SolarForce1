@@ -10,6 +10,7 @@
 
 #include "../lib/u8glib/src/u8g.h"
 #include "../lib/CAN/CAN.h" // CANMessage Struct?
+#include "../lib/CAN/CAN_defs.h"
 #include <string.h>			// strcat etc
 #include <avr/io.h>
 #include <stdio.h>
@@ -31,20 +32,6 @@
 
 // Definitions
 /*********************************************/
-
-// State Byte Masks
-#define 	BMSSTATE_FAULT 	0x01
-#define 	BMSSTATE_RFAULT	0x10
-
-// Flag byte Masks
-#define 	BMSFLAG_FAN		0x80
-#define 	BMSFLAG_LLIM	0x40
-#define 	BMSFLAG_HLIM	0x20
-#define 	BMSFLAG_CANC	0x10
-#define 	BMSFLAG_HWC		0x08
-#define 	BMSFLAG_INTT	0x04
-#define 	BMSFLAG_PL		0x02
-#define 	BMSFLAG_PS		0x01
 
 // Variable Definitions
 /*********************************************/

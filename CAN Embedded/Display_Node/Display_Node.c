@@ -41,6 +41,7 @@ int main(void)
 
 	// Create a new message
 	CANMessage message;
+	heartbeat_Msg = (CANMessage) {.id=0x0888,.rtr=0,.length=5,.data={'A','L','I','V','E'}};
 
 	// Enable Interrupts
 	sei();
@@ -91,6 +92,11 @@ int main(void)
 				flagUpdateLCD = FALSE;
 				flagTimerUpdateLCD = FALSE;
 			}
+    	}
+
+    	if(gMilliSecTick - heartbeat_mS > HEATBEAT_MS){ // shoot off a heatbeat message
+    		heartbeat_mS = gMilliSecTick;
+    		CAN_sendMessage(&heartbeat_Msg);
     	}
 
 

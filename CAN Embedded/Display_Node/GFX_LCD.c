@@ -1,5 +1,6 @@
 
 #include "GFX_LCD.h"
+#include "../lib/CAN/CAN_defs.h"
 
 #define DEBUG
 
@@ -207,18 +208,18 @@ void drawMain(){
 
 	// Fault Condition! Power cycle needed?
 	if((gBMS_State & BMSSTATE_FAULT) || (gBMS_State & BMSSTATE_RFAULT)){
-		u8g_DrawStr(&u8g, 67, 36, "FAULT!");
+		u8g_DrawStr(&u8g, 67, 35, "FAULT!");
 		// Prob wise to draw the stored fault code byte?
 		utoa(gBMS_Faults,buf,2);
-		u8g_DrawStr(&u8g, 67, 44, buf);
+		u8g_DrawStr(&u8g, 67, 43, buf);
 	}
 
 	// Warnings!
 	if(gBMS_Warnings){
-		u8g_DrawStr(&u8g, 67, 54, "Warning!");
+		u8g_DrawStr(&u8g, 67, 50, "Warning!");
 		// Prob wise to draw the stored warning code byte?
 		utoa(gBMS_Warnings,buf,2);
-		u8g_DrawStr(&u8g, 67, 61, buf);
+		u8g_DrawStr(&u8g, 67, 57, buf);
 	}
 
 	// Draw SOC Bar

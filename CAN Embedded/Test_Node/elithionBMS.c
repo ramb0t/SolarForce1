@@ -18,12 +18,12 @@ void BMS_init(void){
 		}};
 
 	BMS[2] = (CANMessage) {.id=CAN_ID+2,.rtr=0,.length=7,.data={
-			0b00000000,  //State
+			0b00000001,  //State
 			0b00000000, 0b00000000, // Timer
-			0b00000000,  //Flags
-			0b00000000,  //Fault Code
+			0b00100000,  //Flags
+			0b00010100,  //Fault Code
 			0b00000000,  //Level Fault
-			0b00000000   //Warnings
+			0b01000000   //Warnings
 		}};
 
 	BMS[3] = (CANMessage) {.id=CAN_ID+3,.rtr=0,.length=6,.data={

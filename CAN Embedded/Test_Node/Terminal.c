@@ -62,12 +62,13 @@ void Terminal_read(volatile uint8_t* state){
 
 	// Lets see if we can find a command?
 	uint8_t command = 0;
-	if(input[0] >=48 || input[0] <= 57){ // in the range of 0-9 .. decode
+	if(input[0] >=48 && input[0] <= 57){ // in the range of 0-9 .. decode
 		command = input[0] - 48;
 
-
+		utoa(*state,input,16);
+		uart_puts(input);
 		// now do state machine logic
-		switch(*state && 0xf0){ // select higher nibble for primary state
+		switch(*state & 0xf0){ // select higher nibble for primary state
 		case TERMINAL_RUN :
 			// Main Menu
 			switch(command){
@@ -190,6 +191,16 @@ void Terminal_read(volatile uint8_t* state){
 				return;
 				break;
 
+			case TERMINAL_cBACK:
+				// Go Back To Main Menu
+				*state = TERMINAL_RUN;
+				uart_puts("\n");
+				uart_puts("Back to Main Menu..\n");
+				uart_puts("\n");
+				Terminal_showMenu();
+				return;
+				break;
+
 			default:
 				// Unknown Command
 				uart_puts("\n");
@@ -206,7 +217,9 @@ void Terminal_read(volatile uint8_t* state){
 			*state = TERMINAL_INIT; // reboot!
 			uart_puts("\n");
 			uart_puts("Unknown state! Program Crash? :((((\n");
-			uart_puts("Attempting reboot \n");
+			utoa(*state,input,16);
+			uart_puts(input);
+			uart_puts("\nAttempting reboot \n");
 			uart_puts("\n");
 			return;
 			break;

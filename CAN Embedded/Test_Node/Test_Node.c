@@ -201,14 +201,14 @@ int main(void)
     			break;
     		}// State Switch
 
-    	if (Terminal_state && TERMINAL_LOOPBMS){
+    	if ((Terminal_state & TERMINAL_LOOPBMS)&0x0f){
 			if((ms_Counter - oldBMSTime) > waitBMSTime){
 				oldBMSTime = ms_Counter;
 				BMS_send_fake_data();
 			}
     	}
 
-    	if (Terminal_state && TERMINAL_LOOPSPEED){
+    	if ((Terminal_state & TERMINAL_LOOPSPEED)&0x0f){
 			if((ms_Counter - oldSpeedTime) > waitSpeedTime){
 				oldSpeedTime = ms_Counter;
 				SpeedEmu_set_speed(spd);
