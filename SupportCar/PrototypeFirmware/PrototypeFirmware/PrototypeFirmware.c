@@ -66,7 +66,7 @@ void InitComms(unsigned int baudRate)
 	//set baud rate 
 	UBRRH = (unsigned char)(baudRate>>8);
 	UBRRL = (unsigned char) baudRate;
-	UCSRB = (1<<TXEN) | (1<<RXEN) | (1<<RXCIE);
+	UCSRB = (1<<TXEN) | (1<<RXEN) ;//| (1<<RXCIE);
 	UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0) | (1<<UPM1) | (1<<UPM0) | (1<<USBS);
 }
 
@@ -93,6 +93,27 @@ PACKET makePacket(int identifier)
 		//add other sensors
 	}
 	return pkt;
+}
+
+void USART_Transmit( unsigned char data )
+{
+	/* Wait for empty transmit buffer */
+	while ( !( UCSRA & (1<<UDRE)) );
+	/* Put data into buffer, sends the data */
+	UDR = data;
+}
+
+void DoSim(uint8_t x)
+{
+	USART_Transmit('>');
+	USART_Transmit('>');
+	USART_Transmit(0xa4);
+	USART_Transmit(',');
+	USART_Transmit(x);
+	USART_Transmit('<');
+	USART_Transmit('<');
+	USART_Transmit(',');
+	_delay_us(500);
 }
 
 void transmit_packet(PACKET p)
@@ -143,7 +164,13 @@ int main(void)
 	
 	while(1)
     {
-		PACKET test;
+		DoSim(60);
+		DoSim(113);
+		DoSim(8);
+		DoSim(90);
+		DoSim(85);
+		
+		/*PACKET test;
 		test.ID = 0b1000001;
 		test.Type = 1;
 		int P = test.Type | (test.ID<<1);
@@ -159,7 +186,7 @@ int main(void)
 			PORTA = P;
 			_delay_ms(100);	
 			PORTA = 0x00;
-		}
+		}*/
     }
 }
 
