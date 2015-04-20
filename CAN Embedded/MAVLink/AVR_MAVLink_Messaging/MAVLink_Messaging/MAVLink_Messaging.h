@@ -44,6 +44,14 @@
 #define HALL_EFFECT_CANID	0x0420
 
 #define BMS_1_CANID			0x0621
+#define BMS_2_CANID			0x0622
+#define BMS_3_CANID			0x0623
+#define BMS_4_CANID			0x0624
+#define BMS_5_CANID			0x0625
+#define BMS_6_CANID			0x0626
+#define BMS_7_CANID			0x0627
+#define BMS_8_CANID			0x0628
+
 #define ACCELO_GYRO_CANID   0x00C8
 #define MPPT1_CANID			0x0771
 #define MPPT2_CANID			0x0772
@@ -69,7 +77,7 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 //------------Library Objects----------------------------//
 
 //CAN library objects per device
-CANMessage Input_Message;			//Generic/temp CAN input msg
+
 
 CANMessage Speed_Message;			//Aggregated Speed Board msg
 CANMessage BMS_Message;				//BMS data message
@@ -81,6 +89,8 @@ CANMessage GPS_message;
 
 volatile int counter=0;
 volatile int ctr2=0;
+volatile int canmsgctr = 0;
+extern	volatile uint8_t 	flag;
 
 char MAV_Rx_buff[10];
 

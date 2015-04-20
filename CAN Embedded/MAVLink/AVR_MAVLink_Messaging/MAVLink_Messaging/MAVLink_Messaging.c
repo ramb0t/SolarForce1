@@ -10,6 +10,10 @@
 #define DEBUG	0
 
 //------------ISR for the Timer0-------------------------//
+ISR(INT0_vect){
+	CAN_fillBuffer();
+
+}
 
 int main (void)
 {
@@ -54,6 +58,7 @@ int main (void)
 	//TCCR0B = (1<<CS02)|(1<<CS00);
 	//TIMSK0 = (1<<TOIE0);		//--enable later!
 	
+		CAN_setupInt0();
 	
 	/*---------UART Serial Init --------------------
 		*uses UART.h library
@@ -280,28 +285,24 @@ void GPS_readData()
 
 void CAN_readData()
 {
+	CANMessage Input_Message;			//Generic/temp CAN input msg
 	//CANMessage Input_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;
 	//zCANMessage Speed_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;	
-		//itoa(CAN_checkReceiveAvailable(), buff,10);
-		//uart_puts("RXAvail:");
-		//uart_puts(buff);
-		//
-		//itoa(CAN_checkError(),buff,10);
-		//uart_puts("CheckErr:");
-		//uart_puts(buff);
-//		_delay_ms(100);
-		
 
-	//if (CAN_checkError()==CAN_CTRLERROR)
-	//{
-	//uart_puts("CAN Controller Error!");
-	////TODO: Set flag for controller error in GUI
-	//}else if (CAN_checkError()==CAN_OK)
-	
-		uart_flush();
+	//	uart_flush();
+		
 		//	_delay_ms(20);
 		
 		char buff[10] ;
+		
+	cli();				//Interrupts off
+	
+	if (~(PINB & (1<<PINB0)))	//if interrupt not triggered fill msg buffer
+	{
+		CAN_fillBuffer();
+	}
+	
+	sei();				//Interrupts on again
 	
 	if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
 		{
@@ -334,7 +335,7 @@ void CAN_readData()
 				//-------------------Receive Data----------------//
 			
 			int rx_Result;
-			rx_Result = CAN_readMessage(&Input_Message);			//read a byte of CAN data
+			rx_Result = CAN_getMessage_Buffer(&Input_Message);			//read a byte of CAN data
 			
 			if (rx_Result == CAN_OK)							//if read correctly...
 			{
@@ -343,22 +344,175 @@ void CAN_readData()
 ///*TEST DISPLAY*/uart_puts("\nCAN ID:");
 				//uart_puts(buff);								//output bytestring to UART
 				
-				//-----------------------Switches for detecting CAN ID--------------------------//
-				if (Input_Message.id ==MOTOR_DRIVER_CANID)		//Motor driver ID detected
+			while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
+			{	
+				if (canmsgctr > 15)
 				{
-					uart_puts("\n");
-					uart_puts("CAN from MD:");
-					uart_puts(Input_Message.id);				//Human readable data on UART
-					uart_puts(":");
-					for (int i=0;i<8;i++)
-					{
+					canmsgctr = 0;
+					break;
+				}
+				canmsgctr++;
+				if (CAN_getMessage_Buffer(&Input_Message) == CAN_OK)
+				{
+					//-----------------------Switches for detecting CAN ID--------------------------//
+				
+				switch (Input_Message.id)
+				{
+					/*Speed	byte 1*/
+				case 	MOTOR_DRIVER_CANID:
+						uart_puts("\n");
+						uart_puts("CAN from MD:");
+						uart_puts(Input_Message.id);				//Human readable data on UART
 						uart_puts(":");
-						itoa(Input_Message.data[i],buff,10);	//convert to ascii form
-						Speed_Message.data[i] = Input_Message.data[i]; //store into CAN object for speed
+						for (int i=0;i<4;i++)
+						{
+							uart_puts(":");
+							itoa(Input_Message.data[i],buff,10);	//convert to ascii form
+							Speed_Message.data[i] = Input_Message.data[i]; //store into CAN object for speed
+							uart_puts(buff);
+						}
+					
+					
+						uart_puts("\n");
+						uart_puts("CAN from HE:");
+						uart_puts(Input_Message.id);
+						for (int i=4;i<8;i++)
+						{
+						itoa(Input_Message.data[i],buff,10);
+						Speed_Message.data[i] = Input_Message.data[i];
+						uart_puts(buff);
+						}
+					break;
+					
+				/*NOTE: BMS Data across different messages, we want:
+				Base CANID =	BMS[0] = 0x0620
+								BMS[1] = 0x0621
+								BMS[2] = 0x0622
+								BMS[3] = 0x0623
+								BMS[4] = 0x0624
+								BMS[5] = 0x0625
+								BMS[6] = 0x0626
+								BMS[7] = 0x0627
+								BMS[8] = 0x0628
+						.........................................................................
+						Parameters	 Value	Detail							CANID byte			CAN Object Number	Range/Type
+						...........................................................................
+						2 = uint8_t fault condition?						BMS[2].data[3]		BMSdata[0]					0=no 1=yes
+						3 = uint16_t source current							BMS[5].data[0]		BMSdata[1]					0-65535mA
+						4 = uint16_t net_current (load)						BMS[4].data[0]		BMSdata[2]					0-65535mA
+						5 = char bat_fan_status																		t=OK f=FAULT
+						6 = uint8_t LLIM_state																		1=flag active 0=flag not active
+						7 = uint8_t HLIM_state																		1=flag active 0=flag not active
+						8 = uint8_t state_of_chg (percentage)				BMS[6].data[0]		BMSdata[3]					0-100%
+						9 = uint16_t pack_voltage							BMS[3].data[0]		BMSdata[4]					0-65535V
+						10 = const uint16_t *cell_voltages [low,avg,high]	BMS[3].data[1,3]	BMSdata[5,6,7]					0-65535V per element
+						11 = const uint16_t *cell_temps [low,avg,high]		BMS[7].data[2,4]	BMSdata[8,9,10]					0-65535C per element
+						12 = uint8_t system_status												MAVLINK_ENUM
+				
+				*/
+					
+				case	BMS_2_CANID:
+					uart_puts("\n");
+					uart_puts("CAN from BMS2:");					//Human readable data on UART
+					uart_puts(Input_Message.id);
+					
+					itoa(Input_Message.data[3],buff,10);		//fault flags
+					BMS_Message.data[0] = Input_Message.data[3];
+					uart_puts(buff);
+					
+					//for (int i=0;i<16;i++)						//16 data fields
+					//{
+						//itoa(Input_Message.data[i],buff,10);
+						//BMS_Message.data[i] = Input_Message.data[i]; //store into CAN object for BMS
+						//uart_puts(buff);
+					//}
+					break;
+					
+				case	BMS_3_CANID:
+					uart_puts("\n");
+					uart_puts("CAN from BMS3:");					//Human readable data on UART
+					uart_puts(Input_Message.id);
+					
+					itoa(Input_Message.data[0],buff,10);		//low pack voltage
+					BMS_Message.data[5] = (Input_Message.data[2]<<8)|(Input_Message.data[3]);
+					uart_puts(buff);
+					
+					itoa(Input_Message.data[0],buff,10);		// avg pack voltages
+					BMS_Message.data[6] = (Input_Message.data[0]<<8)|(Input_Message.data[1]);
+					uart_puts(buff);
+					
+					itoa(Input_Message.data[0],buff,10);		//high pack voltages
+					BMS_Message.data[7] = (Input_Message.data[4]<<8)|(Input_Message.data[5]);
+					
+					uart_puts(buff);
+					break;
+				
+				case	BMS_4_CANID:
+					uart_puts("\n");
+					uart_puts("CAN from BMS4:");					//Human readable data on UART
+					uart_puts(Input_Message.id);
+					
+					itoa(Input_Message.data[0],buff,10);		//pack current
+					itoa(Input_Message.data[1],buff,10);
+					BMS_Message.data[2] = (Input_Message.data[0]<<8)|(Input_Message.data[1]);
+					uart_puts(buff);
+					break;
+				
+
+				case	BMS_6_CANID:
+				uart_puts("\n");
+				uart_puts("CAN from BMS6:");					//Human readable data on UART
+				uart_puts(Input_Message.id);
+				
+				itoa(Input_Message.data[0],buff,10);		//SOC
+				BMS_Message.data[3] = Input_Message.data[0];
+				uart_puts(buff);
+				break;
+				
+				case	BMS_7_CANID:
+				uart_puts("\n");
+				uart_puts("CAN from BMS7:");					//Human readable data on UART
+				uart_puts(Input_Message.id);
+				
+				itoa(Input_Message.data[3],buff,10);			//Min temps
+				BMS_Message.data[8] = (Input_Message.data[2]<<8)|(Input_Message.data[3]);
+				uart_puts(buff);
+				
+				itoa(Input_Message.data[0],buff,10);			//Avg temps
+				BMS_Message.data[9] = Input_Message.data[0];
+				uart_puts(buff);
+				
+				itoa(Input_Message.data[4],buff,10);			//Max temps
+				BMS_Message.data[10] = (Input_Message.data[4]<<8)|(Input_Message.data[5]);
+				uart_puts(buff);
+				break;
+				
+				case	ACCELO_GYRO_CANID:
+					uart_puts("\n");
+					uart_puts("CAN from ACGY:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<2;i++)						//2 data fields
+					{
+						Gyro_Accel_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 					}
 
+				break;
+				
+				case	MPPT1_CANID:
+					uart_puts("\n");
+					uart_puts("CAN from MPPT1:");
+					uart_puts(Input_Message.id);
+					for (int i=0;i<4;i++)						//4 data fields
+					{
+						itoa(Input_Message.data[i],buff,10);
+						MPPT_Message.data[i] = Input_Message.data[i];
+						uart_puts(buff);
+					}
+				break;
+				
 				}
+
 				
 				//if (Input_Message.id ==HALL_EFFECT_CANID)		//Hall effect data detected
 				//{
@@ -373,45 +527,20 @@ void CAN_readData()
 //
 				//}
 				
-				/*NOTE: BMS Data across different messages, we want:
-				Base CANID =	BMS[0] = 0x0620
-								BMS[1] = 0x0621
-								BMS[2] = 0x0622
-								BMS[3] = 0x0623
-								BMS[4] = 0x0624
-								BMS[5] = 0x0625
-								BMS[6] = 0x0626
-								BMS[7] = 0x0627
-								BMS[8] = 0x0628
-						.........................................................................
-						Parameters	 Value	Detail							CANID byte			Range/Type
-						...........................................................................
-						2 = uint8_t fault condition?						BMS[2].data[3]		0=no 1=yes
-						3 = uint16_t source current							BMS[5].data[0]		0-65535mA
-						4 = uint16_t net_current (load)						BMS[4].data[0]		0-65535mA
-						5 = char bat_fan_status													t=OK f=FAULT
-						6 = uint8_t LLIM_state													1=flag active 0=flag not active
-						7 = uint8_t HLIM_state													1=flag active 0=flag not active
-						8 = uint8_t state_of_chg (percentage)				BMS[6].data[0]		0-100%
-						9 = uint16_t pack_voltage							BMS[3].data[0]		0-65535V
-						10 = const uint16_t *cell_voltages [low,avg,high]	BMS[3].data[1,3]	0-65535V per element
-						11 = const uint16_t *cell_temps [low,avg,high]		BMS[7].data[2,4]	0-65535C per element
-						12 = uint8_t system_status												MAVLINK_ENUM
 				
-				*/
-				if (Input_Message.id ==BMS_1_CANID)				//BMS data detected
-				{
-					uart_puts("\n");
-					uart_puts("CAN from BMS:");					//Human readable data on UART
-					uart_puts(Input_Message.id);
-					for (int i=0;i<16;i++)						//16 data fields
-					{
-						itoa(Input_Message.data[i],buff,10);
-						BMS_Message.data[i] = Input_Message.data[i]; //store into CAN object for BMS
-						uart_puts(buff);
-					}
-
-				}
+				//if (Input_Message.id ==BMS_1_CANID)				//BMS data detected
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from BMS:");					//Human readable data on UART
+					//uart_puts(Input_Message.id);
+					//for (int i=0;i<16;i++)						//16 data fields
+					//{
+						//itoa(Input_Message.data[i],buff,10);
+						//BMS_Message.data[i] = Input_Message.data[i]; //store into CAN object for BMS
+						//uart_puts(buff);
+					//}
+//
+				//}
 				
 				if (Input_Message.id ==ACCELO_GYRO_CANID)				//Gyro/MPU6050 data detected
 				{
@@ -518,17 +647,14 @@ void CAN_readData()
 					uart_puts("Y,");
 				}else uart_puts("N\n");
 							
-	}
-					
-
-
-
+	}//endif DEBUG
+				}
 				
-					
-					
-			}//endif CAN_OK
+			}//end inner while CAN_checkreceiveavaialable == MSGAVAIL
+		
+			}//endif rx_result == CAN_OK
 /*TEST DISPLAY*/ uart_puts("\n-------\n CAN Done.\n");
-		}//endif CAN_MSGAVAIL
+		}//endif checkreceive == CAN_MSGAVAIL
 		
 }//end CAN_readData
 
