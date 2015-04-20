@@ -32,25 +32,14 @@ int main(void)
 	OCR1A = 128;
 	Timer1_PWM_On();
 
-	// Init Timer0 for mS Counter
-	Timer0_init();
-
-	// Init Hardware
-	IOInit();
-
 	// Create a new message
 	CANMessage message;
-<<<<<<< HEAD
 	//uint8_t rx_status = 0xff;
-=======
-	heartbeat_Msg = (CANMessage) {.id=0x0888,.rtr=0,.length=5,.data={'A','L','I','V','E'}};
->>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
 
 	// Enable Interrupts
 	sei();
 
     while(1) {
-<<<<<<< HEAD
     	cli();
     	if(~(PINB & (1<<PB0))){
     		//PCIFR |= (1<<PCIF0); // fire ISR!
