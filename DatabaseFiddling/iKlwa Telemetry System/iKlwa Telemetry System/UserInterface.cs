@@ -21,36 +21,27 @@ namespace iKlwa_Telemetry_System
         private enum SENSORS :int{HALL_EFFECT = 420, MOTOR_DRIVER = 421,
                                   BMS, GYRO, MPPT1,
                                   MPPT2, MPPT3, MPPT4,GPS,
-                                  SOLAR_CELL, ANEMOMETER};
-<<<<<<< HEAD
+                                  SOLAR_CELL, ANEMOMETER}
         private ReportScreen output;// = new ReportScreen();
         private bool safe_to_close = true;
-=======
-        private ReportScreen output = new ReportScreen();
-<<<<<<< HEAD
-        private bool sensor_update = false;
+        private int unreadErrorCount = 0;
+        private bool db_exists = false;
         private int counter;//naughty
         string[] list = new string[1];//naughty
-=======
 
->>>>>>> 95d4848eea9709491c671064b8b4e85f3335c08d
         private enum TABS : byte {Summary = 1, Graphing = 2,
                                   Motion = 3, Electrical = 4,
                                   Support = 5, RF = 6}
         private TABS selected_tab = TABS.Summary;//keeps track of which tab is selected
->>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         private const string NO_SENSORS_MSG = "No sensors found...";
 
         public UserInterface()
         {
             InitializeComponent();
-<<<<<<< HEAD
-=======
             d = new TelemetryDatabase("xmlDatabase_V5.xml");
             d.NodeTag = "Capture";
             db_exists = true;
             refresh_timer.Enabled = true;
->>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         }
 
         /// <summary>
@@ -62,10 +53,7 @@ namespace iKlwa_Telemetry_System
         {
             COM_Port_Select COM_Select = new COM_Port_Select();
             COM_Select.ShowDialog();
-<<<<<<< HEAD
-            comms.name = COM_Select.getPort();
-            backgroundWorker1.RunWorkerAsync();
-=======
+
             if (COM_Select.NoPortsFound == false)
             {
                 comms.name = COM_Select.Port;
@@ -138,7 +126,7 @@ namespace iKlwa_Telemetry_System
             }
             catch(ApplicationException xx)
             { MessageBox.Show(xx.Message); }
->>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
+
         }
 
         /// <summary>
@@ -148,13 +136,6 @@ namespace iKlwa_Telemetry_System
         /// <param name="e"></param>
         private void refresh_timer_Tick(object sender, EventArgs e)
         {
-            if (sensor_update == true)
-                getSensors();//if sensor update flag is set, then update sensors every tick
-
-<<<<<<< HEAD
-
-            //naughty things
-=======
             refreshGUI();//refresh GUI method
 
             if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
@@ -394,9 +375,6 @@ namespace iKlwa_Telemetry_System
         }
 
         /// <summary>
-<<<<<<< HEAD
-        /// Occurs when Graph control is activated. Populates all user-definable controls.
-=======
         /// Background Thread which handles reading from the COM Port and writing to the Database
         /// </summary>
         /// <param name="sender"></param>
@@ -430,7 +408,7 @@ namespace iKlwa_Telemetry_System
                                                      "Speed", (int)Convert.ToChar(packet.PAYLOAD.ElementAt(0)));
                                     break;
                                 case (int)SENSORS.HALL_EFFECT:
-                                    string str = packet.PAYLOAD.ElementAt(0);
+                                    string str = packet.PAYLOAD.ElementAt(0).ToString();
                                     str = str.Substring(0, 1);
                                     d.addDataCapture("Hall Effect Sensor", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
                                                      "Speed", (int)Convert.ToChar(str));
@@ -485,7 +463,6 @@ namespace iKlwa_Telemetry_System
 
         /// <summary>
         /// Occurs when Graph Tab is activated. Populates all user-definable controls.
->>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         /// Also enables refreshing of user-definable controls every timer tick.
         /// </summary>
         /// <param name="sender"></param>
@@ -499,9 +476,6 @@ namespace iKlwa_Telemetry_System
             numericUpDown2.Value = DateTime.Now.Minute;
             numericUpDown1.Value = DateTime.Now.Hour - 1;
             numericUpDown3.Value = DateTime.Now.Minute;
-<<<<<<< HEAD
-            sensor_update = true;
-=======
             selected_tab = TABS.Graphing;//indicate that the graphing tab was selected
         }
 
@@ -523,53 +497,8 @@ namespace iKlwa_Telemetry_System
         private void tabPage1_Enter(object sender, EventArgs e)
         {
             selected_tab = TABS.Motion;
->>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
         }
 
-        /// <summary>
-        /// Occurs when the Graph control is de-activated.
-        /// Disables the auto-refreshing of user-definable parameters.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tabControl1_Leave(object sender, EventArgs e)
-        {
-            sensor_update = false;
-        }
-
-        //test this!!!!
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            comms.MavLinkInit();
-            try
-            {
-                comms.OpenPort();
-                var packet = comms.readTelemetryInput();
-                try
-                {
-                    protection.AcquireWriterLock(250);
-                    try
-                    {
-                        switch(packet.ID)
-                        {
-                            case (int)SENSORS.MOTOR_DRIVER:
-                               //dodgy: d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
-                                d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                                 "Speed", (int)Convert.ToChar());
-                                break;
-                        }
-                    }
-                    finally
-                    { protection.ReleaseWriterLock(); }
-                }
-                catch (ApplicationException error)
-                { MessageBox.Show(error.Message); }
-            }
-            catch (Exception err)
-            {
-                MessageBox.Show(err.Message);
-            }
-        }
 
         private void btn_ErrorNotifications_TextChanged(object sender, EventArgs e)
         {

@@ -19,6 +19,12 @@ namespace iKlwa_Telemetry_System
 
         private DataTable grid = new DataTable();
 
+        public void setTitle(string title)
+        {
+            label1.Text = title;
+            ReportScreen.ActiveForm.Text = title;
+        }
+
         public void Populate(List<string> headers, List<string> values)
         {
             grid.Clear();
