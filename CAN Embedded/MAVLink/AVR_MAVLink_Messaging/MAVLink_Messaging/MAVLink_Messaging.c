@@ -88,15 +88,14 @@ int main (void)
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
 
-		//uart_putc('a');				
-		CAN_readData();
-		MAV_msg_pack();
 		
-		//uart_puts("Hi!");
-		
-		//GPS_readData();
-		
+		//CAN_readData();
 
+		//MAV_msg_pack();
+		
+		
+		
+		
 	}
 	return 0;
 
@@ -120,167 +119,49 @@ void GPS_readData()
 	10   = Magnetic variation degrees (Easterly var. subtracts from true course)
 	11   = E or W of magnetic variation
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
-	13   = Checksum
-	*/
-		char GPRMC[60];
-		//unsigned int z=0;
-		//unsigned int lgth=0;
-		uint8_t ctr = 0;
-		uint8_t ctr2 = 0;
-		uint8_t errctr = 0;
-		char gpsdata;
-		
-		if(uart_available())
-		{
-			//uart_putc(uart_getc());
-			gpsdata = uart_getc();
-			//uart_putc(gpsdata);
-			if(gpsdata !='$')
-			{
-				gpsdata = uart_getc();
-				ctr++;
-				if (ctr > 500)
-				{
-					uart_flush();
-					uart_puts("GPS Invalid! Check wiring.");
-				}
-			}else{
-				uart_puts("Fnd$");
-				gpsdata = uart_getc();
-				uart_putc(gpsdata);
-				if (gpsdata == 'G')
-				{
-					uart_puts("FoundG");
-					gpsdata = uart_getc();
-					ctr2++;
-
-					if (gpsdata == 'P')
-					{
-						uart_puts("FoundP");
-						gpsdata = uart_getc();
-						//uart_putc(gpsdata);
-						strcat(GPRMC[ctr2],gpsdata);
-						ctr2++;
-						if (gpsdata == 'R')
-						{
-							uart_puts("FoundR");
-							gpsdata = uart_getc();
-							//uart_putc(gpsdata);
-							strcat(GPRMC[ctr2],gpsdata);
-							ctr2++;
-							if (gpsdata == 'M')
-							{
-								uart_puts("FoundM");
-								gpsdata = uart_getc();
-								//uart_putc(gpsdata);
-								strcat(GPRMC[ctr2],gpsdata);
-								ctr2++;
-								if (gpsdata == 'C')
-								{
-									uart_puts("FoundC");
-									gpsdata = uart_getc();
-									//uart_putc(gpsdata);
-									strcat(GPRMC[ctr2],gpsdata);
-									ctr2++;
-								}
-							}
-						}
-					}
-				}
-			}
-	}
+	13   = Checksum	
+	*/		
 	
-	while (!uart_available())
-	{
-			errctr++;
-			
-			if (errctr>500)
-			{
-				uart_puts("GPS Disconnected!");
-				errctr =0;
-			}
-			
-	}
-//
-			
-			
-			
-			
-			
-			//while (uart_getc() != '$')
-			//{	
-					//gpsdata = uart_getc();
-					////uart_putc(gpsdata);
-				//ctr++;
-
-//
-			//}
-
-
-		}
-		
-		
-	//UART_REG = TX_DISABLE;
-	//uart_flush();
-	//gpsdata = uart_getc();	
-//
-	//for (int i=0;i<30;i++)
-	//{
-		//gpsdata = uart_getc();
-		//NMEA[i] = gpsdata;
-	//}
-	//
-	////UART_REG = TX_ENABLE;
-	////uart_flush();
-	//
-	//for (int i=0;i<30;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-		//uart_puts("\n---------GPS DATA---------\n");
-	//UART_REG = TX_DISABLE;			
-	//gpsdata = uart_getc();
-	//while (gpsdata != '$')
-	//{
-	//gpsdata = uart_getc();
-	//uart_putc(gpsdata);
-	//uart_puts("Invalid GPS data!");
-	//}
-//
-	//while (gpsdata != '*')
-	//{
-		//gpsdata = uart_getc();	//store char in NMEA buffer
-		//NMEA[ctr] = gpsdata;
-		//ctr++;
-	//}
-//
-	//for (int i=0;i<ctr;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-				////print raw NMEA data
-//
-	////PARSE TIME: hhmmss.ss
-	//uart_puts("Time: ");
-	////hour
-	//for(int i=0;i<2;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-	////minute
-	//uart_puts("h:");
-	//for(int i=2;i<4;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
-	//uart_puts(": ");
-	//for(int i=4;i<6;i++)
-	//{
-		//uart_putc(NMEA[i]);
-	//}
 	
+	
+	//for (int i=0;i<strlen(fmt);i++)
+	//{
+		//uart_putc(fmt[i]);
+	//}
+
+}//GPS get
 
 
+
+//void ParseGPS (char c) {
+	//if (c == '$') { state = 0; temp = 0; }
+	//char mode = fmt[state++];
+	//// If received character matches format string, or format is '?' - return
+	//if ((mode == c) || (mode == '?')) return;
+	//// d=decimal digit
+	//char d = c - '0';
+	//if (mode == 'd') temp = temp*10 + d;
+	//// e=long decimal digit
+	//else if (mode == 'e') ltmp = ltmp*10 + d;
+	//// a=angular measure
+	//else if (mode == 'a') ltmp = ltmp*6 + d;
+	//// t=Time - hhmm
+	//else if (mode == 't') { Time = temp*10 + d; temp = 0; }
+	//// m=Millisecs
+	//else if (mode == 'm') { Msecs = temp*10 + d; ltmp=0; }
+	//// l=Latitude - in minutes*1000
+	//else if (mode == 'l') { if (c == 'N') Lat = ltmp; else Lat = -ltmp; ltmp = 0; }
+	//// o=Longitude - in minutes*1000
+	//else if (mode == 'o') { if (c == 'E') Long = ltmp; else Long = -ltmp; temp = 0; }
+	//// j/k=Speed - in knots*100
+	//else if (mode == 'j') { if (c != '.') { temp = temp*10 + d; state--; } }
+	//else if (mode == 'k') { Knots = temp*10 + d; temp = 0; }
+	//// c=Course (Track) - in degrees*100
+	//else if (mode == 'c') { Course = temp*10 + d; temp = 0; }
+	//// y=Date - ddmm
+	//else if (mode == 'y') { Date = temp*10 + d ; Fix = 1; }
+	//else state = 0;
+//}
 
 void CAN_readData()
 {

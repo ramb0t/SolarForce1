@@ -63,6 +63,7 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <string.h>
+#include <stdbool.h>
 #include "../lib/uart/uart.h"					//UART library
 
 #include "../lib/CAN/CAN.h"			//CAN Framework
@@ -98,17 +99,107 @@ extern	volatile uint8_t 	flag;
 char MAV_Rx_buff[10];
 
 //GPS vars to store data for MAV framing later
+		
 
-		char GPRMC[10];
-		char time[6];
-		char fix;
-		char lat[7];
-		char lat_dir;
-		char longitude[8];
-		char long_dir;
-		char spd[3];
-		char tmd[3];
-		char date[6];
+		//// GPS variables
+		//volatile unsigned int Time, Msecs, Knots, Course, Date;
+		//volatile long Lat, Long;
+		//volatile bool Fix;
+		//volatile char gpschar;
+		//
+		//char fmt[]="$GPRMC,dddtdd.ddm,A,eeae.eeee,l,eeeae.eeee,o,djdk,ddd.dc,dddy??,,,?*??";
+//
+		//int state = 0;
+		//unsigned int temp;
+		//long ltmp;
+		
+#include <stdint.h>
+
+
+#define true 	1
+#define false 	0
+
+#define CR		0x0d
+#define LF		0x0a
+
+#define PI 3.14159265358979323846
+
+//states for the GPS parser
+#define GPS_TOP				0
+#define GPS_GOT_START		1
+#define GPS_GET_CHECKSUM	2
+
+//pixels per distance unit
+#define SCALE 1.0
+
+struct gps{
+	char time[13];
+	char lat[17];
+	char lon[18];
+	char latdec[16];
+	char londec[17];
+	char sats[8];
+	char fix[8];
+	char altm[13];
+	char altf[13];
+	char mcog[15];
+	char tcog[15];
+	char sogkph[20];
+	char sogknot[20];
+	char sogmph[20];
+	char mode[8];
+};
+
+struct gpsdisp
+{
+	char showtime;
+	char showpos;
+	char showalt;
+	char showspeed;
+	char showcourse;
+	char showsats;
+	char showfix;
+	char showmode;
+	char showtrack;
+	char timex;
+	char timey;
+	char latx;
+	char laty;
+	char lonx;
+	char lony;
+	char altx;
+	char alty;
+	char speedx;
+	char speedy;
+	char coursex;
+	char coursey;
+	char satsx;
+	char satsy;
+	char fixx;
+	char fixy;
+	char modex;
+	char modey;
+	char posformat;
+	char speedunits;
+	char altunits;
+	char coursetype;
+	char refresh;
+};
+
+void gps_init(void);
+void gps_parse(char inchar);
+void gps_process_sentence(void);
+void GPGGA(void);
+void GPRMC(void);
+void GPVTG(void);
+void gps_show_data(void);
+
+double deg2rad(double deg);
+double rad2deg(double rad);
+double find_distance(double lat1, double lon1, double lat2, double lon2);
+double find_bearing(double lat1, double lon1, double lat2, double lon2);
+void find_relxy(double distance,double bearing,double scale);
+
 
 //------------Function Prototypes------------------------//
 
@@ -122,6 +213,7 @@ void CAN_readData(void);
 void MAV_msg_pack();
 void MAV_uart_send(uint8_t [],uint8_t);
 void GPS_readData(void);
+void GPSParse(char c);
 
 static inline void mavlink_msg_motor_driver_decode(const mavlink_message_t* msg, mavlink_motor_driver_t* motor_driver);
 
