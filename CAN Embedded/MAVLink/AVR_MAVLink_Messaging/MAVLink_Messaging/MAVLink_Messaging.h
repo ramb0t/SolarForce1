@@ -40,26 +40,15 @@
 
 //-------------CAN Defines----------------------------------//
 
-<<<<<<< HEAD
 #define MOTOR_DRIVER_CANID	0x0420
 #define HALL_EFFECT_CANID	0x0420
-#define BMS_CANID			0x0800
-#define ACCELO_GYRO_CANID   0x0200
-#define MPPT1_CANID			0x0300
-#define MPPT2_CANID			0x0301
-#define MPPT3_CANID			0x0302
-#define MPPT4_CANID			0x0303
-=======
-#define MOTOR_DRIVER_CANID	0x1056
-#define HALL_EFFECT_CANID	0x1056
 
-#define BMS_CANID			0x1569
-#define ACCELO_GYRO_CANID   0x0200
-#define MPPT1_CANID			0x1905
-#define MPPT2_CANID			0x1906
-#define MPPT3_CANID			0x1907
-#define MPPT4_CANID			0x1908
->>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
+#define BMS_1_CANID			0x0621
+#define ACCELO_GYRO_CANID   0x00C8
+#define MPPT1_CANID			0x0771
+#define MPPT2_CANID			0x0772
+#define MPPT3_CANID			0x0773
+#define MPPT4_CANID			0x0774
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -79,7 +68,16 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //------------Library Objects----------------------------//
 
-CANMessage Input_Message;				//CAN library object
+//CAN library objects per device
+CANMessage Input_Message;			//Generic/temp CAN input msg
+
+CANMessage Speed_Message;			//Aggregated Speed Board msg
+CANMessage BMS_Message;				//BMS data message
+CANMessage MPPT_Message;			//MPPT messages
+CANMessage Gyro_Accel_Message;		//gyro messages
+CANMessage GPS_message;
+
+
 
 volatile int counter=0;
 volatile int ctr2=0;
