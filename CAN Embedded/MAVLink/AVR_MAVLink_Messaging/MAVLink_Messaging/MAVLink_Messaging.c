@@ -348,13 +348,13 @@ void CAN_readData()
 				{
 					uart_puts("\n");
 					uart_puts("CAN from MD:");
-					uart_puts(Input_Message.id);
+					uart_puts(Input_Message.id);				//Human readable data on UART
 					uart_puts(":");
 					for (int i=0;i<8;i++)
 					{
 						uart_puts(":");
-						itoa(Input_Message.data[i],buff,10);
-						Speed_Message.data[i] = Input_Message.data[i]; 
+						itoa(Input_Message.data[i],buff,10);	//convert to ascii form
+						Speed_Message.data[i] = Input_Message.data[i]; //store into CAN object for speed
 						uart_puts(buff);
 					}
 
@@ -373,14 +373,41 @@ void CAN_readData()
 //
 				//}
 				
+				/*NOTE: BMS Data across different messages, we want:
+				Base CANID =	BMS[0] = 0x0620
+								BMS[1] = 0x0621
+								BMS[2] = 0x0622
+								BMS[3] = 0x0623
+								BMS[4] = 0x0624
+								BMS[5] = 0x0625
+								BMS[6] = 0x0626
+								BMS[7] = 0x0627
+								BMS[8] = 0x0628
+						.........................................................................
+						Parameters	 Value	Detail							CANID byte			Range/Type
+						...........................................................................
+						2 = uint8_t fault condition?						BMS[2].data[3]		0=no 1=yes
+						3 = uint16_t source current							BMS[5].data[0]		0-65535mA
+						4 = uint16_t net_current (load)						BMS[4].data[0]		0-65535mA
+						5 = char bat_fan_status													t=OK f=FAULT
+						6 = uint8_t LLIM_state													1=flag active 0=flag not active
+						7 = uint8_t HLIM_state													1=flag active 0=flag not active
+						8 = uint8_t state_of_chg (percentage)				BMS[6].data[0]		0-100%
+						9 = uint16_t pack_voltage							BMS[3].data[0]		0-65535V
+						10 = const uint16_t *cell_voltages [low,avg,high]	BMS[3].data[1,3]	0-65535V per element
+						11 = const uint16_t *cell_temps [low,avg,high]		BMS[7].data[2,4]	0-65535C per element
+						12 = uint8_t system_status												MAVLINK_ENUM
+				
+				*/
 				if (Input_Message.id ==BMS_1_CANID)				//BMS data detected
 				{
 					uart_puts("\n");
-					uart_puts("CAN from BMS:");
+					uart_puts("CAN from BMS:");					//Human readable data on UART
 					uart_puts(Input_Message.id);
 					for (int i=0;i<16;i++)						//16 data fields
 					{
 						itoa(Input_Message.data[i],buff,10);
+						BMS_Message.data[i] = Input_Message.data[i]; //store into CAN object for BMS
 						uart_puts(buff);
 					}
 
@@ -393,13 +420,13 @@ void CAN_readData()
 					uart_puts(Input_Message.id);
 					for (int i=0;i<2;i++)						//2 data fields
 					{
-						itoa(Input_Message.data[i],buff,10);
+						Gyro_Accel_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 					}
 
 				}
 				
-				if (Input_Message.id ==MPPT1_CANID)				//BMS data detected
+				if (Input_Message.id ==MPPT1_CANID)				//MPPT1 data detected
 				{
 					uart_puts("\n");
 					uart_puts("CAN from MPPT1:");
@@ -407,12 +434,13 @@ void CAN_readData()
 					for (int i=0;i<4;i++)						//4 data fields
 					{
 						itoa(Input_Message.data[i],buff,10);
+						MPPT_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 					}
 
 				}//endif MPPT1
 				
-				if (Input_Message.id ==MPPT2_CANID)				//BMS data detected
+				if (Input_Message.id ==MPPT2_CANID)				//MPPT2 data detected
 				{
 					uart_puts("\n");
 					uart_puts("CAN from MPPT2:");
@@ -420,12 +448,13 @@ void CAN_readData()
 					for (int i=0;i<4;i++)						//4 data fields
 					{
 						itoa(Input_Message.data[i],buff,10);
+						MPPT_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 					}
 
 				}//endif MPPT1
 				
-				if (Input_Message.id ==MPPT3_CANID)				//BMS data detected
+				if (Input_Message.id ==MPPT3_CANID)				//MPPT3 data detected
 				{
 					uart_puts("\n");
 					uart_puts("CAN from MPPT3:");
@@ -433,12 +462,13 @@ void CAN_readData()
 					for (int i=0;i<4;i++)						//4 data fields
 					{
 						itoa(Input_Message.data[i],buff,10);
+						MPPT_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 					}
 
 				}//endif MPPT1
 								
-				if (Input_Message.id ==MPPT4_CANID)				//BMS data detected
+				if (Input_Message.id ==MPPT4_CANID)				//MPPT4 data detected
 				{
 					uart_puts("\n");
 					uart_puts("CAN from MPPT4:");
@@ -446,6 +476,7 @@ void CAN_readData()
 					for (int i=0;i<4;i++)						//4 data fields
 					{
 						itoa(Input_Message.data[i],buff,10);
+						MPPT_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 					}
 
@@ -647,18 +678,22 @@ void MAV_msg_pack()
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
 			//mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,2542,1011,0,0);
+			MPPT_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
 			
 //TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
 			//mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,2500,1000,0,0);
+			MPPT_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
 			
 //TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
 			//mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,2591,968,0,1);
+			MPPT_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
 			
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
 			//mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,2411,1211,1,0);
+			MPPT_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
 			
 			
 			/*-----------------------------------------------------------------------

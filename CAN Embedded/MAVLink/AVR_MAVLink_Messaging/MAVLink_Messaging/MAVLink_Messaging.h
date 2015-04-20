@@ -68,9 +68,17 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //------------Library Objects----------------------------//
 
-			//CAN library object
-CANMessage Input_Message;			//Buffered CAN input msg
-CANMessage Speed_Message;
+//CAN library objects per device
+CANMessage Input_Message;			//Generic/temp CAN input msg
+
+CANMessage Speed_Message;			//Aggregated Speed Board msg
+CANMessage BMS_Message;				//BMS data message
+CANMessage MPPT_Message;			//MPPT messages
+CANMessage Gyro_Accel_Message;		//gyro messages
+CANMessage GPS_message;
+
+
+
 volatile int counter=0;
 volatile int ctr2=0;
 
