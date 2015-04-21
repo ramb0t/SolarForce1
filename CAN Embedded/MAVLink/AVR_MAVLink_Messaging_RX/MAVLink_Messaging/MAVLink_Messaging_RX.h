@@ -61,7 +61,7 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 volatile uint8_t counter=0;				//counts data on UART bus for connection check
 volatile uint8_t ctr2=0;				//counts bytes passing thru MAVLink frame for length check
-volatile uint8_t hb_lost = 0;			//counts cycles since last heartbeat
+volatile uint16_t hb_lost = 0;			//counts cycles since last heartbeat
 
 
 char MAV_Rx_buff[10];
