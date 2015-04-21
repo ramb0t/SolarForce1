@@ -184,8 +184,8 @@ void ParseGPS ()
 				//break;
 			}
 			uart_puts("\n");
-if (DEBUG)
-{
+//if (DEBUG)
+//{
 				for (int i=0;i<13;i++)
 				{
 					uart_puts("\nPART ");
@@ -194,7 +194,7 @@ if (DEBUG)
 					uart_puts(parts[i]);
 					uart_puts("\n");
 				}
-}
+//}
 
 }
 
@@ -273,7 +273,22 @@ void CAN_readData()
 				
 				switch (Input_Message.id)
 				{
-					/*Speed	byte 1*/
+					/*Speed	Data is aggregated across the Hall Effect and Motor Driver nodes
+					Data as follows 
+					Base ID 0x420
+					<<Sent as "Hall Effect in MAVID">>
+					SpeedData[0] = Averaged HE and Motor RPM Speed;
+					SpeedData[1] = HallEffect speed
+					SpeedData[2] = Hall RPM L
+					SpeedData[3] = Hall RPM H
+					
+					<<Sent as MotorDriver in MAVID">>
+					SpeedData[4] = MotorDriver Speed
+					SpeedData[5] = MotorDriver RPM L
+					SpeedData[6] = MotorDriver RPM H
+					SpeedData[7] = Status flag
+					
+					*/
 				case 	MOTOR_DRIVER_CANID:
 						uart_puts("\n");
 						uart_puts("CAN from MD:");
@@ -808,36 +823,33 @@ void MAV_msg_pack()
 			/*-----------------------------------------------------------------------
 			NAME: Motor Driver Data
 			DESCRIPTION: Speed from the motor driver RPM and error flags
-			..........................................................................
-				Parameters	 Value	Detail									Range/Type
-			...........................................................................				
-								2 = temperature of motor controller			1,2,3,4
-																			1 = below 85; 
-																			2 = 85-95; 
-																			3 = 95-105; 
-																			4 = over 105
-								3 = speed from motor driver (RPM)			0-255km/h
-			Assume CAN data 2 = motor controller temp
-							3 =   data 1 = speed								*/
-			
-			//mavlink_msg_motor_driver_pack(100,200,&msg,CANBusInput.data[0],CANBusInput.data[1]);
-			//MAV_uart_send(buf,len);
-			mavlink_msg_motor_driver_send(0,/*0,66*/Speed_Message.data[1],Speed_Message.data[1]);
+				.........................................................................
+				Parameters		 Value/Byte		Details							Range/Type
+				...........................................................................
+				
+				uint8_t speed	SpeedData[4]	MotorDriver	Speed				0-255kmh
+				uint8_t speed	SpeedData[5]	MotorDriver	RPM	L				0-255RPM L
+				uint8_t rpm		SpeedData[6]	MotorDriver	RPM	H				0-255RPM H
+				uint8_t rpm		SpeedData[7]	Status bits						xxxxxxxx */
+//TESTING WAS SpeedMessage.data[1] BEFORE
+			mavlink_msg_motor_driver_send(0,Speed_Message.data[4],Speed_Message.data[5].Speed_Message.data[7]);
 
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
 			DESCRIPTION: Speed from the Hall Effect Sensors and error flags	
 			.........................................................................
-			Parameters		 Value	Detail									Range/Type
+			Parameters		 Value/Byte		Details							Range/Type
 			...........................................................................
-				Parameters		2 = speed from hall effect					0-255km/h
-								3 = uint8_t magnet_back missing?			0=no 1=yes
-								4 = uint8_t magnet_front missing?			0=no 1=yes
-			//TESTING		CAN 2 = speed to send							*/
+							
+			uint8_t speed	SpeedData[0]	Averaged HE and Motor RPM Speed	0-255kmh
+			//DEPRECATED\\	uint8_t speed	SpeedData[1]	HallEffect speed				0=255kmh
+			uint8_t rpm		SpeedData[2]	Hall RPM L						0-255RPM
+			uint8_t rpm		SpeedData[3]	Hall RPM H						0-255RPM
+																					*/
 			
 			//uart_flush();
-			//mavlink_msg_hall_effect_send(MAVLINK_COMM_0, Input_Message.data[2],Input_Message.data[7],0);
+			mavlink_msg_hall_effect_send(MAVLINK_COMM_0, )Speed_Message.data[0],Speed_Message.data[2],Speed_Message.data[3]);
 			
 			//uart_puts("RX");
 			//uart_puts(MAV_Rx_buff);
@@ -896,10 +908,19 @@ void MAV_msg_pack()
 								6 = const char *time						12 characters max
 								7 = const char *date						12 characters max
 								8 = const char *lock_error					12 characters max "OK" or "INVALID"
-			//TESTING
 																					*/
-//TESTING	mavlink_msg_gps_pack(100,200,&msg,latitude,longitude,time,date,lock_error);
-			//MAV_uart_send(buf,len);
+			char *latitude = parts[3];
+			char *longitude = parts[4];
+			char *time = parts[1];
+			char *date = parts[9];
+			char *lock_error = parts[2];
+			
+			if (lock_error == 'V')
+			{
+				lock_error = "INVALID";
+			}else (lock_error = "OK");
+			
+			mavlink_msg_gps_send(MAVLINK_COMM_0,latitude,longitude,time,date,lock_error);
 
 			
 			/*-----------------------------------------------------------------------
