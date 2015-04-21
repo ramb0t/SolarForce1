@@ -62,14 +62,14 @@ void send()
 	speed. id = 0x0420;
 	speed. rtr = 0 ;
 	speed. length = 8 ;
-	speed. data [ 0 ] = motorSpeed>>8;			//average speed
+	speed. data [ 0 ] = 0x00;			//average speed
 	speed. data [ 1 ] = motorSpeed;				//hall speed
-	speed. data [ 2 ] =	Capt1;				//hall rpm [0]
-	speed. data [ 3 ] = avgCount;				//hall rpm [1]
-	speed. data [ 4 ] = avgCount>>8;				//motor speed
-	speed. data [ 5 ] = 0x01;				//motor rpm [0]
-	speed. data [ 6 ] = 0x02;				//motor rpm [1]
-	speed. data [ 7 ] = 0x03;			//status flag
+	speed. data [ 2 ] =	0x00;				//hall rpm [0]
+	speed. data [ 3 ] = 0x00;				//hall rpm [1]
+	speed. data [ 4 ] = 0x00;				//motor speed
+	speed. data [ 5 ] = 0x00;				//motor rpm [0]
+	speed. data [ 6 ] = 0x00;				//motor rpm [1]
+	speed. data [ 7 ] = 0x00;			//status flag
 	
 	CAN_sendMessage (&speed);
 	//_delay_ms(500);

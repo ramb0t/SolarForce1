@@ -95,7 +95,7 @@ void speedCalcs ()
 	speedTest. id = 0x0420;
 	speedTest. rtr = 0 ;
 	speedTest. length = 2 ;
-	speedTest. data [ 0 ] = 0x04;
+	speedTest. data [ 0 ] = 0x00;
 	speedTest. data [ 1 ] = hSpeed;
 	
 	CAN_sendMessage (&speedTest);
@@ -123,12 +123,27 @@ ISR(INT0_vect)
 	TCNT2 = TIMEBASE_RELOAD2; //reload timer
 	
 	//rps = 1/numCount 
-	//numCount in us, multiply by 1000 give ms
-	//1.61*3.4*10000 gives 57960
+	//numCount in us, multiply by 1000 give m/s
+	//1.61*3.14*10000 gives 50554
+	
+	//19 April test, mounted at 10cm from center nut
+	//therefore 10cm radius is 20cm diamter
+	//20cm diameter multiplied y pi is 0.6283m
+	//this multiplied by 1000 gives m/s
+	//0.6283*3.14*10000 gives 19739.2088
+	
+	//rpus = 1/numCount; //revolutions per microseconds
+	//rps = rpus* 1e-6 or rps = //convert microseconds to seconds
+	//rpm = rps*60;
+	//speed = rpm*1.61*3.6
+	
+	
+	//step2 = 60000000/numCount;
+	//hSpeed = step2*
 	step2 = (numCount)*5896; 
 	hSpeed = step2/100; //converted to km/h
 	
-	CANMessage speedTest1;
+	/*CANMessage speedTest1;
 	
 	speedTest1. id = 0x0002;
 	speedTest1. rtr = 0 ;
@@ -139,7 +154,7 @@ ISR(INT0_vect)
 	speedTest1. data [ 3 ] = hSpeed;
 	
 	CAN_sendMessage (&speedTest1);
-	
+	*/
 	//totalCountH = totalCountH + numCount;
 		
 	/*CANMessage tryit2;
