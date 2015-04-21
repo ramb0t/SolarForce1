@@ -137,11 +137,13 @@ void MAV_msg_Unpack()
 								mavlink_msg_gps_decode(&msg,&gps);			//decode message
 								uart_puts_p("GPS>>");					//delim and ID
 								uart_putc(GPS_TXID);
-								uart_putc(gps.time);
-								uart_puts_p(PSTR(","));
 								uart_putc(gps.latitude);
 								uart_puts_p(PSTR(","));
 								uart_putc(gps.longitude);
+								uart_puts_p(PSTR(","));
+								uart_putc(gps.time);
+								uart_puts_p(PSTR(","));
+								uart_putc(gps.date);
 								uart_puts_p(PSTR(","));
 								uart_putc(gps.lock_error);
 								uart_puts_p(PSTR("<<"));	
@@ -149,36 +151,63 @@ void MAV_msg_Unpack()
 							
 							case MAVLINK_MSG_ID_MOTOR_DRIVER:				//is it Motor Driver data?
 							{
-								uart_flush();
-								mavlink_motor_driver_t md;					//instantiate object MD
-								mavlink_msg_motor_driver_decode(&msg,&md);	//encode message
-								uart_puts_p(PSTR("MD>>"));					//delimiter & ID
-								uart_putc(MD_TXID);							
-								uart_puts_p(PSTR(","));
-								uart_putc(md.speed);						//avg. speed
-								uart_puts_p(PSTR(","));						//delim
-								uart_putc(md.controller_temp);				
-								uart_puts_p(PSTR("<<"));
-									break;//now check for next ID
+							uart_flush();
+							mavlink_motor_driver_t md;					//instantiate object MD
+							mavlink_msg_motor_driver_decode(&msg,&md);	//encode message
+							uart_puts_p(PSTR("MD>>"));					//delimiter & ID
+							uart_putc(MD_TXID);
+							uart_puts_p(PSTR(","));
+							uart_putc(md.speed);						//avg. speed
+							uart_puts_p(PSTR(","));						//delim
+							uart_putc(md.controller_temp);				//used as status flags
+							uart_puts_p(PSTR("<<"));
+							
+							mavlink_hall_effect_t he;					//instantiate object MD
+							mavlink_msg_hall_effect_decode(&msg,&he);
+							uart_puts_p(PSTR("HE>>"));					//delimiter & ID
+							uart_putc(HE_TXID);
+							uart_puts_p(PSTR(","));
+							uart_putc(he.speed);						//avg. speed
+							uart_puts_p(PSTR(","));						//delim
+							uart_putc(he.left_magnet);				//left mag RPM
+							uart_puts_p(PSTR(","));						
+							uart_putc(he.right_magnet);				//right mag RPM
+							uart_puts_p(PSTR("<<"));
+							break;//now check for next ID
 							}break;
+							
+							//case MAVLINK_MSG_ID_MOTOR_DRIVER:				//is it Motor Driver data?
+							//{
+								//uart_flush();
+								//mavlink_motor_driver_t md;					//instantiate object MD
+								//mavlink_msg_motor_driver_decode(&msg,&md);	//encode message
+								//uart_puts_p(PSTR("MD>>"));					//delimiter & ID
+								//uart_putc(MD_TXID);							
+								//uart_puts_p(PSTR(","));
+								//uart_putc(md.speed);						//avg. speed
+								//uart_puts_p(PSTR(","));						//delim
+								//uart_putc(md.controller_temp);				
+								//uart_puts_p(PSTR("<<"));
+									//break;//now check for next ID
+							//}break;
 																		
-							case MAVLINK_MSG_ID_HALL_EFFECT:				//is it Hall Effect data?
-							{
-								uart_flush();
-								mavlink_hall_effect_t he;					//generate a struct object
-								mavlink_msg_hall_effect_decode(&msg,&he);	//decode MAVLink into data
-								uart_puts("HE>>");							//delimiter & ID
-								uart_putc(HE_TXID);
-								uart_puts_p(PSTR(","));
-								uart_putc(he.speed);						//speed data
-								uart_puts_p(PSTR(","));
-								uart_putc(he.left_magnet);					//magnet flags
-								uart_puts_p(PSTR(","));	
-								uart_putc(he.right_magnet);
-								uart_puts_p(PSTR("<<"));
-								break;
-							}break;
-																	//now check for next ID
+							//case MAVLINK_MSG_ID_HALL_EFFECT:				//is it Hall Effect data?
+							//{
+								//uart_flush();
+								//mavlink_hall_effect_t he;					//generate a struct object
+								//mavlink_msg_hall_effect_decode(&msg,&he);	//decode MAVLink into data
+								//uart_puts("HE>>");							//delimiter & ID
+								//uart_putc(HE_TXID);
+								//uart_puts_p(PSTR(","));
+								//uart_putc(he.speed);						//speed data
+								//uart_puts_p(PSTR(","));
+								//uart_putc(he.left_magnet);					//magnet flags
+								//uart_puts_p(PSTR(","));	
+								//uart_putc(he.right_magnet);
+								//uart_puts_p(PSTR("<<"));
+								//break;
+							//}break;
+																	////now check for next ID
 							case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
 							{
 								uart_flush();

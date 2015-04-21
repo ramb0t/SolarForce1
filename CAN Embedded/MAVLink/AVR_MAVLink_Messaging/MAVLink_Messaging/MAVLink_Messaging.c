@@ -54,7 +54,7 @@ int main (void)
 	
 	TCNT0 = 0x00;
 	TCCR0A = 0x00;
-	//TCCR0B = (1<<CS02)|(1<<CS00);
+	TCCR0B = (1<<CS02)|(1<<CS00);
 	//TIMSK0 = (1<<TOIE0);		//--enable later!
 	
 		CAN_setupInt0();
@@ -93,8 +93,13 @@ int main (void)
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
 		
-		GPS_readData();
-		
+			counter++;
+			if (counter > 2)
+			{
+				counter = 0;
+				GPS_readData();
+			}
+				
 		CAN_readData();
 
 		MAV_msg_pack();
@@ -184,8 +189,8 @@ void ParseGPS ()
 				//break;
 			}
 			uart_puts("\n");
-//if (DEBUG)
-//{
+if (DEBUG)
+{
 				for (int i=0;i<13;i++)
 				{
 					uart_puts("\nPART ");
@@ -194,7 +199,7 @@ void ParseGPS ()
 					uart_puts(parts[i]);
 					uart_puts("\n");
 				}
-//}
+}
 
 }
 
@@ -290,6 +295,7 @@ void CAN_readData()
 					
 					*/
 				case 	MOTOR_DRIVER_CANID:
+				{
 						uart_puts("\n");
 						uart_puts("CAN from MD:");
 						uart_puts(Input_Message.id);				//Human readable data on UART
@@ -312,7 +318,7 @@ void CAN_readData()
 						Speed_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 						}
-					break;
+				}break;
 					
 				/*NOTE: BMS Data across different messages, we want:
 				Base CANID =	BMS[0] = 0x0620
@@ -342,6 +348,7 @@ void CAN_readData()
 				*/
 					
 				case	BMS_2_CANID:
+				{
 					uart_puts("\n");
 					uart_puts("CAN from BMS2:");					//Human readable data on UART
 					uart_puts(Input_Message.id);
@@ -356,9 +363,10 @@ void CAN_readData()
 						//BMS_Message.data[i] = Input_Message.data[i]; //store into CAN object for BMS
 						//uart_puts(buff);
 					//}
-					break;
+				}break;
 					
 				case	BMS_3_CANID:
+				{
 					uart_puts("\n");
 					uart_puts("CAN from BMS3:");					//Human readable data on UART
 					uart_puts(Input_Message.id);
@@ -375,9 +383,10 @@ void CAN_readData()
 					BMS_Message.data[7] = (Input_Message.data[4]<<8)|(Input_Message.data[5]);
 					
 					uart_puts(buff);
-					break;
+				}break;
 				
 				case	BMS_4_CANID:
+				{
 					uart_puts("\n");
 					uart_puts("CAN from BMS4:");					//Human readable data on UART
 					uart_puts(Input_Message.id);
@@ -386,10 +395,11 @@ void CAN_readData()
 					itoa(Input_Message.data[1],buff,10);
 					BMS_Message.data[2] = (Input_Message.data[0]<<8)|(Input_Message.data[1]);
 					uart_puts(buff);
-					break;
+				}break;
 				
 
 				case	BMS_6_CANID:
+				{
 					uart_puts("\n");
 					uart_puts("CAN from BMS6:");					//Human readable data on UART
 					uart_puts(Input_Message.id);
@@ -397,9 +407,10 @@ void CAN_readData()
 					itoa(Input_Message.data[0],buff,10);		//SOC
 					BMS_Message.data[3] = Input_Message.data[0];
 					uart_puts(buff);
-				break;
+				}break;
 				
 				case	BMS_7_CANID:
+				{
 					uart_puts("\n");
 					uart_puts("CAN from BMS7:");					//Human readable data on UART
 					uart_puts(Input_Message.id);
@@ -418,9 +429,10 @@ void CAN_readData()
 					itoa(Input_Message.data[4],buff,10);			//Max temps
 					BMS_Message.data[10] = (Input_Message.data[4]<<8)|(Input_Message.data[5]);
 					uart_puts(buff);
-				break;
+				}break;
 				
 				case	ACCELO_GYRO_CANID:
+				{	
 					uart_puts("\n");
 					uart_puts("CAN from ACGY:");
 					uart_puts(Input_Message.id);
@@ -430,9 +442,10 @@ void CAN_readData()
 						uart_puts(buff);
 					}
 
-				break;
+				}break;
 				
 				case	MPPT1_CANID:
+				{	
 					uart_puts("\n");
 					uart_puts("CAN from MPPT1:");
 					uart_puts(Input_Message.id);
@@ -442,9 +455,10 @@ void CAN_readData()
 						MPPT1_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 					}
-				break;
+				}break;
 				
 				case	MPPT2_CANID:
+				{
 				uart_puts("\n");
 				uart_puts("CAN from MPPT1:");
 				uart_puts(Input_Message.id);
@@ -454,9 +468,10 @@ void CAN_readData()
 					MPPT2_Message.data[i] = Input_Message.data[i];
 					uart_puts(buff);
 				}
-				break;
+				}break;
 				
 				case	MPPT3_CANID:
+				{
 				uart_puts("\n");
 				uart_puts("CAN from MPPT1:");
 				uart_puts(Input_Message.id);
@@ -466,9 +481,10 @@ void CAN_readData()
 					MPPT3_Message.data[i] = Input_Message.data[i];
 					uart_puts(buff);
 				}
-				break;
+				}break;
 				
 				case	MPPT4_CANID:
+				{
 				uart_puts("\n");
 				uart_puts("CAN from MPPT1:");
 				uart_puts(Input_Message.id);
@@ -478,7 +494,7 @@ void CAN_readData()
 					MPPT4_Message.data[i] = Input_Message.data[i];
 					uart_puts(buff);
 				}
-				break;
+				}break;
 				
 				
 				}
@@ -828,11 +844,11 @@ void MAV_msg_pack()
 				...........................................................................
 				
 				uint8_t speed	SpeedData[4]	MotorDriver	Speed				0-255kmh
-				uint8_t speed	SpeedData[5]	MotorDriver	RPM	L				0-255RPM L
-				uint8_t rpm		SpeedData[6]	MotorDriver	RPM	H				0-255RPM H
+				//DEPRECATED uint8_t speed	SpeedData[5]	MotorDriver	RPM	L				0-255RPM L
+				//DEPRECATED uint8_t rpm		SpeedData[6]	MotorDriver	RPM	H				0-255RPM H
 				uint8_t rpm		SpeedData[7]	Status bits						xxxxxxxx */
 //TESTING WAS SpeedMessage.data[1] BEFORE
-			mavlink_msg_motor_driver_send(0,Speed_Message.data[4],Speed_Message.data[5].Speed_Message.data[7]);
+			mavlink_msg_motor_driver_send(0,Speed_Message.data[4],Speed_Message.data[7]);
 
 			
 			/*-----------------------------------------------------------------------
@@ -849,7 +865,7 @@ void MAV_msg_pack()
 																					*/
 			
 			//uart_flush();
-			mavlink_msg_hall_effect_send(MAVLINK_COMM_0, )Speed_Message.data[0],Speed_Message.data[2],Speed_Message.data[3]);
+			mavlink_msg_hall_effect_send(MAVLINK_COMM_0,Speed_Message.data[0],Speed_Message.data[2],Speed_Message.data[3]);
 			
 			//uart_puts("RX");
 			//uart_puts(MAV_Rx_buff);
