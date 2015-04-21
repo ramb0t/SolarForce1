@@ -72,6 +72,11 @@ int main (void)
 				mavlink_system.sysid = 100; // System ID, 1-255
 				mavlink_system.compid = 200; // Component/Subsystem ID, 1-255
 	
+	/*---------GPS Pointer Init --------------------
+		Sets the Parsing pointer to the start of the GPS string					*/
+	
+	p_start = gps_string;
+	
 //---------------Operational Loop---------------------//
 	
 	while(1) {
@@ -87,11 +92,12 @@ int main (void)
 		LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
-
 		
-		//CAN_readData();
+		GPS_readData();
+		
+		CAN_readData();
 
-		//MAV_msg_pack();
+		MAV_msg_pack();
 		
 		
 		
@@ -120,48 +126,77 @@ void GPS_readData()
 	11   = E or W of magnetic variation
 	12   = Mode indicator, (A=Autonomous, D=Differential, E=Estimated, N=Data not valid)
 	13   = Checksum	
-	*/		
+	*/	
+	do	{
+		gpsdata = uart_getc();	}							//get a GPS char
+	while (gpsdata !='$');
+
+		//uart_putc(uart_getc());
+		if (gpsdata == '$')									//if it's $ = start line
+		{
+			gps_string[0]=gpsdata;							//store this into GPS string
+			//uart_putc(gpsdata);
+			do
+			{	
+				if (uart_available())
+				{
+					gps_string[ctr+1] = uart_getc();		//as long as EOL symbol * not reached
+					//uart_putc(gps_string[ctr+1]);
+					ctr++;									//populate GPRMC NMEA sentence
+				}
+		
+			}while (gps_string[ctr] !='*');
+			gpslen = ctr;									
+			ctr=0;
+			
+			if (gps_string[5]=='C')							//Only GPRMC sentence has a 'C' so isolate this
+			{
+				ParseGPS();
+				uart_puts(gps_string);						//output it!
+			}
 	
 	
+			//for (int i=0;i<gpslen;i++)
+			//{
+			//uart_putc(gps_string[i]);
+			//}
 	
-	//for (int i=0;i<strlen(fmt);i++)
-	//{
-		//uart_putc(fmt[i]);
-	//}
+	
+		}
+
 
 }//GPS get
 
 
 
-//void ParseGPS (char c) {
-	//if (c == '$') { state = 0; temp = 0; }
-	//char mode = fmt[state++];
-	//// If received character matches format string, or format is '?' - return
-	//if ((mode == c) || (mode == '?')) return;
-	//// d=decimal digit
-	//char d = c - '0';
-	//if (mode == 'd') temp = temp*10 + d;
-	//// e=long decimal digit
-	//else if (mode == 'e') ltmp = ltmp*10 + d;
-	//// a=angular measure
-	//else if (mode == 'a') ltmp = ltmp*6 + d;
-	//// t=Time - hhmm
-	//else if (mode == 't') { Time = temp*10 + d; temp = 0; }
-	//// m=Millisecs
-	//else if (mode == 'm') { Msecs = temp*10 + d; ltmp=0; }
-	//// l=Latitude - in minutes*1000
-	//else if (mode == 'l') { if (c == 'N') Lat = ltmp; else Lat = -ltmp; ltmp = 0; }
-	//// o=Longitude - in minutes*1000
-	//else if (mode == 'o') { if (c == 'E') Long = ltmp; else Long = -ltmp; temp = 0; }
-	//// j/k=Speed - in knots*100
-	//else if (mode == 'j') { if (c != '.') { temp = temp*10 + d; state--; } }
-	//else if (mode == 'k') { Knots = temp*10 + d; temp = 0; }
-	//// c=Course (Track) - in degrees*100
-	//else if (mode == 'c') { Course = temp*10 + d; temp = 0; }
-	//// y=Date - ddmm
-	//else if (mode == 'y') { Date = temp*10 + d ; Fix = 1; }
-	//else state = 0;
-//}
+void ParseGPS () 
+{
+			p_end = strchr(p_start, ',');
+			if (p_end) {
+				strncpy(parts[i], p_start, p_end-p_start);
+				parts[i][p_end-p_start] = 0;
+				i++;
+				p_start = p_end + 1;
+			}
+			else {
+				// sopy the last bit - might as well copy 20
+				//strncpy(parts[i], p_start, 20);
+				//break;
+			}
+			uart_puts("\n");
+if (DEBUG)
+{
+				for (int i=0;i<13;i++)
+				{
+					uart_puts("\nPART ");
+					uart_putc(i);
+					uart_puts(": ");
+					uart_puts(parts[i]);
+					uart_puts("\n");
+				}
+}
+
+}
 
 void CAN_readData()
 {
