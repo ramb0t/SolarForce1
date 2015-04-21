@@ -99,12 +99,23 @@ void MAV_msg_Unpack()
 				//if (ctr2 < MAVLINK_MAX_PACKET_LEN)						//while packet size < MAVLink packet
 				
 					c=uart_getc();								//get another char
-					hb_lost++;										//TEST put out
-					if (hb_lost > 1000)
+					
+					/*Each byte output of Unpack (takes 2ms)
+					Count increased every 2ms
+					hence if 5000ms pass with no data, errors are thrown!
+					*/
+					
+					if (c == NULL)	
 					{
-						uart_puts_p(PSTR("Heartbeat fail!"));
-						hb_lost = 0;
+						hb_lost++;										
+						if (hb_lost > 7500)
+						{
+							hb_lost = 0;
+							uart_puts_p(PSTR("ERROR>><<"));
+							_delay_ms(20);
+						}
 					}
+					
 					// Try to get a new message
 					
 					uart_putc(c);								//TESTING OUTPUT	
@@ -133,6 +144,7 @@ void MAV_msg_Unpack()
 																				*/
 							case MAVLINK_MSG_ID_GPS:							//is it GPS data?
 							{
+								hb_lost=0;
 								mavlink_gps_t gps;							//instantiate GPS object
 								mavlink_msg_gps_decode(&msg,&gps);			//decode message
 								uart_puts_p("GPS>>");					//delim and ID
@@ -146,11 +158,13 @@ void MAV_msg_Unpack()
 								uart_putc(gps.date);
 								uart_puts_p(PSTR(","));
 								uart_putc(gps.lock_error);
-								uart_puts_p(PSTR("<<"));	
+								uart_puts_p(PSTR("<<"));
+							break;	
 							}break;
 							
 							case MAVLINK_MSG_ID_MOTOR_DRIVER:				//is it Motor Driver data?
 							{
+								hb_lost=0;
 							uart_flush();
 							mavlink_motor_driver_t md;					//instantiate object MD
 							mavlink_msg_motor_driver_decode(&msg,&md);	//encode message
@@ -210,6 +224,7 @@ void MAV_msg_Unpack()
 																	////now check for next ID
 							case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
 							{
+								hb_lost=0;
 								uart_flush();
 								mavlink_bms_data_t bms;
 								mavlink_msg_bms_data_decode(&msg,&bms);	//decode BMS data packet
@@ -250,6 +265,7 @@ void MAV_msg_Unpack()
 							
 							case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
 							{
+								hb_lost=0;
 								uart_flush();
 								mavlink_accelo_gyro_t ac;
 								mavlink_msg_accelo_gyro_decode(&msg,&ac);
@@ -264,6 +280,7 @@ void MAV_msg_Unpack()
 							
 							case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
 							{
+								hb_lost=0;
 								uart_flush();
 								mavlink_mppt1_data_t m1;
 								mavlink_msg_mppt1_data_decode(&msg,&m1);
@@ -283,6 +300,7 @@ void MAV_msg_Unpack()
 							
 							case MAVLINK_MSG_ID_MPPT2_DATA:				//is it MPPT1 data?
 							{
+								hb_lost=0;
 								uart_flush();
 								mavlink_mppt1_data_t m2;
 								mavlink_msg_mppt1_data_decode(&msg,&m2);
@@ -302,6 +320,7 @@ void MAV_msg_Unpack()
 							
 							case MAVLINK_MSG_ID_MPPT3_DATA:				//is it MPPT1 data?
 							{
+								hb_lost=0;
 								uart_flush();
 								mavlink_mppt1_data_t m3;
 								mavlink_msg_mppt1_data_decode(&msg,&m3);
@@ -321,6 +340,7 @@ void MAV_msg_Unpack()
 							
 							case MAVLINK_MSG_ID_MPPT4_DATA:				//is it MPPT1 data?
 							{
+								hb_lost=0;
 								uart_flush();
 								mavlink_mppt1_data_t m4;
 								mavlink_msg_mppt1_data_decode(&msg,&m4);
@@ -349,7 +369,7 @@ void MAV_msg_Unpack()
 					// And get the next one
 							
 				}//end while counter
-				ctr2=0;
+				
 			}//endif RXC0
 			
 			
