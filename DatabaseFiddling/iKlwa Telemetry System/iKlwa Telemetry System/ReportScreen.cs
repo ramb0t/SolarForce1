@@ -34,10 +34,11 @@ namespace iKlwa_Telemetry_System
                 grid.Columns.Add(title);
             if (values.Count == 0)
                 throw new ArgumentException("No results found.");
-            string[] data = values.ToArray();//rework later
-            for (int i = grid.Columns.Count -1; i < values.Count; i=i+5)
+
+            for (int i = grid.Columns.Count -1; i < values.Count; i=i+grid.Columns.Count)
             {
-                grid.Rows.Add(data[i-4], data[i-3], data[i-2], data[i-1], data[i]);//little hacky?
+                grid.Rows.Add(values.ElementAt(i - 4), values.ElementAt(i - 3),
+                              values.ElementAt(i - 2), values.ElementAt(i - 1), values.ElementAt(i));//little hacky?
             }
             dataGridView1.DataSource = grid;
         }

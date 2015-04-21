@@ -861,6 +861,7 @@
             this.taskbar_notification.Text = "Unread Warning Messages";
             this.taskbar_notification.Visible = true;
             this.taskbar_notification.BalloonTipClicked += new System.EventHandler(this.btn_ErrorNotifications_Click);
+            this.taskbar_notification.Click += new System.EventHandler(this.btn_ErrorNotifications_Click);
             // 
             // btn_ErrorNotifications
             // 
@@ -891,7 +892,9 @@
             // 
             // SerialReadingThread
             // 
+            this.SerialReadingThread.WorkerReportsProgress = true;
             this.SerialReadingThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.SerialReadingThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.SerialReadingThread_ProgressChanged);
             // 
             // UserInterface
             // 

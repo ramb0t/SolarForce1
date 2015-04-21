@@ -43,7 +43,7 @@ namespace iKlwa_Telemetry_System
             {
                 selected_port = comboBox1.SelectedItem.ToString();
             }
-            catch (NullReferenceException n)
+            catch (NullReferenceException)
             { 
                 //MessageBox.Show(n.Message); 
                 selected_port = null;

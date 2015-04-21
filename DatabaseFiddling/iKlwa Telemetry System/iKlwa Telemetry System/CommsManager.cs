@@ -214,6 +214,12 @@ namespace iKlwa_Telemetry_System
             }
         }
 
+        public void ClosePort()
+        {
+            if (port.IsOpen)
+                port.Close();
+        }
+
         protected void Clear()
         {
             port.DiscardInBuffer();

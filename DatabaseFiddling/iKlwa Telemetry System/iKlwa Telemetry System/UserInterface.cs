@@ -25,8 +25,9 @@ namespace iKlwa_Telemetry_System
         private ReportScreen output;
         private bool safe_to_close = true;
         private int unreadErrorCount = 0;
+        private const int maxErrorCount = 15;
         private bool db_exists = false;
-        private string[] error_messages = new string[15];//only show up to 15 error messages at a time unless error report is requested
+        private string[] error_messages = new string[maxErrorCount];//only show up to 15 error messages at a time unless error report is requested
         private enum TABS : byte {Summary = 1, Graphing = 2,
                                   Motion = 3, Electrical = 4,
                                   Support = 5, RF = 6}
@@ -50,15 +51,15 @@ namespace iKlwa_Telemetry_System
         private void button1_Click(object sender, EventArgs e)
         {
             COM_Port_Select COM_Select = new COM_Port_Select();
-            COM_Select.ShowDialog();
-
             if (COM_Select.NoPortsFound == false)
             {
+                COM_Select.ShowDialog();
                 comms.name = COM_Select.Port;
                 btn_COMPortConnect.ForeColor = Color.Green;
                 btn_COMPortConnect.Text = "Connected";
                 SerialReadingThread.RunWorkerAsync();
             }
+            else errorNotificationUpdate("I can't find any COM Ports.\nIs the hardware plugged in?");
         }
 
         private void refreshGUI()
@@ -89,7 +90,7 @@ namespace iKlwa_Telemetry_System
                                     x = d.getLatestValue("Motor Driver", "Speed");
                                     lbl_instSpeed.Text = x;
                                 }
-                                catch (Exception error)
+                                catch (Exception)
                                 {
                                     //MessageBox.Show(error.Message);
                                 }
@@ -107,7 +108,7 @@ namespace iKlwa_Telemetry_System
                                     x = d.getLatestValue("Hall Effect Sensor", "Speed");
                                     label1.Text = x;
                                 }
-                                catch (Exception error)
+                                catch (Exception)
                                 {
                                     //MessageBox.Show(error.Message);
                                 }
@@ -395,6 +396,8 @@ namespace iKlwa_Telemetry_System
                                     {
                                         d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
                                                           "Sensor packet with invalid ID detected", "Data Error");
+                                        SerialReadingThread.ReportProgress(1);//state 1 indicates that an invalid ID error occurred
+
                                     }
                                     break;
                             }
@@ -409,7 +412,11 @@ namespace iKlwa_Telemetry_System
                     catch (ApplicationException error)//Exception from WriterLockTimeout
                     { MessageBox.Show(error.Message); } 
                 }
-                //MessageBox.Show("thread completed");//debug msg
+                //close COM Port and log timeout error
+                d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Comms Lost",
+                                  "No information received from hardware");
+                SerialReadingThread.ReportProgress(2);//indicates a comms timeout occurred
+                comms.ClosePort();
             }
             catch (Exception err)//Exception from opening COM Port or any other event that wasn't considered
             {
@@ -451,10 +458,19 @@ namespace iKlwa_Telemetry_System
 
         private void btn_ErrorNotifications_Click(object sender, EventArgs e)
         {
-            unreadErrorCount = 0;
-            btn_ErrorNotifications.Text = "No New Warnings";
-            btn_ErrorNotifications.ForeColor = Color.Black;
-            taskbar_notification.Visible = false;
+            if (unreadErrorCount > 0)//if there were unread errors
+            {
+                string allErrors = "";
+                for (int i = 0; i<unreadErrorCount;i++)
+                {
+                    allErrors += error_messages[i] + "\n";
+                }
+                unreadErrorCount = 0;
+                btn_ErrorNotifications.Text = "No New Warnings";
+                btn_ErrorNotifications.ForeColor = Color.Black;
+                taskbar_notification.Visible = false;
+                MessageBox.Show(allErrors, "Warnings", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void UserInterface_FormClosing(object sender, FormClosingEventArgs e)
@@ -493,6 +509,42 @@ namespace iKlwa_Telemetry_System
         private void tabPage2_Enter(object sender, EventArgs e)
         {
             selected_tab = TABS.Electrical;
+        }
+
+        private void SerialReadingThread_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            switch (e.ProgressPercentage)//the progress percentage is actually a code indicating the type of message sent from the backgoound worker
+            {
+                case 0://a debug code
+                    {
+                        error_messages[unreadErrorCount++] = "This is probably the only time you should be happy to see an error...";
+                    }
+                    break;
+                case 1:
+                    {
+                        errorNotificationUpdate("An invalid Sensor ID has been detected.\nDon't know what it is, so I'm discarding it!");
+                    }
+                    break;
+                case 2:
+                    {
+                        errorNotificationUpdate("Hardware isn't talking to me!");
+                    }
+                    break;
+            }
+        }   
+
+        private void errorNotificationUpdate(string problem_description)
+        {
+            if (unreadErrorCount+1<maxErrorCount)
+            {
+                error_messages[unreadErrorCount++] = problem_description + "(" + DateTime.Now.Hour + "h" + DateTime.Now.Minute + ")";
+            }
+            else
+            {
+                for (int i = 0; i < maxErrorCount - 1; ++i)
+                    error_messages[i] = error_messages[i + 1];
+                error_messages[maxErrorCount - 1] = problem_description + "("+ DateTime.Now.Hour + "h"+DateTime.Now.Minute + ")";
+            }
         }
 
     }
