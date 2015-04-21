@@ -117,7 +117,7 @@ void motorCalcs()
 	totalCount = 0;
 	numCount = 0;
 	
-	motorSpeed = 40000/avgCount;
+	motorSpeed = 40250/avgCount;
 	
 	
 	send();
@@ -140,7 +140,7 @@ ISR (TIMER1_CAPT_vect)
 	totalCount = totalCount + Capt1;
 	numCount++;
 	
-	if(totalCount > 50000)
+	if(totalCount > 50000) //could this be the issue for being stuck at 1 instead of going to 0???
 	{
 		motorCalcs();
 	}

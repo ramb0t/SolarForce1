@@ -107,55 +107,53 @@ double MPU6050_ReadGyro(int axis)//x = 0; y = 1; z = 2
 	return double_val;
 }
 
-void initComms(unsigned int baudRate)
+/*void initComms(unsigned int baudRate)
 {
 	//set baud rate to 4800
 	UBRR0H = (unsigned char)(baudRate>>8);
 	UBRR0L = (unsigned char) baudRate;
 	UCSR0B = (1<<TXEN0);
-}
+}*/
 
 int main(void)
 {
-	initComms(12);
+	//initComms(12);
 	SPI_Init(); // setup SPI
 	CAN_Init(CAN_125KBPS_16MHZ);
 	
-	UDR0 = 'A';
+	//UDR0 = 'A';
 	
 	TWIM_Init(12);
 	TWIM_WriteRegister(107,0); //disable sleep mode
 	
-	UDR0 = 0x02;
+	//UDR0 = 0x02;
+	
+	CANMessage test;
+	
+	test. id = 0x0011;
+	test. rtr = 0 ;
+	test. length = 6 ;
+	test. data [ 0 ] = 0x06;
+	test. data [ 1 ] = 0x07;
+	
+	CAN_sendMessage (&test);
 	
 	while(1)
 	{
-		CANMessage gyro;
+		CANMessage mcp;
 		
-		gyro. id = 0x0011;
-		gyro. rtr = 0 ;
-		gyro. length = 2 ;
-		gyro. data [ 0 ] = MPU6050_ReadGyro(0);
-		gyro. data [ 1 ] = MPU6050_ReadGyro(1);
+		mcp. id = 0x0011;
+		mcp. rtr = 0 ;
+		mcp. length = 6 ;
+		mcp. data [ 0 ] = MPU6050_ReadGyro(0);
+		mcp. data [ 1 ] = MPU6050_ReadGyro(1);
+		mcp. data [ 2 ] = MPU6050_ReadAccel(0);
+		mcp. data [ 3 ] = MPU6050_ReadAccel(0);
+		mcp. data [ 4 ] = 0x06;
+		mcp. data [ 5 ] = 0x07;
 		
-		CAN_sendMessage (&gyro);
+		CAN_sendMessage (&mcp);
 		
-		UDR0 = MPU6050_ReadGyro(0);
-		_delay_ms(1000);
-		
-		CANMessage acc;
-		
-		gyro. id = 0x0012;
-		gyro. rtr = 0 ;
-		gyro. length = 2 ;
-		gyro. data [ 0 ] = MPU6050_ReadAccel(0);
-		gyro. data [ 1 ] = MPU6050_ReadAccel(1);
-		
-		CAN_sendMessage (&acc);
-		
-		/*removed for testing, showing 0 since
-		  obviously no acceleration
-		UDR0 = MPU6050_ReadAccel(0);
-		_delay_ms(1000);*/
+		//UDR0 = MPU6050_ReadGyro(0);
 	}
 }
