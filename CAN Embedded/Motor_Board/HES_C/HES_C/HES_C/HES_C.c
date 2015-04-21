@@ -48,67 +48,19 @@ volatile uint8_t hSpeed = 0;
 
 void speedCalcs ()
 {	
-	//fix this calculation to keep accuracy
-	//the way Ben showed for the motor one
-	
-	/*if (hallRev > 0)
-	{
-		avgCountH = totalCountH/hallRev; 
-	}
-		else
-	{
-		avgCountH = 0;
-	}
-	
-	CANMessage tryit1;
-	
-	tryit1. id = 0x0009;
-	tryit1. rtr = 0 ;
-	tryit1. length = 7 ;
-	tryit1. data [ 0 ] = 0x09;
-	tryit1. data [ 1 ] = totalCountH>>8;
-	tryit1. data [ 2 ] = totalCountH;
-	tryit1. data [ 3 ] = Capt2>>8;
-	tryit1. data [ 4 ] = Capt2;
-	tryit1. data [ 5 ] = avgCountH>>8;
-	tryit1. data [ 6 ] = avgCountH;
-	
-	CAN_sendMessage (&tryit1);
-	
-	totalCountH = 0;
-	Capt2 = 0;
-	
-	hSpeed = 40000/avgCountH;
-	
-	CANMessage tryit;
-	
-	tryit. id = 0x0006;
-	tryit. rtr = 0 ;
-	tryit. length = 2 ;
-	tryit. data [ 0 ] = 0x04;
-	tryit. data [ 1 ] = hSpeed;
-	
-	CAN_sendMessage (&tryit);*/
-	
 	CANMessage speedTest;
 	
 	speedTest. id = 0x0420;
 	speedTest. rtr = 0 ;
 	speedTest. length = 2 ;
-	speedTest. data [ 0 ] = 0x04;
+	speedTest. data [ 0 ] = 0x00;
 	speedTest. data [ 1 ] = hSpeed;
 	
 	CAN_sendMessage (&speedTest);
 }
 
 ISR(INT0_vect)
-{
-	//to run when there is an interrupt from HES
-	//increment the value of the count by one each time
-	//the magnet is detected
-	//use this value to calculate the rpm's
-	//half_rev = half_rev + 1;
-	
+{	
 	//need debouncing here!!!!
 	//if magnet passes by slowly, picks up more than one interrupt
 	
@@ -122,42 +74,30 @@ ISR(INT0_vect)
 	count2 = 0;
 	TCNT2 = TIMEBASE_RELOAD2; //reload timer
 	
+	//place i circum depending on where its mounted on wheel
+	//24.5cm diameter on my bike, therefore circum = 0.76969m
+	//90000* circum = 69272.11801
+	hSpeed = (69272)/Capt2;
+	
 	//rps = 1/numCount 
-	//numCount in us, multiply by 1000 give ms
-	//1.61*3.4*10000 gives 57960
-	step2 = (numCount)*5896; 
-	hSpeed = step2/100; //converted to km/h
+	//numCount in us, multiply by 1000 give m/s
+	//1.61*3.14*10000 gives 50554
 	
-	CANMessage speedTest1;
+	//19 April test, mounted at 10cm from center nut
+	//therefore 10cm radius is 20cm diamter
+	//20cm diameter multiplied y pi is 0.6283m
+	//this multiplied by 1000 gives m/s
+	//0.6283*3.14*10000 gives 19739.2088
 	
-	speedTest1. id = 0x0002;
-	speedTest1. rtr = 0 ;
-	speedTest1. length = 4 ;
-	speedTest1. data [ 0 ] = 0x01;
-	speedTest1. data [ 1 ] = step2>>8;
-	speedTest1. data [ 2 ] = step2;
-	speedTest1. data [ 3 ] = hSpeed;
+	//rpus = 1/numCount; //revolutions per microseconds
+	//rps = rpus* 1e-6 or rps = //convert microseconds to seconds
+	//rpm = rps*60;
+	//speed = rpm*1.61*3.6
 	
-	CAN_sendMessage (&speedTest1);
-	
-	//totalCountH = totalCountH + numCount;
-		
-	/*CANMessage tryit2;
-	
-	tryit2. id = 0x0007;
-	tryit2. rtr = 0 ;
-	tryit2. length = 2 ;
-	tryit2. data [ 0 ] = 0x07;
-	tryit2. data [ 1 ] = totalCountH;
-	
-	CAN_sendMessage (&tryit2);*/
-	
-	/*hallRev++;
-	
-	if (totalCountH > 50000)
-	{
-		speedCalcs();
-	}*/
+	//step2 = 60000000/numCount;
+	//hSpeed = step2*
+	//step2 = (numCount)*5896; 
+	//hSpeed = step2/100; //converted to km/h
 }
 
 void initInterrupt0(void)
