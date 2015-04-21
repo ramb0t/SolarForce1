@@ -22,13 +22,11 @@ namespace iKlwa_Telemetry_System
                                   BMS, GYRO, MPPT1,
                                   MPPT2, MPPT3, MPPT4,GPS,
                                   SOLAR_CELL, ANEMOMETER}
-        private ReportScreen output;// = new ReportScreen();
+        private ReportScreen output;
         private bool safe_to_close = true;
         private int unreadErrorCount = 0;
         private bool db_exists = false;
-        private int counter;//naughty
-        string[] list = new string[1];//naughty
-
+        private string[] error_messages = new string[15];//only show up to 15 error messages at a time unless error report is requested
         private enum TABS : byte {Summary = 1, Graphing = 2,
                                   Motion = 3, Electrical = 4,
                                   Support = 5, RF = 6}
@@ -138,57 +136,13 @@ namespace iKlwa_Telemetry_System
         {
             refreshGUI();//refresh GUI method
 
-            if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
+            //if (unreadErrorCount<15) unreadErrorCount++;//debugging purposes
             if (unreadErrorCount > 0)//update error messages notifications
             {
                 btn_ErrorNotifications.ForeColor = Color.Red;
                 btn_ErrorNotifications.Text = unreadErrorCount + " New Warnings.";
                 taskbar_notification.Visible = true;
             }
-
-            /*naughty things
->>>>>>> e2ff840632599cfaa1f26247f6881d3c0ab5c34b
-            if (counter!=list.Length)
-            lbl_instSpeed.Text = list[counter++];
-            d.getLatestValue("Speed");
-            
-        }
-
-        /// <summary>
-        /// Secret Simulation/Debug Mode - generate data to textfile, read and store to database.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void pictureBox1_DoubleClick(object sender, EventArgs e)
-        {/*
-          * Commented out to prevent accidental execution. This dev-only code!
-          *  try
-          *  {
-          *      protection.AcquireWriterLock(100);
-          *      try
-          *      {
-          *          MessageBox.Show("Now Entering Simulation Mode.");
-          *          Simulator s = new Simulator();
-          *          s.simData();
-          *          MessageBox.Show("Simulation Data Generated.\n\nNow storing to database");
-          *          string[,] data = s.getData();
-          *
-          *          for (int rows = 0; rows < 1438; rows++)
-          *          {
-          *              d.simulateErrorCapture("RF_Link", "Comms", "Communication Lost");
-          *              d.addDataCapture("Speed_Sensor", data[rows, 2], data[rows, 0], data[rows, 3]);
-          *          }
-          *      }
-          *      finally
-          *      {
-          *          protection.ReleaseWriterLock();
-          *      }
-          *  }
-          *  catch (ApplicationException error)
-          *  {
-          *      MessageBox.Show(error.Message);
-          *  }
-          */
         }
 
         #region not sure how to make this work...
@@ -268,6 +222,7 @@ namespace iKlwa_Telemetry_System
                     results = d.queryRange_valOnly(comboBox1.SelectedItem.ToString(),
                                      numericUpDown1.Value + "h" + numericUpDown3.Value,
                                      numericUpDown4.Value + "h" + numericUpDown2.Value);
+                    
                 }
                 finally
                 {
@@ -338,19 +293,6 @@ namespace iKlwa_Telemetry_System
 
         private void UserInterface_Load(object sender, EventArgs e)
         {
-            //naughy
-            /*var results = d.getLatestValue("Speed_Sensor");
-            int c = 0;
-            list = new string[results.Count()];
-            foreach (var item in results)
-            {
-                foreach (var thing in item.Descendants("Value"))
-                {
-                    list[c++] = thing.Value;
-                }
-            }
-            //end naughty*/
-
             var sensorGroup = d.getSensors();
             if (sensorGroup.Count() == 0) //check if any sensors found and display message if not
             {
@@ -396,50 +338,64 @@ namespace iKlwa_Telemetry_System
                     {
                         //may want to implement writer lock in addDataCapture...?
 
-                        protection.AcquireWriterLock(100);//lock writer
+                        protection.AcquireWriterLock(200);//lock writer
                         try
                         {
                             safe_to_close = false;
                             switch (packet.ID)//determine sensor based on packet ID
                             {
                                 case (int)SENSORS.MOTOR_DRIVER:
-                                    //dodgy: d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Speed", (int)received[0].ToCharArray()[0]);
-                                    d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                                     "Speed", (int)Convert.ToChar(packet.PAYLOAD.ElementAt(0)));
+                                    {
+                                        string str = packet.PAYLOAD.ElementAt(0).ToString();
+                                        str = str.Substring(0, 1);
+                                        d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                                         "Speed", (int)Convert.ToChar(str));
+                                    }
                                     break;
                                 case (int)SENSORS.HALL_EFFECT:
-                                    string str = packet.PAYLOAD.ElementAt(0).ToString();
-                                    str = str.Substring(0, 1);
-                                    d.addDataCapture("Hall Effect Sensor", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                                     "Speed", (int)Convert.ToChar(str));
+                                    {
+                                        string str = packet.PAYLOAD.ElementAt(0).ToString();
+                                        str = str.Substring(0, 1);
+                                        d.addDataCapture("Hall Effect Sensor", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                                         "Speed", (int)Convert.ToChar(str));
+
+                                    } 
                                     break;
 
                                 case (int)SENSORS.BMS:
+                                    { }
                                     break;
 
                                 case (int)SENSORS.GYRO:
+                                    { }
                                     break;
                                 
                                 case (int)SENSORS.MPPT1:
                                 case (int)SENSORS.MPPT2:
                                 case (int)SENSORS.MPPT3:
                                 case (int)SENSORS.MPPT4:
+                                    { }
                                     //look to implement generic MPPT function with a different code for each of the 4
                                     //structure of MPPT data entry will essentially be the same
                                     break;
 
                                 case (int)SENSORS.GPS:
+                                    { }
                                     break;
 
                                 case (int)SENSORS.SOLAR_CELL:
+                                    { }
                                     break;
 
                                 case (int)SENSORS.ANEMOMETER:
+                                    { }
                                     break;
 
                                 default:
-                                    d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                        "Sensor packet with invalid ID detected.","Data Error");
+                                    {
+                                        d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                                          "Sensor packet with invalid ID detected", "Data Error");
+                                    }
                                     break;
                             }
                             count = 0;//if code reaches here, there was a successful write and the timeout counter is cleared.
@@ -459,24 +415,6 @@ namespace iKlwa_Telemetry_System
             {
                 MessageBox.Show(err.Message);
             }
-        }
-
-        /// <summary>
-        /// Occurs when Graph Tab is activated. Populates all user-definable controls.
-        /// Also enables refreshing of user-definable controls every timer tick.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tabControl1_Enter(object sender, EventArgs e)
-        {
-            getSensors();//populate sensor select combo box
-
-            //set numeric updowns so that the default is for the last hour of receiving data
-            numericUpDown4.Value = DateTime.Now.Hour;
-            numericUpDown2.Value = DateTime.Now.Minute;
-            numericUpDown1.Value = DateTime.Now.Hour - 1;
-            numericUpDown3.Value = DateTime.Now.Minute;
-            selected_tab = TABS.Graphing;//indicate that the graphing tab was selected
         }
 
         /// <summary>
@@ -522,6 +460,39 @@ namespace iKlwa_Telemetry_System
         private void UserInterface_FormClosing(object sender, FormClosingEventArgs e)
         {
             while (safe_to_close == false);//nop nop nop!!
+        }
+
+        /// <summary>
+        /// Occurs when Graph Tab is activated. Populates all user-definable controls.
+        /// Also enables refreshing of user-definable controls every timer tick.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabPage5_Enter(object sender, EventArgs e)
+        {
+            getSensors();//populate sensor select combo box
+
+            //set numeric updowns so that the default is for the last hour of receiving data
+            numericUpDown4.Value = DateTime.Now.Hour;
+            numericUpDown2.Value = DateTime.Now.Minute;
+            numericUpDown1.Value = DateTime.Now.Hour - 1;
+            numericUpDown3.Value = DateTime.Now.Minute;
+            selected_tab = TABS.Graphing;//indicate that the graphing tab was selected
+        }
+
+        private void tabPage4_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.Support;
+        }
+
+        private void tabPage3_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.RF;
+        }
+
+        private void tabPage2_Enter(object sender, EventArgs e)
+        {
+            selected_tab = TABS.Electrical;
         }
 
     }

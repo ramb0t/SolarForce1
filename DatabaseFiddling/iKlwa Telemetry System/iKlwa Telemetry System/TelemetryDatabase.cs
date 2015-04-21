@@ -100,5 +100,15 @@ namespace iKlwa_Telemetry_System
             return this.queryLvl3RangeAndTag_Ordered(SENSOR_TAG, val, TIME_TAG, start_time, end_time);
         }
 
+        public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time, string start_date, string end_date)
+        {
+            return this.queryLvl3RangeAndTag_Ordered(SENSOR_TAG, val, TIME_TAG, start_time, end_time,DATE_TAG,start_date,end_date);
+        }
+
+        public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time, string date)
+        {
+            return this.queryLvl3RangeAnd2Tag_Ordered(SENSOR_TAG, val, DATE_TAG, date, TIME_TAG, start_time, end_time);
+        }
+
     }
 }

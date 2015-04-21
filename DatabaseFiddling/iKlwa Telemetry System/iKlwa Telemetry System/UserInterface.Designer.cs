@@ -129,7 +129,6 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(508, 406);
             this.tabControl1.TabIndex = 2;
-            this.tabControl1.Enter += new System.EventHandler(this.tabControl1_Enter);
             // 
             // tabPage6
             // 
@@ -171,6 +170,7 @@
             this.tabPage6.Size = new System.Drawing.Size(500, 377);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "Summary";
+            this.tabPage6.Enter += new System.EventHandler(this.tabPage6_Enter);
             // 
             // lbl_MPPTPIn4
             // 
@@ -503,6 +503,7 @@
             this.tabPage1.Size = new System.Drawing.Size(500, 377);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Solar Car Motion";
+            this.tabPage1.Enter += new System.EventHandler(this.tabPage1_Enter);
             // 
             // groupBox4
             // 
@@ -683,6 +684,7 @@
             this.tabPage2.Size = new System.Drawing.Size(500, 377);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Solar Car Electrical";
+            this.tabPage2.Enter += new System.EventHandler(this.tabPage2_Enter);
             // 
             // tabPage3
             // 
@@ -692,6 +694,7 @@
             this.tabPage3.Size = new System.Drawing.Size(500, 377);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "RF Link";
+            this.tabPage3.Enter += new System.EventHandler(this.tabPage3_Enter);
             // 
             // tabPage4
             // 
@@ -701,6 +704,7 @@
             this.tabPage4.Size = new System.Drawing.Size(500, 377);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Support Car System";
+            this.tabPage4.Enter += new System.EventHandler(this.tabPage4_Enter);
             // 
             // tabPage5
             // 
@@ -719,6 +723,7 @@
             this.tabPage5.Size = new System.Drawing.Size(500, 377);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Graphs";
+            this.tabPage5.Enter += new System.EventHandler(this.tabPage5_Enter);
             // 
             // label32
             // 
@@ -820,15 +825,15 @@
             this.zedGraphControl1.ScrollMinX = 0D;
             this.zedGraphControl1.ScrollMinY = 0D;
             this.zedGraphControl1.ScrollMinY2 = 0D;
-            this.zedGraphControl1.Size = new System.Drawing.Size(473, 316);
+            this.zedGraphControl1.Size = new System.Drawing.Size(473, 288);
             this.zedGraphControl1.TabIndex = 0;
             // 
-            // button1
+            // btn_COMPortConnect
             // 
             this.btn_COMPortConnect.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btn_COMPortConnect.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_COMPortConnect.Location = new System.Drawing.Point(13, 232);
-            this.btn_COMPortConnect.Name = "button1";
+            this.btn_COMPortConnect.Name = "btn_COMPortConnect";
             this.btn_COMPortConnect.Size = new System.Drawing.Size(191, 43);
             this.btn_COMPortConnect.TabIndex = 4;
             this.btn_COMPortConnect.Text = "Connect to Hardware";
@@ -839,7 +844,7 @@
             // 
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button2.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(12, 302);
+            this.button2.Location = new System.Drawing.Point(13, 281);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(191, 43);
             this.button2.TabIndex = 5;
@@ -857,19 +862,11 @@
             this.taskbar_notification.Visible = true;
             this.taskbar_notification.BalloonTipClicked += new System.EventHandler(this.btn_ErrorNotifications_Click);
             // 
-            // button3
+            // btn_ErrorNotifications
             // 
             this.btn_ErrorNotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btn_ErrorNotifications.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_ErrorNotifications.Location = new System.Drawing.Point(13, 370);
-            this.btn_ErrorNotifications.Name = "button3";
-            this.btn_ErrorNotifications.Size = new System.Drawing.Size(191, 43);
-            this.btn_ErrorNotifications.TabIndex = 6;
-            this.btn_ErrorNotifications.Text = "No New Warnings";
-            this.btn_ErrorNotifications.UseVisualStyleBackColor = true;
-            this.btn_ErrorNotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btn_ErrorNotifications.Font = new System.Drawing.Font("Cooper Md BT", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_ErrorNotifications.Location = new System.Drawing.Point(12, 335);
+            this.btn_ErrorNotifications.Location = new System.Drawing.Point(12, 330);
             this.btn_ErrorNotifications.Name = "btn_ErrorNotifications";
             this.btn_ErrorNotifications.Size = new System.Drawing.Size(191, 43);
             this.btn_ErrorNotifications.TabIndex = 6;
@@ -892,7 +889,7 @@
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
-            // backgroundWorker1
+            // SerialReadingThread
             // 
             this.SerialReadingThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
