@@ -55,7 +55,6 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 #define MPPT2_TXID			712
 #define MPPT3_TXID			713
 #define MPPT4_TXID			714
-#define GPS_TXID			400
 
 //------------Library Objects----------------------------//
 
