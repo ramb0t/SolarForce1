@@ -18,7 +18,7 @@ ISR(TIMER0_OVF_vect)
 	
 	if (count0 > 500)
 	{
-		speedCalcs();
+		send();
 		count0 = 0;
 	}
 }

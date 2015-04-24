@@ -28,25 +28,7 @@ volatile uint16_t rpm = 0;
 volatile uint16_t step = 0;
 volatile uint8_t hSpeed = 0;
 
-
-/*void send()
-{
-	//in combo, this 0x420 will have all data
-	//not individual ones like how it is now
-	//work on this!
-	CANMessage hallSpeed;
-	
-	hallSpeed. id = 0x0420;
-	hallSpeed. rtr = 0 ;
-	hallSpeed. length = 1 ;
-	hallSpeed. data [ 0 ] = hSpeed;
-	
-	CAN_sendMessage (&hallSpeed);
-	//_delay_ms(200);
-}*/
-
-
-void speedCalcs ()
+void send()
 {	
 	CANMessage speedTest;
 	
@@ -63,13 +45,12 @@ ISR(INT0_vect)
 {	
 	//need debouncing here!!!!
 	//if magnet passes by slowly, picks up more than one interrupt
-	
 	//step2 = count2*5; //number of overflows*0.5ms
 	//Capt2 = Capt2/10; //5 divided by 10 = 0.5
 	
 	//number of overflows * counts per overflows
 	Capt2 = (count2*125 + (TCNT2 - TIMEBASE_RELOAD2)); //125 is the number of counts that it counts
-	numCount = Capt2*4; //number of balls in microseconds
+	//numCount = Capt2*4; //number of balls in microseconds
 	
 	count2 = 0;
 	TCNT2 = TIMEBASE_RELOAD2; //reload timer
@@ -84,7 +65,7 @@ ISR(INT0_vect)
 	//1.61*3.14*10000 gives 50554
 	
 	//19 April test, mounted at 10cm from center nut
-	//therefore 10cm radius is 20cm diamter
+	//therefore 10cm radius is 20cm diameter
 	//20cm diameter multiplied y pi is 0.6283m
 	//this multiplied by 1000 gives m/s
 	//0.6283*3.14*10000 gives 19739.2088
@@ -123,6 +104,6 @@ int main(void)
 	
     while(1)
     {
-	
+		//do something	
 	}
 }

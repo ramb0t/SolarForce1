@@ -9,7 +9,7 @@
 #ifndef I2C_H_
 #define I2C_H_
 
-#define F_CPU 16000000
+#define F_CPU 16000000UL
 
 #define TRUE 1
 #define FALSE 0

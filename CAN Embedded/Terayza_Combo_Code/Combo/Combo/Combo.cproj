@@ -151,6 +151,12 @@
     <Compile Include="Combo.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="timer1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="timer1.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="timer2.h">
       <SubType>compile</SubType>
     </Compile>

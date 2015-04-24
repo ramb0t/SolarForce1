@@ -6,6 +6,7 @@
  */ 
 
 #define F_CPU 16000000UL
+#define UART_BAUD_RATE 57600
 
 // Standard AVR includes
 #include <avr/io.h>
@@ -16,6 +17,7 @@
 #include <avr/sleep.h>
 #include <avr/wdt.h>
 #include <avr/power.h>
+#include <stdlib.h>
 
 #include "I2C.h"
 #include "../lib/CAN/CAN.h"
@@ -121,39 +123,99 @@ int main(void)
 	SPI_Init(); // setup SPI
 	CAN_Init(CAN_125KBPS_16MHZ);
 	
-	//UDR0 = 'A';
+	// Init UART
+	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 	
 	TWIM_Init(12);
 	TWIM_WriteRegister(107,0); //disable sleep mode
 	
-	//UDR0 = 0x02;
-	
-	CANMessage test;
-	
-	test. id = 0x0011;
-	test. rtr = 0 ;
-	test. length = 6 ;
-	test. data [ 0 ] = 0x06;
-	test. data [ 1 ] = 0x07;
-	
-	CAN_sendMessage (&test);
+	sei();
 	
 	while(1)
 	{
-		CANMessage mcp;
+		double tempD;
+		char buffer[10];
+		char buffer2[30]; 
 		
-		mcp. id = 0x0011;
-		mcp. rtr = 0 ;
-		mcp. length = 6 ;
-		mcp. data [ 0 ] = MPU6050_ReadGyro(0);
-		mcp. data [ 1 ] = MPU6050_ReadGyro(1);
-		mcp. data [ 2 ] = MPU6050_ReadAccel(0);
-		mcp. data [ 3 ] = MPU6050_ReadAccel(0);
-		mcp. data [ 4 ] = 0x06;
-		mcp. data [ 5 ] = 0x07;
+		//*********************************************
+		//GYROSCOPE OUTPUTS
+		//*********************************************
 		
-		CAN_sendMessage (&mcp);
+		//Gyro X
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Gyro x: ");
 		
-		//UDR0 = MPU6050_ReadGyro(0);
+		tempD = MPU6050_ReadGyro(0);
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
+		//Gyro Y
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Gyro y: ");
+		
+		tempD = MPU6050_ReadGyro(2);
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
+		//Gyro Z
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Gyro z: ");
+		
+		tempD = MPU6050_ReadGyro(3);
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
+		//*********************************************
+		//ACCELEROMETER OUTPUTS
+		//*********************************************
+		
+		//Acc X
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Acc x: ");
+		
+		tempD = MPU6050_ReadAccel(0);
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
+		//Acc Y
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Acc y: ");
+		
+		tempD = MPU6050_ReadAccel(1);
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
+		//Acc Z
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Acc z: ");
+		
+		tempD = MPU6050_ReadAccel(3);
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
 	}
 }

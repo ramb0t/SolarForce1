@@ -25,8 +25,6 @@ void timer2_init(void)
 	TCNT2 = TIMEBASE_RELOAD2; // set initial reload-value
 	TIFR2  |= (1<<TOV2);  // clear overflow int.
 	TIMSK2 |= (1<<TOIE2); // enable overflow-interrupt
-	
-	sei(); 	// set (global) interrupt enable bit
 }
 
 
