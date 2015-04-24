@@ -9,10 +9,6 @@
 
 #define DEBUG	1
 
-//------------ISR for the INT0-------------------------//
-ISR(INT0_vect){
-	CAN_fillBuffer();
-}
 
 int main (void)
 {
@@ -49,23 +45,15 @@ int main (void)
 			CAN_Init(CAN_125KBPS_16MHZ);
 		};
 		
+	
+		
 	/*---------Timer Setup---------------------
 		*Overflow based
 		*1024 Prescalar						*/
 	
-	TCNT0 = 0x00;
-	TCCR0A = 0x00;
-	TCCR0B = (1<<CS02)|(1<<CS00);
-	//TIMSK0 = (1<<TOIE0);		//--enable later!
+		Timer0_init();
 	
 		CAN_setupInt0();
-		
-		//TESTING PCINT1
-			//DDRB &= ~(1<<PORTB1);   //Set pin as input
-			//PORTB |= (1<<PORTB1);   //Pullup
-			//PCICR |= (1<<PCIE1); //Enable on PCINT1 pins
-			//PCMSK0 |= (1<<PCINT1); //Mask PB1
-			//flag = CAN_NOMSG;
 		
 	
 	/*---------UART Serial Init --------------------
@@ -103,17 +91,19 @@ int main (void)
 	}	
 	
 	
-			counter++;
-			if (counter > 2)
-			{
-				counter = 0;
-				GPS_readData();
-			}
-				
-		CAN_readData();
-
-		MAV_msg_pack();
-		
+	
+	
+			//counter++;
+			//if (counter > 2)
+			//{
+				//counter = 0;
+				//GPS_readData();
+			//}
+				//
+		//CAN_readData();
+//
+		//MAV_msg_pack();
+		//
 		
 		
 		
@@ -240,10 +230,11 @@ void CAN_readData()
 			//_delay_ms(20);
 		
 		char buff[10] ;
-		
+	
+	uart_puts("Here");	
 	cli();				//Interrupts off
 	
-	if (~(PINB & (1<<PINB1)))	//if interrupt not triggered fill msg buffer
+	if (~(PIND & (1<<PIND1)))	//if interrupt not triggered fill msg buffer
 	{
 		CAN_fillBuffer();
 	}
@@ -253,6 +244,7 @@ void CAN_readData()
 	if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
 	{
 	//-------------------DEBUG CODE!-------------------------//
+	uart_puts("MSGAVAIL");	
 	if(DEBUG)
 	{
 		

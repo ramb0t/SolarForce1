@@ -54,8 +54,31 @@
 #define MPPT4_CANID			0x0774
 
 //---------------Variables---------------//
-CANMessage	Input_data;
-uint8_t		message_decoded;
+CANMessage Input_data;
+extern volatile uint8_t		message_decoded;
+extern volatile	uint8_t		flag;
+char						buff[10];
+
+//flags for if any variables have updated
+volatile	uint8_t		speedUpdated;
+volatile	uint8_t		acceloUpdated;
+volatile	uint8_t		gyroUpdated;
+
+volatile	uint8_t		bms1Updated;	
+volatile	uint8_t		bms2Updated;
+volatile	uint8_t		bms3Updated;
+volatile	uint8_t		bms4Updated;
+volatile	uint8_t		bms5Updated;
+volatile	uint8_t		bms6Updated;
+volatile	uint8_t		bms7Updated;
+volatile	uint8_t		bms8Updated;
+
+volatile	uint8_t		mppt1Updated;
+volatile	uint8_t		mppt2Updated;
+volatile	uint8_t		mppt3Updated;
+volatile	uint8_t		mppt4Updated;
+
+
 
 //---------------Prototypes---------------//
 uint8_t CAN_Decode(CANMessage *message);

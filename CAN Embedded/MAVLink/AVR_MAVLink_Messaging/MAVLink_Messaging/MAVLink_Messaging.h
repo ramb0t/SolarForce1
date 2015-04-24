@@ -37,7 +37,6 @@
 #define TX_ENABLE			(1<<TXEN0)
 #define TX_DISABLE			(0<<TXEN0)
 
-//------------Library and AVR Includes--------------------//
 
 //-------------CAN Defines----------------------------------//
 
@@ -55,11 +54,12 @@
 
 #define ACCELO_CANID		0x0011
 #define GYRO_CANID			0x0012
-#define MPP
 #define MPPT1_CANID			0x0771
 #define MPPT2_CANID			0x0772
 #define MPPT3_CANID			0x0773
 #define MPPT4_CANID			0x0774
+
+//------------Library and AVR Includes--------------------//
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -74,6 +74,12 @@
 
 #include "mavlink_bridge_header.h"  //UART & convenience headers
 
+//---------------Interrupt-based fuctions----------------//
+#include "CAN_Int0.h"
+#include "Mavlink_Timer0.h"
+
+//------------MAVlink convenience functions--------------//
+
 mavlink_status_t* mavlink_get_channel_status(uint8_t chan);
 mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
@@ -81,7 +87,6 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 //------------Library Objects----------------------------//
 
 //CAN library objects per device
-
 
 CANMessage Speed_Message;			//Aggregated Speed Board msg
 CANMessage BMS_Message;				//BMS data message
@@ -93,11 +98,10 @@ CANMessage Gyro_Message;			//gyro messages
 CANMessage Accelo_message;			//Accelerometer messages
 
 
-
 volatile int counter=0;
 volatile int ctr2=0;
 volatile int canmsgctr = 0;
-volatile uint16_t 	flag =0;
+//volatile uint16_t 	flag =0;
 
 char MAV_Rx_buff[10];
 
