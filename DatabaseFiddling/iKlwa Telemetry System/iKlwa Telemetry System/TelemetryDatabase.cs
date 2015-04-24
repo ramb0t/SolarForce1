@@ -32,8 +32,7 @@ namespace iKlwa_Telemetry_System
 
         private string getCurrentTime()
         {
-            return DateTime.Now.Hour.ToString()
-                   + "h" + DateTime.Now.Minute.ToString();
+            return DateTime.Now.ToString("HH") + 'h' + DateTime.Now.ToString("MM");
         }
 
         private void addCapture(string sensor, object time, string type, string description, object value)
@@ -108,6 +107,11 @@ namespace iKlwa_Telemetry_System
         public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time, string date)
         {
             return this.queryLvl3RangeAnd2Tag_Ordered(SENSOR_TAG, val, DATE_TAG, date, TIME_TAG, start_time, end_time);
+        }
+
+        public int count()
+        {
+            return this.queryLvl1().Count();
         }
 
     }

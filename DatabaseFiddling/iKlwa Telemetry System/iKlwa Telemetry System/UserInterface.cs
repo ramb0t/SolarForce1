@@ -251,7 +251,6 @@ namespace iKlwa_Telemetry_System
             line_item.Line.Width = 1;
             gp.Title.Text = gp.YAxis.Title.Text + " vs Time";
             gp.XAxis.Title.Text = "Time";
-            //gp.YAxis.Title.Text = y_axis;
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
             zedGraphControl1.Refresh();
@@ -294,7 +293,7 @@ namespace iKlwa_Telemetry_System
 
         private void UserInterface_Load(object sender, EventArgs e)
         {
-            var sensorGroup = d.getSensors();
+            /*var sensorGroup = d.getSensors();
             if (sensorGroup.Count() == 0) //check if any sensors found and display message if not
             {
                 comboBox1.Items.Add(NO_SENSORS_MSG);
@@ -304,6 +303,10 @@ namespace iKlwa_Telemetry_System
                 {
                     comboBox1.Items.Add(sensor.Key);
                 }
+             */
+            
+            //Get Message Count
+            lbl_count.Text = d.count().ToString();
         }
 
 
@@ -349,7 +352,7 @@ namespace iKlwa_Telemetry_System
                                     {
                                         string str = packet.PAYLOAD.ElementAt(0).ToString();
                                         str = str.Substring(0, 1);
-                                        d.addDataCapture("Motor Driver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                        d.addDataCapture("Motor Driver", now(),
                                                          "Speed", (int)Convert.ToChar(str));
                                     }
                                     break;
@@ -357,7 +360,7 @@ namespace iKlwa_Telemetry_System
                                     {
                                         string str = packet.PAYLOAD.ElementAt(0).ToString();
                                         str = str.Substring(0, 1);
-                                        d.addDataCapture("Hall Effect Sensor", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                        d.addDataCapture("Hall Effect Sensor", now(),
                                                          "Speed", (int)Convert.ToChar(str));
 
                                     } 
@@ -401,6 +404,7 @@ namespace iKlwa_Telemetry_System
                                     }
                                     break;
                             }
+                            SerialReadingThread.ReportProgress(3);
                             count = 0;//if code reaches here, there was a successful write and the timeout counter is cleared.
                         }
                         finally
@@ -530,6 +534,11 @@ namespace iKlwa_Telemetry_System
                         errorNotificationUpdate("Hardware isn't talking to me!");
                     }
                     break;
+                case 3:
+                    {
+                        lbl_count.Text = (Convert.ToInt64(lbl_count.Text) + 1).ToString();
+                    }
+                    break;
             }
         }   
 
@@ -537,14 +546,19 @@ namespace iKlwa_Telemetry_System
         {
             if (unreadErrorCount+1<maxErrorCount)
             {
-                error_messages[unreadErrorCount++] = problem_description + "(" + DateTime.Now.Hour + "h" + DateTime.Now.Minute + ")";
+                error_messages[unreadErrorCount++] = problem_description + "(" + now() + ")";
             }
             else
             {
                 for (int i = 0; i < maxErrorCount - 1; ++i)
                     error_messages[i] = error_messages[i + 1];
-                error_messages[maxErrorCount - 1] = problem_description + "("+ DateTime.Now.Hour + "h"+DateTime.Now.Minute + ")";
+                error_messages[maxErrorCount - 1] = problem_description + "("+ now() + ")";
             }
+        }
+
+        private string now()
+        {
+            return DateTime.Now.ToString("HH") + 'h' + DateTime.Now.ToString("MM");
         }
 
     }

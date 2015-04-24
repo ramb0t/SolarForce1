@@ -102,6 +102,8 @@
             this.refresh_timer = new System.Windows.Forms.Timer(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.SerialReadingThread = new System.ComponentModel.BackgroundWorker();
+            this.label34 = new System.Windows.Forms.Label();
+            this.lbl_count = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -216,7 +218,7 @@
             // 
             this.lbl_MPPTFault.AutoSize = true;
             this.lbl_MPPTFault.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_MPPTFault.Location = new System.Drawing.Point(268, 254);
+            this.lbl_MPPTFault.Location = new System.Drawing.Point(268, 242);
             this.lbl_MPPTFault.Name = "lbl_MPPTFault";
             this.lbl_MPPTFault.Size = new System.Drawing.Size(67, 25);
             this.lbl_MPPTFault.TabIndex = 37;
@@ -236,7 +238,7 @@
             // 
             this.lbl_LLim.AutoSize = true;
             this.lbl_LLim.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LLim.Location = new System.Drawing.Point(268, 229);
+            this.lbl_LLim.Location = new System.Drawing.Point(268, 217);
             this.lbl_LLim.Name = "lbl_LLim";
             this.lbl_LLim.Size = new System.Drawing.Size(67, 25);
             this.lbl_LLim.TabIndex = 35;
@@ -376,7 +378,7 @@
             // 
             this.label27.AutoSize = true;
             this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label27.Location = new System.Drawing.Point(18, 254);
+            this.label27.Location = new System.Drawing.Point(18, 242);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(183, 25);
             this.label27.TabIndex = 21;
@@ -386,7 +388,7 @@
             // 
             this.label26.AutoSize = true;
             this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.Location = new System.Drawing.Point(18, 229);
+            this.label26.Location = new System.Drawing.Point(18, 217);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(171, 25);
             this.label26.TabIndex = 20;
@@ -896,12 +898,32 @@
             this.SerialReadingThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.SerialReadingThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.SerialReadingThread_ProgressChanged);
             // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(9, 401);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(84, 13);
+            this.label34.TabIndex = 7;
+            this.label34.Text = "Message Count:";
+            // 
+            // lbl_count
+            // 
+            this.lbl_count.AutoSize = true;
+            this.lbl_count.Location = new System.Drawing.Point(99, 401);
+            this.lbl_count.Name = "lbl_count";
+            this.lbl_count.Size = new System.Drawing.Size(13, 13);
+            this.lbl_count.TabIndex = 8;
+            this.lbl_count.Text = "0";
+            // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(726, 425);
+            this.Controls.Add(this.lbl_count);
+            this.Controls.Add(this.label34);
             this.Controls.Add(this.btn_ErrorNotifications);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.btn_COMPortConnect);
@@ -930,6 +952,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -1007,6 +1030,8 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.ComponentModel.BackgroundWorker SerialReadingThread;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.Label lbl_count;
 
     }
 }
