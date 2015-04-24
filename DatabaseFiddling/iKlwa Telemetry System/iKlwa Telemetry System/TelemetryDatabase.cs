@@ -32,7 +32,7 @@ namespace iKlwa_Telemetry_System
 
         private string getCurrentTime()
         {
-            return DateTime.Now.ToString("HH") + 'h' + DateTime.Now.ToString("MM");
+            return DateTime.Now.ToString("HH") + 'h' + DateTime.Now.ToString("mm");
         }
 
         private void addCapture(string sensor, object time, string type, string description, object value)
@@ -83,17 +83,6 @@ namespace iKlwa_Telemetry_System
             return this.queryLvl3Range(TIME_TAG, start_time, end_time);
         }
 
-        public string getLatestValue(string sensor, string description)
-        {
-            string latestNode = null;
-            try
-            { latestNode = this.getNewest(SENSOR_TAG, sensor, DESCRIP_TAG, description).Element(VAL_TAG).Value; }
-            catch (NullReferenceException)
-            { throw; }
-            return latestNode;
-
-        }
-
         public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time)
         {
             return this.queryLvl3RangeAndTag_Ordered(SENSOR_TAG, val, TIME_TAG, start_time, end_time);
@@ -107,6 +96,17 @@ namespace iKlwa_Telemetry_System
         public IEnumerable<XElement> queryRange_valOnly(string val, string start_time, string end_time, string date)
         {
             return this.queryLvl3RangeAnd2Tag_Ordered(SENSOR_TAG, val, DATE_TAG, date, TIME_TAG, start_time, end_time);
+        }
+
+        public string getLatestValue(string sensor, string description)
+        {
+            string latestNode = null;
+            try
+            { latestNode = this.getNewest(SENSOR_TAG, sensor, DESCRIP_TAG, description).Element(VAL_TAG).Value; }
+            catch (NullReferenceException)
+            { throw; }
+            return latestNode;
+
         }
 
         public int count()

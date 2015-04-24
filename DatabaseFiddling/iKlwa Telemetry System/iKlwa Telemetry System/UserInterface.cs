@@ -19,14 +19,15 @@ namespace iKlwa_Telemetry_System
         private TelemetryCommsManager comms = new TelemetryCommsManager();
         private ReaderWriterLock protection = new ReaderWriterLock();
         private enum SENSORS :int{HALL_EFFECT = 0xA4, MOTOR_DRIVER = 0xA5,
-                                  BMS, GYRO, MPPT1,
-                                  MPPT2, MPPT3, MPPT4,GPS,
+                                  BMS, GYRO = 2, MPPT1 = 3,
+                                  MPPT2 = 4, MPPT3 = 5, MPPT4 = 6,GPS = 7,
                                   SOLAR_CELL, ANEMOMETER}
         private ReportScreen output;
         private bool safe_to_close = true;
         private int unreadErrorCount = 0;
         private const int maxErrorCount = 15;
         private bool db_exists = false;
+        private long message_count;
         private string[] error_messages = new string[maxErrorCount];//only show up to 15 error messages at a time unless error report is requested
         private enum TABS : byte {Summary = 1, Graphing = 2,
                                   Motion = 3, Electrical = 4,
@@ -301,20 +302,9 @@ namespace iKlwa_Telemetry_System
 
         private void UserInterface_Load(object sender, EventArgs e)
         {
-            /*var sensorGroup = d.getSensors();
-            if (sensorGroup.Count() == 0) //check if any sensors found and display message if not
-            {
-                comboBox1.Items.Add(NO_SENSORS_MSG);
-            }
-            else //populate combo box
-                foreach (var sensor in sensorGroup)
-                {
-                    comboBox1.Items.Add(sensor.Key);
-                }
-             */
-            
             //Get Message Count
-            lbl_count.Text = d.count().ToString();
+            message_count = d.count();
+            lbl_count.Text = message_count.ToString();
         }
 
 
@@ -407,7 +397,7 @@ namespace iKlwa_Telemetry_System
 
                                     default:
                                         {
-                                            d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                            d.addErrorCapture("Support Car Receiver", now(),
                                                               "Sensor packet with invalid ID detected", "Data Error");
                                             SerialReadingThread.ReportProgress(1);//state 1 indicates that an invalid ID error occurred
 
@@ -427,7 +417,7 @@ namespace iKlwa_Telemetry_System
                         { MessageBox.Show(error.Message); } 
                     }
                     //close COM Port and log timeout error
-                    d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Comms Lost",
+                    d.addErrorCapture("Support Car Receiver", now(), "Comms Lost",
                                       "No information received from hardware");
                     SerialReadingThread.ReportProgress(2);//indicates a comms timeout occurred
                     comms.ClosePort(); 
@@ -550,7 +540,7 @@ namespace iKlwa_Telemetry_System
                 case 3:
                     {
                         //occasional unhappiness??
-                        lbl_count.Text = (Convert.ToInt64(lbl_count.Text) + 1).ToString();
+                        lbl_count.Text = (++message_count).ToString();
                     }
                     break;
             }
@@ -572,7 +562,7 @@ namespace iKlwa_Telemetry_System
 
         private string now()
         {
-            return DateTime.Now.ToString("HH") + 'h' + DateTime.Now.ToString("MM");
+            return DateTime.Now.ToString("HH") + 'h' + DateTime.Now.ToString("mm");
         }
 
     }
