@@ -7,7 +7,7 @@
 
 #include "MAVLink_Messaging.h"
 
-#define DEBUG	0
+#define DEBUG	1
 
 //------------ISR for the INT0-------------------------//
 ISR(INT0_vect){
@@ -28,6 +28,7 @@ int main (void)
 	//DDRB |= _BV(DDB5);
 	
 	LED_DIAG_DDR |= (1<<LED_DIAG_GRN)|(1<<LED_DIAG_ORG); //setup diagnostic LEDs
+	
 	
 	CANINT_DDR |= (1<<CANINT_LED);		//CAN interrupt LED
 			
@@ -58,6 +59,14 @@ int main (void)
 	//TIMSK0 = (1<<TOIE0);		//--enable later!
 	
 		CAN_setupInt0();
+		
+		//TESTING PCINT1
+			//DDRB &= ~(1<<PORTB1);   //Set pin as input
+			//PORTB |= (1<<PORTB1);   //Pullup
+			//PCICR |= (1<<PCIE1); //Enable on PCINT1 pins
+			//PCMSK0 |= (1<<PCINT1); //Mask PB1
+			//flag = CAN_NOMSG;
+		
 	
 	/*---------UART Serial Init --------------------
 		*uses UART.h library
@@ -92,7 +101,8 @@ int main (void)
 		LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
-		
+	
+	
 			counter++;
 			if (counter > 2)
 			{
@@ -114,6 +124,13 @@ int main (void)
 
 void GPS_readData()
 {
+	uart_flush();
+	for (i=0;i<62;i++)
+	{
+		gps_string[i]='0';
+	}
+			LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
+			LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 		//---------------GPS Parse--------------------------------//
 	/*eg4. for NMEA 0183 version 3.00 active the Mode indicator field is added
 	$GPRMC,hhmmss.ss,A,llll.ll,a,yyyyy.yy,a,x.x,x.x,ddmmyy,x.x,a,m*hh
@@ -133,7 +150,14 @@ void GPS_readData()
 	13   = Checksum	
 	*/	
 	do	{
-		gpsdata = uart_getc();	}							//get a GPS char
+		gpsdata = uart_getc();
+		flag++;
+		if (flag > 10000)
+		{
+			flag=0;
+			break;
+		}
+	}							//get a GPS char
 	while (gpsdata !='$');
 
 		//uart_putc(uart_getc());
@@ -205,19 +229,21 @@ if (DEBUG)
 
 void CAN_readData()
 {
+	LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
+
 	CANMessage Input_Message;			//Generic/temp CAN input msg
 	//CANMessage Input_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;
 	//zCANMessage Speed_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;	
 
-	//	uart_flush();
+	//uart_flush();
 		
-		//	_delay_ms(20);
+			//_delay_ms(20);
 		
 		char buff[10] ;
 		
 	cli();				//Interrupts off
 	
-	if (~(PINB & (1<<PINB0)))	//if interrupt not triggered fill msg buffer
+	if (~(PINB & (1<<PINB1)))	//if interrupt not triggered fill msg buffer
 	{
 		CAN_fillBuffer();
 	}
@@ -229,18 +255,21 @@ void CAN_readData()
 	//-------------------DEBUG CODE!-------------------------//
 	if(DEBUG)
 	{
+		
 			uart_puts("<<<<START OF MESSAGE>>>>\n");
 			uart_puts("\nCAN DATA\n");
 			
 			itoa(CAN_checkReceiveAvailable(), buff,10);
-/*TEST DISPLAY*/		uart_puts("RX:");
-						uart_puts(buff);
-						uart_puts(",");
-			itoa(CAN_checkError(),buff,10);
-/*TEST DISPLAY*/		uart_puts("Err:");
-						uart_puts(buff);
-						uart_puts(",");
+			/*TEST DISPLAY*/		uart_puts("RX:");
+			uart_puts(buff);
 			uart_puts(",");
+			itoa(CAN_checkError(),buff,10);
+			/*TEST DISPLAY*/		uart_puts("Err:");
+			uart_puts(buff);
+			uart_puts(",");
+			uart_puts(",");
+		
+			
 			
 	}//-------------------END DEBUG CODE!-------------------------//
 	
@@ -275,7 +304,8 @@ void CAN_readData()
 				if (CAN_getMessage_Buffer(&Input_Message) == CAN_OK)
 				{
 					//-----------------------Switches for detecting CAN ID--------------------------//
-				
+
+
 				switch (Input_Message.id)
 				{
 					/*Speed	Data is aggregated across the Hall Effect and Motor Driver nodes
@@ -431,17 +461,23 @@ void CAN_readData()
 					uart_puts(buff);
 				}break;
 				
-				case	ACCELO_GYRO_CANID:
+				case	GYRO_CANID:
 				{	
 					uart_puts("\n");
-					uart_puts("CAN from ACGY:");
+					uart_puts("CAN from GY:");
 					uart_puts(Input_Message.id);
-					for (int i=0;i<2;i++)						//2 data fields
-					{
-						Gyro_Accel_Message.data[i] = Input_Message.data[i];
-						uart_puts(buff);
-					}
+					Gyro_Message.data[0] = Input_Message.data[0];
+					uart_puts(buff);
 
+				}break;
+				
+				case	ACCELO_CANID:
+				{
+					uart_puts("\n");
+					uart_puts("CAN from GY:");
+					uart_puts(Input_Message.id);
+					Accelo_message.data[1] = Input_Message.data[1];
+					uart_puts(buff);
 				}break;
 				
 				case	MPPT1_CANID:
@@ -496,14 +532,18 @@ void CAN_readData()
 				}
 				}break;
 				
-				
+					}
 				}
+			}
+		}
+	}
+}
 
 				//------------OLD METHOD---------------//
 				
 //void CAN_readData()
 //{
-	////CANMessage Input_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;
+	//CANMessage Input_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;
 	////zCANMessage Speed_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;	
 		////itoa(CAN_checkReceiveAvailable(), buff,10);
 		////uart_puts("RXAvail:");
@@ -573,7 +613,7 @@ void CAN_readData()
 					//uart_puts("CAN from MD:");
 					//uart_puts(Input_Message.id);				//Human readable data on UART
 					//uart_puts(":");
-					//for (int i=0;i<8;i++)
+					//for (int i=0;i<4;i++)
 					//{
 						//uart_puts(":");
 						//itoa(Input_Message.data[i],buff,10);	//convert to ascii form
@@ -583,18 +623,19 @@ void CAN_readData()
 //
 				//}
 				//
-				////if (Input_Message.id ==HALL_EFFECT_CANID)		//Hall effect data detected
-				////{
-					////uart_puts("\n");
-					////uart_puts("CAN from HE:");
-					////uart_puts(Input_Message.id);
-					////for (int i=4;i<8;i++)
-					////{
-						////itoa(Input_Message.data[i],buff,10);
-						////uart_puts(buff);
-					////}
-////
-				////}
+				//if (Input_Message.id ==HALL_EFFECT_CANID)		//Hall effect data detected
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from HE:");
+					//uart_puts(Input_Message.id);
+					//for (int i=4;i<6;i++)
+					//{
+						//itoa(Input_Message.data[i],buff,10);
+						//Speed_Message.data[i] = Input_Message.data[i];
+						//uart_puts(buff);
+					//}
+//
+				//}
 				//
 				///*NOTE: BMS Data across different messages, we want:
 				//Base CANID =	BMS[0] = 0x0620
@@ -636,18 +677,31 @@ void CAN_readData()
 //
 				//}
 				//
-				//if (Input_Message.id ==ACCELO_GYRO_CANID)				//Gyro/MPU6050 data detected
+				//if (Input_Message.id ==GYRO_CANID)				//Gyro/MPU6050 data detected
 				//{
 					//uart_puts("\n");
-					//uart_puts("CAN from ACGY:");
+					//uart_puts("CAN from GY:");
 					//uart_puts(Input_Message.id);
 					//for (int i=0;i<2;i++)						//2 data fields
 					//{
-						//Gyro_Accel_Message.data[i] = Input_Message.data[i];
+						//Gyro_Message.data[i] = Input_Message.data[i];
 						//uart_puts(buff);
 					//}
 //
 				//}
+				//
+					//if (Input_Message.id ==ACCELO_CANID)				//Gyro/MPU6050 data detected
+					//{
+						//uart_puts("\n");
+						//uart_puts("CAN from AC:");
+						//uart_puts(Input_Message.id);
+						//for (int i=0;i<2;i++)						//2 data fields
+						//{
+							//Accelo_message.data[i] = Input_Message.data[i];
+							//uart_puts(buff);
+						//}
+//
+					//}
 				//
 				//if (Input_Message.id ==MPPT1_CANID)				//MPPT1 data detected
 				//{
@@ -657,7 +711,7 @@ void CAN_readData()
 					//for (int i=0;i<4;i++)						//4 data fields
 					//{
 						//itoa(Input_Message.data[i],buff,10);
-						//MPPT_Message.data[i] = Input_Message.data[i];
+						//MPPT1_Message.data[i] = Input_Message.data[i];
 						//uart_puts(buff);
 					//}
 //
@@ -671,7 +725,7 @@ void CAN_readData()
 					//for (int i=0;i<4;i++)						//4 data fields
 					//{
 						//itoa(Input_Message.data[i],buff,10);
-						//MPPT_Message.data[i] = Input_Message.data[i];
+						//MPPT2_Message.data[i] = Input_Message.data[i];
 						//uart_puts(buff);
 					//}
 //
@@ -685,7 +739,7 @@ void CAN_readData()
 					//for (int i=0;i<4;i++)						//4 data fields
 					//{
 						//itoa(Input_Message.data[i],buff,10);
-						//MPPT_Message.data[i] = Input_Message.data[i];
+						//MPPT3_Message.data[i] = Input_Message.data[i];
 						//uart_puts(buff);
 					//}
 //
@@ -699,13 +753,60 @@ void CAN_readData()
 					//for (int i=0;i<4;i++)						//4 data fields
 					//{
 						//itoa(Input_Message.data[i],buff,10);
-						//MPPT_Message.data[i] = Input_Message.data[i];
+						//MPPT4_Message.data[i] = Input_Message.data[i];
 						//uart_puts(buff);
 					//}
 //
 				//}//endif MPPT1
 				//
 			//
+				//
+			//
+	//if (DEBUG)
+	//{
+		//uart_puts(",");
+		//itoa(Input_Message.length,buff,10);
+		///*TEST DISPLAY*/uart_puts("\nCAN Data Length:");
+		//uart_puts(",");
+		//if(Input_Message.length==0)						//checks length
+		//{
+			///*TEST DISPLAY*/uart_puts("No CAN Data bits\n");			//Prints if no data bits present
+			//}else{
+			//
+			//uart_puts(buff);
+			//for(int j = 0; j< Input_Message.length; j++)	//print byte for each data element
+			//{
+				///*TEST DISPLAY*/		uart_puts("\nCAN Data ");
+				//itoa(j,buff,10);
+				//uart_puts(buff);
+				///*TEST DISPLAY*/			uart_puts(": ");
+				//
+				//itoa(Input_Message.data[j],buff,10);
+				//
+				//uart_puts(buff);
+				//uart_puts(",");
+			//}
+		//}//endif input length==0
+		//
+		//itoa(Input_Message.rtr,buff,2);
+		///*TEST DISPLAY*/	uart_puts("\nIs this an RTR?: ");
+		//if(Input_Message.rtr==1)
+		//{
+			//uart_puts("Y,");
+		//}else uart_puts("N\n");
+	//}
+				//
+							//
+				//
+					//
+					//
+			//}//endif CAN_OK
+///*TEST DISPLAY*/ uart_puts("\n-------\n CAN Done.\n");
+		//}//endif CAN_MSGAVAIL
+			//
+				//
+//}//end CAN_readData
+	//
 				//
 			//
 	//if (DEBUG)
@@ -741,71 +842,24 @@ void CAN_readData()
 					//uart_puts("Y,");
 				//}else uart_puts("N\n");
 							//
-	//}
-					//
-//
-//
-//
+	//}//endif DEBUG
+				//}
 				//
-					//
-					//
-			//}//endif CAN_OK
+			//}//end inner while CAN_checkreceiveavaialable == MSGAVAIL
+		//
+			//}//endif rx_result == CAN_OK
 ///*TEST DISPLAY*/ uart_puts("\n-------\n CAN Done.\n");
-		//}//endif CAN_MSGAVAIL
+		//}//endif checkreceive == CAN_MSGAVAIL
 		//
 //}//end CAN_readData
-	//
-				
-			
-	if (DEBUG)
-	{
-				uart_puts(",");
-				itoa(Input_Message.length,buff,10);
-				/*TEST DISPLAY*/uart_puts("\nCAN Data Length:");
-				uart_puts(",");
-				if(Input_Message.length==0)						//checks length
-				{
-					/*TEST DISPLAY*/uart_puts("No CAN Data bits\n");			//Prints if no data bits present
-					}else{
-								
-					uart_puts(buff);
-					for(int j = 0; j< Input_Message.length; j++)	//print byte for each data element
-					{
-						/*TEST DISPLAY*/		uart_puts("\nCAN Data ");
-						itoa(j,buff,10);
-						uart_puts(buff);
-						/*TEST DISPLAY*/			uart_puts(": ");
-									
-						itoa(Input_Message.data[j],buff,10);
-									
-						uart_puts(buff);
-						uart_puts(",");
-					}
-				}//endif input length==0
-							
-				itoa(Input_Message.rtr,buff,2);
-				/*TEST DISPLAY*/	uart_puts("\nIs this an RTR?: ");
-				if(Input_Message.rtr==1)
-				{
-					uart_puts("Y,");
-				}else uart_puts("N\n");
-							
-	}//endif DEBUG
-				}
-				
-			}//end inner while CAN_checkreceiveavaialable == MSGAVAIL
-		
-			}//endif rx_result == CAN_OK
-/*TEST DISPLAY*/ uart_puts("\n-------\n CAN Done.\n");
-		}//endif checkreceive == CAN_MSGAVAIL
-		
-}//end CAN_readData
-
+//
 
 
 void MAV_msg_pack()
 {
-				////---------------MAVLink Setup---------------------------//
+	uart_flush();
+	LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
+	////---------------MAVLink Setup---------------------------//
 	///*MAVLINK asks to set all system statuses as integers. For human readibility ENUMS are used in the appropriate headers
 	//these enums convert text for states to integers sent & interpreted. 3 phases to a message:
   //--define the enum types you'll need and use friendly names e.g. value_name = MAV_ENUM_VALUE_NAME
@@ -929,12 +983,13 @@ void MAV_msg_pack()
 			char *longitude = parts[4];
 			char *time = parts[1];
 			char *date = parts[9];
-			char *lock_error = parts[2];
+			char lock_flag = parts[2];
+			char *lock_error = lock_error[7];
 			
-			if (lock_error == 'V')
+			if (lock_flag == 'A')
 			{
-				lock_error = "INVALID";
-			}else (lock_error = "OK");
+				lock_error = "OK";
+			}else lock_error = "INVALID";
 			
 			mavlink_msg_gps_send(MAVLINK_COMM_0,latitude,longitude,time,date,lock_error);
 
@@ -1031,8 +1086,11 @@ void MAV_msg_pack()
 			//itoa(MotorDriver->speed,buf,10);
 			//uart_puts("\nSpeed:");
 			//uart_puts(buf);
+			
+					LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
+		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
 	
-}
+			}
 
 void MAV_uart_send(uint8_t buf[],uint8_t len)
 {
@@ -1043,8 +1101,9 @@ void MAV_uart_send(uint8_t buf[],uint8_t len)
 	for (int i = 0; i < len ; i++){
 		uart_putc(buf[i]);
 		MAV_Rx_buff[i] = buf[i];
-		}
 	}
-						
+	}
 }
+						
+
 

@@ -302,7 +302,7 @@ void MAV_msg_Unpack()
 							{
 								hb_lost=0;
 								uart_flush();
-								mavlink_mppt1_data_t m2;
+								mavlink_mppt2_data_t m2;
 								mavlink_msg_mppt1_data_decode(&msg,&m2);
 								uart_puts_p(PSTR("M2>>"));
 								uart_putc(MPPT2_TXID);
@@ -322,7 +322,7 @@ void MAV_msg_Unpack()
 							{
 								hb_lost=0;
 								uart_flush();
-								mavlink_mppt1_data_t m3;
+								mavlink_mppt3_data_t m3;
 								mavlink_msg_mppt1_data_decode(&msg,&m3);
 								uart_puts_p(PSTR("M3>>"));
 								uart_putc(MPPT3_TXID);
@@ -342,7 +342,7 @@ void MAV_msg_Unpack()
 							{
 								hb_lost=0;
 								uart_flush();
-								mavlink_mppt1_data_t m4;
+								mavlink_mppt4_data_t m4;
 								mavlink_msg_mppt1_data_decode(&msg,&m4);
 								uart_puts_p(PSTR("M4>>"));
 								uart_putc(MPPT4_TXID);

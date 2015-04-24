@@ -25,9 +25,10 @@
 #define CANINT_PORT			PORTB
 #define CANINT_LED			PORTB1
 
+#define LED_DIAG_ORG		PORTC2
+
 #define LED_DIAG_DDR		DDRD
 #define LED_DIAG_PORT		PORTD
-#define LED_DIAG_ORG		PORTD2
 #define LED_DIAG_GRN		PORTD3	
 
 #define UART_DDR			DDRD
@@ -52,7 +53,9 @@
 #define BMS_7_CANID			0x0627
 #define BMS_8_CANID			0x0628
 
-#define ACCELO_GYRO_CANID   0x00C8
+#define ACCELO_CANID		0x0011
+#define GYRO_CANID			0x0012
+#define MPP
 #define MPPT1_CANID			0x0771
 #define MPPT2_CANID			0x0772
 #define MPPT3_CANID			0x0773
@@ -86,15 +89,15 @@ CANMessage MPPT1_Message;			//MPPT messages
 CANMessage MPPT2_Message;			//MPPT messages
 CANMessage MPPT3_Message;			//MPPT messages
 CANMessage MPPT4_Message;			//MPPT messages
-CANMessage Gyro_Accel_Message;		//gyro messages
-CANMessage GPS_message;
+CANMessage Gyro_Message;			//gyro messages
+CANMessage Accelo_message;			//Accelerometer messages
 
 
 
 volatile int counter=0;
 volatile int ctr2=0;
 volatile int canmsgctr = 0;
-extern	volatile uint8_t 	flag;
+volatile uint16_t 	flag =0;
 
 char MAV_Rx_buff[10];
 
