@@ -895,6 +895,7 @@
             // SerialReadingThread
             // 
             this.SerialReadingThread.WorkerReportsProgress = true;
+            this.SerialReadingThread.WorkerSupportsCancellation = true;
             this.SerialReadingThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.SerialReadingThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.SerialReadingThread_ProgressChanged);
             // 

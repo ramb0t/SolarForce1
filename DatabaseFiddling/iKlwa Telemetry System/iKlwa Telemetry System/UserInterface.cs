@@ -18,7 +18,7 @@ namespace iKlwa_Telemetry_System
         private TelemetryDatabase d;
         private TelemetryCommsManager comms = new TelemetryCommsManager();
         private ReaderWriterLock protection = new ReaderWriterLock();
-        private enum SENSORS :int{HALL_EFFECT = 420, MOTOR_DRIVER = 421,
+        private enum SENSORS :int{HALL_EFFECT = 0xA4, MOTOR_DRIVER = 0xA5,
                                   BMS, GYRO, MPPT1,
                                   MPPT2, MPPT3, MPPT4,GPS,
                                   SOLAR_CELL, ANEMOMETER}
@@ -51,15 +51,23 @@ namespace iKlwa_Telemetry_System
         private void button1_Click(object sender, EventArgs e)
         {
             COM_Port_Select COM_Select = new COM_Port_Select();
-            if (COM_Select.NoPortsFound == false)
+            if (btn_COMPortConnect.ForeColor != Color.Green)
             {
-                COM_Select.ShowDialog();
-                comms.name = COM_Select.Port;
-                btn_COMPortConnect.ForeColor = Color.Green;
-                btn_COMPortConnect.Text = "Connected";
-                SerialReadingThread.RunWorkerAsync();
+                if (COM_Select.NoPortsFound == false)
+                {
+                    COM_Select.ShowDialog();
+                    comms.name = COM_Select.Port;
+                    btn_COMPortConnect.ForeColor = Color.Green;
+                    btn_COMPortConnect.Text = "Connected";
+                    SerialReadingThread.RunWorkerAsync();
+                    btn_COMPortConnect.Enabled = false;//take this out later
+                }
+                else errorNotificationUpdate("I can't find any COM Ports.\nIs the hardware plugged in?");
             }
-            else errorNotificationUpdate("I can't find any COM Ports.\nIs the hardware plugged in?");
+            else
+            {
+
+            }
         }
 
         private void refreshGUI()
@@ -330,101 +338,106 @@ namespace iKlwa_Telemetry_System
             comms.MavLinkInit();
             //comms.defaultInit();
             const long timeoutVal = 100000;//if cannot receive a packet after this number of trials, probably a loss of connection. Test?
-            long count = 0;//to compare to timeoutVal
-            try
-            {
-                comms.OpenPort();//open COM Port
-                while (count<timeoutVal)
+            while (!SerialReadingThread.CancellationPending)
+	        {
+	            long count = 0;//to compare to timeoutVal
+                try
                 {
-                    count++;//increment timeout counter
-                    var packet = comms.readTelemetryInput(); //read telemetry input
-                    try
+                    comms.OpenPort();//open COM Port
+                    while (count<timeoutVal)
                     {
-                        //may want to implement writer lock in addDataCapture...?
-
-                        protection.AcquireWriterLock(200);//lock writer
+                        count++;//increment timeout counter
+                        var packet = comms.readTelemetryInput(); //read telemetry input
                         try
                         {
-                            safe_to_close = false;
-                            switch (packet.ID)//determine sensor based on packet ID
+                            //may want to implement writer lock in addDataCapture...?
+
+                            protection.AcquireWriterLock(200);//lock writer
+                            try
                             {
-                                case (int)SENSORS.MOTOR_DRIVER:
-                                    {
-                                        string str = packet.PAYLOAD.ElementAt(0).ToString();
-                                        str = str.Substring(0, 1);
-                                        d.addDataCapture("Motor Driver", now(),
-                                                         "Speed", (int)Convert.ToChar(str));
-                                    }
-                                    break;
-                                case (int)SENSORS.HALL_EFFECT:
-                                    {
-                                        string str = packet.PAYLOAD.ElementAt(0).ToString();
-                                        str = str.Substring(0, 1);
-                                        d.addDataCapture("Hall Effect Sensor", now(),
-                                                         "Speed", (int)Convert.ToChar(str));
+                                safe_to_close = false;
+                                switch (packet.ID)//determine sensor based on packet ID
+                                {
+                                    case (int)SENSORS.MOTOR_DRIVER:
+                                        {
+                                            string str = packet.PAYLOAD.ElementAt(0).ToString();
+                                            str = str.Substring(0, 1);
+                                            d.addDataCapture("Motor Driver", now(),
+                                                             "Speed", (int)Convert.ToChar(str));
+                                        }
+                                        break;
+                                    case (int)SENSORS.HALL_EFFECT:
+                                        {
+                                            string str = packet.PAYLOAD.ElementAt(0).ToString();
+                                            str = str.Substring(0, 1);
+                                            d.addDataCapture("Hall Effect Sensor", now(),
+                                                             "Speed", (int)Convert.ToChar(str));
 
-                                    } 
-                                    break;
+                                        } 
+                                        break;
 
-                                case (int)SENSORS.BMS:
-                                    { }
-                                    break;
+                                    case (int)SENSORS.BMS:
+                                        { }
+                                        break;
 
-                                case (int)SENSORS.GYRO:
-                                    { }
-                                    break;
+                                    case (int)SENSORS.GYRO:
+                                        { }
+                                        break;
                                 
-                                case (int)SENSORS.MPPT1:
-                                case (int)SENSORS.MPPT2:
-                                case (int)SENSORS.MPPT3:
-                                case (int)SENSORS.MPPT4:
-                                    { }
-                                    //look to implement generic MPPT function with a different code for each of the 4
-                                    //structure of MPPT data entry will essentially be the same
-                                    break;
+                                    case (int)SENSORS.MPPT1:
+                                    case (int)SENSORS.MPPT2:
+                                    case (int)SENSORS.MPPT3:
+                                    case (int)SENSORS.MPPT4:
+                                        { }
+                                        //look to implement generic MPPT function with a different code for each of the 4
+                                        //structure of MPPT data entry will essentially be the same
+                                        break;
 
-                                case (int)SENSORS.GPS:
-                                    { }
-                                    break;
+                                    case (int)SENSORS.GPS:
+                                        { }
+                                        break;
 
-                                case (int)SENSORS.SOLAR_CELL:
-                                    { }
-                                    break;
+                                    case (int)SENSORS.SOLAR_CELL:
+                                        { }
+                                        break;
 
-                                case (int)SENSORS.ANEMOMETER:
-                                    { }
-                                    break;
+                                    case (int)SENSORS.ANEMOMETER:
+                                        { }
+                                        break;
 
-                                default:
-                                    {
-                                        d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
-                                                          "Sensor packet with invalid ID detected", "Data Error");
-                                        SerialReadingThread.ReportProgress(1);//state 1 indicates that an invalid ID error occurred
+                                    default:
+                                        {
+                                            d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute,
+                                                              "Sensor packet with invalid ID detected", "Data Error");
+                                            SerialReadingThread.ReportProgress(1);//state 1 indicates that an invalid ID error occurred
 
-                                    }
-                                    break;
+                                        }
+                                        break;
+                                }
+                                SerialReadingThread.ReportProgress(3);
+                                count = 0;//if code reaches here, there was a successful write and the timeout counter is cleared.
                             }
-                            SerialReadingThread.ReportProgress(3);
-                            count = 0;//if code reaches here, there was a successful write and the timeout counter is cleared.
+                            finally
+                            {
+                                protection.ReleaseWriterLock();//ensure WriterLock is always released
+                                safe_to_close = true;
+                            }
                         }
-                        finally
-                        {
-                            protection.ReleaseWriterLock();//ensure WriterLock is always released
-                            safe_to_close = true;
-                        }
+                        catch (ApplicationException error)//Exception from WriterLockTimeout
+                        { MessageBox.Show(error.Message); } 
                     }
-                    catch (ApplicationException error)//Exception from WriterLockTimeout
-                    { MessageBox.Show(error.Message); } 
+                    //close COM Port and log timeout error
+                    d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Comms Lost",
+                                      "No information received from hardware");
+                    SerialReadingThread.ReportProgress(2);//indicates a comms timeout occurred
+                    comms.ClosePort(); 
+	            }
+
+            
+                catch (Exception err)//Exception from opening COM Port or any other event that wasn't considered
+                {
+                    MessageBox.Show(err.Message);
                 }
-                //close COM Port and log timeout error
-                d.addErrorCapture("Support Car Receiver", DateTime.Now.Hour + "h" + DateTime.Now.Minute, "Comms Lost",
-                                  "No information received from hardware");
-                SerialReadingThread.ReportProgress(2);//indicates a comms timeout occurred
-                comms.ClosePort();
-            }
-            catch (Exception err)//Exception from opening COM Port or any other event that wasn't considered
-            {
-                MessageBox.Show(err.Message);
             }
         }
 
@@ -536,6 +549,7 @@ namespace iKlwa_Telemetry_System
                     break;
                 case 3:
                     {
+                        //occasional unhappiness??
                         lbl_count.Text = (Convert.ToInt64(lbl_count.Text) + 1).ToString();
                     }
                     break;

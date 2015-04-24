@@ -27,7 +27,7 @@ namespace iKlwa_Telemetry_System
 
         public bool NoPortsFound
         {
-            get { return no_ports_found; }
+            get { return System.IO.Ports.SerialPort.GetPortNames().Count()==0; }
         }
 
         private void COM_Port_Select_Load(object sender, EventArgs e)

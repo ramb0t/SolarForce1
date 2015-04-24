@@ -43,7 +43,8 @@ namespace iKlwa_Telemetry_System
         private Packet populate()
         {
             Packet pkt;
-            pkt.ID = (int)Convert.ToChar(this.readTextUntil(DELIMETER.ToString()));
+            var a = this.readTextUntil(DELIMETER.ToString());
+            pkt.ID = (int)Convert.ToChar(a);
             pkt.PAYLOAD = this.getFrame().Split(DELIMETER).ToList<object>();
             return pkt;
         }
