@@ -28,7 +28,7 @@ namespace iKlwa_Telemetry_System
         public struct Packet
         {
             public int ID;
-            public List<object> PAYLOAD;
+            public List<string> PAYLOAD;
         }
 
         private void waitForStart()
@@ -43,9 +43,9 @@ namespace iKlwa_Telemetry_System
         private Packet populate()
         {
             Packet pkt;
-            var a = this.readTextUntil(DELIMETER.ToString());
-            pkt.ID = (int)Convert.ToChar(a);
-            pkt.PAYLOAD = this.getFrame().Split(DELIMETER).ToList<object>();
+            pkt.ID = this.readByte();
+            this.readTextUntil(DELIMETER + "");
+            pkt.PAYLOAD = this.getFrame().Split(DELIMETER).ToList<string>();
             return pkt;
         }
 
