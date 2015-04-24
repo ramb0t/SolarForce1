@@ -125,6 +125,10 @@
       <SubType>compile</SubType>
       <Link>lib\GPS\TinyGPS.h</Link>
     </Compile>
+    <Compile Include="..\..\..\lib\macros.h">
+      <SubType>compile</SubType>
+      <Link>lib\macros.h</Link>
+    </Compile>
     <Compile Include="..\..\..\lib\mcp2515\mcp2515.c">
       <SubType>compile</SubType>
       <Link>lib\mcp2515\mcp2515.c</Link>
@@ -157,6 +161,12 @@
       <SubType>compile</SubType>
       <Link>lib\uart\uart.h</Link>
     </Compile>
+    <Compile Include="CAN_Int0.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CAN_Int0.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="checksum.h">
       <SubType>compile</SubType>
     </Compile>
@@ -173,6 +183,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="MAVLink_Messaging.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Mavlink_Timer0.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Mavlink_Timer0.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="mavlink_types.h">
