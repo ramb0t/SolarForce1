@@ -49,13 +49,13 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 #define HE_TXID				420
 #define MD_TXID				421
 
-#define BMS_TXID			800
-#define AC_TXID				200
-#define MPPT1_TXID			711
-#define MPPT2_TXID			712
-#define MPPT3_TXID			713
-#define MPPT4_TXID			714
-#define GPS_TXID			400
+#define BMS_TXID			1
+#define AC_TXID				2
+#define MPPT1_TXID			3
+#define MPPT2_TXID			4
+#define MPPT3_TXID			5
+#define MPPT4_TXID			6
+#define GPS_TXID			7
 
 //------------Library Objects----------------------------//
 

@@ -25,9 +25,10 @@
 #define CANINT_PORT			PORTB
 #define CANINT_LED			PORTB1
 
+#define LED_DIAG_ORG		PORTC2
+
 #define LED_DIAG_DDR		DDRD
 #define LED_DIAG_PORT		PORTD
-#define LED_DIAG_ORG		PORTD2
 #define LED_DIAG_GRN		PORTD3	
 
 #define UART_DDR			DDRD
@@ -36,7 +37,6 @@
 #define TX_ENABLE			(1<<TXEN0)
 #define TX_DISABLE			(0<<TXEN0)
 
-//------------Library and AVR Includes--------------------//
 
 //-------------CAN Defines----------------------------------//
 
@@ -52,11 +52,14 @@
 #define BMS_7_CANID			0x0627
 #define BMS_8_CANID			0x0628
 
-#define ACCELO_GYRO_CANID   0x00C8
+#define ACCELO_CANID		0x0011
+#define GYRO_CANID			0x0012
 #define MPPT1_CANID			0x0771
 #define MPPT2_CANID			0x0772
 #define MPPT3_CANID			0x0773
 #define MPPT4_CANID			0x0774
+
+//------------Library and AVR Includes--------------------//
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -71,6 +74,12 @@
 
 #include "mavlink_bridge_header.h"  //UART & convenience headers
 
+//---------------Interrupt-based fuctions----------------//
+#include "CAN_Int0.h"
+#include "Mavlink_Timer0.h"
+
+//------------MAVlink convenience functions--------------//
+
 mavlink_status_t* mavlink_get_channel_status(uint8_t chan);
 mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
@@ -79,22 +88,20 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //CAN library objects per device
 
-
 CANMessage Speed_Message;			//Aggregated Speed Board msg
 CANMessage BMS_Message;				//BMS data message
 CANMessage MPPT1_Message;			//MPPT messages
 CANMessage MPPT2_Message;			//MPPT messages
 CANMessage MPPT3_Message;			//MPPT messages
 CANMessage MPPT4_Message;			//MPPT messages
-CANMessage Gyro_Accel_Message;		//gyro messages
-CANMessage GPS_message;
-
+CANMessage Gyro_Message;			//gyro messages
+CANMessage Accelo_message;			//Accelerometer messages
 
 
 volatile int counter=0;
 volatile int ctr2=0;
 volatile int canmsgctr = 0;
-extern	volatile uint8_t 	flag;
+//volatile uint16_t 	flag =0;
 
 char MAV_Rx_buff[10];
 
