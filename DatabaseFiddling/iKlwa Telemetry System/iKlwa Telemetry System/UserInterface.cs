@@ -483,6 +483,7 @@ namespace iKlwa_Telemetry_System
         private void UserInterface_FormClosing(object sender, FormClosingEventArgs e)
         {
             while (safe_to_close == false);//nop nop nop!!
+            //possibly add another clause to prevent the program hanging!!
         }
 
         /// <summary>
