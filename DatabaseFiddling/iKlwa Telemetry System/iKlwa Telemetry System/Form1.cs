@@ -55,6 +55,7 @@ namespace iKlwa_Telemetry_System
             string COM_port = c.Port; //get the selected port, if valid
             comms.name = COM_port.ToString();
             comms.OpenPort();
+            richTextBox1.Text = comms.readTextUntil("3");
         }
 
         private void button2_Click(object sender, EventArgs e)

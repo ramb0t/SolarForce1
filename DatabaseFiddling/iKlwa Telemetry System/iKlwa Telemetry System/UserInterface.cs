@@ -41,7 +41,6 @@ namespace iKlwa_Telemetry_System
             d = new TelemetryDatabase("xmlDatabase_V5.xml");
             d.NodeTag = "Capture";
             db_exists = true;
-            refresh_timer.Enabled = true;
         }
 
         /// <summary>
@@ -62,6 +61,7 @@ namespace iKlwa_Telemetry_System
                     btn_COMPortConnect.Text = "Connected";
                     SerialReadingThread.RunWorkerAsync();
                     btn_COMPortConnect.Enabled = false;//take this out later
+                    refresh_timer.Enabled = true;
                 }
                 else errorNotificationUpdate("I can't find any COM Ports.\nIs the hardware plugged in?");
             }
