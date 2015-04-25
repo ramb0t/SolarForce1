@@ -28,7 +28,7 @@
 
 #include "GlobalDefs.h"
 
-//#include "MAVLink_Messaging.h"
+#include "MAVLink_Messaging.h"
 
 //define returned CAN data
 #define CAN_MSG_DECODED 1
@@ -62,7 +62,7 @@ volatile CANMessage Input_data;
 extern volatile uint8_t		message_decoded;
 extern volatile	uint8_t		flag;
 volatile char				buff[10];
-volatile GlobalVars	CANData;
+extern volatile GlobalVars	CANData;
 
 //flags for if any variables have updated
 volatile	uint8_t		speedHEUpdated;

@@ -74,7 +74,7 @@ int main (void)
 		Sets the Parsing pointer to the start of the GPS string					*/
 	
 	p_start = gps_string;
-	
+	volatile GlobalVars CANData;
 //---------------Operational Loop---------------------//
 	
 	while(1) {
@@ -95,6 +95,7 @@ int main (void)
 
 	//this goes true every 500ms
 	
+
 	if (updateMAV_flag == TRUE)
 	{
 		MAV_HB_send();					//send MAVLink heartbeat	
@@ -104,11 +105,11 @@ int main (void)
 	
 	
 	
-	//if (updateGPS_flag == TRUE)
-	//{
-	//	GPS_readData();					//store GPS data to global fields
-	//	updateGPS_flag = FALSE;			//GPS has been 
-	//}
+	if (updateGPS_flag == TRUE)
+	{
+		GPS_readData();					//store GPS data to global fields
+		updateGPS_flag = FALSE;			//GPS has been 
+	}
 
 
 	
@@ -214,6 +215,7 @@ void ParseGPS ()
 				strncpy(parts[i], p_start, 20);
 				//break;
 			}
+			if(DEBUG){
 			uart_puts("\n");
 				for (int i=0;i<13;i++)
 				{
@@ -223,7 +225,7 @@ void ParseGPS ()
 					uart_puts(parts[i]);
 					uart_puts("\n");
 				}
-
+			}
 
 }
 
@@ -273,7 +275,8 @@ void MAV_msg_pack()
 			if (speedMDUpdated==1 || speedHEUpdated==1)
 			{
 				
-				mavlink_msg_speed_halleffect_send(MAVLINK_COMM_0,mavSendData.avgSpeed,mavSendData.hesSPeed,mavSendData.hesRPM,mavSendData.motorSpeed,mavSendData.motorRPM,mavSendData.statusFlags);
+				mavlink_msg_speed_halleffect_send(MAVLINK_COMM_0,CANData.avgSpeed,CANData.hesSPeed,
+				CANData.hesRPM,CANData.motorSpeed,CANData.motorRPM,CANData.statusFlags);
 				speedMDUpdated = 0; speedHEUpdated = 0;
 			}
 			
@@ -302,12 +305,12 @@ void MAV_msg_pack()
 			//uart_flush();
 			if (bms1Updated==1)
 			{
-			mavlink_msg_bms_data_send(MAVLINK_COMM_0,mavSendData.BMSData_warnings,mavSendData.maxVoltage,mavSendData.maxVoltageID,
-			mavSendData.minVoltage,mavSendData.minVoltageID,mavSendData.packVoltage,mavSendData.current,mavSendData.chargeLimit,
-			mavSendData.dischargeLimit,mavSendData.batteryEnergyIn,mavSendData.batteryEnergyOut,mavSendData.SOC,mavSendData.DOD,
-			mavSendData.capacity,mavSendData.SOH,mavSendData.minTempID,mavSendData.minTemperature,mavSendData.temperature,
-			mavSendData.maxTemperature,mavSendData.maxTempID,mavSendData.packResistance,mavSendData.minRes,mavSendData.minResID,
-			mavSendData.maxRes,mavSendData.maxResID,MAV_STATE_ACTIVE);
+			mavlink_msg_bms_data_send(MAVLINK_COMM_0,CANData.BMSData_warnings,CANData.maxVoltage,CANData.maxVoltageID,
+			CANData.minVoltage,CANData.minVoltageID,CANData.packVoltage,CANData.current,CANData.chargeLimit,
+			CANData.dischargeLimit,CANData.batteryEnergyIn,CANData.batteryEnergyOut,CANData.SOC,CANData.DOD,
+			CANData.capacity,CANData.SOH,CANData.minTempID,CANData.minTemperature,CANData.temperature,
+			CANData.maxTemperature,CANData.maxTempID,CANData.packResistance,CANData.minRes,CANData.minResID,
+			CANData.maxRes,CANData.maxResID,MAV_STATE_ACTIVE);
 			
 			bms1Updated=0;
 			}

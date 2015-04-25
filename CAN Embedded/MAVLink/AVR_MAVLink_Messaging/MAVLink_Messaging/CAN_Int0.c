@@ -14,8 +14,7 @@
 ISR(INT0_vect)
 {
 	CAN_fillBuffer();
-	if (flag != CAN_NOMSG)
-	{
+
 		if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
 		{
 			if (CAN_Decode(&Input_data)==CAN_MSG_DECODED)	//if a new message has been decoded
@@ -23,11 +22,11 @@ ISR(INT0_vect)
 				updateMAV_flag = TRUE;						//...set a flag to send this data & store data
 			}else
 			{
-				return;										//else leave it alone
+				return CAN_NOT_DECODED;										//else leave it alone
 			}
 		}
 		
-	}
+
 }
 
 
@@ -75,13 +74,13 @@ uint8_t CAN_Decode(CANMessage *message)
 					*/
 				case 	SPEED_HE_CANID:
 				{
-										
-							CANData.avgSpeed = message->data[0];
-							CANData.hesSPeed = message->data[1];
-							CANData.hesRPM = (message->data[3])|(message->data[2]<<8);
-							CANData.motorSpeed = message->data[4];
-							CANData.motorRPM = (message->data[6])|(message->data[5]<<8);
-							CANData.statusFlags = message->data[7];
+							LED_DIAG_PORT |= (1<<LED_DIAG_GRN);			
+							CANData.avgSpeed = 13/*message->data[0]*/;
+							CANData.hesSPeed = 15/*message->data[1]*/;
+							CANData.hesRPM = 17/*(message->data[3])|(message->data[2]<<8)*/;
+							CANData.motorSpeed = 18/*message->data[4]*/;
+							CANData.motorRPM =12 /*(message->data[6])|(message->data[5]<<8)*/;
+							CANData.statusFlags = 12/*message->data[7]*/;
 						//
 						speedMDUpdated=1;	
 						speedHEUpdated=1;

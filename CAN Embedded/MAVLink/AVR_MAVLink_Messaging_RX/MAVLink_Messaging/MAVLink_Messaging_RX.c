@@ -120,7 +120,7 @@ void MAV_msg_Unpack()
 					
 					// Try to get a new message
 					
-					//uart_putc(c);								//TESTING OUTPUT	
+					uart_putc(c);								//TESTING OUTPUT	
 					ctr2++;				
 					if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) //if packet matches defined MAVLink packet
 					{

@@ -70,7 +70,7 @@ static volatile uint8_t counter=0;
 //volatile int ctr2=0;
 //volatile int canmsgctr = 0;
 //volatile uint16_t 	flag =0;
-volatile GlobalVars mavSendData;
+extern volatile GlobalVars CANData;
 
 char MAV_Rx_buff[10];
 
