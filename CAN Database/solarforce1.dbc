@@ -64,8 +64,8 @@ BO_ 1571 BMSSTPM3: 6 BMS
  SG_ PackVoltage : 7|16@0+ (1,0) [0|0] "" Vector__XXX
  SG_ MinVoltage : 23|8@0+ (1,0) [0|0] "" Vector__XXX
  SG_ MinVoltageID : 31|8@0+ (1,0) [0|0] "" Vector__XXX
- SG_ MaxVoltage : 7|8@0+ (1,0) [0|0] "" Vector__XXX
- SG_ MaxVoltageID : 7|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxVoltage : 39|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxVoltageID : 47|8@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1570 BMSSTPM2: 7 BMS
  SG_ FaultState : 0|1@1+ (1,0) [0|0] "" Vector__XXX
