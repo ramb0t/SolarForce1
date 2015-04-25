@@ -77,7 +77,8 @@ ISR (TIMER1_CAPT_vect)
 
 ISR(TIMER1_OVF_vect)
 {
-	if(totalCount < 50000) //finish this
+	send();
+	//if(totalCount < 50000); //finish this
 }
 
 void timer1_init()

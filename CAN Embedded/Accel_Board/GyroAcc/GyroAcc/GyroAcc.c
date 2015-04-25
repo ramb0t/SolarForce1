@@ -18,6 +18,7 @@
 #include <avr/wdt.h>
 #include <avr/power.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "I2C.h"
 #include "../lib/CAN/CAN.h"
@@ -216,6 +217,69 @@ int main(void)
 		
 		uart_puts(buffer2);
 		_delay_ms(500);
+		
+		//trying to work out angle		
+		double angletheta;
+		
+		//angletry = atan((MPU6050_ReadAccel(0))/(sqrt(pow((MPU6050_ReadAccel(1)),2)+pow((MPU6050_ReadAccel(2)),2))));
+		//angletheta = ((atan((MPU6050_ReadAccel(0))/(MPU6050_ReadAccel(1))))*180/M_PI);
+		angletheta = (atan(MPU6050_ReadAccel(0)/(sqrt((pow(MPU6050_ReadAccel(1),2)) + (pow(MPU6050_ReadAccel(2),2))))))*180/M_PI;
+
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Angle theta: ");
+		
+		tempD = angletheta;
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
+		double anglepsi;
+		
+		//angletry = atan((MPU6050_ReadAccel(0))/(sqrt(pow((MPU6050_ReadAccel(1)),2)+pow((MPU6050_ReadAccel(2)),2))));
+		//anglephi = ((atan((MPU6050_ReadAccel(3))/(sqrt((pow(MPU6050_ReadAccel(0),2)) + (pow(MPU6050_ReadAccel(1),2)) + (pow(MPU6050_ReadAccel(2),2))))))*180/M_PI);
+		anglepsi = (atan(MPU6050_ReadAccel(1)/(sqrt((pow(MPU6050_ReadAccel(0),2)) + (pow(MPU6050_ReadAccel(2),2))))))*180/M_PI;
+
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Angle psi: ");
+		
+		tempD = anglepsi;
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
+		double anglephi;
+		
+		//angletry = atan((MPU6050_ReadAccel(0))/(sqrt(pow((MPU6050_ReadAccel(1)),2)+pow((MPU6050_ReadAccel(2)),2))));
+		//anglephi = ((atan((MPU6050_ReadAccel(3))/(sqrt((pow(MPU6050_ReadAccel(0),2)) + (pow(MPU6050_ReadAccel(1),2)) + (pow(MPU6050_ReadAccel(2),2))))))*180/M_PI);
+		anglephi = (atan((sqrt((pow(MPU6050_ReadAccel(0),2)) + (pow(MPU6050_ReadAccel(1),2))))/MPU6050_ReadAccel(2)))*180/M_PI;
+		
+		memset(buffer2, 0, sizeof buffer2);
+		strcat(buffer2, "Angle pi: ");
+		
+		tempD = anglephi;
+		dtostrf(tempD,1,4,buffer);
+		strcat(buffer2,buffer);
+		strcat(buffer2,"\n");
+		
+		uart_puts(buffer2);
+		_delay_ms(500);
+		
+		CANMessage accelerometer;
+		
+		accelerometer. id = 0x0822;
+		accelerometer. rtr = 0 ;
+		accelerometer. length = 3 ;
+		accelerometer. data [ 0 ] = MPU6050_ReadAccel(0);
+		accelerometer. data [ 1 ] = MPU6050_ReadAccel(1);
+		accelerometer. data [ 2 ] = MPU6050_ReadAccel(2);
+		
+		CAN_sendMessage (&accelerometer);
 		
 	}
 }

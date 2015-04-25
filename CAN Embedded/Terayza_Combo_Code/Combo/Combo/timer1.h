@@ -16,9 +16,9 @@
 #include <avr/interrupt.h>
 #include "../lib/uart/uart.h"
 
-extern volatile uint16_t motorSpeed;
+extern volatile uint8_t motorSpeed;
 extern volatile uint16_t totalCount;
-extern volatile uint16_t numCount1;
+extern volatile uint8_t numCount1;
 
 void timer1_init(void);
 

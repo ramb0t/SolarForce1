@@ -10,6 +10,7 @@
 //timer0 overflow
 ISR(TIMER1_OVF_vect)
 {
+	send();
 	if(totalCount < 50000)
 	{
 		motorSpeed = 0x00;

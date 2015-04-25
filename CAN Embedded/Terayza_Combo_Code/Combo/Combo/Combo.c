@@ -14,36 +14,43 @@
 #include "../lib/mcp2515/mcp2515.h"
 #include "../lib/SPI/AVR_SPI.h"
 #include "timer0.h"
+#include "timer1.h"
 #include "timer2.h"
 
 volatile uint16_t count2 = 0;
 volatile uint8_t hSpeed = 0;
+volatile uint16_t hRPM = 0;
 volatile uint16_t count0 = 0;
 volatile uint8_t motorSpeed = 0;
+volatile uint16_t motorRPM = 0;
 volatile uint8_t numCount1;
 volatile uint16_t totalCount;
 volatile uint16_t avgCount;
+volatile uint8_t status;
 
 void send()
 {
 	volatile uint8_t avgSpeed;
 	avgSpeed = (hSpeed + motorSpeed)/2;
+	status = 0; //decide stats things 
 	
 	CANMessage speed;
 	
 	speed. id = 0x0420;
 	speed. rtr = 0 ;
-	speed. length = 3 ;
+	speed. length = 8 ;
 	speed. data [ 0 ] = avgSpeed;
 	speed. data [ 1 ] = hSpeed;
-	//speed. data [ 2 ] = hRPM>>8;
-	//speed. data [ 3 ] = hRPM;
+	speed. data [ 2 ] = hRPM>>8;
+	speed. data [ 3 ] = hRPM;
 	speed. data [ 2 ] = motorSpeed;
-	//speed. data [ 5 ] = motorRPM>>8;
-	//speed. data [ 6 ] = motorRPM;
-	//speed. data [ 7 ] = status;
+	speed. data [ 5 ] = motorRPM>>8;
+	speed. data [ 6 ] = motorRPM;
+	speed. data [ 7 ] = status;
 	
 	CAN_sendMessage (&speed);
+	
+	//Sequence number: x = 0, y = 1, z = 2;
 	
 	/*CANMessage angle;
 	
@@ -61,9 +68,13 @@ void send()
 	gyroscope. id = 0x0821;
 	gyroscope. rtr = 0 ;
 	gyroscope. length = 3 ;
-	gyroscope. data [ 0 ] = gyrox;
-	gyroscope. data [ 1 ] = gyroy;
-	gyroscope. data [ 2 ] = gyroz;
+	gyroscope. data [ 0 ] = 0x00; //therefore x values
+	gyroscope. data [ 1 ] = gyrox>>24;
+	gyroscope. data [ 2 ] = gyrox>>16;
+	gyroscope. data [ 3 ] = gyrox>>8;
+	gyroscope. data [ 3 ] = gyrox;
+	
+	//CHECK IF THIS MAKES SENSE AT ALL!!! MIGHT NEED SEPERATE ONES
 	
 	CAN_sendMessage (&gyroscope);
 	
@@ -95,6 +106,8 @@ void motorCalcs()
 	numCount1 = 0;
 	
 	motorSpeed = 40250/avgCount;
+	
+	motorRPM = 416666/avgCount; //value should be 41666.6667
 }
 
 ISR(INT0_vect)
@@ -114,6 +127,8 @@ ISR(INT0_vect)
 	//24.5cm diameter on my bike, therefore circum = 0.76969m
 	//90000* circum = 69272.11801
 	hSpeed = (69272)/Capt2;
+	
+	hRPM = 15000000/Capt2;
 }
 
 ISR (TIMER1_CAPT_vect)
