@@ -9,13 +9,14 @@
 
 ISR(TIMER0_OVF_vect)
 {
+	gMilliSecTick++;
 	TCNT0 = TIMEBASE_RELOAD;		//Reroll timer value!
 	
-	gMilliSecTick++;
+	ms_Counter++;								//another 1ms passed!
 	
-	if ((gMilliSecTick - old_mS) > MAVLINK_HB_UPDATERATE )
+	if ((ms_Counter - old_mS) > MAVLINK_HB_UPDATERATE )
 	{
-		old_mS = gMilliSecTick;		//set the previous value back to let counter run
+		old_mS = ms_Counter;		//set the previous value back to let counter run
 		updateMAV_flag = TRUE;
 	}
 	
@@ -32,4 +33,5 @@ void Timer0_init(void)
 
 	gMilliSecTick = 0;
 	old_mS = 0;
+	ms_Counter = 0;
 }

@@ -7,7 +7,7 @@
 
 #include "MAVLink_Messaging.h"
 
-#define DEBUG	1
+#define DEBUG	0
 
 
 int main (void)
@@ -61,7 +61,7 @@ int main (void)
 		*interrupt-based					*/
 	
 		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
-				
+		
 		sei();	//interrupts ON
 	
 	//TODO: Get interrupt-based heartbeats and GPS data integrated with CAN
@@ -90,21 +90,19 @@ int main (void)
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
 	
+	//----------------new code---------------//
+
+	//this goes true every 500ms
+
+	if (updateMAV_flag == TRUE)
+	{
+		uart_puts("hi");
+		MAV_HB_send();
+		updateMAV_flag = FALSE;
+	}
 	
+	//----------------/new code-------------//
 	
-	
-			//counter++;
-			//if (counter > 2)
-			//{
-				//counter = 0;
-				//GPS_readData();
-			//}
-				//
-		//CAN_readData();
-//
-		//MAV_msg_pack();
-		//
-		
 		
 		
 	}
@@ -1031,7 +1029,7 @@ void MAV_msg_pack()
 			//uart_flush();
 			//uart_puts("\n---------MAVLink Heartbeat---------\n");
 			
-			mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
+			//mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
 
 			//uart_puts("\n<<<<END OF MESSAGE>>>>\n");
 			
@@ -1083,6 +1081,11 @@ void MAV_msg_pack()
 		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
 	
 			}
+			
+void MAV_HB_send()
+{
+	mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
+}
 
 void MAV_uart_send(uint8_t buf[],uint8_t len)
 {

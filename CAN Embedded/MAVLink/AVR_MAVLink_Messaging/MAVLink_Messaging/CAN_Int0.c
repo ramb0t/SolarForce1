@@ -14,9 +14,12 @@ ISR(INT0_vect)
 	{
 		if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
 		{
-			if (CAN_Decode(&Input_data)==CAN_MSG_DECODED)
+			if (CAN_Decode(&Input_data)==CAN_MSG_DECODED)	//if a new message has been decoded
+			{	
+				updateMAV_flag = TRUE;						//...set a flag to send this data
+			}else
 			{
-				updateMAV_flag = TRUE;
+				return;										//else leave it alone
 			}
 		}
 		
@@ -55,7 +58,7 @@ uint8_t CAN_Decode(CANMessage *message)
 						{
 							//uart_puts(":");
 							itoa(message->data[i],buff,10);	//convert to ascii form
-							Speed_message.data[i] = message->data[i]; //store into CAN object for speed
+							Speed_Message.data[i] = message->data[i]; //store into CAN object for speed
 							//uart_puts(buff);
 						}
 					
@@ -66,7 +69,7 @@ uint8_t CAN_Decode(CANMessage *message)
 						for (int i=4;i<8;i++)
 						{
 						itoa(message->data[i],buff,10);
-						Speed_message.data[i] = message->data[i];
+						Speed_Message.data[i] = message->data[i];
 						uart_puts(buff);
 						}
 						speedUpdated=1;						//inform this value has been updated

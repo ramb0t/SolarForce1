@@ -88,14 +88,14 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //CAN library objects per device
 
-CANMessage Speed_Message;			//Aggregated Speed Board msg
-CANMessage BMS_Message;				//BMS data message
-CANMessage MPPT1_Message;			//MPPT messages
-CANMessage MPPT2_Message;			//MPPT messages
-CANMessage MPPT3_Message;			//MPPT messages
-CANMessage MPPT4_Message;			//MPPT messages
-CANMessage Gyro_Message;			//gyro messages
-CANMessage Accelo_message;			//Accelerometer messages
+volatile CANMessage Speed_Message;			//Aggregated Speed Board msg
+volatile CANMessage BMS_Message;				//BMS data message
+volatile CANMessage MPPT1_Message;			//MPPT messages
+volatile CANMessage MPPT2_Message;			//MPPT messages
+volatile CANMessage MPPT3_Message;			//MPPT messages
+volatile CANMessage MPPT4_Message;			//MPPT messages
+volatile CANMessage Gyro_Message;			//gyro messages
+volatile CANMessage Accelo_message;			//Accelerometer messages
 
 
 volatile int counter=0;
@@ -128,6 +128,12 @@ void MAV_msg_pack();
 void MAV_uart_send(uint8_t [],uint8_t);
 void GPS_readData(void);
 void GPSParse();
+void MAV_HB_send();
+
+volatile uint8_t	updateMAV_flag;		//flag to know whether MAVLink packet to be sent
+volatile uint16_t 	gMilliSecTick;
+volatile uint16_t	ms_Counter;
+volatile uint16_t	old_mS;
 
 static inline void mavlink_msg_motor_driver_decode(const mavlink_message_t* msg, mavlink_motor_driver_t* motor_driver);
 

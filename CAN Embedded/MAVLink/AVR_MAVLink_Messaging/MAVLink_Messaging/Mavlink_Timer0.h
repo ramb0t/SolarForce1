@@ -21,11 +21,13 @@
 #define TIMEBASE_RELOAD ((uint8_t)(0xff-TIMEBASE_HITS_PER_1MS+1)) // value to reload timer with
 #define MAVLINK_HB_UPDATERATE 500
 #define TRUE 1
+#define FALSE 0
 
 //---------------Variables---------------//
-volatile uint8_t	updateMAV_flag = 0;		//flag to know whether MAVLink packet to be sent
-volatile uint16_t 	gMilliSecTick;
-volatile uint16_t	old_mS;
+extern volatile uint8_t	updateMAV_flag;		//flag to know whether MAVLink packet to be sent
+extern volatile uint16_t 	gMilliSecTick;
+extern volatile uint16_t	ms_Counter;
+extern volatile uint16_t	old_mS;
 
 
 //---------------Prototypes---------------//

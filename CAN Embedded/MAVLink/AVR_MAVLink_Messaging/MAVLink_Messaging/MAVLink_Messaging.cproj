@@ -131,19 +131,19 @@
     </Compile>
     <Compile Include="..\..\..\lib\mcp2515\mcp2515.c">
       <SubType>compile</SubType>
-      <Link>lib\mcp2515\mcp2515.c</Link>
+      <Link>lib\mcp2515.c</Link>
     </Compile>
     <Compile Include="..\..\..\lib\mcp2515\mcp2515.h">
       <SubType>compile</SubType>
-      <Link>lib\mcp2515\mcp2515.h</Link>
+      <Link>lib\mcp2515.h</Link>
     </Compile>
     <Compile Include="..\..\..\lib\mcp2515\mcp2515_bittime.h">
       <SubType>compile</SubType>
-      <Link>lib\mcp2515\mcp2515_bittime.h</Link>
+      <Link>lib\mcp2515_bittime.h</Link>
     </Compile>
     <Compile Include="..\..\..\lib\mcp2515\mcp2515_defs.h">
       <SubType>compile</SubType>
-      <Link>lib\mcp2515\mcp2515_defs.h</Link>
+      <Link>lib\mcp2515_defs.h</Link>
     </Compile>
     <Compile Include="..\..\..\lib\SPI\AVR_SPI.c">
       <SubType>compile</SubType>
@@ -168,6 +168,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="checksum.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="GPS_Rx_ISR.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="GPS_Rx_ISR.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="mavlink_bridge_header.h">
@@ -252,9 +258,9 @@
   <ItemGroup>
     <Folder Include="lib\" />
     <Folder Include="lib\CAN\" />
-    <Folder Include="lib\mcp2515\" />
     <Folder Include="lib\GPS" />
     <Folder Include="lib\SPI\" />
+    <Folder Include="lib\SPI\mcp2515\" />
     <Folder Include="lib\uart\" />
     <Folder Include="solarCar" />
   </ItemGroup>
