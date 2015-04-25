@@ -65,6 +65,37 @@ void USART_Transmit( unsigned char data )
 	UDR = data;
 }
 
+void adc_init()
+{
+	// AREF = AVcc
+	ADMUX = (1<<REFS0);
+	
+	// ADC Enable and prescaler of 128
+	// 1000000/128 = 125000
+	ADCSRA = (1<<ADEN)|(1<<ADPS1)|(1<<ADPS0);
+}
+
+// read adc value
+uint16_t adc_read(uint8_t ch)
+{
+	// select the corresponding channel 0~7
+	// ANDing with '7' will always keep the value
+	// of 'ch' between 0 and 7
+	ch &= 0b00000111;  // AND operation with 7
+	ADMUX = (ADMUX & 0xF8)|ch;     // clears the bottom 3 bits before ORing
+	
+	// start single conversion
+	// write '1' to ADSC
+	ADCSRA |= (1<<ADSC);
+	
+	// wait for conversion to complete
+	// ADSC becomes '0' again
+	// till then, run loop continuously
+	while(ADCSRA & (1<<ADSC));
+	
+	return (ADC);
+}
+
 void DoSim(uint8_t x)
 {
 	USART_Transmit('>');
@@ -77,7 +108,7 @@ void DoSim(uint8_t x)
 	USART_Transmit(',');
 	_delay_us(500);
 }
-
+/*
 void transmit_packet(PACKET p)
 {
 	myFlags.ID_received_ack = 0;
@@ -105,11 +136,33 @@ void transmit_packet(PACKET p)
 	}
 	myFlags.payload_sent = 1;
 	while (myFlags.payload_received_ack == 0); //wait for ack
-}
+}*/
 
 int main(void)
 {
 	
 	//configure the uC to transmit serial data
 	InitComms(12);
+	DDRD = 0xfc;
+	DDRA = 0;
+	
+	//setup adc
+	adc_init();
+		
+	while (1)
+	{
+		//PORTD |= 1<<PORTD5;
+		//_delay_ms(234);
+		//PORTD &= ~(1<<PORTD5);
+		//_delay_ms(123);
+
+			uint16_t voltage = adc_read(4);
+			uint16_t test = 0x57;
+			USART_Transmit(test>>8);
+			USART_Transmit(test);
+			USART_Transmit(13);
+			USART_Transmit(voltage>>8);
+			USART_Transmit(voltage);
+		
+	}
 }
