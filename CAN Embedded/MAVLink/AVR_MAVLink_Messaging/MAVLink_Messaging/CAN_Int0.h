@@ -62,7 +62,7 @@ volatile CANMessage Input_data;
 extern volatile uint8_t		message_decoded;
 extern volatile	uint8_t		flag;
 volatile char				buff[10];
-extern volatile GlobalVars	CANData;
+volatile GlobalVars	CANData;
 
 //flags for if any variables have updated
 volatile	uint8_t		speedHEUpdated;
