@@ -32,14 +32,33 @@ BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
  SG_ State : 0|1@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1576 BMSSTPM8: 6 BMS
+ SG_ PackResistance : 7|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MinRes : 23|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MinResID : 31|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxRes : 39|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxResID : 47|8@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1575 BMSSTPM7: 6 BMS
+ SG_ Temperature : 31|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MinTemperature : 23|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MinTempID : 7|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxTemperature : 39|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxTempID : 47|8@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1574 BMSSTPM6: 7 BMS
+ SG_ SOC : 7|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ DOD : 15|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ Capacity : 31|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ SOH : 55|8@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1573 BMSSTPM5: 8 BMS
+ SG_ BattEnergyIn : 7|32@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ BattEnergyOut : 39|32@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1572 BMSSTPM4: 6 BMS
+ SG_ Current : 7|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ ChargeLimit : 23|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ DischgLimit : 39|16@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1571 BMSSTPM3: 6 BMS
  SG_ PackVoltage : 7|16@0+ (1,0) [0|0] "" Vector__XXX
