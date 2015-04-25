@@ -98,7 +98,7 @@ static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const char *c
 	//}
 //}
 
-#include "mavlink.h"				//MAVLink framework
+#include "./solarCar/mavlink.h"				//MAVLink framework
 
 
 #endif /* MAVLINK_BRIDGE_HEADER_H_ */

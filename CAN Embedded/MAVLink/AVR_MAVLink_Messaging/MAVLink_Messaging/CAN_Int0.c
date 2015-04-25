@@ -4,8 +4,10 @@
  * Created: 2015/04/24 08:56:22 PM
  *  Author: Matt
  */ 
-
+#include "MAVLink_Messaging.h"
 #include "CAN_Int0.h"
+#include "GlobalDefs.h"
+
 
 //CAN_Init(CAN_125KBPS_16MHZ); // Setup CAN Bus with our desired speed
 
@@ -51,6 +53,8 @@ uint8_t CAN_Decode(CANMessage *message)
 	mppt2Updated=0;
 	mppt3Updated=0;
 	mppt4Updated=0;
+	
+	
 	switch (message->id)
 				{
 					/*Speed	Data is aggregated across the Hall Effect and Motor Driver nodes
@@ -69,33 +73,18 @@ uint8_t CAN_Decode(CANMessage *message)
 					SpeedData[7] = Status flag
 					
 					*/
-				case 	MOTOR_DRIVER_CANID:
+				case 	SPEED_HE_CANID:
 				{
-						//uart_puts("\n");
-						//uart_puts("CAN from MD:");
-						//uart_puts(message->id);				//Human readable data on UART
-						//uart_puts(":");
-						for (int i=0;i<4;i++)
-						{
-							//uart_puts(":");
-							//itoa(message->data[i],buff,10);	//convert to ascii form
-							Speed_Message.data[i] = message->data[i]; //store into CAN object for speed
-							//uart_puts(buff);
-						}
+										
+							CANData.avgSpeed = message->data[0];
+							CANData.hesSPeed = message->data[1];
+							CANData.hesRPM = (message->data[3])|(message->data[2]<<8);
+							CANData.motorSpeed = message->data[4];
+							CANData.motorRPM = (message->data[6])|(message->data[5]<<8);
+							CANData.statusFlags = message->data[7];
+						//
 						speedMDUpdated=1;	
-					
-					
-						//uart_puts("\n");
-						//uart_puts("CAN from HE:");
-						//uart_puts(message->id);
-						for (int i=4;i<8;i++)
-						{
-						utoa(message->data[i],buff,10);
-						Speed_Message.data[i] = message->data[i];
-						//uart_puts(buff);
-						}
-						speedHEUpdated=1;						//inform this value has been updated
-						return CAN_MSG_DECODED;
+						speedHEUpdated=1;
 				}
 					
 				/*NOTE: BMS Data across different messages, we want:
@@ -132,7 +121,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					//uart_puts(message->id);
 					
 					utoa(message->data[3],buff,10);		//fault flags
-					BMS_Message.data[0] = message->data[3];
+					//BMS_Message.data[0] = message->data[3];
 					
 					//uart_puts(buff);
 					
@@ -153,15 +142,15 @@ uint8_t CAN_Decode(CANMessage *message)
 					uart_puts(message->id);
 					
 					utoa(message->data[0],buff,10);		//low pack voltage
-					BMS_Message.data[5] = (message->data[2]<<8)|(message->data[3]);
+					//BMS_Message.data[5] = (message->data[2]<<8)|(message->data[3]);
 					//uart_puts(buff);
 					
 					utoa(message->data[0],buff,10);		// avg pack voltages
-					BMS_Message.data[6] = (message->data[0]<<8)|(message->data[1]);
+					//BMS_Message.data[6] = (message->data[0]<<8)|(message->data[1]);
 					//uart_puts(buff);
 					
 					utoa(message->data[0],buff,10);		//high pack voltages
-					BMS_Message.data[7] = (message->data[4]<<8)|(message->data[5]);
+					//BMS_Message.data[7] = (message->data[4]<<8)|(message->data[5]);
 					//uart_puts(buff);
 					
 					bms3Updated=1;
@@ -176,7 +165,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					
 					utoa(message->data[0],buff,10);		//pack current
 					utoa(message->data[1],buff,10);
-					BMS_Message.data[2] = (message->data[0]<<8)|(message->data[1]);
+					//BMS_Message.data[2] = (message->data[0]<<8)|(message->data[1]);
 					//uart_puts(buff);
 					
 					bms4Updated=1;
@@ -191,7 +180,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					//uart_puts(message->id);
 				
 					utoa(message->data[0],buff,10);		//SOC
-					BMS_Message.data[3] = message->data[0];
+					//BMS_Message.data[3] = message->data[0];
 					//uart_puts(buff);
 					
 					bms6Updated=1;
@@ -208,15 +197,15 @@ uint8_t CAN_Decode(CANMessage *message)
 					//uart_puts(buff);
 					utoa(message->data[3],buff,10);			//Min temps
 					//uart_puts(buff);
-					BMS_Message.data[8] = (message->data[2]<<8)|(message->data[3]);
+					//BMS_Message.data[8] = (message->data[2]<<8)|(message->data[3]);
 					
 				
 					utoa(message->data[0],buff,10);			//Avg temps
-					BMS_Message.data[9] = message->data[0];
+					//BMS_Message.data[9] = message->data[0];
 					//uart_puts(buff);
 				
 					utoa(message->data[4],buff,10);			//Max temps
-					BMS_Message.data[10] = (message->data[4]<<8)|(message->data[5]);
+					//BMS_Message.data[10] = (message->data[4]<<8)|(message->data[5]);
 					//uart_puts(buff);
 					
 					bms7Updated=1;
@@ -228,7 +217,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					//uart_puts("\n");
 					//uart_puts("CAN from GY:");
 					//uart_puts(message->id);
-					Gyro_Message.data[0] = message->data[0];
+					//Gyro_Message.data[0] = message->data[0];
 					//uart_puts(buff);
 
 					gyroUpdated=1;
@@ -240,7 +229,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					//uart_puts("\n");
 					//uart_puts("CAN from GY:");
 					//uart_puts(message->id);
-					Accelo_message.data[1] = message->data[1];
+					//Accelo_message.data[1] = message->data[1];
 					//uart_puts(buff);
 					
 					acceloUpdated=1;
@@ -260,7 +249,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					for (int i=0;i<4;i++)						//4 data fields
 					{
 						utoa(message->data[i],buff,10);
-						MPPT1_Message.data[i] = message->data[i];
+						//MPPT1_Message.data[i] = message->data[i];
 						//uart_puts(buff);
 					}
 					
@@ -276,7 +265,7 @@ uint8_t CAN_Decode(CANMessage *message)
 				for (int i=0;i<4;i++)						//4 data fields
 				{
 					utoa(message->data[i],buff,10);
-					MPPT2_Message.data[i] = message->data[i];
+					//MPPT2_Message.data[i] = message->data[i];
 					//uart_puts(buff);
 				}
 				
@@ -292,7 +281,7 @@ uint8_t CAN_Decode(CANMessage *message)
 				for (int i=0;i<4;i++)						//4 data fields
 				{
 					utoa(message->data[i],buff,10);
-					MPPT3_Message.data[i] = message->data[i];
+					//MPPT3_Message.data[i] = message->data[i];
 					//uart_puts(buff);
 				}
 				
@@ -308,7 +297,7 @@ uint8_t CAN_Decode(CANMessage *message)
 				for (int i=0;i<4;i++)						//4 data fields
 				{
 					utoa(message->data[i],buff,10);
-					MPPT4_Message.data[i] = message->data[i];
+					//MPPT4_Message.data[i] = message->data[i];
 					//uart_puts(buff);
 				}
 				
