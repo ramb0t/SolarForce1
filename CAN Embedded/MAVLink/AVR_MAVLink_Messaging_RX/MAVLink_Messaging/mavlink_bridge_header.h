@@ -77,17 +77,17 @@ static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const char *c
 
     if (chan == MAVLINK_COMM_0)
     {
-		if( !(UCSR0A & (1<<UDRE0)) )
-		{
+		//if( !(UCSR0A & (1<<UDRE0)) )
+		//{
 			for(int i=0;i < length;i++){
 			uart_putc(ch[i]);
-			}
+		//	}
 		}
     }
 }
 
 
-#include "mavlink.h"				//MAVLink framework
+#include "./solarCar/mavlink.h"				//MAVLink framework
 
 
 #endif /* MAVLINK_BRIDGE_HEADER_H_ */

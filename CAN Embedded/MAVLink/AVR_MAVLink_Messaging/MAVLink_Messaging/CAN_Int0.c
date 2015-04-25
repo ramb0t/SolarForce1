@@ -212,7 +212,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 				
-				case	GYRO_CANID:
+				case	ACGY1 || ACGY2 || ACGY3:
 				{	
 					//uart_puts("\n");
 					//uart_puts("CAN from GY:");
@@ -224,7 +224,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 				
-				case	ACCELO_CANID:
+				case	ACGY2:
 				{
 					//uart_puts("\n");
 					//uart_puts("CAN from GY:");

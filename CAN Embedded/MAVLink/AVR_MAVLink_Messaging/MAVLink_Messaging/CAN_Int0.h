@@ -48,8 +48,9 @@
 #define BMS_7_CANID			0x0627
 #define BMS_8_CANID			0x0628
 
-#define ACCELO_CANID		0x0011
-#define GYRO_CANID			0x0012
+#define ACGY1				0x0820
+#define ACGY2				0x0821
+#define	ACGY3				0x0822
 
 #define MPPT1_CANID			0x0771
 #define MPPT2_CANID			0x0772

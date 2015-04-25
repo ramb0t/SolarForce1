@@ -38,6 +38,8 @@
 
 #include "mavlink_bridge_header.h"  //UART & convenience headers
 
+#include "GlobalDefs.h"
+
 mavlink_status_t* mavlink_get_channel_status(uint8_t chan);
 mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
@@ -46,8 +48,7 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 #define MOTOR_DRIVER_CANID	0x420
 #define HALL_EFFECT_CANID	0x420
 
-#define HE_TXID				420
-#define MD_TXID				421
+#define HESPD_TXID			420
 
 #define BMS_TXID			1
 #define AC_TXID				2
@@ -62,7 +63,7 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 volatile uint8_t counter=0;				//counts data on UART bus for connection check
 volatile uint8_t ctr2=0;				//counts bytes passing thru MAVLink frame for length check
 volatile uint16_t hb_lost = 0;			//counts cycles since last heartbeat
-
+volatile GlobalVars	rxData;
 
 char MAV_Rx_buff[10];
 
@@ -79,9 +80,5 @@ void MAV_msg_Unpack();
 void MAV_uart_send(uint8_t [],uint8_t);
 void GPS_readData(void);
 
-static inline void mavlink_msg_motor_driver_decode(const mavlink_message_t* msg, mavlink_motor_driver_t* motor_driver);
-
-
- 
 
 #endif /* MAVLINK_MESSAGING_H_ */

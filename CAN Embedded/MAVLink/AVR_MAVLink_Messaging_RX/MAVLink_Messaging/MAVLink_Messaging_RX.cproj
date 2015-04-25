@@ -160,6 +160,9 @@
     <Compile Include="checksum.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="GlobalDefs.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="mavlink_bridge_header.h">
       <SubType>compile</SubType>
     </Compile>
@@ -193,19 +196,22 @@
     <Compile Include="solarCar\mavlink_msg_bms_data.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="solarCar\mavlink_msg_extra1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_extra2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_extra3.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="solarCar\mavlink_msg_gps.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="solarCar\mavlink_msg_gps_raw.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="solarCar\mavlink_msg_hall_effect.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="solarCar\mavlink_msg_heartbeat.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="solarCar\mavlink_msg_motor_driver.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="solarCar\mavlink_msg_mppt1_data.h">
@@ -218,6 +224,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="solarCar\mavlink_msg_mppt4_data.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_speed_halleffect.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="solarCar\mavlink_msg_sys_status.h">

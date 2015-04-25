@@ -21,12 +21,7 @@
 #define MAVLINK_CRC_EXTRA 1
 #endif
 
-#ifndef MAVLINK_CHECK_MESSAGE_LENGTH
-#define MAVLINK_CHECK_MESSAGE_LENGTH 1
-#endif
-
 #include "version.h"
 #include "solarCar.h"
-
 
 #endif // MAVLINK_H
