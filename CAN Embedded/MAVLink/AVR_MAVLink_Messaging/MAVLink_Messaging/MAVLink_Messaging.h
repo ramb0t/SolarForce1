@@ -36,7 +36,71 @@
 #define TX_ENABLE			(1<<TXEN0)
 #define TX_DISABLE			(0<<TXEN0)
 
-//------------GLobal -----------------//
+//------------GLobal Defines-------------------------------//
+
+typedef struct 
+{
+	//------------BMS DATA----------------//
+	//BMS Data Flags
+	uint8_t		BMSData_warnings[7];		//Warnings and flags
+	//BMS voltages & IDs
+	uint16_t	packVoltage;				//Voltages
+	uint8_t		maxVoltage;	
+	uint8_t		maxVoltageID;
+	uint8_t		minVoltage;
+	uint8_t		minVoltageID;
+	
+	//BMS Charge Limits					
+	uint16_t	chargeLimit;
+	uint16_t	dischargeLimit;
+	uint16_t	current;
+	
+	//BMS Battery Energy
+	uint32_t	batteryEnergyIn;
+	uint32_t	batteryEnergyOut;
+	
+	//BMS Battery Params
+	uint16_t	capacity;					//capacity of bank
+	uint16_t	DOD;						//discharge depth
+	uint8_t		SOC;						//state of charge	
+	
+	//Temperatures
+	uint8_t		maxTemperature;
+	uint8_t		maxTempID;
+	uint8_t		minTemperature;
+	uint8_t		minTempID;
+	uint8_t		temperature;
+	
+	//Resistances
+	uint16_t	packResistance;
+	uint8_t		minRes;
+	uint8_t		minResID;
+	uint8_t		maxRes;
+	uint8_t		maxResID;
+//------------MPPT DATA----------------//	
+	uint16_t		Vin;
+	uint16_t		Vout;
+	uint8_t			Tamb;
+	uint8_t			mppt_flags;
+	
+}GlobalVars;
+
+typedef struct
+{
+	//BMS flags
+	uint8_t		BMS
+	
+}GlobalVars_flags;
+
+volatile CANMessage Speed_Message;			//Aggregated Speed Board msg
+volatile CANMessage BMS_Message;				//BMS data message
+volatile CANMessage MPPT1_Message;			//MPPT messages
+volatile CANMessage MPPT2_Message;			//MPPT messages
+volatile CANMessage MPPT3_Message;			//MPPT messages
+volatile CANMessage MPPT4_Message;			//MPPT messages
+volatile CANMessage Gyro_Message;			//gyro messages
+volatile CANMessage Accelo_message;			//Accelerometer messages
+
 
 
 //-------------CAN Defines----------------------------------//
@@ -109,15 +173,6 @@ uint8_t gpslen;
 
 //------------Library Objects----------------------------//
 //CAN library objects per device
-
-volatile CANMessage Speed_Message;			//Aggregated Speed Board msg
-volatile CANMessage BMS_Message;				//BMS data message
-volatile CANMessage MPPT1_Message;			//MPPT messages
-volatile CANMessage MPPT2_Message;			//MPPT messages
-volatile CANMessage MPPT3_Message;			//MPPT messages
-volatile CANMessage MPPT4_Message;			//MPPT messages
-volatile CANMessage Gyro_Message;			//gyro messages
-volatile CANMessage Accelo_message;			//Accelerometer messages
 
 
 //------------MAVLink Function Prototypes------------------------//

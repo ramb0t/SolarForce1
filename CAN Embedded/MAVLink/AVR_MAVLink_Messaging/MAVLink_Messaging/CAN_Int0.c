@@ -249,6 +249,11 @@ uint8_t CAN_Decode(CANMessage *message)
 				
 				case	MPPT1_CANID:
 				{	
+					//----METHOD TO BITSHIFT--------//
+					/*uint16_t val = (byte4&0x03)<<8;
+					val &= 0xff00;
+					val |= (byte5&0x00ff);*/
+					
 					//uart_puts("\n");
 					//uart_puts("CAN from MPPT1:");
 					//uart_puts(message->id);
