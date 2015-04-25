@@ -93,19 +93,20 @@ int main (void)
 	//----------------new code---------------//
 
 	//this goes true every 500ms
-
+	
 	if (updateMAV_flag == TRUE)
 	{
-		//uart_puts("hi");
 		MAV_HB_send();					//send MAVLink heartbeat	
 		MAV_msg_pack();					//selectively send MAVLink packets
 		updateMAV_flag = FALSE;
 	}
 	
-	//if (updateGPS_flag = TRUE)
+	
+	
+	//if (updateGPS_flag == TRUE)
 	//{
-		//GPS_readData();					//store GPS data to global fields
-		//updateGPS_flag = FALSE;			//GPS has been 
+	//	GPS_readData();					//store GPS data to global fields
+	//	updateGPS_flag = FALSE;			//GPS has been 
 	//}
 
 
@@ -332,7 +333,7 @@ void CAN_readData()
 						for (int i=0;i<4;i++)
 						{
 							uart_puts(":");
-							itoa(Input_Message.data[i],buff,10);	//convert to ascii form
+							utoa(Input_Message.data[i],buff,10);	//convert to ascii form
 							Speed_Message.data[i] = Input_Message.data[i]; //store into CAN object for speed
 							uart_puts(buff);
 						}
@@ -343,7 +344,7 @@ void CAN_readData()
 						uart_puts(Input_Message.id);
 						for (int i=4;i<8;i++)
 						{
-						itoa(Input_Message.data[i],buff,10);
+						utoa(Input_Message.data[i],buff,10);
 						Speed_Message.data[i] = Input_Message.data[i];
 						uart_puts(buff);
 						}

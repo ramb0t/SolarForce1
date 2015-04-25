@@ -31,24 +31,57 @@ BU_: SpeedNode RFNode DisplayNode BMS MPPT
 BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
  SG_ State : 0|1@0+ (1,0) [0|0] "" Vector__XXX
 
-BO_ 1576 BMSSTPM9: 6 BMS
+BO_ 1576 BMSSTPM8: 6 BMS
 
-BO_ 1575 BMSSTPM8: 6 BMS
+BO_ 1575 BMSSTPM7: 6 BMS
 
-BO_ 1574 BMSSTPM7: 7 BMS
+BO_ 1574 BMSSTPM6: 7 BMS
 
-BO_ 1573 BMSSTPM6: 8 BMS
+BO_ 1573 BMSSTPM5: 8 BMS
 
-BO_ 1572 BMSSTPM5: 6 BMS
+BO_ 1572 BMSSTPM4: 6 BMS
 
-BO_ 1571 BMSSTPM4: 6 BMS
+BO_ 1571 BMSSTPM3: 6 BMS
+ SG_ PackVoltage : 7|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MinVoltage : 23|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MinVoltageID : 31|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxVoltage : 7|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxVoltageID : 7|8@0+ (1,0) [0|0] "" Vector__XXX
 
-BO_ 1570 BMSSTPM3: 7 BMS
+BO_ 1570 BMSSTPM2: 7 BMS
  SG_ FaultState : 0|1@1+ (1,0) [0|0] "" Vector__XXX
  SG_ ContactorK1 : 1|1@1+ (1,0) [0|0] "" Vector__XXX
  SG_ ContactorK2 : 2|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ CANContactorRQ : 28|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ContactorK3 : 3|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ RelayFault : 4|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ SrcPower : 24|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ LoadPwr : 25|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ InterlockTrip : 26|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ HWContactorRQ : 27|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Timer : 15|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ HLIMSet : 29|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ LLIMSet : 30|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ FanOn : 31|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ StoredFaults : 39|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ PluginDriveOff : 40|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ InterlockTrip_Stored : 41|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ CommFaultBank : 42|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ CrgOvercurrent : 43|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ DischOvercurrent : 44|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Overtemp : 45|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Undervolt : 46|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Overvolt : 47|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ LowVolt_Warn : 48|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ HiVolt_Warn : 49|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Chrge_OC_Warn : 50|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Discg_OC_Warn : 51|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ColdTemp_Warn : 52|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ HotTemp_Warn : 53|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ lowSOH_Warn : 54|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ IsolatioFault_Warn : 55|1@1+ (1,0) [0|0] "" Vector__XXX
 
-BO_ 1569 BMSSTPM2: 8 BMS
+BO_ 1569 BMSSTPM1: 8 BMS
  SG_ Rev : 7|64@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 100 Speed: 8 SpeedNode
@@ -66,7 +99,7 @@ BO_ 1905 MPPTAnswer1: 7 MPPT
 
 BO_ 0 GPS: 8 RFNode
 
-BO_ 1568 BMSSTPM1: 8 BMS
+BO_ 1568 BMSSTPM0: 8 BMS
  SG_ ELITHION : 7|64@0+ (1,0) [0|0] "" Vector__XXX
 
 

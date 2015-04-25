@@ -36,11 +36,15 @@
 #define TX_ENABLE			(1<<TXEN0)
 #define TX_DISABLE			(0<<TXEN0)
 
+//------------GLobal -----------------//
+
 
 //-------------CAN Defines----------------------------------//
 
 #define MOTOR_DRIVER_CANID	0x0420
 #define HALL_EFFECT_CANID	0x0420
+// #420 BLAZING TIME :P!!
+
 
 #define BMS_1_CANID			0x0621
 #define BMS_2_CANID			0x0622

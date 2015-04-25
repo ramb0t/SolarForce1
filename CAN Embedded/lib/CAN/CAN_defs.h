@@ -12,6 +12,7 @@
 //Definitions of the Message IDs on the Network
 
 #define CANID_SPEED			0x0420
+// #420 BLAZING TIME :P!!
 
 #define CANID_BMSDEFAULT	0x0620
 #define CANID_BMS0			CANID_BMSDEFAULT + 0
