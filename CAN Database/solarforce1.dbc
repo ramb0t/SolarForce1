@@ -64,8 +64,8 @@ BO_ 1571 BMSSTPM3: 6 BMS
  SG_ PackVoltage : 7|16@0+ (1,0) [0|0] "" Vector__XXX
  SG_ MinVoltage : 23|8@0+ (1,0) [0|0] "" Vector__XXX
  SG_ MinVoltageID : 31|8@0+ (1,0) [0|0] "" Vector__XXX
- SG_ MaxVoltage : 7|8@0+ (1,0) [0|0] "" Vector__XXX
- SG_ MaxVoltageID : 7|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxVoltage : 39|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ MaxVoltageID : 47|8@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1570 BMSSTPM2: 7 BMS
  SG_ FaultState : 0|1@1+ (1,0) [0|0] "" Vector__XXX
@@ -103,8 +103,13 @@ BO_ 1570 BMSSTPM2: 7 BMS
 BO_ 1569 BMSSTPM1: 8 BMS
  SG_ Rev : 7|64@0+ (1,0) [0|0] "" Vector__XXX
 
-BO_ 100 Speed: 8 SpeedNode
- SG_ SpeedValue : 0|8@1+ (1,0) [0|255] "kmph" Vector__XXX
+BO_ 1056 Speed: 8 SpeedNode
+ SG_ AverageSpeed : 7|8@0+ (1,0) [0|255] "kmph" Vector__XXX
+ SG_ hesRPM : 23|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ hesSpeed : 15|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ motorSpeed : 39|8@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ motorRPM : 47|16@0+ (1,0) [0|0] "" Vector__XXX
+ SG_ Status : 63|8@0+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 1905 MPPTAnswer1: 7 MPPT
  SG_ Iin : 17|10@0+ (1,0) [0|0] "" Vector__XXX

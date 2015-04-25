@@ -26,6 +26,10 @@
 // Timer0
 #include "Mavlink_Timer0.h"
 
+#include "GlobalDefs.h"
+
+//#include "MAVLink_Messaging.h"
+
 //define returned CAN data
 #define CAN_MSG_DECODED 1
 #define CAN_NOT_DECODED 0
@@ -33,8 +37,7 @@
 //---------------CAN IDs-----------------//
 
 
-#define MOTOR_DRIVER_CANID	0x0420
-#define HALL_EFFECT_CANID	0x0420
+#define SPEED_HE_CANID		0x0420
 
 #define BMS_1_CANID			0x0621
 #define BMS_2_CANID			0x0622
@@ -54,19 +57,11 @@
 #define MPPT4_CANID			0x0774
 
 //---------------Variables---------------//
-CANMessage Input_data;
+volatile CANMessage Input_data;
 extern volatile uint8_t		message_decoded;
 extern volatile	uint8_t		flag;
-volatile char						buff[10];
-
-extern volatile CANMessage Speed_Message;			//Aggregated Speed Board msg
-extern volatile CANMessage BMS_Message;				//BMS data message
-extern volatile CANMessage MPPT1_Message;			//MPPT messages
-extern volatile CANMessage MPPT2_Message;			//MPPT messages
-extern volatile CANMessage MPPT3_Message;			//MPPT messages
-extern volatile CANMessage MPPT4_Message;			//MPPT messages
-extern volatile CANMessage Gyro_Message;			//gyro messages
-extern volatile CANMessage Accelo_message;			//Accelerometer messages
+volatile char				buff[10];
+volatile GlobalVars	CANData;
 
 //flags for if any variables have updated
 volatile	uint8_t		speedHEUpdated;

@@ -6,6 +6,7 @@
  */ 
 
 #include "MAVLink_Messaging.h"
+#include "GlobalDefs.h"
 
 #define DEBUG	0
 
@@ -169,14 +170,14 @@ void GPS_readData()
 			{	
 				if (uart_available())
 				{
-					gps_string[ctr+1] = uart_getc();		//as long as EOL symbol * not reached
+					gps_string[gpsctr+1] = uart_getc();		//as long as EOL symbol * not reached
 					//uart_putc(gps_string[ctr+1]);
-					ctr++;									//populate GPRMC NMEA sentence
+					gpsctr++;									//populate GPRMC NMEA sentence
 				}
 		
-			}while (gps_string[ctr] !='*');
-			gpslen = ctr;									
-			ctr=0;
+			}while (gps_string[gpsctr] !='*');
+			gpslen = gpsctr;									
+			gpsctr=0;
 			
 			if (gps_string[5]=='C')							//Only GPRMC sentence has a 'C' so isolate this
 			{
@@ -226,318 +227,318 @@ void ParseGPS ()
 
 }
 
-void CAN_readData()
-{
-	LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
-
-	CANMessage Input_Message;			//Generic/temp CAN input msg
-	//CANMessage Input_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;
-	//zCANMessage Speed_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;	
-
-	//uart_flush();
-		
-			//_delay_ms(20);
-		
-		char buff[10] ;
-	
-	cli();				//Interrupts off
-	
-	if (~(PIND & (1<<PIND1)))	//if interrupt not triggered fill msg buffer
-	{
-		CAN_fillBuffer();
-	}
-	
-	sei();				//Interrupts on again
-	
-	if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
-	{
-	//-------------------DEBUG CODE!-------------------------//
-	uart_puts("MSGAVAIL");	
-	if(DEBUG)
-	{
-		
-			uart_puts("<<<<START OF MESSAGE>>>>\n");
-			uart_puts("\nCAN DATA\n");
-			
-			itoa(CAN_checkReceiveAvailable(), buff,10);
-			/*TEST DISPLAY*/		uart_puts("RX:");
-			uart_puts(buff);
-			uart_puts(",");
-			itoa(CAN_checkError(),buff,10);
-			/*TEST DISPLAY*/		uart_puts("Err:");
-			uart_puts(buff);
-			uart_puts(",");
-			uart_puts(",");
-		
-			
-			
-	}//-------------------END DEBUG CODE!-------------------------//
-	
-				//-----------------Pull MPPT data----------------//
-				//Input_Message.id = 0x771;
-				//Input_Message.rtr = 1;
-				//Input_Message.length = 0;
+//void CAN_readData()
+//{
+	//LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 //
-				 ////Send the request
-				//CAN_sendMessage(&Input_Message);
-				
-				//-------------------Receive Data----------------//
-			
-			int rx_Result;
-			rx_Result = CAN_getMessage_Buffer(&Input_Message);			//read a byte of CAN data
-			
-			if (rx_Result == CAN_OK)							//if read correctly...
-			{
-				////buff[0] = "\0";
-				//itoa(Input_Message.id,buff,10);					//read ASCII-converted byte into buffer
-///*TEST DISPLAY*/uart_puts("\nCAN ID:");
-				//uart_puts(buff);								//output bytestring to UART
-				
-			while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
-			{	
-				if (canmsgctr > 15)
-				{
-					canmsgctr = 0;
-					break;
-				}
-				canmsgctr++;
-				if (CAN_getMessage_Buffer(&Input_Message) == CAN_OK)
-				{
-					//-----------------------Switches for detecting CAN ID--------------------------//
-
-
-				switch (Input_Message.id)
-				{
-					/*Speed	Data is aggregated across the Hall Effect and Motor Driver nodes
-					Data as follows 
-					Base ID 0x420
-					<<Sent as "Hall Effect in MAVID">>
-					SpeedData[0] = Averaged HE and Motor RPM Speed;
-					SpeedData[1] = HallEffect speed
-					SpeedData[2] = Hall RPM L
-					SpeedData[3] = Hall RPM H
-					
-					<<Sent as MotorDriver in MAVID">>
-					SpeedData[4] = MotorDriver Speed
-					SpeedData[5] = MotorDriver RPM L
-					SpeedData[6] = MotorDriver RPM H
-					SpeedData[7] = Status flag
-					
-					*/
-				case 	MOTOR_DRIVER_CANID:
-				{
-						uart_puts("\n");
-						uart_puts("CAN from MD:");
-						uart_puts(Input_Message.id);				//Human readable data on UART
-						uart_puts(":");
-						for (int i=0;i<4;i++)
-						{
-							uart_puts(":");
-							utoa(Input_Message.data[i],buff,10);	//convert to ascii form
-							Speed_Message.data[i] = Input_Message.data[i]; //store into CAN object for speed
-							uart_puts(buff);
-						}
-					
-					
-						uart_puts("\n");
-						uart_puts("CAN from HE:");
-						uart_puts(Input_Message.id);
-						for (int i=4;i<8;i++)
-						{
-						utoa(Input_Message.data[i],buff,10);
-						Speed_Message.data[i] = Input_Message.data[i];
-						uart_puts(buff);
-						}
-				}break;
-					
-				/*NOTE: BMS Data across different messages, we want:
-				Base CANID =	BMS[0] = 0x0620
-								BMS[1] = 0x0621
-								BMS[2] = 0x0622
-								BMS[3] = 0x0623
-								BMS[4] = 0x0624
-								BMS[5] = 0x0625
-								BMS[6] = 0x0626
-								BMS[7] = 0x0627
-								BMS[8] = 0x0628
-						.........................................................................
-						Parameters	 Value	Detail							CANID byte			CAN Object Number	Range/Type
-						...........................................................................
-						2 = uint8_t fault condition?						BMS[2].data[3]		BMSdata[0]					0=no 1=yes
-						3 = uint16_t source current							BMS[5].data[0]		BMSdata[1]					0-65535mA
-						4 = uint16_t net_current (load)						BMS[4].data[0]		BMSdata[2]					0-65535mA
-						5 = char bat_fan_status																				t=OK f=FAULT
-						6 = uint8_t LLIM_state																				1=flag active 0=flag not active
-						7 = uint8_t HLIM_state																				1=flag active 0=flag not active
-						8 = uint8_t state_of_chg (percentage)				BMS[6].data[0]		BMSdata[3]					0-100%
-						9 = uint16_t pack_voltage							BMS[3].data[0]		BMSdata[4]					0-65535V
-						10 = const uint16_t *cell_voltages [low,avg,high]	BMS[3].data[1,3]	BMSdata[5,6,7]					0-65535V per element
-						11 = const uint16_t *cell_temps [low,avg,high]		BMS[7].data[2,4]	BMSdata[8,9,10]					0-65535C per element
-						12 = uint8_t system_status												MAVLINK_ENUM
-				
-				*/
-					
-				case	BMS_2_CANID:
-				{
-					uart_puts("\n");
-					uart_puts("CAN from BMS2:");					//Human readable data on UART
-					uart_puts(Input_Message.id);
-					
-					itoa(Input_Message.data[3],buff,10);		//fault flags
-					BMS_Message.data[0] = Input_Message.data[3];
-					uart_puts(buff);
-					
-					//for (int i=0;i<16;i++)						//16 data fields
+	//CANMessage Input_Message;			//Generic/temp CAN input msg
+	////CANMessage Input_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;
+	////zCANMessage Speed_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}}; ;	
+//
+	////uart_flush();
+		//
+			////_delay_ms(20);
+		//
+		//char buff[10] ;
+	//
+	//cli();				//Interrupts off
+	//
+	//if (~(PIND & (1<<PIND1)))	//if interrupt not triggered fill msg buffer
+	//{
+		//CAN_fillBuffer();
+	//}
+	//
+	//sei();				//Interrupts on again
+	//
+	//if(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
+	//{
+	////-------------------DEBUG CODE!-------------------------//
+	//uart_puts("MSGAVAIL");	
+	//if(DEBUG)
+	//{
+		//
+			//uart_puts("<<<<START OF MESSAGE>>>>\n");
+			//uart_puts("\nCAN DATA\n");
+			//
+			//itoa(CAN_checkReceiveAvailable(), buff,10);
+			///*TEST DISPLAY*/		uart_puts("RX:");
+			//uart_puts(buff);
+			//uart_puts(",");
+			//itoa(CAN_checkError(),buff,10);
+			///*TEST DISPLAY*/		uart_puts("Err:");
+			//uart_puts(buff);
+			//uart_puts(",");
+			//uart_puts(",");
+		//
+			//
+			//
+	//}//-------------------END DEBUG CODE!-------------------------//
+	//
+				////-----------------Pull MPPT data----------------//
+				////Input_Message.id = 0x771;
+				////Input_Message.rtr = 1;
+				////Input_Message.length = 0;
+////
+				 //////Send the request
+				////CAN_sendMessage(&Input_Message);
+				//
+				////-------------------Receive Data----------------//
+			//
+			//int rx_Result;
+			//rx_Result = CAN_getMessage_Buffer(&Input_Message);			//read a byte of CAN data
+			//
+			//if (rx_Result == CAN_OK)							//if read correctly...
+			//{
+				//////buff[0] = "\0";
+				////itoa(Input_Message.id,buff,10);					//read ASCII-converted byte into buffer
+/////*TEST DISPLAY*/uart_puts("\nCAN ID:");
+				////uart_puts(buff);								//output bytestring to UART
+				//
+			//while(CAN_checkReceiveAvailable()==CAN_MSGAVAIL)
+			//{	
+				//if (canmsgctr > 15)
+				//{
+					//canmsgctr = 0;
+					//break;
+				//}
+				//canmsgctr++;
+				//if (CAN_getMessage_Buffer(&Input_Message) == CAN_OK)
+				//{
+					////-----------------------Switches for detecting CAN ID--------------------------//
+//
+//
+				//switch (Input_Message.id)
+				//{
+					///*Speed	Data is aggregated across the Hall Effect and Motor Driver nodes
+					//Data as follows 
+					//Base ID 0x420
+					//<<Sent as "Hall Effect in MAVID">>
+					//SpeedData[0] = Averaged HE and Motor RPM Speed;
+					//SpeedData[1] = HallEffect speed
+					//SpeedData[2] = Hall RPM L
+					//SpeedData[3] = Hall RPM H
+					//
+					//<<Sent as MotorDriver in MAVID">>
+					//SpeedData[4] = MotorDriver Speed
+					//SpeedData[5] = MotorDriver RPM L
+					//SpeedData[6] = MotorDriver RPM H
+					//SpeedData[7] = Status flag
+					//
+					//*/
+				//case 	SPEED_HE_CANID:
+				//{
+						//uart_puts("\n");
+						//uart_puts("CAN from MD:");
+						//uart_puts(Input_Message.id);				//Human readable data on UART
+						//uart_puts(":");
+						//for (int i=0;i<4;i++)
+						//{
+							//uart_puts(":");
+							//utoa(Input_Message.data[i],buff,10);	//convert to ascii form
+							//Speed_Message.data[i] = Input_Message.data[i]; //store into CAN object for speed
+							//uart_puts(buff);
+						//}
+					//
+					//
+						//uart_puts("\n");
+						//uart_puts("CAN from HE:");
+						//uart_puts(Input_Message.id);
+						//for (int i=4;i<8;i++)
+						//{
+						//utoa(Input_Message.data[i],buff,10);
+						//Speed_Message.data[i] = Input_Message.data[i];
+						//uart_puts(buff);
+						//}
+				//}break;
+					//
+				///*NOTE: BMS Data across different messages, we want:
+				//Base CANID =	BMS[0] = 0x0620
+								//BMS[1] = 0x0621
+								//BMS[2] = 0x0622
+								//BMS[3] = 0x0623
+								//BMS[4] = 0x0624
+								//BMS[5] = 0x0625
+								//BMS[6] = 0x0626
+								//BMS[7] = 0x0627
+								//BMS[8] = 0x0628
+						//.........................................................................
+						//Parameters	 Value	Detail							CANID byte			CAN Object Number	Range/Type
+						//...........................................................................
+						//2 = uint8_t fault condition?						BMS[2].data[3]		BMSdata[0]					0=no 1=yes
+						//3 = uint16_t source current							BMS[5].data[0]		BMSdata[1]					0-65535mA
+						//4 = uint16_t net_current (load)						BMS[4].data[0]		BMSdata[2]					0-65535mA
+						//5 = char bat_fan_status																				t=OK f=FAULT
+						//6 = uint8_t LLIM_state																				1=flag active 0=flag not active
+						//7 = uint8_t HLIM_state																				1=flag active 0=flag not active
+						//8 = uint8_t state_of_chg (percentage)				BMS[6].data[0]		BMSdata[3]					0-100%
+						//9 = uint16_t pack_voltage							BMS[3].data[0]		BMSdata[4]					0-65535V
+						//10 = const uint16_t *cell_voltages [low,avg,high]	BMS[3].data[1,3]	BMSdata[5,6,7]					0-65535V per element
+						//11 = const uint16_t *cell_temps [low,avg,high]		BMS[7].data[2,4]	BMSdata[8,9,10]					0-65535C per element
+						//12 = uint8_t system_status												MAVLINK_ENUM
+				//
+				//*/
+					//
+				//case	BMS_2_CANID:
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from BMS2:");					//Human readable data on UART
+					//uart_puts(Input_Message.id);
+					//
+					//itoa(Input_Message.data[3],buff,10);		//fault flags
+					//BMS_Message.data[0] = Input_Message.data[3];
+					//uart_puts(buff);
+					//
+					////for (int i=0;i<16;i++)						//16 data fields
+					////{
+						////itoa(Input_Message.data[i],buff,10);
+						////BMS_Message.data[i] = Input_Message.data[i]; //store into CAN object for BMS
+						////uart_puts(buff);
+					////}
+				//}break;
+					//
+				//case	BMS_3_CANID:
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from BMS3:");					//Human readable data on UART
+					//uart_puts(Input_Message.id);
+					//
+					//itoa(Input_Message.data[0],buff,10);		//low pack voltage
+					//BMS_Message.data[5] = (Input_Message.data[2]<<8)|(Input_Message.data[3]);
+					//uart_puts(buff);
+					//
+					//itoa(Input_Message.data[0],buff,10);		// avg pack voltages
+					//BMS_Message.data[6] = (Input_Message.data[0]<<8)|(Input_Message.data[1]);
+					//uart_puts(buff);
+					//
+					//itoa(Input_Message.data[0],buff,10);		//high pack voltages
+					//BMS_Message.data[7] = (Input_Message.data[4]<<8)|(Input_Message.data[5]);
+					//
+					//uart_puts(buff);
+				//}break;
+				//
+				//case	BMS_4_CANID:
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from BMS4:");					//Human readable data on UART
+					//uart_puts(Input_Message.id);
+					//
+					//itoa(Input_Message.data[0],buff,10);		//pack current
+					//itoa(Input_Message.data[1],buff,10);
+					//BMS_Message.data[2] = (Input_Message.data[0]<<8)|(Input_Message.data[1]);
+					//uart_puts(buff);
+				//}break;
+				//
+//
+				//case	BMS_6_CANID:
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from BMS6:");					//Human readable data on UART
+					//uart_puts(Input_Message.id);
+				//
+					//itoa(Input_Message.data[0],buff,10);		//SOC
+					//BMS_Message.data[3] = Input_Message.data[0];
+					//uart_puts(buff);
+				//}break;
+				//
+				//case	BMS_7_CANID:
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from BMS7:");					//Human readable data on UART
+					//uart_puts(Input_Message.id);
+				//
+					//itoa(Input_Message.data[2],buff,10);			//Min temps
+					//uart_puts(buff);
+					//itoa(Input_Message.data[3],buff,10);			//Min temps
+					//uart_puts(buff);
+					//BMS_Message.data[8] = (Input_Message.data[2]<<8)|(Input_Message.data[3]);
+					//
+				//
+					//itoa(Input_Message.data[0],buff,10);			//Avg temps
+					//BMS_Message.data[9] = Input_Message.data[0];
+					//uart_puts(buff);
+				//
+					//itoa(Input_Message.data[4],buff,10);			//Max temps
+					//BMS_Message.data[10] = (Input_Message.data[4]<<8)|(Input_Message.data[5]);
+					//uart_puts(buff);
+				//}break;
+				//
+				//case	GYRO_CANID:
+				//{	
+					//uart_puts("\n");
+					//uart_puts("CAN from GY:");
+					//uart_puts(Input_Message.id);
+					//Gyro_Message.data[0] = Input_Message.data[0];
+					//uart_puts(buff);
+//
+				//}break;
+				//
+				//case	ACCELO_CANID:
+				//{
+					//uart_puts("\n");
+					//uart_puts("CAN from GY:");
+					//uart_puts(Input_Message.id);
+					//Accelo_message.data[1] = Input_Message.data[1];
+					//uart_puts(buff);
+				//}break;
+				//
+				//case	MPPT1_CANID:
+				//{	
+					//uart_puts("\n");
+					//uart_puts("CAN from MPPT1:");
+					//uart_puts(Input_Message.id);
+					//for (int i=0;i<4;i++)						//4 data fields
 					//{
 						//itoa(Input_Message.data[i],buff,10);
-						//BMS_Message.data[i] = Input_Message.data[i]; //store into CAN object for BMS
+						//MPPT1_Message.data[i] = Input_Message.data[i];
 						//uart_puts(buff);
 					//}
-				}break;
-					
-				case	BMS_3_CANID:
-				{
-					uart_puts("\n");
-					uart_puts("CAN from BMS3:");					//Human readable data on UART
-					uart_puts(Input_Message.id);
-					
-					itoa(Input_Message.data[0],buff,10);		//low pack voltage
-					BMS_Message.data[5] = (Input_Message.data[2]<<8)|(Input_Message.data[3]);
-					uart_puts(buff);
-					
-					itoa(Input_Message.data[0],buff,10);		// avg pack voltages
-					BMS_Message.data[6] = (Input_Message.data[0]<<8)|(Input_Message.data[1]);
-					uart_puts(buff);
-					
-					itoa(Input_Message.data[0],buff,10);		//high pack voltages
-					BMS_Message.data[7] = (Input_Message.data[4]<<8)|(Input_Message.data[5]);
-					
-					uart_puts(buff);
-				}break;
-				
-				case	BMS_4_CANID:
-				{
-					uart_puts("\n");
-					uart_puts("CAN from BMS4:");					//Human readable data on UART
-					uart_puts(Input_Message.id);
-					
-					itoa(Input_Message.data[0],buff,10);		//pack current
-					itoa(Input_Message.data[1],buff,10);
-					BMS_Message.data[2] = (Input_Message.data[0]<<8)|(Input_Message.data[1]);
-					uart_puts(buff);
-				}break;
-				
-
-				case	BMS_6_CANID:
-				{
-					uart_puts("\n");
-					uart_puts("CAN from BMS6:");					//Human readable data on UART
-					uart_puts(Input_Message.id);
-				
-					itoa(Input_Message.data[0],buff,10);		//SOC
-					BMS_Message.data[3] = Input_Message.data[0];
-					uart_puts(buff);
-				}break;
-				
-				case	BMS_7_CANID:
-				{
-					uart_puts("\n");
-					uart_puts("CAN from BMS7:");					//Human readable data on UART
-					uart_puts(Input_Message.id);
-				
-					itoa(Input_Message.data[2],buff,10);			//Min temps
-					uart_puts(buff);
-					itoa(Input_Message.data[3],buff,10);			//Min temps
-					uart_puts(buff);
-					BMS_Message.data[8] = (Input_Message.data[2]<<8)|(Input_Message.data[3]);
-					
-				
-					itoa(Input_Message.data[0],buff,10);			//Avg temps
-					BMS_Message.data[9] = Input_Message.data[0];
-					uart_puts(buff);
-				
-					itoa(Input_Message.data[4],buff,10);			//Max temps
-					BMS_Message.data[10] = (Input_Message.data[4]<<8)|(Input_Message.data[5]);
-					uart_puts(buff);
-				}break;
-				
-				case	GYRO_CANID:
-				{	
-					uart_puts("\n");
-					uart_puts("CAN from GY:");
-					uart_puts(Input_Message.id);
-					Gyro_Message.data[0] = Input_Message.data[0];
-					uart_puts(buff);
-
-				}break;
-				
-				case	ACCELO_CANID:
-				{
-					uart_puts("\n");
-					uart_puts("CAN from GY:");
-					uart_puts(Input_Message.id);
-					Accelo_message.data[1] = Input_Message.data[1];
-					uart_puts(buff);
-				}break;
-				
-				case	MPPT1_CANID:
-				{	
-					uart_puts("\n");
-					uart_puts("CAN from MPPT1:");
-					uart_puts(Input_Message.id);
-					for (int i=0;i<4;i++)						//4 data fields
-					{
-						itoa(Input_Message.data[i],buff,10);
-						MPPT1_Message.data[i] = Input_Message.data[i];
-						uart_puts(buff);
-					}
-				}break;
-				
-				case	MPPT2_CANID:
-				{
-				uart_puts("\n");
-				uart_puts("CAN from MPPT1:");
-				uart_puts(Input_Message.id);
-				for (int i=0;i<4;i++)						//4 data fields
-				{
-					itoa(Input_Message.data[i],buff,10);
-					MPPT2_Message.data[i] = Input_Message.data[i];
-					uart_puts(buff);
-				}
-				}break;
-				
-				case	MPPT3_CANID:
-				{
-				uart_puts("\n");
-				uart_puts("CAN from MPPT1:");
-				uart_puts(Input_Message.id);
-				for (int i=0;i<4;i++)						//4 data fields
-				{
-					itoa(Input_Message.data[i],buff,10);
-					MPPT3_Message.data[i] = Input_Message.data[i];
-					uart_puts(buff);
-				}
-				}break;
-				
-				case	MPPT4_CANID:
-				{
-				uart_puts("\n");
-				uart_puts("CAN from MPPT1:");
-				uart_puts(Input_Message.id);
-				for (int i=0;i<4;i++)						//4 data fields
-				{
-					itoa(Input_Message.data[i],buff,10);
-					MPPT4_Message.data[i] = Input_Message.data[i];
-					uart_puts(buff);
-				}
-				}break;
-				
-					}
-				}
-			}
-		}
-	}
-}
+				//}break;
+				//
+				//case	MPPT2_CANID:
+				//{
+				//uart_puts("\n");
+				//uart_puts("CAN from MPPT1:");
+				//uart_puts(Input_Message.id);
+				//for (int i=0;i<4;i++)						//4 data fields
+				//{
+					//itoa(Input_Message.data[i],buff,10);
+					//MPPT2_Message.data[i] = Input_Message.data[i];
+					//uart_puts(buff);
+				//}
+				//}break;
+				//
+				//case	MPPT3_CANID:
+				//{
+				//uart_puts("\n");
+				//uart_puts("CAN from MPPT1:");
+				//uart_puts(Input_Message.id);
+				//for (int i=0;i<4;i++)						//4 data fields
+				//{
+					//itoa(Input_Message.data[i],buff,10);
+					//MPPT3_Message.data[i] = Input_Message.data[i];
+					//uart_puts(buff);
+				//}
+				//}break;
+				//
+				//case	MPPT4_CANID:
+				//{
+				//uart_puts("\n");
+				//uart_puts("CAN from MPPT1:");
+				//uart_puts(Input_Message.id);
+				//for (int i=0;i<4;i++)						//4 data fields
+				//{
+					//itoa(Input_Message.data[i],buff,10);
+					//MPPT4_Message.data[i] = Input_Message.data[i];
+					//uart_puts(buff);
+				//}
+				//}break;
+				//
+					//}
+				//}
+			//}
+		//}
+	//}
+//}
 
 				//------------OLD METHOD---------------//
 				
@@ -895,37 +896,13 @@ void MAV_msg_pack()
 				.........................................................................
 				Parameters		 Value/Byte		Details							Range/Type
 				...........................................................................
+			/**/
+			
+			if (speedMDUpdated==1 || speedHEUpdated==1)
+			{
 				
-				uint8_t speed	SpeedData[4]	MotorDriver	Speed				0-255kmh
-				//DEPRECATED uint8_t speed	SpeedData[5]	MotorDriver	RPM	L				0-255RPM L
-				//DEPRECATED uint8_t rpm		SpeedData[6]	MotorDriver	RPM	H				0-255RPM H
-				uint8_t rpm		SpeedData[7]	Status bits						xxxxxxxx */
-//TESTING WAS SpeedMessage.data[1] BEFORE
-			if (speedMDUpdated==1)
-			{
-				mavlink_msg_motor_driver_send(0,Speed_Message.data[4],Speed_Message.data[7]);
-				speedMDUpdated=0;
-			}
-			
-			
-			/*-----------------------------------------------------------------------
-			NAME: Hall Effect Sensor Data
-			DESCRIPTION: Speed from the Hall Effect Sensors and error flags	
-			.........................................................................
-			Parameters		 Value/Byte		Details							Range/Type
-			...........................................................................
-							
-			uint8_t speed	SpeedData[0]	Averaged HE and Motor RPM Speed	0-255kmh
-			//DEPRECATED\\	uint8_t speed	SpeedData[1]	HallEffect speed				0=255kmh
-			uint8_t rpm		SpeedData[2]	Hall RPM L						0-255RPM
-			uint8_t rpm		SpeedData[3]	Hall RPM H						0-255RPM
-																					*/
-			
-			//uart_flush();
-			if (speedHEUpdated==1)
-			{
-				mavlink_msg_hall_effect_send(MAVLINK_COMM_0,Speed_Message.data[0],Speed_Message.data[2],Speed_Message.data[3]);
-				speedHEUpdated=0;
+				mavlink_msg_speed_halleffect_send(MAVLINK_COMM_0,mavSendData.avgSpeed,mavSendData.hesSPeed,mavSendData.hesRPM,mavSendData.motorSpeed,mavSendData.motorRPM,mavSendData.statusFlags);
+				speedMDUpdated = 0; speedHEUpdated = 0;
 			}
 			
 			
@@ -950,17 +927,16 @@ void MAV_msg_pack()
 						12 = uint8_t system_status												MAVLINK_ENUM
 								
 			*/
-			//					voltages min			voltage avg			voltage max
-			uint16_t volt[] = {BMS_Message.data[5],BMS_Message.data[6],BMS_Message.data[7]};
-				//				temp min				temp avg				temp max
-			uint16_t temp[] = {BMS_Message.data[8],BMS_Message.data[9],BMS_Message.data[10]};
-			uint16_t *cell_voltage = volt;	
-			uint16_t *cell_temp = temp;
-
 			//uart_flush();
 			if (bms1Updated==1)
 			{
-			mavlink_msg_bms_data_send(MAVLINK_COMM_0,BMS_Message.data[0],BMS_Message.data[1],BMS_Message.data[2],'t',0,0,BMS_Message.data[3],BMS_Message.data[4],cell_voltage,cell_temp,MAV_STATE_ACTIVE);
+			mavlink_msg_bms_data_send(MAVLINK_COMM_0,mavSendData.BMSData_warnings,mavSendData.maxVoltage,mavSendData.maxVoltageID,
+			mavSendData.minVoltage,mavSendData.minVoltageID,mavSendData.packVoltage,mavSendData.current,mavSendData.chargeLimit,
+			mavSendData.dischargeLimit,mavSendData.batteryEnergyIn,mavSendData.batteryEnergyOut,mavSendData.SOC,mavSendData.DOD,
+			mavSendData.capacity,mavSendData.SOH,mavSendData.minTempID,mavSendData.minTemperature,mavSendData.temperature,
+			mavSendData.maxTemperature,mavSendData.maxTempID,mavSendData.packResistance,mavSendData.minRes,mavSendData.minResID,
+			mavSendData.maxRes,mavSendData.maxResID,MAV_STATE_ACTIVE);
+			
 			bms1Updated=0;
 			}
 			/*-----------------------------------------------------------------------
@@ -990,24 +966,24 @@ void MAV_msg_pack()
 								7 = const char *date						12 characters max
 								8 = const char *lock_error					12 characters max "OK" or "INVALID"
 																					*/
-			char *latitude = parts[3];
-			char *longitude = parts[4];
-			char *time = parts[1];
-			char *date = parts[9];
-			char lock_flag = parts[2];
-			char *lock_error = lock_error[7];
-			
-			if (lock_flag == 'A')
-			{
-				lock_error = "OK";
-			}else lock_error = "INVALID";
-			
-			if (gps_needs_sending==TRUE)
-			{
-				mavlink_msg_gps_send(MAVLINK_COMM_0,latitude,longitude,time,date,lock_error);
-				gps_needs_sending=FALSE;
-			}
-			
+			//char *latitude = parts[3];
+			//char *longitude = parts[4];
+			//char *time = parts[1];
+			//char *date = parts[9];
+			//char lock_flag = parts[2];
+			//char *lock_error = lock_error[7];
+			//
+			//if (lock_flag == 'A')
+			//{
+				//lock_error = "OK";
+			//}else lock_error = "INVALID";
+			//
+			//if (gps_needs_sending==TRUE)
+			//{
+				//mavlink_msg_gps_send(MAVLINK_COMM_0,latitude,longitude,time,date,lock_error);
+				//gps_needs_sending=FALSE;
+			//}
+			//
 			
 			/*-----------------------------------------------------------------------
 			NAME: MPPT Data
@@ -1023,39 +999,39 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			if (mppt1Updated==1)
-			{
-				mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,MPPT1_Message.data[0],MPPT1_Message.data[1],MPPT1_Message.data[2],MPPT1_Message.data[3]);
-				//MPPT1_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-				mppt1Updated=0;
-			}
-
-			
-//TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			//MAV_uart_send(buf,len);
-			if (mppt2Updated==1)
-			{
-			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,MPPT2_Message.data[0],MPPT2_Message.data[1],MPPT2_Message.data[2],MPPT2_Message.data[3]);
-			//MPPT2_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			mppt2Updated=0;
-			}
-//TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			//MAV_uart_send(buf,len);
-			if (mppt3Updated==1)
-			{
-			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,MPPT3_Message.data[0],MPPT3_Message.data[1],MPPT3_Message.data[2],MPPT3_Message.data[3]);
-			//MPPT3_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			mppt3Updated=0;
-			}
-//TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			//MAV_uart_send(buf,len);
-			if (mppt4Updated==1)
-			{
-			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,MPPT4_Message.data[0],MPPT4_Message.data[1],MPPT4_Message.data[2],MPPT4_Message.data[3]);
-			//MPPT4_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			mppt4Updated=0;
-			}
-			
+			//if (mppt1Updated==1)
+			//{
+				//mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,MPPT1_Message.data[0],MPPT1_Message.data[1],MPPT1_Message.data[2],MPPT1_Message.data[3]);
+				////MPPT1_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
+				//mppt1Updated=0;
+			//}
+//
+			//
+////TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			////MAV_uart_send(buf,len);
+			//if (mppt2Updated==1)
+			//{
+			//mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,MPPT2_Message.data[0],MPPT2_Message.data[1],MPPT2_Message.data[2],MPPT2_Message.data[3]);
+			////MPPT2_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
+			//mppt2Updated=0;
+			//}
+////TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			////MAV_uart_send(buf,len);
+			//if (mppt3Updated==1)
+			//{
+			//mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,MPPT3_Message.data[0],MPPT3_Message.data[1],MPPT3_Message.data[2],MPPT3_Message.data[3]);
+			////MPPT3_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
+			//mppt3Updated=0;
+			//}
+////TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
+			////MAV_uart_send(buf,len);
+			//if (mppt4Updated==1)
+			//{
+			//mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,MPPT4_Message.data[0],MPPT4_Message.data[1],MPPT4_Message.data[2],MPPT4_Message.data[3]);
+			////MPPT4_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
+			//mppt4Updated=0;
+			//}
+			//
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
 			DESCRIPTION: MAVLink heartbeat required to confirm a connection is active
@@ -1123,6 +1099,13 @@ void MAV_msg_pack()
 			
 void MAV_HB_send()
 {
+		//------------MAVLink Function Prototypes------------------------//
+
+		uint8_t system_type = MAV_TYPE_GROUND_ROVER;
+		uint8_t autopilot_type = MAV_AUTOPILOT_UDB;
+		uint8_t base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
+		uint8_t custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+		uint8_t system_status = MAV_STATE_ACTIVE;
 	mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
 }
 

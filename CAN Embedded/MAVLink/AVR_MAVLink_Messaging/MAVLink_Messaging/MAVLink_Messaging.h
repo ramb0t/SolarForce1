@@ -36,31 +36,6 @@
 #define TX_ENABLE			(1<<TXEN0)
 #define TX_DISABLE			(0<<TXEN0)
 
-//------------GLobal -----------------//
-
-
-//-------------CAN Defines----------------------------------//
-
-#define MOTOR_DRIVER_CANID	0x0420
-#define HALL_EFFECT_CANID	0x0420
-// #420 BLAZING TIME :P!!
-
-
-#define BMS_1_CANID			0x0621
-#define BMS_2_CANID			0x0622
-#define BMS_3_CANID			0x0623
-#define BMS_4_CANID			0x0624
-#define BMS_5_CANID			0x0625
-#define BMS_6_CANID			0x0626
-#define BMS_7_CANID			0x0627
-#define BMS_8_CANID			0x0628
-
-#define ACCELO_CANID		0x0011
-#define GYRO_CANID			0x0012
-#define MPPT1_CANID			0x0771
-#define MPPT2_CANID			0x0772
-#define MPPT3_CANID			0x0773
-#define MPPT4_CANID			0x0774
 
 //------------Library and AVR Includes--------------------//
 
@@ -75,12 +50,11 @@
 #include "../lib/CAN/CAN.h"			//CAN Framework
 #include "../lib/mcp2515/mcp2515.h"	//bit timings for MCP2515
 
-
-
 //---------------Interrupt-based fuctions----------------//
 #include "CAN_Int0.h"
 #include "Mavlink_Timer0.h"
 #include "GPS_Rx_ISR.h"
+#include "GlobalDefs.h"
 //#include "selecticeMAVSend.h"
 
 //------------MAVlink convenience functions--------------//
@@ -92,10 +66,11 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //------------Variables----------------------------//
 
-volatile int counter=0;
-volatile int ctr2=0;
-volatile int canmsgctr = 0;
+static volatile uint8_t counter=0;
+//volatile int ctr2=0;
+//volatile int canmsgctr = 0;
 //volatile uint16_t 	flag =0;
+volatile GlobalVars mavSendData;
 
 char MAV_Rx_buff[10];
 
@@ -104,30 +79,9 @@ char gpsdata;
 char gps_string[62];
 char parts[15][20];
 char *p_start, *p_end;
-uint8_t ctr=0;
+static volatile uint8_t gpsctr=0;
 uint8_t gpslen;
 
-//------------Library Objects----------------------------//
-//CAN library objects per device
-
-volatile CANMessage Speed_Message;			//Aggregated Speed Board msg
-volatile CANMessage BMS_Message;				//BMS data message
-volatile CANMessage MPPT1_Message;			//MPPT messages
-volatile CANMessage MPPT2_Message;			//MPPT messages
-volatile CANMessage MPPT3_Message;			//MPPT messages
-volatile CANMessage MPPT4_Message;			//MPPT messages
-volatile CANMessage Gyro_Message;			//gyro messages
-volatile CANMessage Accelo_message;			//Accelerometer messages
-
-
-//------------MAVLink Function Prototypes------------------------//
-
-		uint8_t system_type = MAV_TYPE_GROUND_ROVER;
-		uint8_t autopilot_type = MAV_AUTOPILOT_UDB;
-		uint8_t base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
-		uint8_t custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
-		uint8_t system_status = MAV_STATE_ACTIVE;
-		
 //------------Function Prototypes------------------------//
 
 void CAN_readData(void);
@@ -144,9 +98,5 @@ volatile uint8_t	updateMAV_flag;		//flag to know whether MAVLink packet to be se
 volatile uint16_t 	gMilliSecTick;
 volatile uint16_t	ms_Counter;
 volatile uint16_t	old_mS;
-
-
-
- 
 
 #endif /* MAVLINK_MESSAGING_H_ */
