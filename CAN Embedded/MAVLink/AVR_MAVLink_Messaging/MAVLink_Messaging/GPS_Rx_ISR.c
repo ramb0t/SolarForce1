@@ -9,5 +9,8 @@
 
 ISR(USART_RX_vect)
 {
-
+	if (uart_available())		//make sure UART is actually from GPS
+	{
+		updateGPS_flag = TRUE;
+	}
 }

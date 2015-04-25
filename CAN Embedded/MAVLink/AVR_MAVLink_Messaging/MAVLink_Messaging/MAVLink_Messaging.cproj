@@ -203,6 +203,12 @@
     <Compile Include="protocol.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="selecticeMAVSend.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="selectiveMAVSend.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="solarCar\common.h">
       <SubType>compile</SubType>
     </Compile>

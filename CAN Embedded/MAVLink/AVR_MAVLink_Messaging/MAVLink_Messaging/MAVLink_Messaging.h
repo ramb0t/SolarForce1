@@ -77,6 +77,7 @@
 //---------------Interrupt-based fuctions----------------//
 #include "CAN_Int0.h"
 #include "Mavlink_Timer0.h"
+#include "selecticeMAVSend.h"
 
 //------------MAVlink convenience functions--------------//
 
@@ -126,9 +127,12 @@ uint8_t gpslen;
 void CAN_readData(void);
 void MAV_msg_pack();
 void MAV_uart_send(uint8_t [],uint8_t);
+
 void GPS_readData(void);
 void GPSParse();
+
 void MAV_HB_send();
+
 
 volatile uint8_t	updateMAV_flag;		//flag to know whether MAVLink packet to be sent
 volatile uint16_t 	gMilliSecTick;

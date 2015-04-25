@@ -97,9 +97,17 @@ int main (void)
 	if (updateMAV_flag == TRUE)
 	{
 		uart_puts("hi");
-		MAV_HB_send();
+		MAV_HB_send();					//send MAVLink heartbeat	
+		MAV_msg_pack();					//selectively send MAVLink packets
 		updateMAV_flag = FALSE;
 	}
+	
+	if (updateGPS_flag = TRUE)
+	{
+		GPS_readData();					//store GPS data to global fields		
+	}
+	
+	
 	
 	//----------------/new code-------------//
 	
@@ -109,6 +117,7 @@ int main (void)
 	return 0;
 
 }
+
 
 void GPS_readData()
 {
@@ -892,8 +901,12 @@ void MAV_msg_pack()
 				//DEPRECATED uint8_t rpm		SpeedData[6]	MotorDriver	RPM	H				0-255RPM H
 				uint8_t rpm		SpeedData[7]	Status bits						xxxxxxxx */
 //TESTING WAS SpeedMessage.data[1] BEFORE
-			mavlink_msg_motor_driver_send(0,Speed_Message.data[4],Speed_Message.data[7]);
-
+			if (speedMDUpdated=1)
+			{
+				mavlink_msg_motor_driver_send(0,Speed_Message.data[4],Speed_Message.data[7]);
+				speedMDUpdated=0;
+			}
+			
 			
 			/*-----------------------------------------------------------------------
 			NAME: Hall Effect Sensor Data
@@ -909,7 +922,12 @@ void MAV_msg_pack()
 																					*/
 			
 			//uart_flush();
-			mavlink_msg_hall_effect_send(MAVLINK_COMM_0,Speed_Message.data[0],Speed_Message.data[2],Speed_Message.data[3]);
+			if (speedHEUpdated=1)
+			{
+				mavlink_msg_hall_effect_send(MAVLINK_COMM_0,Speed_Message.data[0],Speed_Message.data[2],Speed_Message.data[3]);
+				speedHEUpdated=0;
+			}
+			
 			
 			//uart_puts("RX");
 			//uart_puts(MAV_Rx_buff);
@@ -940,8 +958,11 @@ void MAV_msg_pack()
 			uint16_t *cell_temp = temp;
 
 			//uart_flush();
+			if (bms1Updated=1)
+			{
 			mavlink_msg_bms_data_send(MAVLINK_COMM_0,BMS_Message.data[0],BMS_Message.data[1],BMS_Message.data[2],'t',0,0,BMS_Message.data[3],BMS_Message.data[4],cell_voltage,cell_temp,MAV_STATE_ACTIVE);
-
+			bms1Updated=0;
+			}
 			/*-----------------------------------------------------------------------
 			NAME: Accelerometer/Gyroscope Data
 			DESCRIPTION: Yaw, Pitch, Roll and Acceleration data from MPU6050
@@ -981,8 +1002,12 @@ void MAV_msg_pack()
 				lock_error = "OK";
 			}else lock_error = "INVALID";
 			
-			mavlink_msg_gps_send(MAVLINK_COMM_0,latitude,longitude,time,date,lock_error);
-
+			if (updateGPS_flag=TRUE)
+			{
+				mavlink_msg_gps_send(MAVLINK_COMM_0,latitude,longitude,time,date,lock_error);
+				updateGPS_flag=FALSE;
+			}
+			
 			
 			/*-----------------------------------------------------------------------
 			NAME: MPPT Data
@@ -998,24 +1023,38 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,MPPT1_Message.data[0],MPPT1_Message.data[1],MPPT1_Message.data[2],MPPT1_Message.data[3]);
-			//MPPT1_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
+			if (mppt1Updated=1)
+			{
+				mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,MPPT1_Message.data[0],MPPT1_Message.data[1],MPPT1_Message.data[2],MPPT1_Message.data[3]);
+				//MPPT1_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
+				mppt1Updated=0;
+			}
+
 			
 //TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
+			if (mppt2Updated=1)
+			{
 			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,MPPT2_Message.data[0],MPPT2_Message.data[1],MPPT2_Message.data[2],MPPT2_Message.data[3]);
 			//MPPT2_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			
+			mppt2Updated=0;
+			}
 //TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
+			if (mppt3Updated=1)
+			{
 			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,MPPT3_Message.data[0],MPPT3_Message.data[1],MPPT3_Message.data[2],MPPT3_Message.data[3]);
 			//MPPT3_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			
+			mppt3Updated=0;
+			}
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
+			if (mppt4Updated=1)
+			{
 			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,MPPT4_Message.data[0],MPPT4_Message.data[1],MPPT4_Message.data[2],MPPT4_Message.data[3]);
 			//MPPT4_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			
+			mppt4Updated=0;
+			}
 			
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
