@@ -10,7 +10,8 @@
 
 ISR(INT0_vect)
 {
-	while (flag != CAN_NOMSG)
+	CAN_fillBuffer();
+	if (flag != CAN_NOMSG)
 	{
 		if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
 		{
@@ -30,6 +31,25 @@ ISR(INT0_vect)
 
 uint8_t CAN_Decode(CANMessage *message)
 {
+	
+	speedHEUpdated=0;
+	speedMDUpdated=0;
+	acceloUpdated=0;
+	gyroUpdated=0;
+
+	bms1Updated=0;
+	bms2Updated=0;
+	bms3Updated=0;
+	bms4Updated=0;
+	bms5Updated=0;
+	bms6Updated=0;
+	bms7Updated=0;
+	bms8Updated=0;
+
+	mppt1Updated=0;
+	mppt2Updated=0;
+	mppt3Updated=0;
+	mppt4Updated=0;
 	switch (message->id)
 				{
 					/*Speed	Data is aggregated across the Hall Effect and Motor Driver nodes
@@ -61,6 +81,7 @@ uint8_t CAN_Decode(CANMessage *message)
 							Speed_Message.data[i] = message->data[i]; //store into CAN object for speed
 							//uart_puts(buff);
 						}
+						speedMDUpdated=1;	
 					
 					
 						uart_puts("\n");
@@ -72,7 +93,7 @@ uint8_t CAN_Decode(CANMessage *message)
 						Speed_Message.data[i] = message->data[i];
 						uart_puts(buff);
 						}
-						speedUpdated=1;						//inform this value has been updated
+						speedHEUpdated=1;						//inform this value has been updated
 						return CAN_MSG_DECODED;
 				}
 					

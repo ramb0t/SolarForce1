@@ -16,7 +16,6 @@
 #define F_CPU 16000000UL
 #define UART_BAUD_RATE 9600
 
-
 #define TELEMETRY_UART_OUT	DDD1
 #define GPS_UART_DATA_IN	DDD0
 #define TELEMETRY_UART_IN	DDD0
@@ -72,32 +71,22 @@
 #include "../lib/CAN/CAN.h"			//CAN Framework
 #include "../lib/mcp2515/mcp2515.h"	//bit timings for MCP2515
 
-#include "mavlink_bridge_header.h"  //UART & convenience headers
+
 
 //---------------Interrupt-based fuctions----------------//
 #include "CAN_Int0.h"
 #include "Mavlink_Timer0.h"
-#include "selecticeMAVSend.h"
+#include "GPS_Rx_ISR.h"
+//#include "selecticeMAVSend.h"
 
 //------------MAVlink convenience functions--------------//
 
+#include "mavlink_bridge_header.h"  //UART & convenience headers
 mavlink_status_t* mavlink_get_channel_status(uint8_t chan);
 mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 
-//------------Library Objects----------------------------//
-
-//CAN library objects per device
-
-volatile CANMessage Speed_Message;			//Aggregated Speed Board msg
-volatile CANMessage BMS_Message;				//BMS data message
-volatile CANMessage MPPT1_Message;			//MPPT messages
-volatile CANMessage MPPT2_Message;			//MPPT messages
-volatile CANMessage MPPT3_Message;			//MPPT messages
-volatile CANMessage MPPT4_Message;			//MPPT messages
-volatile CANMessage Gyro_Message;			//gyro messages
-volatile CANMessage Accelo_message;			//Accelerometer messages
-
+//------------Variables----------------------------//
 
 volatile int counter=0;
 volatile int ctr2=0;
@@ -111,18 +100,31 @@ char gpsdata;
 char gps_string[62];
 char parts[15][20];
 char *p_start, *p_end;
-char i;
 uint8_t ctr=0;
 uint8_t gpslen;
 
+//------------Library Objects----------------------------//
+//CAN library objects per device
 
-//------------Function Prototypes------------------------//
+volatile CANMessage Speed_Message;			//Aggregated Speed Board msg
+volatile CANMessage BMS_Message;				//BMS data message
+volatile CANMessage MPPT1_Message;			//MPPT messages
+volatile CANMessage MPPT2_Message;			//MPPT messages
+volatile CANMessage MPPT3_Message;			//MPPT messages
+volatile CANMessage MPPT4_Message;			//MPPT messages
+volatile CANMessage Gyro_Message;			//gyro messages
+volatile CANMessage Accelo_message;			//Accelerometer messages
+
+
+//------------MAVLink Function Prototypes------------------------//
 
 		uint8_t system_type = MAV_TYPE_GROUND_ROVER;
 		uint8_t autopilot_type = MAV_AUTOPILOT_UDB;
 		uint8_t base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
 		uint8_t custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
 		uint8_t system_status = MAV_STATE_ACTIVE;
+		
+//------------Function Prototypes------------------------//
 
 void CAN_readData(void);
 void MAV_msg_pack();
@@ -139,7 +141,6 @@ volatile uint16_t 	gMilliSecTick;
 volatile uint16_t	ms_Counter;
 volatile uint16_t	old_mS;
 
-static inline void mavlink_msg_motor_driver_decode(const mavlink_message_t* msg, mavlink_motor_driver_t* motor_driver);
 
 
  

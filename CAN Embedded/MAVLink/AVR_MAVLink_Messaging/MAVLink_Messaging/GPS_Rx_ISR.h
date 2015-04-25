@@ -15,7 +15,8 @@
 #include <avr/interrupt.h>
 
 //---------------Variables---------------//
-extern volatile uint8_t		updateGPS_flag;		//flag to know whether MAVLink packet to be sent
+volatile uint8_t		updateGPS_flag;		//flag to know whether MAVLink packet to be sent
+volatile uint8_t		gps_needs_sending;
 extern volatile uint16_t 	gMilliSecTick;
 extern volatile uint16_t	ms_Counter;
 extern volatile uint16_t	old_mS;

@@ -57,7 +57,7 @@
 CANMessage Input_data;
 extern volatile uint8_t		message_decoded;
 extern volatile	uint8_t		flag;
-char						buff[10];
+volatile char						buff[10];
 
 extern volatile CANMessage Speed_Message;			//Aggregated Speed Board msg
 extern volatile CANMessage BMS_Message;				//BMS data message
@@ -69,7 +69,8 @@ extern volatile CANMessage Gyro_Message;			//gyro messages
 extern volatile CANMessage Accelo_message;			//Accelerometer messages
 
 //flags for if any variables have updated
-volatile	uint8_t		speedUpdated;
+volatile	uint8_t		speedHEUpdated;
+volatile	uint8_t		speedMDUpdated;
 volatile	uint8_t		acceloUpdated;
 volatile	uint8_t		gyroUpdated;
 

@@ -7,10 +7,8 @@
 
 #include "GPS_Rx_ISR.h"
 
-ISR(USART_RX_vect)
-{
-	if (uart_available())		//make sure UART is actually from GPS
-	{
-		updateGPS_flag = TRUE;
-	}
-}
+//ISR(USART_RX_vect)
+//{
+//
+		//updateGPS_flag = 1;
+//}

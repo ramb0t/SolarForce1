@@ -96,18 +96,19 @@ int main (void)
 
 	if (updateMAV_flag == TRUE)
 	{
-		uart_puts("hi");
+		//uart_puts("hi");
 		MAV_HB_send();					//send MAVLink heartbeat	
 		MAV_msg_pack();					//selectively send MAVLink packets
 		updateMAV_flag = FALSE;
 	}
 	
-	if (updateGPS_flag = TRUE)
-	{
-		GPS_readData();					//store GPS data to global fields		
-	}
-	
-	
+	//if (updateGPS_flag = TRUE)
+	//{
+		//GPS_readData();					//store GPS data to global fields
+		//updateGPS_flag = FALSE;			//GPS has been 
+	//}
+
+
 	
 	//----------------/new code-------------//
 	
@@ -121,8 +122,9 @@ int main (void)
 
 void GPS_readData()
 {
+	
 	uart_flush();
-	for (i=0;i<62;i++)
+	for (int i=0;i<62;i++)
 	{
 		gps_string[i]='0';
 	}
@@ -190,13 +192,14 @@ void GPS_readData()
 	
 		}
 
-
+	gps_needs_sending = TRUE;
 }//GPS get
 
 
 
 void ParseGPS () 
-{
+{	
+			int i=0;
 			p_end = strchr(p_start, ',');
 			if (p_end) {
 				strncpy(parts[i], p_start, p_end-p_start);
@@ -206,12 +209,10 @@ void ParseGPS ()
 			}
 			else {
 				// sopy the last bit - might as well copy 20
-				//strncpy(parts[i], p_start, 20);
+				strncpy(parts[i], p_start, 20);
 				//break;
 			}
 			uart_puts("\n");
-if (DEBUG)
-{
 				for (int i=0;i<13;i++)
 				{
 					uart_puts("\nPART ");
@@ -220,7 +221,7 @@ if (DEBUG)
 					uart_puts(parts[i]);
 					uart_puts("\n");
 				}
-}
+
 
 }
 
@@ -238,7 +239,6 @@ void CAN_readData()
 		
 		char buff[10] ;
 	
-	uart_puts("Here");	
 	cli();				//Interrupts off
 	
 	if (~(PIND & (1<<PIND1)))	//if interrupt not triggered fill msg buffer
@@ -869,7 +869,6 @@ void MAV_msg_pack()
   //--connect to QGC and observe output! */
 
 
-			uart_puts(" ");
 			//---------------MAVLink Data---------------------------//
 			// Initialize the required buffers
 			// Set correct buffer lengths
@@ -901,7 +900,7 @@ void MAV_msg_pack()
 				//DEPRECATED uint8_t rpm		SpeedData[6]	MotorDriver	RPM	H				0-255RPM H
 				uint8_t rpm		SpeedData[7]	Status bits						xxxxxxxx */
 //TESTING WAS SpeedMessage.data[1] BEFORE
-			if (speedMDUpdated=1)
+			if (speedMDUpdated==1)
 			{
 				mavlink_msg_motor_driver_send(0,Speed_Message.data[4],Speed_Message.data[7]);
 				speedMDUpdated=0;
@@ -922,7 +921,7 @@ void MAV_msg_pack()
 																					*/
 			
 			//uart_flush();
-			if (speedHEUpdated=1)
+			if (speedHEUpdated==1)
 			{
 				mavlink_msg_hall_effect_send(MAVLINK_COMM_0,Speed_Message.data[0],Speed_Message.data[2],Speed_Message.data[3]);
 				speedHEUpdated=0;
@@ -958,7 +957,7 @@ void MAV_msg_pack()
 			uint16_t *cell_temp = temp;
 
 			//uart_flush();
-			if (bms1Updated=1)
+			if (bms1Updated==1)
 			{
 			mavlink_msg_bms_data_send(MAVLINK_COMM_0,BMS_Message.data[0],BMS_Message.data[1],BMS_Message.data[2],'t',0,0,BMS_Message.data[3],BMS_Message.data[4],cell_voltage,cell_temp,MAV_STATE_ACTIVE);
 			bms1Updated=0;
@@ -1002,10 +1001,10 @@ void MAV_msg_pack()
 				lock_error = "OK";
 			}else lock_error = "INVALID";
 			
-			if (updateGPS_flag=TRUE)
+			if (gps_needs_sending==TRUE)
 			{
 				mavlink_msg_gps_send(MAVLINK_COMM_0,latitude,longitude,time,date,lock_error);
-				updateGPS_flag=FALSE;
+				gps_needs_sending=FALSE;
 			}
 			
 			
@@ -1023,7 +1022,7 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			if (mppt1Updated=1)
+			if (mppt1Updated==1)
 			{
 				mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,MPPT1_Message.data[0],MPPT1_Message.data[1],MPPT1_Message.data[2],MPPT1_Message.data[3]);
 				//MPPT1_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
@@ -1033,7 +1032,7 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			if (mppt2Updated=1)
+			if (mppt2Updated==1)
 			{
 			mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,MPPT2_Message.data[0],MPPT2_Message.data[1],MPPT2_Message.data[2],MPPT2_Message.data[3]);
 			//MPPT2_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
@@ -1041,7 +1040,7 @@ void MAV_msg_pack()
 			}
 //TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			if (mppt3Updated=1)
+			if (mppt3Updated==1)
 			{
 			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,MPPT3_Message.data[0],MPPT3_Message.data[1],MPPT3_Message.data[2],MPPT3_Message.data[3]);
 			//MPPT3_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
@@ -1049,7 +1048,7 @@ void MAV_msg_pack()
 			}
 //TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			if (mppt4Updated=1)
+			if (mppt4Updated==1)
 			{
 			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,MPPT4_Message.data[0],MPPT4_Message.data[1],MPPT4_Message.data[2],MPPT4_Message.data[3]);
 			//MPPT4_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
@@ -1126,18 +1125,6 @@ void MAV_HB_send()
 	mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
 }
 
-void MAV_uart_send(uint8_t buf[],uint8_t len)
-{
-
-	if( !(UCSR0A & (1<<UDRE0)) )
-	{
-		uart_flush();
-	for (int i = 0; i < len ; i++){
-		uart_putc(buf[i]);
-		MAV_Rx_buff[i] = buf[i];
-	}
-	}
-}
-						
+					
 
 
