@@ -83,6 +83,8 @@ int main(void)
 
 	BMS_init();
 	SpeedEmu_init();
+	GyroEmu_init();
+	MPPTEmu_init();
 
 		// Loop for all the time!
     while(1) {

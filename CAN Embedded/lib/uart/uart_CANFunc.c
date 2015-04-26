@@ -32,29 +32,31 @@ void uart_SendCANMsg(CANMessage* message){
 	itoa( message->length, buffer, 10);   // convert integer into string (decimal format)
 	uart_puts(buffer);        // and transmit string to UART
 
-	//uart_puts(" | RTR= ");
-	//itoa( message->rtr, buffer, 10);   // convert integer into string (decimal format)
-	//uart_puts(buffer);        // and transmit string to UART
+	uart_puts(" | RTR= ");
+	itoa( message->rtr, buffer, 10);   // convert integer into string (decimal format)
+	uart_puts(buffer);        // and transmit string to UART
 
-	for (int i = 0; i < message->length; i++){
+	if (message->length >0){
+		for (int i = 0; i < message->length; i++){
 
-		char string[15] ="|D";
-		itoa(i, buffer, 10);
-		strcat(string, buffer);
-		strcat(string, "= ");
+			char string[15] ="|D";
+			itoa(i, buffer, 10);
+			strcat(string, buffer);
+			strcat(string, "= ");
 
-		itoa(message->data[i], buffer, 10);
-		strcat(string, buffer);
-		uart_puts(string);        // and transmit string to UART
+			itoa(message->data[i], buffer, 10);
+			strcat(string, buffer);
+			uart_puts(string);        // and transmit string to UART
+		}
 	}
-	uart_puts(" |t= ");
-	ultoa(ms_Counter, buffer, 10); // get the ms time'
-	uart_puts(buffer);
+	//uart_puts(" |t= ");
+	//ultoa(ms_Counter, buffer, 10); // get the ms time'
+	//uart_puts(buffer);
 
-	uart_puts(" |delT= ");
-	ultoa(ms_Counter-oldtime, buffer, 10); // get the delta time
-	oldtime = ms_Counter;
-	uart_puts(buffer);
+	//uart_puts(" |delT= ");
+	//ultoa(ms_Counter-oldtime, buffer, 10); // get the delta time
+	//oldtime = ms_Counter;
+	//uart_puts(buffer);
 
 	uart_puts("\n");
 

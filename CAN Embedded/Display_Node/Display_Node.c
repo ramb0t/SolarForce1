@@ -97,11 +97,11 @@ int main(void)
 				LED_OFF(LED_1);
 				// reset the flag
 				flagUpdateLCD = FALSE;
-				flagTimerUpdateLCD = FALSE;
+				flagTimerUpdateLCD = FALSE; // Sneaky!
 			}
     	}
 
-    	if(gMilliSecTick - heartbeat_mS > HEATBEAT_MS){ // shoot off a heatbeat message
+    	if(gMilliSecTick - heartbeat_mS > HEATBEAT_MS){ // shoot off a heartbeat message
     		heartbeat_mS = gMilliSecTick;
     		CAN_sendMessage(&heartbeat_Msg);
     	}
