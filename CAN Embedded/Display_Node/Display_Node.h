@@ -106,6 +106,8 @@ extern			int32_t		gGyro_AnglePHI;
 
 extern 			int16_t		AVR_Temp;
 
+extern			gCANVars_struct gCANVars;
+
 
 // Function Prototypes
 /*********************************************/

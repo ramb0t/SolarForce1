@@ -102,6 +102,9 @@ void GFX_LCD_DrawMain(void){
 		case SCREEN_SPD:
 			drawSpd();
 		break;
+		case SCREEN_MPPT:
+			drawMPPT();
+		break;
 		default:
 			drawMain();
 		break;
@@ -343,6 +346,67 @@ void drawMain(){
 	//u8g_DrawStr(&u8g, 66, 31, buf);
 
 }
+
+void drawMPPT(){
+	char buf[10]; // used for forming strings to pass to the display ??
+	char string[15];
+
+	// Set The Font
+//	u8g_SetFont(&u8g, u8g_font_freedoomr25n);
+//	u8g_SetFontRefHeightExtendedText(&u8g);
+//	u8g_SetDefaultForegroundColor(&u8g);
+//	u8g_SetFontPosTop(&u8g);
+
+	// Draw a Frame
+	//u8g_DrawHLine(&u8g, 0,30,65);
+	//u8g_DrawHLine(&u8g, 0,31,65);
+	u8g_DrawVLine(&u8g, 65,0,64);
+	//u8g_DrawFrame(&u8g,0,0,64,32);
+
+	// Draw the Speed
+//	utoa(gSpeed, buf, 10);
+//	u8g_DrawStr(&u8g, 3, 4, buf);
+
+	// Change the font
+	u8g_SetFont(&u8g, u8g_font_5x8);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw MPPT1 Status
+	utoa(gCANVars.MPPT1_Status, buf, 2);
+	memset(string, 0, sizeof string);
+	strcat(string,"1S:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 1, string);
+
+	// Draw MPPT1 Vin
+	utoa(gCANVars.MPPT1_Vin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"1Vin:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 10, string);
+
+	// Draw MPPT1 Iin
+	utoa(gCANVars.MPPT1_Iin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"1Iin:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 19, string);
+
+	// Draw MPPT1 Vout
+	utoa(gCANVars.MPPT1_Vout, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"1Vout:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 28, string);
+
+	// Draw MPPT1 Tamb
+	utoa(gCANVars.MPPT1_Tamb, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"1Tamb:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 37, string);
+
+} // end drawMPPt
 
 
 

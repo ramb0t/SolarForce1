@@ -34,6 +34,7 @@
 /*********************************************/
 #define		SCREEN_MAIN		0x01
 #define		SCREEN_SPD		0x02
+#define		SCREEN_MPPT		0x04
 
 // Variable Definitions
 /*********************************************/
@@ -58,6 +59,35 @@ int32_t		gGyro_AngleTHE;
 int32_t		gGyro_AngleSI;
 int32_t		gGyro_AnglePHI;
 
+typedef struct{
+
+	// MPPT Vars
+	uint8_t 	MPPT1_Status;
+	uint16_t 	MPPT1_Vin;
+	uint16_t	MPPT1_Iin;
+	uint16_t	MPPT1_Vout;
+	uint8_t		MPPT1_Tamb;
+	uint8_t 	MPPT2_Status;
+	uint16_t 	MPPT2_Vin;
+	uint16_t	MPPT2_Iin;
+	uint16_t	MPPT2_Vout;
+	uint8_t		MPPT2_Tamb;
+	uint8_t 	MPPT3_Status;
+	uint16_t 	MPPT3_Vin;
+	uint16_t	MPPT3_Iin;
+	uint16_t	MPPT3_Vout;
+	uint8_t		MPPT3_Tamb;
+	uint8_t 	MPPT4_Status;
+	uint16_t 	MPPT4_Vin;
+	uint16_t	MPPT4_Iin;
+	uint16_t	MPPT4_Vout;
+	uint8_t		MPPT4_Tamb;
+
+} gCANVars_struct;
+
+// create an instance of the global stuct!
+gCANVars_struct gCANVars;
+
 int16_t     AVR_Temp;
 
 
@@ -74,6 +104,7 @@ void GFX_LCD_Draw(CANMessage*);
 void GFX_LCD_DrawMain(void);
 void drawMain(void);
 void drawSpd(void);
+void drawMPPT(void);
 void draw(CANMessage*);
 
 #endif /* GFX_LCD_H_ */

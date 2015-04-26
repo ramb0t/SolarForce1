@@ -207,6 +207,50 @@ uint8_t CAN_Decode(CANMessage *message){
 
 	break; //CANID_GYRO_ANGLEPHI
 
+	case CANID_MPPT1:
+		gCANVars.MPPT1_Status = message->data[0]&0xFC ; // Mask off status bits
+		gCANVars.MPPT1_Vin    = ((message->data[0]&0x03)<<8)|(message->data[1]); // Get Vin
+		gCANVars.MPPT1_Iin    = ((message->data[2]&0x03)<<8)|(message->data[3]); // Get Iin
+		gCANVars.MPPT1_Vout   = ((message->data[4]&0x03)<<8)|(message->data[5]); // Get Vout
+		gCANVars.MPPT1_Tamb   = message->data[6]; // get Tamb
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_MPPT1
+
+	case CANID_MPPT2:
+		gCANVars.MPPT2_Status = message->data[0]&0xFC ; // Mask off status bits
+		gCANVars.MPPT2_Vin    = ((message->data[0]&0x03)<<8)|(message->data[1]); // Get Vin
+		gCANVars.MPPT2_Iin    = ((message->data[2]&0x03)<<8)|(message->data[3]); // Get Iin
+		gCANVars.MPPT2_Vout   = ((message->data[4]&0x03)<<8)|(message->data[5]); // Get Vout
+		gCANVars.MPPT2_Tamb   = message->data[6]; // get Tamb
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_MPPT2
+
+	case CANID_MPPT3:
+		gCANVars.MPPT3_Status = message->data[0]&0xFC ; // Mask off status bits
+		gCANVars.MPPT3_Vin    = ((message->data[0]&0x03)<<8)|(message->data[1]); // Get Vin
+		gCANVars.MPPT3_Iin    = ((message->data[2]&0x03)<<8)|(message->data[3]); // Get Iin
+		gCANVars.MPPT3_Vout   = ((message->data[4]&0x03)<<8)|(message->data[5]); // Get Vout
+		gCANVars.MPPT3_Tamb   = message->data[6]; // get Tamb
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_MPPT3
+
+	case CANID_MPPT4:
+		gCANVars.MPPT4_Status = message->data[0]&0xFC ; // Mask off status bits
+		gCANVars.MPPT4_Vin    = ((message->data[0]&0x03)<<8)|(message->data[1]); // Get Vin
+		gCANVars.MPPT4_Iin    = ((message->data[2]&0x03)<<8)|(message->data[3]); // Get Iin
+		gCANVars.MPPT4_Vout   = ((message->data[4]&0x03)<<8)|(message->data[5]); // Get Vout
+		gCANVars.MPPT4_Tamb   = message->data[6]; // get Tamb
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_MPPT4
+
 	default:
 		// We didn't find any message we are looking for...
 		decode_result = CAN_NODECODE;
@@ -252,8 +296,10 @@ ISR(PCINT2_vect){
 		if(!CHECKBIT(BTN_PIN,BTN_3) || !CHECKBIT(BTN_PIN,BTN_PORT)){
 			if (Screen == SCREEN_MAIN ){
 				Screen = SCREEN_SPD;
+			}else if(Screen == SCREEN_SPD){
+				Screen = SCREEN_MPPT;
 			}else{
-				Screen = SCREEN_MAIN;
+				Screen =SCREEN_MAIN;
 			}
 			// tell the lcd it needs to updagte
 			flagUpdateLCD = TRUE;
