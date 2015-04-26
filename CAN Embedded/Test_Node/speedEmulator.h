@@ -9,12 +9,13 @@
 #define SPEEDEMULATOR_H_
 
 #include "../lib/CAN/CAN.h"
+#include "../lib/CAN/CAN_defs.h"
 #include <string.h>
 #include <util/delay.h>
 // Defines for CAN messages
 
 #define SPDPeriod			250	// mS bettween messages
-#define CAN_ID			0x0420   // CAN ID of the Speed Message
+//#define CAN_ID			0x0420   // CAN ID of the Speed Message
 
 CANMessage SpeedMsg;
 

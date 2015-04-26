@@ -8,7 +8,7 @@
 #include "speedEmulator.h"
 
 void SpeedEmu_init(void){
-	SpeedMsg = (CANMessage){.id=CAN_ID,.rtr=0,.length=8,.data={
+	SpeedMsg = (CANMessage){.id=CANID_SPEED,.rtr=0,.length=8,.data={
 			0,0,0,0,0,0,0,0
 	}};
 }

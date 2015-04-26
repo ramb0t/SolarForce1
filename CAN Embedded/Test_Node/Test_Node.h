@@ -31,6 +31,8 @@
 /*********************************************/
 // CAN Application Layer
 #include "../lib/CAN/CAN.h"
+// CAN Definitions File
+#include "../lib/CAN/CAN_defs.h"
 // MCP2515 Library
 #include "../lib/mcp2515/mcp2515.h"
 // SPI Library used with CAN Controller
@@ -57,6 +59,10 @@
 #include "elithionBMS.h"
 //Speed Emulator
 #include "speedEmulator.h"
+//GyroEmulator
+#include "gyroEmulator.h"
+//MPPTEmulator
+#include "MPPTEmulator.h"
 
 // Pin Defines
 #include "pinDefines.h"

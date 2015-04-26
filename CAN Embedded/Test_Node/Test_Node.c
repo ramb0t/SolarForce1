@@ -8,6 +8,9 @@
 
 #include "Test_Node.h"
 
+// fixes problem?
+#include "../lib/CAN/CAN_defs.h"
+
 int main(void)
 {
 
@@ -73,7 +76,7 @@ int main(void)
 		uint16_t oldGyroTime = ms_Counter-75; // add a small offset
 #define	waitBMSTime 1000 // delay time in ms
 #define waitSpeedTime 200
-#define waitGyroTime 500
+#define waitGyroTime GyroPeriod
 
 	uint8_t spd = 0;
 	uint16_t Gyro_Angle = 0;
@@ -135,8 +138,41 @@ int main(void)
 					CAN_getMessage_Buffer(&message);
 					uart_SendCANMsg(&message);
 				}
-
     			break;
+
+    		case (TERMINAL_LISTENMPPT):
+				if(flag == CAN_MSGAVAIL){ // stuff in the buffer
+					if(CAN_getMessage_Buffer(&message) == CAN_OK){
+						if(message.rtr == 1){ // we have request to reply...
+						// decode and see if it matches what we need?
+						switch(message.id){  // switch to the correct reply and send it
+							case (CANID_MPPTRQ1):
+								MPPTEmu_SendReply(1);
+							break;
+							case (CANID_MPPTRQ2):
+								MPPTEmu_SendReply(2);
+							break;
+							case (CANID_MPPTRQ3):
+								MPPTEmu_SendReply(3);
+							break;
+							case (CANID_MPPTRQ4):
+								MPPTEmu_SendReply(4);
+							break;
+							default:
+								break;
+							}
+
+						// sends the message on the CAN interface.
+						uart_SendCANMsg(&message); // this shows the MPPT request
+						}
+					}
+				}else if(flag == CAN_FAIL){
+					uart_puts("that bad thing happened");
+					CAN_getMessage_Buffer(&message);
+					uart_SendCANMsg(&message);
+				}
+    			break; //MPPT response
+
     		case (TERMINAL_SEND1):
     	    	message.id = 0b11100010001;
     			message.rtr = 1;

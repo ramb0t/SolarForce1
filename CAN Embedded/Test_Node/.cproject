@@ -61,7 +61,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="lib|u8glib/examples" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="u8glib|lib|u8glib/examples" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 						<entry excluding="u8glib" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="lib"/>
 					</sourceEntries>
 				</configuration>
@@ -123,7 +123,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="lib/u8glib|u8glib/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="u8glib|lib/u8glib|u8glib/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

@@ -127,6 +127,16 @@ void Terminal_read(volatile uint8_t* state){
 				return;
 				break;
 
+			case TERMINAL_cLISTENMPPT:
+				// Go to RAW Listen Mode
+				*state = TERMINAL_LISTENMPPT;
+				uart_puts("\n");
+				uart_puts("Entering Listen Mode MPPT\n");
+				uart_puts("Type 'c' to exit\n");
+				uart_puts("\n");
+				return;
+				break;
+
 			case TERMINAL_cBACK:
 				// Go Back To Main Menu
 				*state = TERMINAL_RUN;
@@ -358,6 +368,7 @@ static void Terminal_showListenMenu(void){
 	uart_puts("1: Listen All CAN data Readable\n");
 	uart_puts("2: Listen All CAN data Raw\n");
 	uart_puts("3: Listen for Specified CAN ID \n");
+	uart_puts("4: Listen and Reply MPPT \n");
 	uart_puts("0: Go Back to Main Menu \n");
 	uart_puts("-------------------------------------\n");
 	uart_puts("\n");
