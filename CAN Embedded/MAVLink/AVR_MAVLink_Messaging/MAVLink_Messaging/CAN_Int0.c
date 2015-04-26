@@ -77,9 +77,9 @@ uint8_t CAN_Decode(CANMessage *message)
 							//LED_DIAG_PORT |= (1<<LED_DIAG_GRN);		
 							CANData.avgSpeed = message->data[0];
 							CANData.hesSPeed = message->data[1];
-							CANData.hesRPM = (message->data[3])|(message->data[2]<<8);
+							CANData.hesRPM = (message->data[3]<<8)|(message->data[2]);
 							CANData.motorSpeed = message->data[4];
-							CANData.motorRPM = (message->data[6])|(message->data[5]<<8);
+							CANData.motorRPM = (message->data[5]<<8)|(message->data[6]);
 							CANData.statusFlags = message->data[7];
 						//
 						
