@@ -65,8 +65,8 @@ volatile uint8_t ctr2=0;				//counts bytes passing thru MAVLink frame for length
 volatile uint16_t hb_lost = 0;			//counts cycles since last heartbeat
 volatile GlobalVars	rxData;
 
-char MAV_Rx_buff[16];
-char MAV_Rx_buff_H[16];
+char MAV_Rx_buff[8];
+char MAV_Rx_buff_H[8];
 
 //------------Function Prototypes------------------------//
 

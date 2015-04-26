@@ -348,9 +348,13 @@ void MAV_msg_pack()
 								4 = int8_t acceleration (m.s^-2)			-127 to 127 m.s^-2		
 								5 = int8_t incline (degrees)				-127 to 127 (0-100 @ 10 counts per degree)
 			//TESTING																	*/
-			
+			if (acceloUpdated==1||gyroUpdated==1)
+			{
+			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0,CANData.gyro_x,CANData.gyro_y,CANData.gyro_z,CANData.accel_x,CANData.accel_y,CANData.accel_z);
 			//mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
-			
+			acceloUpdated=0;
+			gyroUpdated=0;
+			}
 //TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
 			//MAV_uart_send(buf,len);
 			

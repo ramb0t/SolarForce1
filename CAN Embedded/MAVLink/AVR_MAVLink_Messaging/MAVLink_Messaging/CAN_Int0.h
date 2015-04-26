@@ -23,6 +23,8 @@
 #include "../lib/mcp2515/mcp2515.h"
 // SPI Library used with CAN Controller
 #include "../lib/SPI/AVR_SPI.h"
+
+#include "../lib/CAN/CAN_defs.h"
 // Timer0
 #include "Mavlink_Timer0.h"
 
@@ -37,27 +39,27 @@
 //---------------CAN IDs-----------------//
 
 
-#define SPEED_HE_CANID		0x0420
+//#define SPEED_HE_CANID		0x0420
 
-#define CANID_BMSDEFAULT	0x0620
-#define BMS_0_CANID			CANID_BMSDEFAULT + 0
-#define BMS_1_CANID			CANID_BMSDEFAULT + 1
-#define BMS_2_CANID			CANID_BMSDEFAULT + 2
-#define BMS_3_CANID			CANID_BMSDEFAULT + 3
-#define BMS_4_CANID			CANID_BMSDEFAULT + 4
-#define BMS_5_CANID			CANID_BMSDEFAULT + 5
-#define BMS_6_CANID			CANID_BMSDEFAULT + 6
-#define BMS_7_CANID			CANID_BMSDEFAULT + 7
-#define BMS_8_CANID			CANID_BMSDEFAULT + 8
-
-#define ACGY1				0x0820
-#define ACGY2				0x0821
-#define	ACGY3				0x0822
-
-#define MPPT1_CANID			0x0771
-#define MPPT2_CANID			0x0772
-#define MPPT3_CANID			0x0773
-#define MPPT4_CANID			0x0774
+//#define CANID_BMSDEFAULT	0x0620
+//#define BMS_0_CANID			CANID_BMSDEFAULT + 0
+//#define BMS_1_CANID			CANID_BMSDEFAULT + 1
+//#define BMS_2_CANID			CANID_BMSDEFAULT + 2
+//#define BMS_3_CANID			CANID_BMSDEFAULT + 3
+//#define BMS_4_CANID			CANID_BMSDEFAULT + 4
+//#define BMS_5_CANID			CANID_BMSDEFAULT + 5
+//#define BMS_6_CANID			CANID_BMSDEFAULT + 6
+//#define BMS_7_CANID			CANID_BMSDEFAULT + 7
+//#define BMS_8_CANID			CANID_BMSDEFAULT + 8
+//
+//#define ACGY1				0x0820
+//#define ACGY2				0x0821
+//#define	ACGY3				0x0822
+//
+//#define MPPT1_CANID			0x0771
+//#define MPPT2_CANID			0x0772
+//#define MPPT3_CANID			0x0773
+//#define MPPT4_CANID			0x0774
 
 //---------------Variables---------------//
 volatile CANMessage Input_data;

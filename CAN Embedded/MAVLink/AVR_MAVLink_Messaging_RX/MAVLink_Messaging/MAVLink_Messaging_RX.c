@@ -197,9 +197,7 @@ void MAV_msg_Unpack()
 							utoa(spdhe.motor_speed,MAV_Rx_buff,10);
 							uart_puts(MAV_Rx_buff);
 							uart_puts_p(PSTR(","));	
-							
-							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff);
-							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);
+							memset(MAV_Rx_buff, 0, sizeof MAV_Rx_buff);	
 							utoa((spdhe.motor_RPM<<8),MAV_Rx_buff,10);			//send 16-bit value high byte
 							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);		//clear the high buffer of the new  buffer
 							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat
