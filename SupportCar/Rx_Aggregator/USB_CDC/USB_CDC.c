@@ -194,8 +194,12 @@ int main(void)
 
 	while (1)
 	{
-		fputs("new loop", &USBSerialStream);
+		//fputs("new loop", &USBSerialStream);
 		
+		//display the MAVLink directly on the COM Port
+		//fputc(uart1_getc(),&USBSerialStream);
+		
+		/*
 		//send local sensors should be sent roughly once every 15 MAVLink Packets
 		if(++msg_counter > 15)
 		{
@@ -207,7 +211,7 @@ int main(void)
 		if (myFlags.ADC_read_complete == 1)//if an Irradiance sensor data packet is ready to be sent
 		{
 			_delay_ms(123);    //debug or necessary?
-			//testBlink(quick_blink);
+			//testBlink();
 			//debug!			fputs("Voltage Reading in counts = ", &USBSerialStream);
 			
 			itoa(voltage,buffer,10); //USB is really fast, so sending in ASCII is a minimal overhead.
@@ -218,12 +222,12 @@ int main(void)
 			
 			//proper code will send the string ">>13,ADC<<"
 			myFlags.ADC_read_complete = 0;//clear the flag
-		}
+		}*/
 		//fputs("Voltage Reading in mV = ",&USBSerialStream);
 		//fputs(buffer1,&USBSerialStream);
 		
 		
-		//MAV_msg_Unpack();
+		MAV_msg_Unpack();
 		
 		/* Must throw away unused bytes from the host, or it will lock up while waiting for the device */
 		CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
@@ -239,7 +243,7 @@ void ADC_ok_LED()
 	PORTF &= ~(1<</*PORTF4*/PORTF0);
 }
 
-void testBlink(int time)
+void testBlink()
 {
 	PORTF &= ~((1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4));
 	
@@ -343,7 +347,7 @@ void MAV_msg_Unpack()
   //--this ensures the message goes to MAVLink frame
   //--connect to QGC and observe output! */
 
-			//uart1_puts_p("\n-MAVLink Data---------\n");
+			//fputs("\n-MAVLink Data---------\n");
 			//---------------MAVLink Data---------------------------//
 			// Initialize the required buffers
 			// Set correct buffer lengths
@@ -355,21 +359,21 @@ void MAV_msg_Unpack()
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 						
-			//uart1_puts_p(PSTR(""));
+			//fputs(PSTR(""));
 			 
 			mavlink_message_t msg2;
 			int chan = 0;
 			uint8_t c;
 			mavlink_status_t* mav_status;
 
-			//uart1_puts("here");
+			//fputs("here");
 			
 			if(uart1_available())
 			{
 			if(!(UCSR1A & (1<<RXC1)))									//poll data from the UART bus only while there is data on it
 			{
-				//uart1_puts("also");
-				//uart1_putc('a');
+				//fputs("also");
+				//fputc('a');
 				//if (ctr2 < MAVLINK_MAX_PACKET_LEN)						//while packet size < MAVLink packet
 				
 					c=uart1_getc();								//get another char
@@ -385,14 +389,14 @@ void MAV_msg_Unpack()
 						if (hb_lost > 7500)
 						{
 							hb_lost = 0;
-							uart1_puts_p(PSTR("ERROR>><<"));
+							fputs("ERROR>><<",&USBSerialStream);
 							_delay_ms(20);
 						}
 					}
 					
 					// Try to get a new message
 					
-					uart1_putc(c);								//TESTING OUTPUT	
+					//fputc(c);								//TESTING OUTPUT	
 					fputc(c,&USBSerialStream);
 					ctr2++;				
 					if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) //if packet matches defined MAVLink packet
@@ -402,7 +406,7 @@ void MAV_msg_Unpack()
 						{
 							case MAVLINK_MSG_ID_HEARTBEAT:					//Is it heartbeat ID?
 							{
-								uart1_puts_p(PSTR("HB"));
+								fputs("HB",&USBSerialStream);
 								// E.g. read GCS heartbeat and go into
 								// comm lost mode if timer times out
 								hb_lost = 0; //reset heartbeat counter
@@ -417,54 +421,56 @@ void MAV_msg_Unpack()
 										data
 														end msg
 																				*/
-							case MAVLINK_MSG_ID_GPS:							//is it GPS data?
+							/*case MAVLINK_MSG_ID_GPS:							//is it GPS data?
 							{
 								hb_lost=0;
 								mavlink_gps_t gps;							//instantiate GPS object
 								mavlink_msg_gps_decode(&msg,&gps);			//decode message
-								uart1_puts_p("GPS>>");					//delim and ID
-								uart1_putc(GPS_TXID);
-								uart1_putc(gps.latitude);
-								uart1_puts_p(PSTR(","));
-								uart1_putc(gps.longitude);
-								uart1_puts_p(PSTR(","));
-								uart1_putc(gps.time);
-								uart1_puts_p(PSTR(","));
-								uart1_putc(gps.date);
-								uart1_puts_p(PSTR(","));
-								uart1_putc(gps.lock_error);
-								uart1_puts_p(PSTR("<<"));
+								fputs("GPS>>");					//delim and ID
+								fputc(GPS_TXID);
+								fputc(gps.latitude);
+								fputs(PSTR(","));
+								fputc(gps.longitude);
+								fputs(PSTR(","));
+								fputc(gps.time);
+								fputs(PSTR(","));
+								fputc(gps.date);
+								fputs(PSTR(","));
+								fputc(gps.lock_error);
+								fputs(PSTR("<<"));
 							break;	
-							}break;
+							}break;*/
 							
 							case MAVLINK_MSG_ID_SPEED_HALLEFFECT:				//is it Motor Driver data?
 							{
+								testBlink();
+								
 								hb_lost=0;
 							//uart1_flush();
 							mavlink_speed_halleffect_t spdhe;					//instantiate object MD
 							mavlink_msg_speed_halleffect_decode(&msg,&spdhe);	//encode message
-							uart1_puts_p(PSTR("MD>>"));					//delimiter & ID
+							fputs("MD>>",&USBSerialStream);					//delimiter & ID
 							
-							uart1_putc(HESPD_TXID);
-							uart1_puts_p(PSTR(","));
+							fputc(HESPD_TXID,&USBSerialStream);
+							fputs(",",&USBSerialStream);
 							utoa(spdhe.avg_speed,MAV_Rx_buff,10);
-							uart1_puts(MAV_Rx_buff);						//avg. speed
-							uart1_puts_p(PSTR(","));						//delim
+							fputs(MAV_Rx_buff,&USBSerialStream);						//avg. speed
+							fputs(",",&USBSerialStream);						//delim
 							utoa(spdhe.hes_speed,MAV_Rx_buff,10);
-							uart1_puts(MAV_Rx_buff);			//used as status flags
-							uart1_puts_p(PSTR(","));	
+							fputs(MAV_Rx_buff,&USBSerialStream);			//used as status flags
+							fputs(",",&USBSerialStream);	
 							utoa(spdhe.hes_RPM,MAV_Rx_buff,10);
-							uart1_puts(MAV_Rx_buff);	
-							uart1_puts_p(PSTR(","));	
+							fputs(MAV_Rx_buff,&USBSerialStream);	
+							fputs(",",&USBSerialStream);	
 							utoa(spdhe.motor_speed,MAV_Rx_buff,10);
-							uart1_puts(MAV_Rx_buff);
-							uart1_puts_p(PSTR(","));	
+							fputs(MAV_Rx_buff,&USBSerialStream);
+							fputs(",", &USBSerialStream);	
 							utoa(spdhe.motor_RPM,MAV_Rx_buff,10);
-							uart1_puts(MAV_Rx_buff);
-							uart1_puts_p(PSTR(","));	
+							fputs(MAV_Rx_buff,&USBSerialStream);
+							fputs(",",&USBSerialStream);	
 							utoa(spdhe.flags,MAV_Rx_buff,10);
-							uart1_puts(MAV_Rx_buff);
-							uart1_puts_p(PSTR("<<"));
+							fputs(MAV_Rx_buff,&USBSerialStream);
+							fputs("<<",&USBSerialStream);
 														
 							break;//now check for next ID
 							}break;
@@ -476,38 +482,38 @@ void MAV_msg_Unpack()
 								//uart1_flush();
 								//mavlink_bms_data_t bms;
 								//mavlink_msg_bms_data_decode(&msg,&bms);	//decode BMS data packet
-								//uart1_puts_p(PSTR("BMS>>"));					//delim and ID
-								//uart1_putc(BMS_TXID);	
-								//uart1_puts_p(PSTR(","));
+								//fputs(PSTR("BMS>>"));					//delim and ID
+								//fputc(BMS_TXID);	
+								//fputs(PSTR(","));
 								////--------------BMS data  begin-----------//
-								//uart1_putc(bms.fault_condition);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(bms.source_current);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(bms.load_current);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(bms.bat_fan_status);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(bms.LLIM_state);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(bms.HLIM_state);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(bms.state_of_chg);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(bms.pack_voltage);
-								//uart1_puts_p(PSTR(","));
+								//fputc(bms.fault_condition);
+								//fputs(PSTR(","));
+								//fputc(bms.source_current);
+								//fputs(PSTR(","));
+								//fputc(bms.load_current);
+								//fputs(PSTR(","));
+								//fputc(bms.bat_fan_status);
+								//fputs(PSTR(","));
+								//fputc(bms.LLIM_state);
+								//fputs(PSTR(","));
+								//fputc(bms.HLIM_state);
+								//fputs(PSTR(","));
+								//fputc(bms.state_of_chg);
+								//fputs(PSTR(","));
+								//fputc(bms.pack_voltage);
+								//fputs(PSTR(","));
 								//for (int i=0;i<3;i++)
 								//{
-									//uart1_putc(bms.cell_voltages[i]);	
-									//uart1_puts_p(PSTR(","));	
+									//fputc(bms.cell_voltages[i]);	
+									//fputs(PSTR(","));	
 								//}
 								//for (int i=0;i<3;i++)
 								//{
-									//uart1_putc(bms.cell_temps[i]);
-									//uart1_puts_p(PSTR(","));
+									//fputc(bms.cell_temps[i]);
+									//fputs(PSTR(","));
 								//}
-								//uart1_putc(bms.system_status);
-								//uart1_puts_p(PSTR("<<"));	
+								//fputc(bms.system_status);
+								//fputs(PSTR("<<"));	
 								//break;				
 							//}break;
 							//
@@ -517,12 +523,12 @@ void MAV_msg_Unpack()
 								//uart1_flush();
 								//mavlink_accelo_gyro_t ac;
 								//mavlink_msg_accelo_gyro_decode(&msg,&ac);
-								//uart1_puts_p(PSTR("AC>>"));
-								//uart1_putc(AC_TXID);		
-								//uart1_putc(ac.acceleration);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(ac.incline);
-								//uart1_puts_p(PSTR("<<"));
+								//fputs(PSTR("AC>>"));
+								//fputc(AC_TXID);		
+								//fputc(ac.acceleration);
+								//fputs(PSTR(","));
+								//fputc(ac.incline);
+								//fputs(PSTR("<<"));
 								//break;
 							//}break;
 							//
@@ -532,17 +538,17 @@ void MAV_msg_Unpack()
 								//uart1_flush();
 								//mavlink_mppt1_data_t m1;
 								//mavlink_msg_mppt1_data_decode(&msg,&m1);
-								//uart1_puts_p(PSTR("M1>>"));
-								//uart1_putc(MPPT1_TXID);
-								//uart1_puts_p(PSTR(","));		
-								//uart1_putc(m1.voltage_in);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m1.current_in);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m1.overtemp);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m1.undervolt);
-								//uart1_puts_p(PSTR("<<"));
+								//fputs(PSTR("M1>>"));
+								//fputc(MPPT1_TXID);
+								//fputs(PSTR(","));		
+								//fputc(m1.voltage_in);
+								//fputs(PSTR(","));
+								//fputc(m1.current_in);
+								//fputs(PSTR(","));
+								//fputc(m1.overtemp);
+								//fputs(PSTR(","));
+								//fputc(m1.undervolt);
+								//fputs(PSTR("<<"));
 								//break;
 							//}break;
 							//
@@ -552,17 +558,17 @@ void MAV_msg_Unpack()
 								//uart1_flush();
 								//mavlink_mppt2_data_t m2;
 								//mavlink_msg_mppt1_data_decode(&msg,&m2);
-								//uart1_puts_p(PSTR("M2>>"));
-								//uart1_putc(MPPT2_TXID);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m2.voltage_in);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m2.current_in);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m2.overtemp);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m2.undervolt);
-								//uart1_puts_p(PSTR("<<"));
+								//fputs(PSTR("M2>>"));
+								//fputc(MPPT2_TXID);
+								//fputs(PSTR(","));
+								//fputc(m2.voltage_in);
+								//fputs(PSTR(","));
+								//fputc(m2.current_in);
+								//fputs(PSTR(","));
+								//fputc(m2.overtemp);
+								//fputs(PSTR(","));
+								//fputc(m2.undervolt);
+								//fputs(PSTR("<<"));
 								//break;
 							//}break;
 							//
@@ -572,17 +578,17 @@ void MAV_msg_Unpack()
 								//uart1_flush();
 								//mavlink_mppt3_data_t m3;
 								//mavlink_msg_mppt1_data_decode(&msg,&m3);
-								//uart1_puts_p(PSTR("M3>>"));
-								//uart1_putc(MPPT3_TXID);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m3.voltage_in);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m3.current_in);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m3.overtemp);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m3.undervolt);
-								//uart1_puts_p(PSTR("<<"));
+								//fputs(PSTR("M3>>"));
+								//fputc(MPPT3_TXID);
+								//fputs(PSTR(","));
+								//fputc(m3.voltage_in);
+								//fputs(PSTR(","));
+								//fputc(m3.current_in);
+								//fputs(PSTR(","));
+								//fputc(m3.overtemp);
+								//fputs(PSTR(","));
+								//fputc(m3.undervolt);
+								//fputs(PSTR("<<"));
 								//break;
 							//}break;
 							//
@@ -592,17 +598,17 @@ void MAV_msg_Unpack()
 								//uart1_flush();
 								//mavlink_mppt4_data_t m4;
 								//mavlink_msg_mppt1_data_decode(&msg,&m4);
-								//uart1_puts_p(PSTR("M4>>"));
-								//uart1_putc(MPPT4_TXID);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m4.voltage_in);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m4.current_in);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m4.overtemp);
-								//uart1_puts_p(PSTR(","));
-								//uart1_putc(m4.undervolt);
-								//uart1_puts_p(PSTR("<<"));
+								//fputs(PSTR("M4>>"));
+								//fputc(MPPT4_TXID);
+								//fputs(PSTR(","));
+								//fputc(m4.voltage_in);
+								//fputs(PSTR(","));
+								//fputc(m4.current_in);
+								//fputs(PSTR(","));
+								//fputc(m4.overtemp);
+								//fputs(PSTR(","));
+								//fputc(m4.undervolt);
+								//fputs(PSTR("<<"));
 								//break;
 							//}break;					
 			
@@ -632,7 +638,7 @@ void MAV_msg_Unpack()
 	{
 		myFlags.ADC_read_complete = 1;
 		voltage = ADC;
-		//testBlink(slow_blink);
+		//testBlink();
 		//ADCSRA &= ~(1<<ADIE);
 	}
 
