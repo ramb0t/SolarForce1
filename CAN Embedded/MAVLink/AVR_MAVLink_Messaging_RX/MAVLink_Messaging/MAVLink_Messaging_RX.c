@@ -217,46 +217,33 @@ void MAV_msg_Unpack()
 							}break;
 							
 						////now check for next ID
-							//case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
-							//{
-								//hb_lost=0;
-								//uart_flush();
-								//mavlink_bms_data_t bms;
-								//mavlink_msg_bms_data_decode(&msg,&bms);	//decode BMS data packet
-								//uart_puts_p(PSTR("BMS>>"));					//delim and ID
-								//uart_putc(BMS_TXID);	
-								//uart_puts_p(PSTR(","));
-								////--------------BMS data  begin-----------//
-								//uart_putc(bms.fault_flags);
-								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.maxVoltage);
-								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.maxVoltageID);
-								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.minVoltage);
-								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.minVoltageID);
-								//uart_puts_p(PSTR(","));
-								//uart_puts(bms.packVoltage);
-								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.state_of_chg);
-								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.pack_voltage);
-								//uart_puts_p(PSTR(","));
-								//for (int i=0;i<3;i++)
-								//{
-									//uart_putc(bms.cell_voltages[i]);	
-									//uart_puts_p(PSTR(","));	
-								//}
-								//for (int i=0;i<3;i++)
-								//{
-									//uart_putc(bms.cell_temps[i]);
-									//uart_puts_p(PSTR(","));
-								//}
-								//uart_putc(bms.system_status);
-								//uart_puts_p(PSTR("<<"));	
-								//break;				
-							//}break;
+							case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
+							{
+								hb_lost=0;
+								uart_flush();
+								mavlink_bms_data_t bms;
+								mavlink_msg_bms_data_decode(&msg,&bms);	//decode BMS data packet
+								uart_puts_p(PSTR("BMS>>"));					//delim and ID
+								uart_putc(BMS_TXID);	
+								uart_puts_p(PSTR(","));
+								//--------------BMS data  begin-----------//
+								uart_putc(bms.fault_flags);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.maxVoltage);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.maxVoltageID);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.minVoltage);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.minVoltageID);
+								uart_puts_p(PSTR(","));
+								uart_puts(bms.packVoltage);
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.current);
+								uart_puts_p(PSTR(","));
+								uart_puts_p(PSTR("<<"));	
+								break;				
+							}break;
 							
 							case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
 							{
@@ -266,9 +253,9 @@ void MAV_msg_Unpack()
 								mavlink_msg_accelo_gyro_decode(&msg,&ac);
 								uart_puts_p(PSTR("AC>>"));
 								uart_putc(AC_TXID);
-								uart_putc(ac.acceleration);
+								uart_putc(ac.accel_x);
 								uart_puts_p(PSTR(","));
-								uart_putc(ac.incline);
+								uart_putc(ac.accel_y);
 								uart_puts_p(PSTR("<<"));
 								break;
 							}break;
