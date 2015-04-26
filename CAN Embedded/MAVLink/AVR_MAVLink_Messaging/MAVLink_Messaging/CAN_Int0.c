@@ -15,16 +15,16 @@ ISR(INT0_vect)
 {
 	CAN_fillBuffer();
 
-		if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
-		{
-			if (CAN_Decode(&Input_data)==CAN_MSG_DECODED)	//if a new message has been decoded
-			{	
-				updateMAV_flag = TRUE;						//...set a flag to send this data & store data
-			}else
-			{
-				return;										//else leave it alone
-			}
-		}
+		//if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
+		//{
+			//if (CAN_Decode(&Input_data)==CAN_MSG_DECODED)	//if a new message has been decoded
+			//{	
+				//updateMAV_flag = TRUE;						//...set a flag to send this data & store data
+			//}else
+			//{
+				//return;										//else leave it alone
+			//}
+		//}
 		
 
 }
