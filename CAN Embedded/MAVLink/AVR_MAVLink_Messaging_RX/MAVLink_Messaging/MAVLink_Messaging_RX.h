@@ -66,6 +66,7 @@ volatile uint16_t hb_lost = 0;			//counts cycles since last heartbeat
 volatile GlobalVars	rxData;
 
 char MAV_Rx_buff[16];
+char MAV_Rx_buff_H[16];
 
 //------------Function Prototypes------------------------//
 

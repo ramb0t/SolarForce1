@@ -121,6 +121,10 @@
       <SubType>compile</SubType>
       <Link>lib\CAN\CAN.h</Link>
     </Compile>
+    <Compile Include="..\..\..\lib\CAN\CAN_defs.h">
+      <SubType>compile</SubType>
+      <Link>lib\CAN\CAN_defs.h</Link>
+    </Compile>
     <Compile Include="..\..\..\lib\GPS\TinyGPS.h">
       <SubType>compile</SubType>
       <Link>lib\GPS\TinyGPS.h</Link>

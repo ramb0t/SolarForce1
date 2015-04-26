@@ -61,7 +61,7 @@ int main (void)
 		*uses UART.h library
 		*interrupt-based					*/
 	
-		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
+		uart_init( UART_BAUD_SELECT_DOUBLE_SPEED(UART_BAUD_RATE,F_CPU) ); 
 		
 		sei();	//interrupts ON
 	
@@ -151,7 +151,7 @@ int main (void)
 void GPS_readData()
 {
 	uint8_t gpsctr;
-	uart_flush();
+	//uart_flush();
 	for (int i=0;i<62;i++)
 	{
 		gps_string[i]='0';

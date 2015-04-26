@@ -32,6 +32,7 @@ int main (void)
 	//TCCR0B = (1<<CS02)|(1<<CS00);
 	//TIMSK0 = (1<<TOIE0);		//--enable later!
 	
+	char buff[10];
 	
 	/*---------UART Serial Init --------------------
 		*uses UART.h library
@@ -52,8 +53,13 @@ int main (void)
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 	//uart_puts("hi");
+		//utoa(uart_get_rx_buff(),buff,10);
+		//uart_puts(buff);
+		//uart_puts("\n");
 		MAV_msg_Unpack();
-
+		
+		//uart_puts(uart_get_tx_buff());
+		//uart_puts("\n");
 
 	}
 	return 0;
@@ -93,8 +99,6 @@ void MAV_msg_Unpack()
 
 			//uart_puts("here");
 			if(uart_available())
-			{
-			if(!(UCSR0A & (1<<RXC0)))									//poll data from the UART bus only while there is data on it
 			{
 				//uart_puts("also");
 				//uart_putc('a');
@@ -144,25 +148,25 @@ void MAV_msg_Unpack()
 										data
 														end msg
 																				*/
-							case MAVLINK_MSG_ID_GPS:							//is it GPS data?
-							{
-								hb_lost=0;
-								mavlink_gps_t gps;							//instantiate GPS object
-								mavlink_msg_gps_decode(&msg,&gps);			//decode message
-								uart_puts_p("GPS>>");					//delim and ID
-								uart_putc(GPS_TXID);
-								uart_putc(gps.latitude);
-								uart_puts_p(PSTR(","));
-								uart_putc(gps.longitude);
-								uart_puts_p(PSTR(","));
-								uart_putc(gps.time);
-								uart_puts_p(PSTR(","));
-								uart_putc(gps.date);
-								uart_puts_p(PSTR(","));
-								uart_putc(gps.lock_error);
-								uart_puts_p(PSTR("<<"));
-							break;	
-							}break;
+							//case MAVLINK_MSG_ID_GPS:							//is it GPS data?
+							//{
+								//hb_lost=0;
+								//mavlink_gps_t gps;							//instantiate GPS object
+								//mavlink_msg_gps_decode(&msg,&gps);			//decode message
+								//uart_puts_p("GPS>>");					//delim and ID
+								//uart_putc(GPS_TXID);
+								//uart_putc(gps.latitude);
+								//uart_puts_p(PSTR(","));
+								//uart_putc(gps.longitude);
+								//uart_puts_p(PSTR(","));
+								//uart_putc(gps.time);
+								//uart_puts_p(PSTR(","));
+								//uart_putc(gps.date);
+								//uart_puts_p(PSTR(","));
+								//uart_putc(gps.lock_error);
+								//uart_puts_p(PSTR("<<"));
+							//break;	
+							//}break;
 							
 							case MAVLINK_MSG_ID_SPEED_HALLEFFECT:				//is it Motor Driver data?
 							{
@@ -179,14 +183,33 @@ void MAV_msg_Unpack()
 							utoa(spdhe.hes_speed,MAV_Rx_buff,10);
 							uart_puts(MAV_Rx_buff);			//used as status flags
 							uart_puts_p(PSTR(","));	
-							utoa(spdhe.hes_RPM,MAV_Rx_buff,10);
-							uart_puts(MAV_Rx_buff);	
+							
+							utoa((spdhe.hes_RPM<<8),MAV_Rx_buff,10);			//send 16-bit value high byte
+							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);		//clear the high buffer of the new  buffer
+							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat 			
+							
+							utoa(spdhe.hes_RPM,MAV_Rx_buff,10);					//repeat for low byte
+							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat low byte to the current data
+							
+							uart_puts(MAV_Rx_buff_H);							//send the HES RPM
+							
 							uart_puts_p(PSTR(","));	
 							utoa(spdhe.motor_speed,MAV_Rx_buff,10);
 							uart_puts(MAV_Rx_buff);
 							uart_puts_p(PSTR(","));	
-							utoa(spdhe.motor_RPM,MAV_Rx_buff,10);
-							uart_puts(MAV_Rx_buff);
+							
+							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff);
+							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);
+							utoa((spdhe.motor_RPM<<8),MAV_Rx_buff,10);			//send 16-bit value high byte
+							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);		//clear the high buffer of the new  buffer
+							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat
+							
+							utoa(spdhe.motor_RPM,MAV_Rx_buff,10);					//repeat for low byte
+							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat low byte to the current data
+							
+							uart_puts(MAV_Rx_buff_H);							//send the Motor RPM
+							
+							
 							uart_puts_p(PSTR(","));	
 							utoa(spdhe.flags,MAV_Rx_buff,10);
 							uart_puts(MAV_Rx_buff);
@@ -206,17 +229,17 @@ void MAV_msg_Unpack()
 								//uart_putc(BMS_TXID);	
 								//uart_puts_p(PSTR(","));
 								////--------------BMS data  begin-----------//
-								//uart_putc(bms.fault_condition);
+								//uart_putc(bms.fault_flags);
 								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.source_current);
+								//uart_putc(bms.maxVoltage);
 								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.load_current);
+								//uart_putc(bms.maxVoltageID);
 								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.bat_fan_status);
+								//uart_putc(bms.minVoltage);
 								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.LLIM_state);
+								//uart_putc(bms.minVoltageID);
 								//uart_puts_p(PSTR(","));
-								//uart_putc(bms.HLIM_state);
+								//uart_puts(bms.packVoltage);
 								//uart_puts_p(PSTR(","));
 								//uart_putc(bms.state_of_chg);
 								//uart_puts_p(PSTR(","));
@@ -236,21 +259,21 @@ void MAV_msg_Unpack()
 								//uart_puts_p(PSTR("<<"));	
 								//break;				
 							//}break;
-							//
-							//case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
-							//{
-								//hb_lost=0;
-								//uart_flush();
-								//mavlink_accelo_gyro_t ac;
-								//mavlink_msg_accelo_gyro_decode(&msg,&ac);
-								//uart_puts_p(PSTR("AC>>"));
-								//uart_putc(AC_TXID);		
-								//uart_putc(ac.acceleration);
-								//uart_puts_p(PSTR(","));
-								//uart_putc(ac.incline);
-								//uart_puts_p(PSTR("<<"));
-								//break;
-							//}break;
+							
+							case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
+							{
+								hb_lost=0;
+								uart_flush();
+								mavlink_accelo_gyro_t ac;
+								mavlink_msg_accelo_gyro_decode(&msg,&ac);
+								uart_puts_p(PSTR("AC>>"));
+								uart_putc(AC_TXID);
+								uart_putc(ac.acceleration);
+								uart_puts_p(PSTR(","));
+								uart_putc(ac.incline);
+								uart_puts_p(PSTR("<<"));
+								break;
+							}break;
 							//
 							//case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
 							//{
@@ -342,7 +365,7 @@ void MAV_msg_Unpack()
 					
 					// And get the next one
 							
-				}//end while counter
+				
 				
 			}//endif RXC0
 			
