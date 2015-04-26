@@ -74,8 +74,12 @@ int main (void)
 		Sets the Parsing pointer to the start of the GPS string					*/
 	
 	p_start = gps_string;
-	volatile GlobalVars CANData;
 	uint8_t rungps=0;
+	/*---------CANData Global Struct INIT--------------------
+		Sets the Parsing pointer to the start of the GPS string					*/
+	volatile GlobalVars CANData;
+	
+	
 //---------------Operational Loop---------------------//
 	
 	while(1) {
@@ -116,17 +120,23 @@ int main (void)
 			updateGPS_flag = FALSE;			//GPS has been		
 		}
 
-		if (gps_needs_sending==TRUE)
+		if (gps_needs_sending==TRUE)		//GPS parsed and ready to send
 		{
 			uart_puts(gps_string);
 			gps_needs_sending = FALSE;
 		}
 		
-	
-	
-
-	
-
+		
+		if (reqMPPTs_flag == TRUE)			//MPPTs must be requested to send data if 1s has passed (flag set)
+		{
+			CANMessage mppt_request;		//object of MPPT request CAN msg
+			mppt_request.id = CANID_MPPTRQ1;
+			mppt_request.length = 0;
+			mppt_request.rtr = 1;
+			CAN_sendMessage(&mppt_request);			
+			reqMPPTs_flag = FALSE;
+		}
+		
 
 	if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
 	{

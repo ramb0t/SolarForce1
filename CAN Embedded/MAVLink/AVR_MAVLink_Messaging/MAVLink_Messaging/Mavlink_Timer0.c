@@ -18,7 +18,14 @@ ISR(TIMER0_OVF_vect)
 	{
 		old_mS = ms_Counter;		//set the previous value back to let counter run
 		updateMAV_flag = TRUE;
+		
 	}
+	
+		if ((ms_Counter - old_mS_MPPT) > MPPT_REQUEST_TIME ) //need to send request to mppt's every 1s
+		{
+			old_mS_MPPT = ms_Counter;		//set the previous value back to let counter run
+			reqMPPTs_flag = TRUE;
+		}
 	
 }
 
@@ -33,5 +40,6 @@ void Timer0_init(void)
 
 	gMilliSecTick = 0;
 	old_mS = 0;
+	old_mS_MPPT = 0;
 	ms_Counter = 0;
 }

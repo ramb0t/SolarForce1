@@ -20,6 +20,7 @@
 #define TIMEBASE_HITS_PER_1MS ( F_CPU/TIMEBASE_PRESCALE/1000 ) //number of timer counts per 1mS
 #define TIMEBASE_RELOAD ((uint8_t)(0xff-TIMEBASE_HITS_PER_1MS+1)) // value to reload timer with
 #define MAVLINK_HB_UPDATERATE 500
+#define MPPT_REQUEST_TIME 1000
 #define TRUE 1
 #define FALSE 0
 
@@ -28,6 +29,9 @@ extern volatile uint8_t		updateMAV_flag;		//flag to know whether MAVLink packet 
 extern volatile uint16_t 	gMilliSecTick;
 extern volatile uint16_t	ms_Counter;
 extern volatile uint16_t	old_mS;
+
+extern volatile uint16_t	old_mS_MPPT;
+extern volatile uint8_t		reqMPPTs_flag;	
 
 
 //---------------Prototypes---------------//

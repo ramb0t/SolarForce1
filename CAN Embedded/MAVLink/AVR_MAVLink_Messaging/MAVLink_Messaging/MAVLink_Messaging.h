@@ -98,4 +98,8 @@ volatile uint16_t 	gMilliSecTick;
 volatile uint16_t	ms_Counter;
 volatile uint16_t	old_mS;
 
+volatile uint16_t	old_mS_MPPT;
+volatile uint8_t	reqMPPTs_flag;
+
+
 #endif /* MAVLINK_MESSAGING_H_ */
