@@ -84,6 +84,17 @@ typedef struct
 	uint16_t		motorRPM;		//5,6
 	uint8_t			statusFlags;	//7
 	
+	//------------ACCELO/GYRO----------------//
+	
+	uint16_t		gyro_x;			//0,1	
+	uint16_t		gyro_y;			//2,3
+	uint16_t		gyro_z;			//4,5
+	
+	uint16_t		accel_x;		//0,1
+	uint16_t		accel_y;		//2,3
+	uint16_t		accel_z;		//4,5
+
+	
 }GlobalVars;
 
 

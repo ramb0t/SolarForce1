@@ -72,7 +72,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					SpeedData[7] = Status flag
 					
 					*/
-				case 	SPEED_HE_CANID:
+				case 	CANID_SPEED:
 				{
 							//LED_DIAG_PORT |= (1<<LED_DIAG_GRN);		
 							CANData.avgSpeed = message->data[0];
@@ -115,7 +115,7 @@ uint8_t CAN_Decode(CANMessage *message)
 				
 				*/
 					
-				case	BMS_2_CANID:
+				case	CANID_BMS2:
 				{
 					utoa(message->data[3],buff,10);		//fault flags
 					//BMS_Message.data[0] = message->data[3];
@@ -138,7 +138,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 					
-				case	BMS_3_CANID:
+				case	CANID_BMS3:
 				{
 					CANData.packVoltage = (message->data[0]<<8)|(message->data[1]);
 					CANData.minVoltage = message->data[2];
@@ -166,7 +166,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 				
-				case	BMS_4_CANID:
+				case	CANID_BMS4:
 				{
 					CANData.current = (message->data[0]<<8)|(message->data[1]);
 					CANData.chargeLimit = (message->data[2]<<8)|(message->data[3]);
@@ -184,7 +184,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 				
-				case	BMS_5_CANID:
+				case	CANID_BMS5:
 				{
 					CANData.batteryEnergyIn = (message->data[0]<<24)|(message->data[1]<<16)|(message->data[2]<<8)|(message->data[3]);
 					CANData.batteryEnergyIn = (message->data[4]<<24)|(message->data[5]<<16)|(message->data[6]<<8)|(message->data[7]);
@@ -194,7 +194,7 @@ uint8_t CAN_Decode(CANMessage *message)
 				}
 				
 
-				case	BMS_6_CANID:
+				case	CANID_BMS6:
 				{
 					CANData.SOC = message->data[0];
 					CANData.DOD = (message->data[1]<<8)|(message->data[2]);
@@ -213,7 +213,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 				
-				case	BMS_7_CANID:
+				case	CANID_BMS7:
 				{
 					//uart_puts("\n");
 					//uart_puts("CAN from BMS7:");					//Human readable data on UART
@@ -245,7 +245,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 				
-				case BMS_8_CANID:
+				case CANID_BMS8:
 				{
 					CANData.packResistance = (message->data[0]<<8)|(message->data[1]);
 					CANData.minRes = message->data[2];
@@ -253,31 +253,26 @@ uint8_t CAN_Decode(CANMessage *message)
 					CANData.maxRes = message->data[4];
 				}
 				
-				case	ACGY1 || ACGY2 || ACGY3:
+				case	CANID_GYRO_GYRO:
 				{	
-					//uart_puts("\n");
-					//uart_puts("CAN from GY:");
-					//uart_puts(message->id);
-					//Gyro_Message.data[0] = message->data[0];
-					//uart_puts(buff);
-
+					CANData.gyro_x = (message->data[0]<<8)|(message->data[1]);
+					CANData.gyro_y = (message->data[2]<<8)|(message->data[3]);
+					CANData.gyro_z = (message->data[4]<<8)|(message->data[5]);
 					gyroUpdated=1;
 					return CAN_MSG_DECODED;
 				}
 				
-				case	ACGY2:
+				case	CANID_GYRO_ACCEL:
 				{
-					//uart_puts("\n");
-					//uart_puts("CAN from GY:");
-					//uart_puts(message->id);
-					//Accelo_message.data[1] = message->data[1];
-					//uart_puts(buff);
+					CANData.accel_x = (message->data[0]<<8)|(message->data[1]);
+					CANData.accel_y = (message->data[2]<<8)|(message->data[3]);
+					CANData.accel_z = (message->data[4]<<8)|(message->data[5]);
 					
 					acceloUpdated=1;
 					return CAN_MSG_DECODED;
 				}
 				
-				case	MPPT1_CANID:
+				case	CANID_MPPT1:
 				{	
 					//----METHOD TO BITSHIFT--------//
 					/*uint16_t val = (byte4&0x03)<<8;
@@ -315,7 +310,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 				
-				case	MPPT2_CANID:
+				case	CANID_MPPT2:
 				{
 					uint16_t temp = ((message->data[0] & (0x03))<<8);
 					temp &= 0xFF00;
@@ -338,7 +333,7 @@ uint8_t CAN_Decode(CANMessage *message)
 				return CAN_MSG_DECODED;
 				}
 				
-				case	MPPT3_CANID:
+				case	CANID_MPPT3:
 				{
 					uint16_t temp = ((message->data[0] & (0x03))<<8);
 					temp &= 0xFF00;
@@ -361,7 +356,7 @@ uint8_t CAN_Decode(CANMessage *message)
 				return CAN_MSG_DECODED;
 				}
 				
-				case	MPPT4_CANID:
+				case	CANID_MPPT4:
 				{
 					uint16_t temp = ((message->data[0] & (0x03))<<8);
 					temp &= 0xFF00;
