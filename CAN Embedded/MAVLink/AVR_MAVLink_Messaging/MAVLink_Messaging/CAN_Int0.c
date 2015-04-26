@@ -22,7 +22,7 @@ ISR(INT0_vect)
 				updateMAV_flag = TRUE;						//...set a flag to send this data & store data
 			}else
 			{
-				return CAN_NOT_DECODED;										//else leave it alone
+				return;										//else leave it alone
 			}
 		}
 		
@@ -74,16 +74,18 @@ uint8_t CAN_Decode(CANMessage *message)
 					*/
 				case 	SPEED_HE_CANID:
 				{
-							LED_DIAG_PORT |= (1<<LED_DIAG_GRN);			
-							CANData.avgSpeed = 13/*message->data[0]*/;
+							//LED_DIAG_PORT |= (1<<LED_DIAG_GRN);		
+							CANData.avgSpeed = message->data[1];
 							CANData.hesSPeed = 15/*message->data[1]*/;
-							CANData.hesRPM = 17/*(message->data[3])|(message->data[2]<<8)*/;
+							CANData.hesRPM = (message->data[0]<<8)|(message->data[1]);/*(message->data[3])|(message->data[2]<<8)*/;
 							CANData.motorSpeed = 18/*message->data[4]*/;
 							CANData.motorRPM =12 /*(message->data[6])|(message->data[5]<<8)*/;
 							CANData.statusFlags = 12/*message->data[7]*/;
 						//
+						
 						speedMDUpdated=1;	
 						speedHEUpdated=1;
+						return CAN_MSG_DECODED;
 				}
 					
 				/*NOTE: BMS Data across different messages, we want:
