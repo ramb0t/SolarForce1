@@ -191,6 +191,16 @@ void Terminal_read(volatile uint8_t* state){
 				return;
 				break;
 
+			case TERMINAL_cLOOPGYRO:
+				// loop Gyro Data
+				*state |= TERMINAL_LOOPGYRO;
+				uart_puts("\n");
+				uart_puts("Looping Gyro CAN Messages \n");
+				uart_puts("Type 'c' to exit\n");
+				uart_puts("\n");
+				return;
+				break;
+
 			case TERMINAL_cBACK:
 				// Go Back To Main Menu
 				*state = TERMINAL_RUN;

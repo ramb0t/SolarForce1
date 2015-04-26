@@ -70,10 +70,13 @@ int main(void)
 	extern volatile uint16_t ms_Counter;
 		uint16_t oldBMSTime = ms_Counter;
 		uint16_t oldSpeedTime = ms_Counter-50; // add a small offset
+		uint16_t oldGyroTime = ms_Counter-75; // add a small offset
 #define	waitBMSTime 1000 // delay time in ms
 #define waitSpeedTime 200
+#define waitGyroTime 500
 
-	uint16_t spd = 0;
+	uint8_t spd = 0;
+	uint16_t Gyro_Angle = 0;
 
 	BMS_init();
 	SpeedEmu_init();
@@ -212,13 +215,27 @@ int main(void)
 			if((ms_Counter - oldSpeedTime) > waitSpeedTime){
 				oldSpeedTime = ms_Counter;
 				SpeedEmu_set_speed(spd);
+				SpeedEmu_set_HESSpd(spd+1);
+				SpeedEmu_set_HESRPM((int16_t)spd +100);
+				SpeedEmu_set_MTSpd(spd+2);
+				SpeedEmu_set_MTRPM((uint16_t)spd +200);
 				spd = spd+1;
 				if(spd > 250){
 					spd = 0;
 				}
 				SpeedEmu_send_fake_data();
+
+				// send gyro same time because that's how it works!
+				Gyro_Angle = Gyro_Angle + 100;
+				GyroEmu_set_AngleX(Gyro_Angle);
+				GyroEmu_set_AngleY(Gyro_Angle+100);
+				GyroEmu_set_AngleZ(Gyro_Angle+200);
+				GyroEmu_send_fake_data();
+
 			}
     	}
+
+
 
     } // while
 } // main

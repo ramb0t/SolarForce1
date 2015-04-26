@@ -81,7 +81,7 @@ void BMS_send_fake_data(){
 
 	for(uint8_t i = 0; i < 9; i++){
 		CAN_sendMessage(&BMS[i]);
-		_delay_us(1000);
+		_delay_us(1000); // make sure not to trip up can sending by calling too fast
 	}
 
 	BMS[6].data[0]++; // SOC

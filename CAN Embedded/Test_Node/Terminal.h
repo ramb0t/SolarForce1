@@ -38,6 +38,7 @@
 #define TERMINAL_SENDBMS				0x43
 #define TERMINAL_LOOPBMS				0x44
 #define TERMINAL_LOOPSPEED				0x48
+#define TERMINAL_LOOPGYRO				0x49
 
 #define TERMINAL_MAX_INPUT_LENGTH		10
 
@@ -58,6 +59,7 @@
 #define TERMINAL_cSENDBMS				4
 #define TERMINAL_cLOOPBMS				5
 #define TERMINAL_cLOOPSPEED				6
+#define TERMINAL_cLOOPGYRO				7
 
 #define TERMINAL_s1						"1"
 #define TERMINAL_s2						"2"
