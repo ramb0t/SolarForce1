@@ -151,6 +151,9 @@
     <Compile Include="Combo.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Combo.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="I2C.h">
       <SubType>compile</SubType>
     </Compile>

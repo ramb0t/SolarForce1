@@ -115,7 +115,7 @@ int16_t MPU6050_ReadGyro(int axis)//x = 0; y = 1; z = 2
 	return val;
 }
 
-int16_t MPU6050_CalcAngle(int axis)//x = 0; y = 1; z = 2
+float MPU6050_CalcAngle(int axis)//x = 0; y = 1; z = 2
 {
 	char reg = axis * 2 + 59;
 	char AFS_SEL = TWIM_ReadRegister(28);
@@ -158,7 +158,7 @@ int main(void)
     while(1)
     {
         //TODO:: Please write your application code 
-		/*
+		
 		//*****************************************
 		//Send angle
 		//*****************************************
@@ -166,10 +166,14 @@ int main(void)
 		float anglepsi;
 		float anglephi;
 		
-		angletheta = (atan(MPU6050_CalcAngle(0)/(sqrt((pow(MPU6050_CalcAngle(1),2)) + (pow(MPU6050_CalcAngle(2),2))))))*180/M_PI;
-		anglepsi = (atan(MPU6050_CalcAngle(1)/(sqrt((pow(MPU6050_CalcAngle(0),2)) + (pow(MPU6050_CalcAngle(2),2))))))*180/M_PI;
-		anglephi = (atan((sqrt((pow(MPU6050_CalcAngle(0),2)) + (pow(MPU6050_CalcAngle(1),2))))/MPU6050_CalcAngle(2)))*180/M_PI;
-		*/
+		angletheta = ((atan(MPU6050_CalcAngle(0)/(sqrt((pow(MPU6050_CalcAngle(1),2)) + (pow(MPU6050_CalcAngle(2),2))))))*180/M_PI)*1000;
+		anglepsi = ((atan(MPU6050_CalcAngle(1)/(sqrt((pow(MPU6050_CalcAngle(0),2)) + (pow(MPU6050_CalcAngle(2),2))))))*180/M_PI)*1000;
+		anglephi = ((atan((sqrt((pow(MPU6050_CalcAngle(0),2)) + (pow(MPU6050_CalcAngle(1),2))))/MPU6050_CalcAngle(2)))*180/M_PI)*1000;
+		
+		int32_t anglethetaTEMP = angletheta;
+		int32_t anglepsiTEMP = anglepsi;
+		int16_t anglephiTEMP = anglephi;
+		
 		//*****************************************
 		//Send gyroscope
 		//*****************************************
@@ -179,7 +183,7 @@ int main(void)
 			
 		CANMessage Gyro;
 			
-		Gyro. id = 0x7A2;
+		Gyro. id = 0x07A2;
 		Gyro. rtr = 0 ;
 		Gyro. length = 6 ;
 		Gyro. data [ 0 ] = tempGX>>8;
@@ -200,8 +204,7 @@ int main(void)
 		
 		CANMessage Accel;
 		
-		Accel. id = 0x07A3
-		;
+		Accel. id = 0x07A3;
 		Accel. rtr = 0 ;
 		Accel. length = 6 ;
 		Accel. data [ 0 ] = tempAX>>8;
@@ -212,6 +215,34 @@ int main(void)
 		Accel. data [ 5 ] = tempAZ;
 		
 		CAN_sendMessage (&Accel);
+		
+		CANMessage anglexy;
+		
+		anglexy. id = 0x07A0;
+		anglexy. rtr = 0 ;
+		anglexy. length = 8 ;
+		anglexy. data [ 0 ] = anglethetaTEMP>>24;
+		anglexy. data [ 1 ] = anglethetaTEMP>>16;
+		anglexy. data [ 2 ] = anglethetaTEMP>>8;
+		anglexy. data [ 3 ] = anglethetaTEMP;
+		anglexy. data [ 4 ] = anglepsiTEMP>>32;
+		anglexy. data [ 5 ] = anglepsiTEMP>>16;
+		anglexy. data [ 6 ] = anglepsiTEMP>>8;
+		anglexy. data [ 7 ] = anglepsiTEMP;
+		
+		CAN_sendMessage (&anglexy);
+		
+		CANMessage anglez;
+		
+		anglez. id = 0x07A1;
+		anglez. rtr = 0 ;
+		anglez. length = 4 ;
+		anglez. data [ 0 ] = anglephiTEMP>>24;
+		anglez. data [ 1 ] = anglephiTEMP>>16;
+		anglez. data [ 2 ] = anglephiTEMP>>8;
+		anglez. data [ 3 ] = anglephiTEMP;
+		
+		CAN_sendMessage (&anglez);
 		
 		//CANMessage test1;
 	

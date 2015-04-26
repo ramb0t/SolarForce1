@@ -10,12 +10,13 @@
 //timer0 overflow
 ISR(TIMER1_OVF_vect)
 {
-	send();
 	if(totalCount < 50000)
 	{
 		motorSpeed = 0x00;
 		TCNT1 = 0;
 	}
+	
+	send();
 }
 
 //timer1 setup

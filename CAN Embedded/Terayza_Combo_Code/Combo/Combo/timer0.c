@@ -13,6 +13,7 @@
 ISR(TIMER0_OVF_vect)
 {
 	count0++;
+	gTimebase++; // inc the system counter 
 	TCNT0 = TIMEBASE_RELOAD0; //reload timer
 	//timer will be reloaded to the highest value(overflow value) - 1ms
 	
