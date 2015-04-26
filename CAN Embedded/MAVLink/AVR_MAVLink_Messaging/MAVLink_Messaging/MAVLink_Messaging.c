@@ -75,6 +75,7 @@ int main (void)
 	
 	p_start = gps_string;
 	volatile GlobalVars CANData;
+	uint8_t rungps=0;
 //---------------Operational Loop---------------------//
 	
 	while(1) {
@@ -98,18 +99,33 @@ int main (void)
 
 	if (updateMAV_flag == TRUE)
 	{
+		rungps++;
+		if (rungps > 2)
+		{
+			updateGPS_flag = TRUE;
+			rungps = 0;
+		}
+		
 		MAV_HB_send();					//send MAVLink heartbeat	
 		MAV_msg_pack();					//selectively send MAVLink packets
 		updateMAV_flag = FALSE;
 	}
+		if (updateGPS_flag == TRUE)
+		{
+			GPS_readData();					//store GPS data to global fields
+			updateGPS_flag = FALSE;			//GPS has been		
+		}
+
+		if (gps_needs_sending==TRUE)
+		{
+			uart_puts(gps_string);
+			gps_needs_sending = FALSE;
+		}
+		
 	
 	
+
 	
-	if (updateGPS_flag == TRUE)
-	{
-		GPS_readData();					//store GPS data to global fields
-		updateGPS_flag = FALSE;			//GPS has been 
-	}
 
 
 	if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
@@ -134,7 +150,7 @@ int main (void)
 
 void GPS_readData()
 {
-	
+	uint8_t gpsctr;
 	uart_flush();
 	for (int i=0;i<62;i++)
 	{
@@ -192,7 +208,7 @@ void GPS_readData()
 			if (gps_string[5]=='C')							//Only GPRMC sentence has a 'C' so isolate this
 			{
 				ParseGPS();
-				uart_puts(gps_string);						//output it!
+				gps_needs_sending = TRUE;						//output it!
 			}
 	
 	
@@ -204,7 +220,7 @@ void GPS_readData()
 	
 		}
 
-	gps_needs_sending = TRUE;
+	
 }//GPS get
 
 

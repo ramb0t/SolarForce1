@@ -72,6 +72,8 @@
 		void EVENT_USB_Device_Disconnect(void);
 		void EVENT_USB_Device_ConfigurationChanged(void);
 		void EVENT_USB_Device_ControlRequest(void);
+		
+		static FILE USBSerialStream;
 
 #endif
 

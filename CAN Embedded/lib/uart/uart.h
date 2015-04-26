@@ -225,6 +225,12 @@ extern int uart_available(void);
  */
 extern void uart_flush(void);
 
+/* Extension by Matt (authorised by Ben)
+Gets the buffer values from the UART buffers. Useful for troubleshooting
+	returns: UART head and Tail values
+															*/
+extern uint8_t uart_get_rx_buff(void);
+
 
 /** @brief  Initialize USART1 (only available on selected ATmegas) @see uart_init */
 extern void uart1_init(unsigned int baudrate);
