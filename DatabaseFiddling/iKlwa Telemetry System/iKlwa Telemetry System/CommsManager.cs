@@ -150,7 +150,25 @@ namespace iKlwa_Telemetry_System
         {
             return port.ReadTo(end_sequence);
         }
+        /*
+        public string readBytesUntil(string end_seq)
+        {
+            char[] end = end_seq.ToCharArray();
 
+            List<int> int
+
+            StringBuilder strBuild = new StringBuilder();
+
+            int temp = readByte();
+            //if ((char)temp!=end_character)
+            {
+                strBuild.Append(temp);
+                strBuild.Append(',');
+            }
+
+            return strBuild.ToString();
+        }
+        */
         public void writeBytes(byte[] values)
         {
             port.Write(values, 0, values.Length);

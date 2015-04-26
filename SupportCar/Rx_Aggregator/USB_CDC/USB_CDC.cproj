@@ -163,6 +163,7 @@
   <offline-documentation help="" />
   <dependencies>
     <content-extension eid="fourwalledcubicle.lufa" uuidref="0e160d5c-e331-48d9-850b-e0387912171b" version="14.09.28" />
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.15.0" />
   </dependencies>
   <project id="lufa.demos.device.class.cdc.example.avr8" value="Add" config="" content-id="0e160d5c-e331-48d9-850b-e0387912171b" />
   <board id="lufa.boards.dummy.avr8" value="Add" config="" content-id="0e160d5c-e331-48d9-850b-e0387912171b" />
@@ -173,106 +174,128 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>USE_LUFA_CONFIG_HEADER</Value>
-      <Value>F_USB=16000000UL</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>../src</Value>
-      <Value>../src/LUFA</Value>
-      <Value>../src/config</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.OtherFlags>-fdata-sections</avrgcc.compiler.optimization.OtherFlags>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.compiler.miscellaneous.OtherFlags>-mrelax -std=gnu99 -fno-strict-aliasing -fno-jump-tables</avrgcc.compiler.miscellaneous.OtherFlags>
-  <avrgcc.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.Libraries>
-  <avrgcc.assembler.general.AssemblerFlags>-DARCH=ARCH_AVR8 -DBOARD=BOARD_NONE -DF_CPU=16000000UL -DF_USB=16000000UL -DUSE_LUFA_CONFIG_HEADER</avrgcc.assembler.general.AssemblerFlags>
-  <avrgcc.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>../src</Value>
-      <Value>../src/LUFA</Value>
-      <Value>../src/config</Value>
-    </ListValues>
-  </avrgcc.assembler.general.IncludePaths>
-</AvrGcc>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+            <Value>ARCH=ARCH_AVR8</Value>
+            <Value>BOARD=BOARD_NONE</Value>
+            <Value>F_CPU=16000000UL</Value>
+            <Value>USE_LUFA_CONFIG_HEADER</Value>
+            <Value>F_USB=16000000UL</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>../src</Value>
+            <Value>../src/LUFA</Value>
+            <Value>../src/config</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.OtherFlags>-fdata-sections</avrgcc.compiler.optimization.OtherFlags>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.miscellaneous.OtherFlags>-mrelax -std=gnu99 -fno-strict-aliasing -fno-jump-tables</avrgcc.compiler.miscellaneous.OtherFlags>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.assembler.general.AssemblerFlags>-DARCH=ARCH_AVR8 -DBOARD=BOARD_NONE -DF_CPU=16000000UL -DF_USB=16000000UL -DUSE_LUFA_CONFIG_HEADER</avrgcc.assembler.general.AssemblerFlags>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>../src</Value>
+            <Value>../src/LUFA</Value>
+            <Value>../src/config</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+      </AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>DEBUG</Value>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>USE_LUFA_CONFIG_HEADER</Value>
-      <Value>F_USB=16000000UL</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>../src</Value>
-      <Value>../src/LUFA</Value>
-      <Value>../src/config</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.OtherFlags>-fdata-sections</avrgcc.compiler.optimization.OtherFlags>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.compiler.miscellaneous.OtherFlags>-mrelax -std=gnu99 -fno-strict-aliasing -fno-jump-tables</avrgcc.compiler.miscellaneous.OtherFlags>
-  <avrgcc.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.Libraries>
-  <avrgcc.assembler.general.AssemblerFlags>-DARCH=ARCH_AVR8 -DBOARD=BOARD_NONE -DF_CPU=16000000UL -DF_USB=16000000UL -DUSE_LUFA_CONFIG_HEADER</avrgcc.assembler.general.AssemblerFlags>
-  <avrgcc.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>../src</Value>
-      <Value>../src/LUFA</Value>
-      <Value>../src/config</Value>
-    </ListValues>
-  </avrgcc.assembler.general.IncludePaths>
-  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
-</AvrGcc>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+            <Value>ARCH=ARCH_AVR8</Value>
+            <Value>BOARD=BOARD_NONE</Value>
+            <Value>F_CPU=16000000UL</Value>
+            <Value>USE_LUFA_CONFIG_HEADER</Value>
+            <Value>F_USB=16000000UL</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>../src</Value>
+            <Value>../src/LUFA</Value>
+            <Value>../src/config</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.OtherFlags>-fdata-sections</avrgcc.compiler.optimization.OtherFlags>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.miscellaneous.OtherFlags>-mrelax -std=gnu99 -fno-strict-aliasing -fno-jump-tables</avrgcc.compiler.miscellaneous.OtherFlags>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.assembler.general.AssemblerFlags>-DARCH=ARCH_AVR8 -DBOARD=BOARD_NONE -DF_CPU=16000000UL -DF_USB=16000000UL -DUSE_LUFA_CONFIG_HEADER</avrgcc.assembler.general.AssemblerFlags>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>../src</Value>
+            <Value>../src/LUFA</Value>
+            <Value>../src/config</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="Debug\" />
+    <Folder Include="Debug\lib\" />
+    <Folder Include="Debug\lib\uart\" />
+    <Folder Include="Debug\src\" />
+    <Folder Include="Debug\src\config\" />
+    <Folder Include="Debug\src\LUFA\" />
+    <Folder Include="Debug\src\LUFA\LUFA\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Common\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\Board\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\USB\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Common\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\" />
+    <Folder Include="Debug\src\LUFA\LUFA\Platform\" />
+    <Folder Include="lib" />
+    <Folder Include="lib\uart" />
+    <Folder Include="solarCar\" />
     <Folder Include="src\" />
     <Folder Include="src\config\" />
     <Folder Include="src\LUFA\" />
@@ -291,9 +314,272 @@
     <Folder Include="src\LUFA\LUFA\Platform\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="checksum.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="common.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Descriptors.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="lib\uart\uart.c">
+      <SubType>compile</SubType>
+      <Link>lib\uart\uart.c</Link>
+    </Compile>
+    <Compile Include="lib\uart\uart.h">
+      <SubType>compile</SubType>
+      <Link>lib\uart\uart.h</Link>
+    </Compile>
+    <Compile Include="version.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="Debug\Descriptors.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\Descriptors.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\lib\uart\uart.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\lib\uart\uart.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\makedep.mk">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\Makefile">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Common\HIDParser.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Common\HIDParser.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\AudioClassDevice.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\AudioClassDevice.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\CDCClassDevice.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\CDCClassDevice.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\HIDClassDevice.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\HIDClassDevice.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\MassStorageClassDevice.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\MassStorageClassDevice.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\MIDIClassDevice.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\MIDIClassDevice.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\PrinterClassDevice.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\PrinterClassDevice.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\RNDISClassDevice.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Device\RNDISClassDevice.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\AndroidAccessoryClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\AndroidAccessoryClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\AudioClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\AudioClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\CDCClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\CDCClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\HIDClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\HIDClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\MassStorageClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\MassStorageClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\MIDIClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\MIDIClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\PrinterClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\PrinterClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\RNDISClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\RNDISClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\StillImageClassHost.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Class\Host\StillImageClassHost.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Device_AVR8.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Device_AVR8.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\EndpointStream_AVR8.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\EndpointStream_AVR8.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Endpoint_AVR8.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Endpoint_AVR8.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Host_AVR8.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Host_AVR8.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\PipeStream_AVR8.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\PipeStream_AVR8.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Pipe_AVR8.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Pipe_AVR8.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_Control_R.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_Control_R.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_Control_W.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_Control_W.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_RW.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_RW.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\Template_Pipe_RW.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\Template\Template_Pipe_RW.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\USBController_AVR8.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\USBController_AVR8.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\USBInterrupt_AVR8.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\AVR8\USBInterrupt_AVR8.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\ConfigDescriptors.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\ConfigDescriptors.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\DeviceStandardReq.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\DeviceStandardReq.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\Events.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\Events.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\HostStandardReq.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\HostStandardReq.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\USBTask.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\src\LUFA\LUFA\Drivers\USB\Core\USBTask.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\USB_CDC.d">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\USB_CDC.eep">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\USB_CDC.elf">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\USB_CDC.hex">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\USB_CDC.lss">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\USB_CDC.map">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\USB_CDC.o">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="Debug\USB_CDC.srec">
+      <SubType>compile</SubType>
+    </None>
     <None Include="src\asf.h">
       <SubType>compile</SubType>
     </None>
@@ -537,6 +823,99 @@
     <None Include="src\LUFA\LUFA\Drivers\USB\Class\CDCClass.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="GlobalDefs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="gps_parse.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mavlink.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mavlink_bridge_header.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mavlink_conversions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mavlink_helpers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MAVLink_Messaging_RX.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MAVLink_Messaging_RX.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mavlink_msg_gps.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mavlink_msg_heartbeat.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mavlink_types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="protocol.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\common.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_accelo_gyro.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_bms_data.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_extra1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_extra2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_extra3.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_gps.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_gps_raw.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_heartbeat.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_mppt1_data.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_mppt2_data.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_mppt3_data.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_mppt4_data.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_speed_halleffect.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\mavlink_msg_sys_status.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\solarCar.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\testsuite.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="solarCar\version.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\LUFA\LUFA\Drivers\USB\Class\Common\HIDParser.c">
       <SubType>compile</SubType>
     </Compile>

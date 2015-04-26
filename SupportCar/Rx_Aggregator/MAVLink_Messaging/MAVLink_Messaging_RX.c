@@ -1,313 +1,65 @@
 /*
-             LUFA Library
-     Copyright (C) Dean Camera, 2014.
-
-  dean [at] fourwalledcubicle [dot] com
-           www.lufa-lib.org
-*/
-
-/*
-  Copyright 2014  Dean Camera (dean [at] fourwalledcubicle [dot] com)
-
-  Permission to use, copy, modify, distribute, and sell this
-  software and its documentation for any purpose is hereby granted
-  without fee, provided that the above copyright notice appear in
-  all copies and that both that the copyright notice and this
-  permission notice and warranty disclaimer appear in supporting
-  documentation, and that the name of the author not be used in
-  advertising or publicity pertaining to distribution of the
-  software without specific, written prior permission.
-
-  The author disclaims all warranties with regard to this
-  software, including all implied warranties of merchantability
-  and fitness.  In no event shall the author be liable for any
-  special, indirect or consequential damages or any damages
-  whatsoever resulting from loss of use, data or profits, whether
-  in an action of contract, negligence or other tortious action,
-  arising out of or in connection with the use or performance of
-  this software.
-*/
-
-/** \file
+ * MAVLink_Messaging.c
  *
- *  Main source file for the VirtualSerial demo. This file contains the main tasks of
- *  the demo and is responsible for the initial application hardware configuration.
- */
-
-#include "VirtualSerial.h"
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
-
-#ifndef __AVR_ATmega32U4__
-#define __AVR_ATmega32U4__
-#endif
+ * Created: 2015/03/29 11:47:11 PM
+ *  Author: Matt
+ */ 
 
 #include "MAVLink_Messaging_RX.h"
-#include "../lib/uart/uart.h"
 
-#define F_CPU 16e6
-#define MAX_CAPTURE 15
-#define Irrad_Channel 13
 #define DEBUG	1
 
-/** LUFA CDC Class driver interface configuration and state information. This structure is
- *  passed to all CDC Class driver functions, so that multiple instances of the same class
- *  within a device can be differentiated from one another.
- */
-USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
-	{
-		.Config =
-			{
-				.ControlInterfaceNumber   = INTERFACE_ID_CDC_CCI,
-				.DataINEndpoint           =
-					{
-						.Address          = CDC_TX_EPADDR,
-						.Size             = CDC_TXRX_EPSIZE,
-						.Banks            = 1,
-					},
-				.DataOUTEndpoint =
-					{
-						.Address          = CDC_RX_EPADDR,
-						.Size             = CDC_TXRX_EPSIZE,
-						.Banks            = 1,
-					},
-				.NotificationEndpoint =
-					{
-						.Address          = CDC_NOTIFICATION_EPADDR,
-						.Size             = CDC_NOTIFICATION_EPSIZE,
-						.Banks            = 1,
-					},
-			},
-	};
+//------------ISR for the Timer0-------------------------//
 
-/** Standard file stream for the CDC interface when set up, so that the virtual CDC COM port can be
- *  used like any regular character stream in the C APIs.
- */
-static FILE USBSerialStream;
-
-#pragma region ADC_Config
-
-	//initialise the adc
-	void init_adc(uint8_t channel)
-	{
-	//adc reference is AVcc
-	//Single Ended Mode
-		ADMUX |= (1<<REFS0);
-	
-		ADMUX |= channel;
-		//MUX5 is in ADCSRB!
-		if (channel>=8 && channel <=13)
-		ADCSRB |= (1<<MUX5);
-		else
-		ADCSRB &= ~(1<<MUX5);
-	
-		//Enable ADC with conversion completed interrupt
-		//assume single conversion mode
-		ADCSRA = (1<<ADEN) | (1<<ADIE);
-	}
-
-	typedef enum uint8_t {Prescalar2 = 1,
-						  Prescalar4 = 2,
-	  					  Prescalar8 = 3,
-						  Prescalar16 = 4,
-						  Prescalar32 = 5,
-						  Prescalar64 = 6,
-						  Prescalar128 = 7} PRESCALAR;
-
-	void setPrescalar(PRESCALAR p)
-	{
-		ADCSRA |= p;
-	}
-
-	//allows the disabling of a digital input to reduce power consumption
-	void disable_digital_input(uint8_t channel)
-	{
-		if (channel<=7)
-		{
-			DIDR0 |= 1<<channel;
-		}
-		else if(channel<=13)
-		{
-			DIDR1 |= 1<<(channel-8);
-		}
-	}
-
-	void adc_read()
-	{
-		ADCSRA |= 1<<ADSC;
-	}
-	
-	volatile uint16_t voltage;
-
-#pragma endregion
-
-#pragma region TimerSetups
-
-	//setup timer 3 for input capture
-	void init_timer3_ICP()
-	{
-		//enable input capture noise canceller and trigger on a rising edge
-		//choose prescaler of /256... gives 62500 clocks for max freq and 16us resolution
-		TCCR3B = (1<<ICES3)|(1<<CS32)|(1<<ICNC3);
-	
-		//setup input capture interrupt and overflow interrupt
-		TIMSK3 = (1<<TOIE3)|(1<<ICIE3);
-	}
-
-	uint32_t sum_capture = 0;
-	uint8_t count_capture = 0;
-
-#pragma endregion
-
-#pragma region Flags_and_Useful_Things
-
-	typedef union
-	{
-		uint8_t all;
-		struct
-		{
-			uint8_t ADC_read_complete: 1,
-			ICP_ready: 1;
-		};
-	} FLAGS;
-	
-	void diagnostic1_blink()
-	{
-		
-	}
-
-	static volatile FLAGS myFlags;
-
-#pragma endregion
-
-/** Main program entry point. This routine contains the overall program flow, including initial
- *  setup of all components and the main program loop.
- */
-int main(void)
+int main (void)
 {
-	SetupHardware();
-
-	/* Create a regular character stream for the interface so that it can be used with the stdio.h functions */
-	CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
+	/* -------port configuration----------------
+	GPS Serial In Dig I/P 2 = PORTD2
+	Telemetry Serial O/P 3 = PORTD3
+	Telemetry Serial I/P 4 = PORTD4				*/
 	
-	
-	
-	//MAVLink things
-	
-	//uart setup
+	UART_DDR |= _BV(TELEMETRY_UART_OUT);	//output
 	UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
-	UART_DDR |= _BV(TELEMETRY_UART_OUT);//output
 	
-	//timer0 setup
+	//DDRB |= _BV(DDB5);
+			
+	/*---------Timer Setup---------------------
+		*Overflow based
+		*1024 Prescalar						*/
+	
 	TCNT0 = 0x00;
 	TCCR0A = 0x00;
-	
-	//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
-	UBRR1H = (unsigned char)(UART_BAUD_RATE>>8);
-	UBRR1L = (unsigned char)(UART_BAUD_RATE);
-	UCSR1B = (1<<RXCIE1)|(1<<TXEN1)|(1<<RXEN1);
-	UCSR1C = (1<<UCSZ11)|(1<<UCSZ12);
+	//TCCR0B = (1<<CS02)|(1<<CS00);
+	//TIMSK0 = (1<<TOIE0);		//--enable later!
 	
 	
-	GlobalInterruptEnable();
-
-	while (1)
-	{
-		fputs("Pi", &USBSerialStream);
-		testBlink();
-		
+	/*---------UART Serial Init --------------------
+		*uses UART.h library
+		*interrupt-based					*/
+	
+		uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
+	
+		sei();	//interrupts ON
+	
+	//HACK: Sending GPS data and heartbeat
+	//TODO: Get interrupt-based heartbeats and GPS data integrated with CAN
+	
+				mavlink_system.sysid = 100; // System ID, 1-255
+				mavlink_system.compid = 200; // Component/Subsystem ID, 1-255
+	
+//---------------Operational Loop---------------------//
+	
+	while(1) {
+		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
+	//uart_puts("hi");
 		MAV_msg_Unpack();
-		
-		/* Must throw away unused bytes from the host, or it will lock up while waiting for the device */
-		CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
 
-		CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
-		USB_USBTask();
+
 	}
+	return 0;
+
 }
 
-void ADC_ok_LED()
-{
-	ADC_ok_LED();
-	PORTF &= ~(1<</*PORTF4*/PORTF0);
-}
-
-void testBlink()
-{
-	PORTC &= ~(1<<PORTC6);
-	
-	PORTF &= ~((1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4));
-}
-
-#pragma region LUFA_Functions
-
-	/** Configures the board hardware and chip peripherals for the demo's functionality. */
-	void SetupHardware(void)
-	{
-		#if (ARCH == ARCH_AVR8)
-		/* Disable watchdog if enabled by bootloader/fuses */
-		MCUSR &= ~(1 << WDRF);
-		wdt_disable();
-
-		/* Disable clock division */
-		clock_prescale_set(clock_div_1);
-		#elif (ARCH == ARCH_XMEGA)
-		/* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
-		XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
-		XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
-
-		/* Start the 32MHz internal RC oscillator and start the DFLL to increase it to 48MHz using the USB SOF as a reference */
-		XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
-		XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
-
-		PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
-		#endif
-
-		/* Hardware Initialization */
-		USB_Init();
-		
-		//init for ADC
-		init_adc(Irrad_Channel);
-		disable_digital_input(Irrad_Channel);
-		setPrescalar(Prescalar128);
-		
-		//init for diagnostic LEDs
-		DDRF |= (1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4);
-		PORTF |= (1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4);
-	}
-
-	/** Event handler for the library USB Connection event. */
-	void EVENT_USB_Device_Connect(void)
-	{
-		//LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
-	}
-
-	/** Event handler for the library USB Disconnection event. */
-	void EVENT_USB_Device_Disconnect(void)
-	{
-		//LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
-	}
-
-	/** Event handler for the library USB Configuration Changed event. */
-	void EVENT_USB_Device_ConfigurationChanged(void)
-	{
-		bool ConfigSuccess = true;
-
-		ConfigSuccess &= CDC_Device_ConfigureEndpoints(&VirtualSerial_CDC_Interface);
-
-		//LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
-	}
-
-	/** Event handler for the library USB Control Request reception event. */
-	void EVENT_USB_Device_ControlRequest(void)
-	{
-		CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
-	}
-
-#pragma endregion
-
-#pragma region MAVLink functions
 
 void MAV_msg_Unpack()
 {
@@ -340,12 +92,9 @@ void MAV_msg_Unpack()
 			mavlink_status_t* mav_status;
 
 			//uart_puts("here");
-			
-			//available grumping
-			
 			if(uart_available())
 			{
-			if(!(UCSR1A & (1<<RXC1)))									//poll data from the UART bus only while there is data on it
+			if(!(UCSR0A & (1<<RXC0)))									//poll data from the UART bus only while there is data on it
 			{
 				//uart_puts("also");
 				//uart_putc('a');
@@ -601,32 +350,5 @@ void MAV_msg_Unpack()
 							
 }//end upacks
 
-#pragma endregion
 
-#pragma region ISRs
 
-	ISR(ADC_vect)
-	{
-		myFlags.ADC_read_complete = 1;
-		voltage = ADC;
-	}
-
-	ISR(TIMER3_CAPT_vect)
-	{
-		sum_capture += ICR3;//add ICR value to sum of captures
-		TCNT3 = 0;//clear timer so ICR value always starts at 0
-		count_capture++;//increment count of captures
-		if (count_capture == MAX_CAPTURE)//if Max Captures were reached (max captures = 15)
-		{
-			myFlags.ICP_ready = 1;//set flag indicating ready to average values
-		}
-	}
-
-	ISR(TIMER3_OVF_vect)
-	{
-		myFlags.ICP_ready = 1;
-		count_capture++;
-		sum_capture = 0xFFFF;
-	}
-
-#pragma endregion

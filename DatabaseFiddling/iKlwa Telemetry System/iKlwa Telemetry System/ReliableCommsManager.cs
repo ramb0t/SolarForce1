@@ -44,8 +44,9 @@ namespace iKlwa_Telemetry_System
         {
             Packet pkt;
             pkt.ID = this.readByte();
-            this.readTextUntil(DELIMETER + "");
-            pkt.PAYLOAD = this.getFrame().Split(DELIMETER).ToList<string>();
+            this.readTextUntil(DELIMETER+"");
+            string x = this.getFrame();
+            pkt.PAYLOAD = x.Split(DELIMETER).ToList<string>();
             return pkt;
         }
 
