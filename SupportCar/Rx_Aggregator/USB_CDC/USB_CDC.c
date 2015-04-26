@@ -51,6 +51,10 @@
 #define Irrad_Channel 13
 #define DEBUG	1
 
+#define quick_blink 200
+#define slow_blink 500
+#define super_slow_blink 1500
+
 /** LUFA CDC Class driver interface configuration and state information. This structure is
  *  passed to all CDC Class driver functions, so that multiple instances of the same class
  *  within a device can be differentiated from one another.
@@ -89,52 +93,33 @@ static FILE USBSerialStream;
 #pragma region ADC_Config
 
 	//initialise the adc
-	void init_adc(uint8_t channel)
+	void init_adc()
 	{
-	//adc reference is AVcc
-	//Single Ended Mode
+		//clear all
+		ADMUX = 0;
+		
+		//adc reference is AVcc
+		//Single Ended Mode
 		ADMUX |= (1<<REFS0);
-	
-		ADMUX |= channel;
-		//MUX5 is in ADCSRB!
-		if (channel>=8 && channel <=13)
-		ADCSRB |= (1<<MUX5);
-		else
-		ADCSRB &= ~(1<<MUX5);
-	
+		
 		//Enable ADC with conversion completed interrupt
 		//assume single conversion mode
-		ADCSRA = (1<<ADEN) | (1<<ADIE);
-	}
-
-	typedef enum uint8_t {Prescalar2 = 1,
-						  Prescalar4 = 2,
-	  					  Prescalar8 = 3,
-						  Prescalar16 = 4,
-						  Prescalar32 = 5,
-						  Prescalar64 = 6,
-						  Prescalar128 = 7} PRESCALAR;
-
-	void setPrescalar(PRESCALAR p)
-	{
-		ADCSRA |= p;
+		ADCSRA = (1<<ADEN) | (1<<ADIE) | (1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2);
 	}
 
 	//allows the disabling of a digital input to reduce power consumption
 	void disable_digital_input(uint8_t channel)
 	{
-		if (channel<=7)
-		{
-			DIDR0 |= 1<<channel;
-		}
-		else if(channel<=13)
-		{
-			DIDR1 |= 1<<(channel-8);
-		}
+		DIDR2 |= 1<<ADC13D;
 	}
 
 	void adc_read()
 	{
+		//set channel to 13
+		ADMUX |= (1<<MUX0)|(1<<MUX2);
+		//MUX5 is in ADCSRB!
+		ADCSRB |= (1<<MUX5);
+		//start read
 		ADCSRA |= 1<<ADSC;
 	}
 	
@@ -155,8 +140,8 @@ static FILE USBSerialStream;
 		TIMSK3 = (1<<TOIE3)|(1<<ICIE3);
 	}
 
-	uint32_t sum_capture = 0;
-	uint8_t count_capture = 0;
+	volatile uint32_t sum_capture = 0;
+	volatile uint8_t count_capture = 0;
 
 #pragma endregion
 
@@ -202,35 +187,38 @@ int main(void)
 	TCCR0A = 0x00;
 	#define uart1_BAUD_RATE 9600
 	uart1_init( UART_BAUD_SELECT(uart1_BAUD_RATE,F_CPU) );
-	//UBRR1H = (unsigned char)(UART_BAUD_RATE>>8);
-	//UBRR1L = (unsigned char)(UART_BAUD_RATE);
-	//UCSR1B = (1<<RXCIE1)|(1<<TXEN1)|(1<<RXEN1);
-	//UCSR1C = (1<<UCSZ11)|(1<<UCSZ12);
 	
+	uint8_t msg_counter = 0;
 	
 	GlobalInterruptEnable();
-
-	//fputs("HI", &USBSerialStream);
-
 
 	while (1)
 	{
 		fputs("new loop", &USBSerialStream);
-		
-		/* some test code
-			char potatoWorks = 0;
-			potatoWorks = uart1_getc();
+		/*
+		if(++msg_counter > 15)
+		{
+			msg_counter = 0;
+		}*/
+		/*test adc*/
+		char buffer[50];
+		adc_read();
+		if (myFlags.ADC_read_complete == 1)
+		{
+			_delay_ms(123);
+			testBlink(quick_blink);
+			fputs("Voltage Reading in counts = ", &USBSerialStream);
+			itoa(voltage,buffer,10);
+			fputs(">>13,", &USBSerialStream);
+			fputs(buffer, &USBSerialStream);
+			fputs("<<", &USBSerialStream);
 			
-			do {potatoWorks = uart1_getc();
-				
-				uart1_putc(potatoWorks);
-				//fputs(potatoWorks,&USBSerialStream);
-				if (potatoWorks!=UART_NO_DATA)	fputc(potatoWorks,&USBSerialStream);
-				//uart1_putc(uart1_getc());
-				//CDC_Device_SendByte(&USBSerialStream, potatoWorks);
-				testBlink();}
-			while(potatoWorks==0);
-		*/
+			//proper code will send the string ">>13,ADC<<"
+			myFlags.ADC_read_complete = 0;//clear the flag
+		}
+		fputs("Voltage Reading in mV = ",&USBSerialStream);
+		fputs(buffer1,&USBSerialStream);
+		
 		
 		//MAV_msg_Unpack();
 		
@@ -248,19 +236,23 @@ void ADC_ok_LED()
 	PORTF &= ~(1<</*PORTF4*/PORTF0);
 }
 
-void testBlink()
+void testBlink(int time)
 {
-	PORTC &= ~(1<<PORTC6);
-	
 	PORTF &= ~((1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4));
 	
-	_delay_ms(500);
+	PORTC &= ~(1<<PORTC6);
 	
-	PORTC |= (1<<PORTC6);
+	PORTD &= ~((1<<PORTD0)|(1<<PORTD1));
 	
-	PORTF |= ((1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4));
+	_delay_ms(250);
+				
+	PORTF |= (1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4);
+			
+	PORTC |= 1<<PORTC6;
+			
+	PORTD |= (1<<PORTD0)|(1<<PORTD1);
 	
-	_delay_ms(500);
+	_delay_ms(250);
 }
 
 #pragma region LUFA_Functions
@@ -291,13 +283,17 @@ void testBlink()
 		USB_Init();
 		
 		//init for ADC
-		init_adc(Irrad_Channel);
-		disable_digital_input(Irrad_Channel);
-		setPrescalar(Prescalar128);
+		DDRB &= ~(1<<PORTB6);
+		init_adc();
+		//disable_digital_input();
 		
 		//init for diagnostic LEDs
 		DDRF |= (1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4);
 		PORTF |= (1<<PORTF1) | (1<<PORTF0) | (1<<PORTF4);
+		DDRC |= 1<<PORTC6;
+		PORTC |= 1<<PORTC6;
+		DDRD |= (1<<PORTD0)|(1<<PORTD1);
+		PORTD |= (1<<PORTD0)|(1<<PORTD1);
 	}
 
 	/** Event handler for the library USB Connection event. */
@@ -350,19 +346,6 @@ void MAV_msg_Unpack()
 			// Set correct buffer lengths
 			
 			//fputs("in unpack", &USBSerialStream);//debug
-			//fputc('&',&USBSerialStream);
-			char potatoWorks = uart1_getc();
-			_delay_ms(234);
-			//fputc(potatoWorks,&USBSerialStream);
-			potatoWorks = uart1_getc();
-			//_delay_ms(234);
-			(potatoWorks,&USBSerialStream);
-			potatoWorks = uart1_getc();
-			//_delay_ms(234);
-			fputc(potatoWorks,&USBSerialStream);
-			potatoWorks = uart1_getc();
-			_delay_ms(234);
-			fputc(potatoWorks,&USBSerialStream);
 			
 			mavlink_message_t msg;
 			mavlink_status_t status;
@@ -377,8 +360,6 @@ void MAV_msg_Unpack()
 			mavlink_status_t* mav_status;
 
 			//uart1_puts("here");
-			
-			//available grumping
 			
 			if(uart1_available())
 			{
@@ -648,6 +629,8 @@ void MAV_msg_Unpack()
 	{
 		myFlags.ADC_read_complete = 1;
 		voltage = ADC;
+		//testBlink(slow_blink);
+		//ADCSRA &= ~(1<<ADIE);
 	}
 
 	ISR(TIMER3_CAPT_vect)
