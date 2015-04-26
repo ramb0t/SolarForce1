@@ -65,8 +65,8 @@ volatile uint8_t ctr2=0;				//counts bytes passing thru MAVLink frame for length
 volatile uint16_t hb_lost = 0;			//counts cycles since last heartbeat
 volatile GlobalVars	rxData;
 
-char MAV_Rx_buff[8];
-char MAV_Rx_buff_H[8];
+char MAV_Rx_buff[16];
+char MAV_Rx_buff_H[16];
 
 //------------Function Prototypes------------------------//
 
@@ -76,10 +76,6 @@ char MAV_Rx_buff_H[8];
 		int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
 		int system_status = MAV_STATE_ACTIVE;
 
-void CAN_readData(void);
 void MAV_msg_Unpack();
-void MAV_uart_send(uint8_t [],uint8_t);
-void GPS_readData(void);
-
 
 #endif /* MAVLINK_MESSAGING_H_ */

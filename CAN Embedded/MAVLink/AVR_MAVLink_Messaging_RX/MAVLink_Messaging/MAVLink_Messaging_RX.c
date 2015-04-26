@@ -184,29 +184,20 @@ void MAV_msg_Unpack()
 							uart_puts(MAV_Rx_buff);			//used as status flags
 							uart_puts_p(PSTR(","));	
 							
-							utoa((spdhe.hes_RPM<<8),MAV_Rx_buff,10);			//send 16-bit value high byte
 							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);		//clear the high buffer of the new  buffer
-							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat 			
+							utoa(spdhe.hes_RPM,MAV_Rx_buff_H,10);			//send 16-bit value high byte
+							uart_puts(MAV_Rx_buff_H);							//send the Motor RPM
 							
-							utoa(spdhe.hes_RPM,MAV_Rx_buff,10);					//repeat for low byte
-							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat low byte to the current data
-							
-							uart_puts(MAV_Rx_buff_H);							//send the HES RPM
 							
 							uart_puts_p(PSTR(","));	
+							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);	
 							utoa(spdhe.motor_speed,MAV_Rx_buff,10);
 							uart_puts(MAV_Rx_buff);
 							uart_puts_p(PSTR(","));	
-							memset(MAV_Rx_buff, 0, sizeof MAV_Rx_buff);	
-							utoa((spdhe.motor_RPM<<8),MAV_Rx_buff,10);			//send 16-bit value high byte
-							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);		//clear the high buffer of the new  buffer
-							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat
 							
-							utoa(spdhe.motor_RPM,MAV_Rx_buff,10);					//repeat for low byte
-							strcat(MAV_Rx_buff_H,MAV_Rx_buff);					//concat low byte to the current data
-							
+							memset(MAV_Rx_buff_H, 0, sizeof MAV_Rx_buff_H);		//clear the high buffer of the new  buffer	
+							utoa(spdhe.motor_RPM,MAV_Rx_buff_H,10);			//send 16-bit value high byte
 							uart_puts(MAV_Rx_buff_H);							//send the Motor RPM
-							
 							
 							uart_puts_p(PSTR(","));	
 							utoa(spdhe.flags,MAV_Rx_buff,10);
