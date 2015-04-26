@@ -32,11 +32,19 @@
 
 // Definitions
 /*********************************************/
+#define		SCREEN_MAIN		0x01
+#define		SCREEN_SPD		0x02
 
 // Variable Definitions
 /*********************************************/
+volatile uint8_t	Screen;
 // Used for the display...
-uint8_t	gSpeed;
+uint8_t		gSpeed;
+uint8_t		gSpeed_HESSpd;
+uint16_t	gSpeed_HESRPM;
+uint8_t		gSpeed_MTSpd;
+uint16_t	gSpeed_MTRPM;
+uint8_t		gSpeed_status;
 uint8_t		gBMS_State;
 uint8_t		gBMS_Flags;
 uint8_t		gBMS_Faults;
@@ -61,6 +69,7 @@ void u8g_prepare();
 void GFX_LCD_Draw(CANMessage*);
 void GFX_LCD_DrawMain(void);
 void drawMain(void);
+void drawSpd(void);
 void draw(CANMessage*);
 
 #endif /* GFX_LCD_H_ */

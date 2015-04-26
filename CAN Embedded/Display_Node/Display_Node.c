@@ -22,6 +22,7 @@ int main(void)
 	CAN_setupPCINT0();			 // Setup CAN Message buffer using PCINT ISR
 
 	// Init LCD
+	Screen = SCREEN_MAIN;
 	LCD_SELECT();				// Enable the sck line of LCD to bypass ST7920 bug
 	u8g_setup();				// Call u8glib setup for the LCD
 	LCD_UNSELECT();				// Disable sck of LCD to prevent crap being displayed when
@@ -85,8 +86,17 @@ int main(void)
 			// If an LCD update is needed, then do it!
 			if(flagTimerUpdateLCD == TRUE && flagUpdateLCD == TRUE){
 				// get the temp
-				AVR_Temp = ADC_getTemp();
+				//AVR_Temp = ADC_getTemp();
 				// Call the update function
+
+				//HACK lets flib btwn displays?
+				if (Screen == SCREEN_MAIN ){
+					Screen = SCREEN_SPD;
+				}else{
+					Screen = SCREEN_MAIN;
+				}
+
+
 				LED_ON(LED_1);
 				GFX_LCD_DrawMain();
 				LED_OFF(LED_1);
@@ -133,6 +143,11 @@ uint8_t CAN_Decode(CANMessage *message){
 		// We found a speed message!
 		// get the speed value;
 		gSpeed = (message->data[0]);
+		gSpeed_HESSpd = (message->data[1]);
+		gSpeed_HESRPM = (message->data[3] <<8)|(message->data[2]);
+		gSpeed_MTSpd = (message->data[4]);
+		gSpeed_MTRPM = (message->data[5] <<8)|(message->data[6]);
+		gSpeed_status = (message->data[7]);
 
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;

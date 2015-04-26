@@ -95,18 +95,85 @@ void GFX_LCD_DrawMain(void){
 	u8g_FirstPage(&u8g);
 	do
 	{
-		drawMain();
-//		LCD_UNSELECT();
-//		sei();
-//		LED_FLIP(LED_1);
-//		// wait 4 mS if we caught anything...
-//		//while(gMilliSecTick - int_mS > 4){}
-//		cli();
-//		LCD_SELECT();
+		switch(Screen){ // select the code for the current active screen
+		case SCREEN_MAIN:
+			drawMain();
+		break;
+		case SCREEN_SPD:
+			drawSpd();
+		break;
+		default:
+			drawMain();
+		break;
+		} // Switch
+
 	} while ( u8g_NextPage(&u8g) );
 	LCD_UNSELECT();
 	sei();
 }
+
+
+void drawSpd(){
+	char buf[10]; // used for forming strings to pass to the display ??
+	char string[15];
+
+	// Set The Font
+	u8g_SetFont(&u8g, u8g_font_freedoomr25n);
+	u8g_SetFontRefHeightExtendedText(&u8g);
+	u8g_SetDefaultForegroundColor(&u8g);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw a Frame
+	u8g_DrawHLine(&u8g, 0,30,65);
+	u8g_DrawHLine(&u8g, 0,31,65);
+	u8g_DrawVLine(&u8g, 65,0,64);
+	//u8g_DrawFrame(&u8g,0,0,64,32);
+
+	// Draw the Speed
+	utoa(gSpeed, buf, 10);
+	u8g_DrawStr(&u8g, 3, 4, buf);
+
+	// Change the font
+	u8g_SetFont(&u8g, u8g_font_5x8);
+	u8g_SetFontPosTop(&u8g);
+
+	// Draw HESSPD
+	utoa(gSpeed_HESSpd, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"HESSPD:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 67, 1, string);
+
+	// Draw HESRPM
+	utoa(gSpeed_HESRPM, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"HESRPM:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 67, 10, string);
+
+	// Draw MTSPD
+	utoa(gSpeed_MTSpd, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"MTSPD:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 67, 19, string);
+
+	// Draw MTRPM
+	utoa(gSpeed_MTRPM, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"MTRPM:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 67, 28, string);
+
+	// Draw MTSPD
+	utoa(gSpeed_status, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"status:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 67, 37, string);
+
+}
+
 
 void drawMain(){
 	char buf[10]; // used for forming strings to pass to the display ??
@@ -172,12 +239,12 @@ void drawMain(){
 
 	// Lets show the temp?
 	// Draw Temp
-	itoa(AVR_Temp, buf, 10);
-	memset(string, 0, sizeof string);
-	strcat(string,"CPUTmp:");
-	strcat(string,buf);
-	strcat(string,"'C");
-	u8g_DrawStr(&u8g, 0, 42, string);
+//	itoa(AVR_Temp, buf, 10);
+//	memset(string, 0, sizeof string);
+//	strcat(string,"CPUTmp:");
+//	strcat(string,buf);
+//	strcat(string,"'C");
+//	u8g_DrawStr(&u8g, 0, 42, string);
 
 	// Change the font
 	u8g_SetFont(&u8g, u8g_font_5x8);
@@ -255,6 +322,7 @@ void drawMain(){
 	//u8g_DrawStr(&u8g, 66, 31, buf);
 
 }
+
 
 
 void draw(CANMessage* msg){

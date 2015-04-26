@@ -80,8 +80,15 @@ extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have pa
 				 CANMessage heartbeat_Msg;
 
 extern	volatile uint8_t 	flag;
+
+extern  volatile uint8_t	Screen; // Keeps track of which screen we are on...
 // External vars for the display values we are interested in
 extern 			uint8_t 	gSpeed;
+extern			uint8_t		gSpeed_HESSpd;
+extern			uint16_t	gSpeed_HESRPM;
+extern			uint8_t		gSpeed_MTSpd;
+extern			uint16_t	gSpeed_MTRPM;
+extern			uint8_t		gSpeed_status;
 extern			uint8_t		gBMS_State;
 extern			uint8_t		gBMS_Flags;
 extern			uint8_t		gBMS_Faults;
