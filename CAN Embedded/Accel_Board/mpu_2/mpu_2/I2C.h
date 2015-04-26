@@ -1,7 +1,7 @@
 /*
  * I2C.h
  *
- * Created: 11/04/2015 10:59:18 PM
+ * Created: 26/04/2015 12:37:12 AM
  *  Author: Terayza
  */ 
 
@@ -9,7 +9,7 @@
 #ifndef I2C_H_
 #define I2C_H_
 
-#define F_CPU 16000000UL
+#define F_CPU 16000000
 
 #define TRUE 1
 #define FALSE 0
@@ -64,6 +64,11 @@
 #define TWIM_READ    1
 #define TWIM_WRITE   0
 
+#define LED1_ON	PORTC &= ~(1<<PORTC2);
+#define LED2_ON	PORTC &= ~(1<<PORTC3);
+#define LED1_OFF	PORTC |= (1<<PORTC2);
+#define LED2_OFF	PORTC |= (1<<PORTC3);
+
 /*******************************************************
  Public Function: TWIM_Init
 
@@ -106,23 +111,17 @@ uint8_t TWIM_Init (uint32_t TWI_Bitrate)
 *******************************************************/
 uint8_t TWIM_Start (uint8_t Address, uint8_t TWIM_Type)//1 = read, 0 = write
     {
-		
     uint8_t        twst;
-	
 /*
 ** Send START condition
 */
-	
     TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN);
-	//PORTC |= (1<< PORTC3);
-	PORTC &= ~ (1<< PORTC2);
-	
 /*
 ** Wait until transmission completed
 */
-    while (!(TWCR & (1<<TWINT)));
 
-	PORTC &= ~(1<< PORTC3);
+    while (!(TWCR & (1<<TWINT)));
+	
 /*
 ** Check value of TWI Status Register. Mask prescaler bits.
 */
@@ -235,5 +234,7 @@ uint8_t TWIM_ReadNack (void)
     
     return TWDR;
     }
+
+
 
 #endif /* I2C_H_ */

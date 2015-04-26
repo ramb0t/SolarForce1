@@ -22,9 +22,13 @@
 
 #include "I2C.h"
 #include "../lib/CAN/CAN.h"
+#include "../lib/CAN/CAN_defs.h"
 #include "../lib/mcp2515/mcp2515.h"
-#include "../lib/SPI/AVR_SPI.h"
+#include "../lib/mcp2515/mcp2515_bittime.h"
+#include "../lib/mcp2515/mcp2515_defs.h"
 #include "../lib/uart/uart.h"
+#include "../lib/uart/uart_CANFunc.h"
+#include "../lib/SPI/AVR_SPI.h"
 
 #include <stdlib.h>
 
@@ -38,8 +42,10 @@
 #define addr 0x68
 
 void TWIM_WriteRegister(char reg, char value)
-{
+{	
+	
 	TWIM_Start(addr, TWIM_WRITE); // set device address and write mode
+	
 	TWIM_Write(reg);
 	TWIM_Write(value);
 	TWIM_Stop();
@@ -110,26 +116,26 @@ double MPU6050_ReadGyro(int axis)//x = 0; y = 1; z = 2
 	return double_val;
 }
 
-/*void initComms(unsigned int baudRate)
-{
-	//set baud rate to 4800
-	UBRR0H = (unsigned char)(baudRate>>8);
-	UBRR0L = (unsigned char) baudRate;
-	UCSR0B = (1<<TXEN0);
-}*/
-
 int main(void)
 {
-	//initComms(12);
-	SPI_Init(); // setup SPI
-	CAN_Init(CAN_125KBPS_16MHZ);
+
+	
+	
 	
 	// Init UART
 	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 	
+	
+	
 	TWIM_Init(12);
+	//AS SOON AS DISABLE SLEEP MODE, CAN WONT SEND
+	
 	TWIM_WriteRegister(107,0); //disable sleep mode
 	
+
+
+	SPI_Init(); // setup SPI
+	CAN_Init(CAN_125KBPS_16MHZ);
 	sei();
 	
 	while(1)
@@ -270,16 +276,14 @@ int main(void)
 		uart_puts(buffer2);
 		_delay_ms(500);
 		
-		CANMessage accelerometer;
+		CANMessage test;
 		
-		accelerometer. id = 0x0822;
-		accelerometer. rtr = 0 ;
-		accelerometer. length = 3 ;
-		accelerometer. data [ 0 ] = MPU6050_ReadAccel(0);
-		accelerometer. data [ 1 ] = MPU6050_ReadAccel(1);
-		accelerometer. data [ 2 ] = MPU6050_ReadAccel(2);
+		test. id = 0x0002;
+		test. rtr = 0 ;
+		test. length = 1 ;
+		test. data [ 0 ] = 0x03;
 		
-		CAN_sendMessage (&accelerometer);
-		
+		CAN_sendMessage (&test);
+
 	}
 }

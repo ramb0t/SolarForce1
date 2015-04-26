@@ -183,6 +183,7 @@ uint8_t CAN_sendMessage(const CANMessage* message)
 //	uint16_t time;
 //	time = timebase_actTime();
 //
+
 	do {
 		res = mcp2515_getNextFreeTXBuf(&txbuf_n); // info = addr.
 //		if (timebase_passedTimeMS(time) > CANSENDTIMEOUT ) timeout = 1;
@@ -191,10 +192,15 @@ uint8_t CAN_sendMessage(const CANMessage* message)
 			timeout =1;
 		}
 	} while (res == MCP_ALLTXBUSY && !timeout);
+	
+
 
 	if (!timeout) {
 		mcp2515_write_canMsg( txbuf_n, message);
+
 		mcp2515_start_transmit( txbuf_n );
+						
+						
 		return CAN_OK;
 	}
 	else {
