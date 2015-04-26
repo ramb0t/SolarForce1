@@ -54,6 +54,10 @@ uint8_t 	gBMS_soc;
 uint16_t 	gBMS_PackVoltage;
 int16_t 	gBMS_PackCurrent;
 int8_t		gBMS_Temp;
+int32_t		gGyro_AngleTHE;
+int32_t		gGyro_AngleSI;
+int32_t		gGyro_AnglePHI;
+
 int16_t     AVR_Temp;
 
 

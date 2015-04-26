@@ -71,10 +71,12 @@
 //				uint8_t		LCD_BackLight_Val;  // Better to use a macro?
 #define			LCD_BackLight	OCR1A
 
-				 uint8_t	flagUpdateLCD;		// sets if an update is needed.
+		volatile uint8_t	flagUpdateLCD;		// sets if an update is needed.
 extern  volatile uint8_t    flagTimerUpdateLCD; // allow the timer to determine update rate
 extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have passed
 		volatile uint16_t	int_mS;				// Keep track of when the last interupt was
+		volatile uint16_t	btn_int_mS;			// used for btn debounce isr stuff
+		volatile uint8_t	btn_press_flag;
 				 uint16_t	heartbeat_mS;		// Keep track of when to send the next heartbeat
 #define 	HEATBEAT_MS		1111                // arb to keep things interesting
 				 CANMessage heartbeat_Msg;
@@ -98,6 +100,10 @@ extern 			uint8_t		gBMS_soc;
 extern			uint16_t	gBMS_PackVoltage;
 extern			int16_t		gBMS_PackCurrent;
 extern			int8_t		gBMS_Temp;
+extern			int32_t		gGyro_AngleTHE;
+extern			int32_t		gGyro_AngleSI;
+extern			int32_t		gGyro_AnglePHI;
+
 extern 			int16_t		AVR_Temp;
 
 
@@ -105,6 +111,7 @@ extern 			int16_t		AVR_Temp;
 /*********************************************/
 void 	IOInit(void);
 uint8_t CAN_Decode(CANMessage *message);
+void 	setupPCINT2(void);
 
 
 #endif /* DISPLAY_NODE_H_ */

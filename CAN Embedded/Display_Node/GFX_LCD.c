@@ -172,6 +172,27 @@ void drawSpd(){
 	strcat(string,buf);
 	u8g_DrawStr(&u8g, 67, 37, string);
 
+	// Draw AngleTHE
+	ltoa(gGyro_AngleTHE, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"T:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 35, string);
+
+	// Draw AngleSI
+	ltoa(gGyro_AngleSI, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"S:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 44, string);
+
+	// Draw AnglePHI
+	ltoa(gGyro_AnglePHI, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"P:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 53, string);
+
 }
 
 

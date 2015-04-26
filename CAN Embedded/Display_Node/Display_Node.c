@@ -40,6 +40,10 @@ int main(void)
 	// Init Hardware
 	IOInit();
 
+	// Init Btn press stuff
+	btn_press_flag = FALSE;
+	setupPCINT2();
+
 	// Create a new message
 	CANMessage message;
 	heartbeat_Msg = (CANMessage) {.id=0x0888,.rtr=0,.length=5,.data={'A','L','I','V','E'}};
@@ -88,15 +92,6 @@ int main(void)
 				// get the temp
 				//AVR_Temp = ADC_getTemp();
 				// Call the update function
-
-				//HACK lets flib btwn displays?
-				if (Screen == SCREEN_MAIN ){
-					Screen = SCREEN_SPD;
-				}else{
-					Screen = SCREEN_MAIN;
-				}
-
-
 				LED_ON(LED_1);
 				GFX_LCD_DrawMain();
 				LED_OFF(LED_1);
@@ -195,6 +190,22 @@ uint8_t CAN_Decode(CANMessage *message){
 
 	break; //CANID_BMS7
 
+	case CANID_GYRO_ANGLESI:
+		gGyro_AngleTHE = (message->data[0]<<24)|(message->data[1]<<16)|(message->data[2]<<8)|(message->data[0]);
+		gGyro_AngleSI = (message->data[4]<<24)|(message->data[5]<<16)|(message->data[6]<<8)|(message->data[7]);
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_GYRO_ANGLESI
+
+	case CANID_GYRO_ANGLEPHI:
+		gGyro_AnglePHI = (message->data[4]<<24)|(message->data[5]<<16)|(message->data[6]<<8)|(message->data[7]);
+
+		// let the caller know we found something!
+		decode_result = CAN_MSG_DECODED;
+
+	break; //CANID_GYRO_ANGLEPHI
 
 	default:
 		// We didn't find any message we are looking for...
@@ -207,6 +218,14 @@ uint8_t CAN_Decode(CANMessage *message){
 
 }
 
+void setupPCINT2(void){
+	// setup pin int
+	BTN_DDR &= ~((1<<BTN_4)|(1<<BTN_3));   //Set pin as input
+	BTN_PORT |= (1<<BTN_4)|(1<<BTN_3);   //Pullup
+	PCICR |= (1<<PCIE2); //Enable on PCINT0 pins
+	PCMSK2 |= (1<<PCINT4)|(1<<PCINT5); //Mask PD4, PD5
+}
+
 // CAN Interrupt ISR!
 ISR(PCINT0_vect){
 
@@ -217,4 +236,30 @@ ISR(PCINT0_vect){
 
 }
 
+// Push button ISR
+ISR(PCINT2_vect){
+	// We had int from Btn 3 or Btn 4?
+	if(FALSE == btn_press_flag){ // start the debounce stuff
+		btn_press_flag = TRUE;
+		btn_int_mS = gMilliSecTick;
 
+		// otherwise check how long it has been (30mS debounce)
+	}else if ((gMilliSecTick - btn_int_mS > 30) && btn_press_flag){
+
+		// it has been 30mS, reset the flag
+		btn_press_flag = FALSE;
+		// check if the button is still pressed:
+		if(!CHECKBIT(BTN_PIN,BTN_3) || !CHECKBIT(BTN_PIN,BTN_PORT)){
+			if (Screen == SCREEN_MAIN ){
+				Screen = SCREEN_SPD;
+			}else{
+				Screen = SCREEN_MAIN;
+			}
+			// tell the lcd it needs to updagte
+			flagUpdateLCD = TRUE;
+		}
+	}
+
+
+
+}
