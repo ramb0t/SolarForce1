@@ -173,23 +173,29 @@ void MAV_msg_Unpack()
 							uart_puts_p(PSTR("MD>>"));					//delimiter & ID
 							uart_putc(HESPD_TXID);
 							uart_puts_p(PSTR(","));
-							uart_putc(spdhe.avg_speed);						//avg. speed
+							utoa(spdhe.avg_speed,MAV_Rx_buff,10);
+							uart_puts(MAV_Rx_buff);						//avg. speed
 							uart_puts_p(PSTR(","));						//delim
-							uart_putc(spdhe.hes_speed);				//used as status flags
+							utoa(spdhe.hes_speed,MAV_Rx_buff,10);
+							uart_puts(MAV_Rx_buff);			//used as status flags
 							uart_puts_p(PSTR(","));	
-							uart_putc(spdhe.hes_RPM);	
+							utoa(spdhe.hes_RPM,MAV_Rx_buff,10);
+							uart_puts(MAV_Rx_buff);	
 							uart_puts_p(PSTR(","));	
-							uart_putc(spdhe.motor_speed);
+							utoa(spdhe.motor_speed,MAV_Rx_buff,10);
+							uart_puts(MAV_Rx_buff);
 							uart_puts_p(PSTR(","));	
-							uart_putc(spdhe.motor_RPM);
+							utoa(spdhe.motor_RPM,MAV_Rx_buff,10);
+							uart_puts(MAV_Rx_buff);
 							uart_puts_p(PSTR(","));	
-							uart_putc(spdhe.flags);
+							utoa(spdhe.flags,MAV_Rx_buff,10);
+							uart_puts(MAV_Rx_buff);
 							uart_puts_p(PSTR("<<"));
 														
 							break;//now check for next ID
 							}break;
 							
-						//////now check for next ID
+						////now check for next ID
 							//case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
 							//{
 								//hb_lost=0;

@@ -52,11 +52,29 @@ typedef struct
 	uint8_t		maxRes;				//4
 	uint8_t		maxResID;			//5
 	//------------MPPT DATA----------------//
-	uint16_t		Vin;			//0&1
-	uint16_t		Iin;			//2&3
-	uint16_t		Vout;			//4&5
-	uint8_t			Tamb;			//6
-	uint8_t			mppt_flags;		//bits 4-7 of byte 1
+	uint16_t		Vin1;			//0&1
+	uint16_t		Iin1;			//2&3
+	uint16_t		Vout1;			//4&5
+	uint8_t			Tamb1;			//6
+	uint8_t			mppt_flags1;		//bits 4-7 of byte 1
+	
+	uint16_t		Vin2;			//0&1
+	uint16_t		Iin2;			//2&3
+	uint16_t		Vout2;			//4&5
+	uint8_t			Tamb2;			//6
+	uint8_t			mppt_flags2;		//bits 4-7 of byte 1
+		
+	uint16_t		Vin3;			//0&1
+	uint16_t		Iin3;			//2&3
+	uint16_t		Vout3;			//4&5
+	uint8_t			Tamb3;			//6
+	uint8_t			mppt_flags3;		//bits 4-7 of byte 1
+			
+	uint16_t		Vin4;			//0&1
+	uint16_t		Iin4;			//2&3
+	uint16_t		Vout4;			//4&5
+	uint8_t			Tamb4;			//6
+	uint8_t			mppt_flags4;		//bits 4-7 of byte 1
 	
 	//------------SPEED DATA----------------//
 	uint8_t			avgSpeed;		//0

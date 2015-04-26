@@ -79,7 +79,6 @@ char gpsdata;
 char gps_string[62];
 char parts[15][20];
 char *p_start, *p_end;
-static volatile uint8_t gpsctr=0;
 uint8_t gpslen;
 
 //------------Function Prototypes------------------------//
