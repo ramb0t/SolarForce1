@@ -17,6 +17,9 @@
 #include "../lib/uart/uart.h"
 
 extern volatile uint16_t count0;
+		volatile uint16_t gTimebase;
+		uint16_t oldTime; 
+		//8======D---- Keyboard
 
 // timebase on timer0 serves a 1ms tick
 // for 16MHz System and Prescaler 64

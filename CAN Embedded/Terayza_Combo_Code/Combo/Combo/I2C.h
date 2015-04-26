@@ -70,6 +70,9 @@
 #define LED1_OFF	PORTC |= (1<<PORTC2);
 #define LED2_OFF	PORTC |= (1<<PORTC3);
 
+extern volatile uint16_t gTimebase;
+extern uint16_t oldTime;
+
 /*******************************************************
  Public Function: TWIM_Init
 
@@ -116,12 +119,31 @@ uint8_t TWIM_Start (uint8_t Address, uint8_t TWIM_Type)//1 = read, 0 = write
 /*
 ** Send START condition
 */
+	PORTC &= ~ (1<< PORTC3);
+
     TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN);
 /*
 ** Wait until transmission completed
 */
-
-    while (!(TWCR & (1<<TWINT)));
+	//*****************************************
+	//This while function pauses the program when it does not
+	//receive data from the MPU.
+	//For this reason, require error checking to be implemented.
+	//Use timer 0, which is set to overflow every 1ms.
+	//If no signal received, count to a specific value and
+	//exit while loop.
+	//*****************************************
+	
+	oldTime = gTimebase; 
+	
+    while (!(TWCR & (1<<TWINT))){ // 100mS breakout timer 
+		if((gTimebase-oldTime > 200)){
+			return;
+			break; // for good measure, should never get here!
+		}
+	}
+	
+	PORTC &= ~ (1<< PORTC2);
 	
 /*
 ** Check value of TWI Status Register. Mask prescaler bits.
@@ -136,7 +158,13 @@ uint8_t TWIM_Start (uint8_t Address, uint8_t TWIM_Type)//1 = read, 0 = write
 /*
 ** Wait until transmission completed and ACK/NACK has been received
 */
-    while (!(TWCR & (1<<TWINT)));
+PORTC |= (1<< PORTC3);
+
+	//reset the 'oldTime' 
+	oldTime = gTimebase; 
+    while ((!(TWCR & (1<<TWINT))) && (gTimebase-oldTime < 200));
+	PORTC |= (1<< PORTC2);
+
 /*
 ** Check value of TWI Status Register. Mask prescaler bits.
 */
@@ -164,7 +192,9 @@ void TWIM_Stop (void)
 /*
 ** Wait until stop condition is executed and bus released
 */
-    while (TWCR & (1<<TWINT));
+	oldTime = gTimebase;
+
+    while (TWCR & (1<<TWINT) && (gTimebase-oldTime < 200));
     }
 /*******************************************************
  Public Function: TWIM_Write
@@ -189,8 +219,9 @@ uint8_t TWIM_Write (uint8_t byte)
     TWCR = (1<<TWINT)|(1<<TWEN);
 /*
 ** Wait until transmission completed
-*/
-    while (!(TWCR & (1<<TWINT)));
+*/	oldTime = gTimebase;
+
+    while ((!(TWCR & (1<<TWINT))) && (gTimebase-oldTime < 200));
 /*
 ** Check value of TWI Status Register. Mask prescaler bits
 */
@@ -213,7 +244,9 @@ uint8_t TWIM_Write (uint8_t byte)
 uint8_t TWIM_ReadAck (void)
     {
     TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA);
-    while (!(TWCR & (1<<TWINT)));    
+	
+	oldTime = gTimebase;
+    while ((!(TWCR & (1<<TWINT))) && (gTimebase-oldTime < 200));    
 
     return TWDR;
     }
@@ -231,7 +264,9 @@ uint8_t TWIM_ReadAck (void)
 uint8_t TWIM_ReadNack (void)
     {
     TWCR = (1<<TWINT)|(1<<TWEN);
-    while(!(TWCR & (1<<TWINT)));
+	
+	oldTime = gTimebase;
+    while((!(TWCR & (1<<TWINT))) && (gTimebase-oldTime < 200));
     
     return TWDR;
     }

@@ -9,16 +9,7 @@
 #define HES1 1
 #define addr 0x68
 
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
-#include "../lib/CAN/CAN.h"
-#include "../lib/mcp2515/mcp2515.h"
-#include "../lib/SPI/AVR_SPI.h"
-#include "timer0.h"
-#include "timer1.h"
-#include "timer2.h"
-#include "I2C.h"
+#include "Combo.h"
 
 volatile uint16_t count2 = 0;
 volatile uint8_t hSpeed = 0;
@@ -38,9 +29,8 @@ void send()
 	//Speed sending
 	//*****************************************
 	
-	//avgSpeed = (hSpeed + motorSpeed)/2;
-	//status = 0; //decide status things 
 	check();
+
 		
 	CANMessage speed;
 	
@@ -52,8 +42,8 @@ void send()
 	speed. data [ 2 ] = hRPM>>8;
 	speed. data [ 3 ] = hRPM;
 	speed. data [ 4 ] = motorSpeed;
-	speed. data [ 5 ] = motorRPM>>8;
-	speed. data [ 6 ] = motorRPM;
+	speed. data [ 5 ] = 0x08;//motorRPM>>8;
+	speed. data [ 6 ] = 0x22;//motorRPM;
 	speed. data [ 7 ] = status;
 	
 	CAN_sendMessage (&speed);
@@ -61,7 +51,7 @@ void send()
 	//*****************************************
 	//MPU6050 sending
 	//*****************************************
-	/*
+	
 	//*****************************************
 	//Send angle
 	//*****************************************
@@ -69,23 +59,43 @@ void send()
 	float anglepsi;
 	float anglephi;
 	
-	angletheta = (atan(MPU6050_CalcAngle(0)/(sqrt((pow(MPU6050_CalcAngle(1),2)) + (pow(MPU6050_CalcAngle(2),2))))))*180/M_PI;
-	anglepsi = (atan(MPU6050_CalcAngle(1)/(sqrt((pow(MPU6050_CalcAngle(0),2)) + (pow(MPU6050_CalcAngle(2),2))))))*180/M_PI;
-	anglephi = (atan((sqrt((pow(MPU6050_CalcAngle(0),2)) + (pow(MPU6050_CalcAngle(1),2))))/MPU6050_CalcAngle(2)))*180/M_PI;
+	angletheta = ((atan(MPU6050_CalcAngle(0)/(sqrt((pow(MPU6050_CalcAngle(1),2)) + (pow(MPU6050_CalcAngle(2),2))))))*180/M_PI)*1000;
+	anglepsi = ((atan(MPU6050_CalcAngle(1)/(sqrt((pow(MPU6050_CalcAngle(0),2)) + (pow(MPU6050_CalcAngle(2),2))))))*180/M_PI)*1000;
+	anglephi = ((atan((sqrt((pow(MPU6050_CalcAngle(0),2)) + (pow(MPU6050_CalcAngle(1),2))))/MPU6050_CalcAngle(2)))*180/M_PI)*1000;
+	
+	uint32_t anglethetaTEMP = angletheta;
+	uint32_t anglepsiTEMP = anglepsi;
+	uint32_t anglephiTEMP = anglephi;
 		
-	CANMessage angle;
+	CANMessage anglexy;
 	
-	angle. id = 0x0820;
-	angle. rtr = 0 ;
-	angle. length = 3 ;
-	angle. data [ 0 ] = theta>>8;
-	angle. data [ 0 ] = theta;
-	angle. data [ 1 ] = phi>>8;
-	angle. data [ 1 ] = phi;
-	angle. data [ 2 ] = psi>>8;
-	angle. data [ 2 ] = psi;
+	anglexy. id = 0x07A0;
+	anglexy. rtr = 0 ;
+	anglexy. length = 8 ;
+	anglexy. data [ 0 ] = anglethetaTEMP>>24;
+	anglexy. data [ 1 ] = anglethetaTEMP>>16;
+	anglexy. data [ 2 ] = anglethetaTEMP>>8;
+	anglexy. data [ 3 ] = anglethetaTEMP;
+	anglexy. data [ 4 ] = anglepsiTEMP>>32;
+	anglexy. data [ 5 ] = anglepsiTEMP>>16;
+	anglexy. data [ 6 ] = anglepsiTEMP>>8;
+	anglexy. data [ 7 ] = anglepsiTEMP;
 	
-	CAN_sendMessage (&angle);*/
+	CAN_sendMessage (&anglexy);
+	
+	CANMessage anglez;
+	
+	anglez. id = 0x07A1;
+	anglez. rtr = 0 ;
+	anglez. length = 4 ;
+	anglez. data [ 0 ] = anglephiTEMP>>24;
+	anglez. data [ 1 ] = anglephiTEMP>>16;
+	anglez. data [ 2 ] = anglephiTEMP>>8;
+	anglez. data [ 3 ] = anglephiTEMP;
+
+	
+	CAN_sendMessage (&anglez);
+	
 	
 	//*****************************************
 	//Send gyroscope
@@ -210,7 +220,7 @@ int16_t MPU6050_ReadGyro(int axis)//x = 0; y = 1; z = 2
 	return val;
 }
 
-int16_t MPU6050_CalcAngle(int axis)//x = 0; y = 1; z = 2
+float MPU6050_CalcAngle(int axis)//x = 0; y = 1; z = 2
 {
 	char reg = axis * 2 + 59;
 	char AFS_SEL = TWIM_ReadRegister(28);
@@ -261,7 +271,7 @@ void check()
 	
 	avgSpeed = (hSpeed + motorSpeed)/2;
 	
-	if (((avgSpeed-motorSpeed) <= 2) & ((avgSpeed-hSpeed) <= 2))
+	if (((avgSpeed-motorSpeed) <= 2) && ((avgSpeed-hSpeed) <= 2))
 	{
 		status = 0x00;
 	}
@@ -350,6 +360,9 @@ void initInterrupt0(void)
 
 int main(void)
 {
+	DDRC |= (1 << PORTC2); //output
+	DDRC |= (1 << PORTC3); //output
+	
 	//*****************************************
 	//Initializations
 	//*****************************************
@@ -363,6 +376,17 @@ int main(void)
 	//*****************************************
 	SPI_Init(); // setup SPI
 	CAN_Init(CAN_125KBPS_16MHZ);
+	
+	sei(); 	// set (global) interrupt enable bit
+	//Tenp hack code!
+	
+	//while(1){ // loop for all the time
+		//oldTime = gTimebase;
+		//PORTC ^= (1<<PORTC2); //toggle
+		//while(gTimebase-oldTime < 400){
+			//// wait
+		//}
+	//}
 	
 	//*****************************************
 	//MPU6050 Init
@@ -382,7 +406,7 @@ int main(void)
 	DDRB &= ~(1 << PORTB0); //set PB0 as input
 	PORTB |= (1<< PORTB0);  //pull up
 	
-	sei(); 	// set (global) interrupt enable bit
+	
 	
 	while(1)
 	{
