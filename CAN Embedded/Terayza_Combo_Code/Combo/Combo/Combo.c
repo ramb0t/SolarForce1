@@ -16,6 +16,7 @@
 #include "timer0.h"
 #include "timer1.h"
 #include "timer2.h"
+#include "I2C.h"
 
 volatile uint16_t count2 = 0;
 volatile uint8_t hSpeed = 0;
@@ -30,9 +31,12 @@ volatile uint8_t status;
 
 void send()
 {
+	//*****************************************
+	//Speed sending
+	//*****************************************
 	volatile uint8_t avgSpeed;
 	avgSpeed = (hSpeed + motorSpeed)/2;
-	status = 0; //decide stats things 
+	status = 0; //decide status things 
 	
 	CANMessage speed;
 	
@@ -50,16 +54,20 @@ void send()
 	
 	CAN_sendMessage (&speed);
 	
-	//Sequence number: x = 0, y = 1, z = 2;
-	
+	//*****************************************
+	//MPU6050 sending
+	//*****************************************
 	/*CANMessage angle;
 	
 	angle. id = 0x0820;
 	angle. rtr = 0 ;
 	angle. length = 3 ;
-	angle. data [ 0 ] = yaw;
-	angle. data [ 1 ] = pitch;
-	angle. data [ 2 ] = roll;
+	angle. data [ 0 ] = theta>>8;
+	angle. data [ 0 ] = theta;
+	angle. data [ 1 ] = phi>>8;
+	angle. data [ 1 ] = phi;
+	angle. data [ 2 ] = psi>>8;
+	angle. data [ 2 ] = psi;
 	
 	CAN_sendMessage (&angle);
 	
@@ -68,13 +76,12 @@ void send()
 	gyroscope. id = 0x0821;
 	gyroscope. rtr = 0 ;
 	gyroscope. length = 3 ;
-	gyroscope. data [ 0 ] = 0x00; //therefore x values
-	gyroscope. data [ 1 ] = gyrox>>24;
-	gyroscope. data [ 2 ] = gyrox>>16;
-	gyroscope. data [ 3 ] = gyrox>>8;
-	gyroscope. data [ 3 ] = gyrox;
-	
-	//CHECK IF THIS MAKES SENSE AT ALL!!! MIGHT NEED SEPERATE ONES
+	gyroscope. data [ 0 ] = MPU6050_ReadGyro(0)>>8; //therefore x values
+	gyroscope. data [ 1 ] = MPU6050_ReadGyro(0);
+	gyroscope. data [ 2 ] = MPU6050_ReadGyro(1)>>8;
+	gyroscope. data [ 3 ] = MPU6050_ReadGyro(1);
+	gyroscope. data [ 3 ] = MPU6050_ReadGyro(2)>>8;
+	gyroscope. data [ 3 ] = MPU6050_ReadGyro(2);
 	
 	CAN_sendMessage (&gyroscope);
 	
@@ -83,14 +90,19 @@ void send()
 	accelerometer. id = 0x0822;
 	accelerometer. rtr = 0 ;
 	accelerometer. length = 3 ;
-	accelerometer. data [ 0 ] = accelx;
-	accelerometer. data [ 1 ] = accely;
-	accelerometer. data [ 2 ] = accelz;
+	accelerometer. data [ 0 ] = MPU6050_ReadAccel(0)>>8;
+	accelerometer. data [ 1 ] = MPU6050_ReadAccel(0);
+	accelerometer. data [ 2 ] = MPU6050_ReadAccel(1)>>8;
+	accelerometer. data [ 3 ] = MPU6050_ReadAccel(1);
+	accelerometer. data [ 4 ] = MPU6050_ReadAccel(2)>>8;
+	accelerometer. data [ 5 ] = MPU6050_ReadAccel(2);
 	
 	CAN_sendMessage (&accelerometer);*/
-
 }
 
+//*****************************************
+//Calculation for motor speed
+//*****************************************
 void motorCalcs()
 {
 	if(numCount1 > 0)
@@ -110,6 +122,10 @@ void motorCalcs()
 	motorRPM = 416666/avgCount; //value should be 41666.6667
 }
 
+//*****************************************
+//Interrupt 0 ISR
+//Used for Hall Effect Sensor
+//*****************************************
 ISR(INT0_vect)
 {
 	volatile uint16_t Capt2 = 0;
@@ -131,6 +147,10 @@ ISR(INT0_vect)
 	hRPM = 15000000/Capt2;
 }
 
+//*****************************************
+//Input Capture ISR
+//Used for the motor controller
+//*****************************************
 ISR (TIMER1_CAPT_vect)
 {
 	volatile uint16_t Capt1;
@@ -146,6 +166,9 @@ ISR (TIMER1_CAPT_vect)
 	}
 }
 
+//*****************************************
+//Initilising Interrupts
+//*****************************************
 void initInterrupt0(void)
 {
 	EIMSK |= (1 << INT0); //enable INT0
@@ -154,18 +177,35 @@ void initInterrupt0(void)
 
 int main(void)
 {
-	//initializations
+	//*****************************************
+	//Initializations
+	//*****************************************
 	initInterrupt0();
 	timer0_init();
 	timer1_init();
 	timer2_init();
 	
+	//*****************************************
+	//CAN Send things
+	//*****************************************
 	SPI_Init(); // setup SPI
 	CAN_Init(CAN_125KBPS_16MHZ);
 	
+	//*****************************************
+	//MPU6050 Init
+	//*****************************************
+	TWIM_Init(12);
+	TWIM_WriteRegister(107,0); //disable sleep mode
+	
+	//*****************************************
+	//HES Setup
+	//*****************************************
 	DDRD = 0x00; //set port D as input pins
 	PORTD = 0xff; // set pull ups
 	
+	//*****************************************
+	//Motor Controller Setup
+	//*****************************************
 	DDRB &= ~(1 << PORTB0); //set PB0 as input
 	PORTB |= (1<< PORTB0);  //pull up
 	
