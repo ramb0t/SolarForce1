@@ -571,7 +571,11 @@ Returns:  Integer number of bytes in the receive buffer
 **************************************************************************/
 int uart_available(void)
 {
+	if((UART_RxHead - UART_RxTail) == UART_RX_BUFFER_MASK){
+		return UART_RX_BUFFER_MASK;
+	}else{
         return (UART_RX_BUFFER_MASK + UART_RxHead - UART_RxTail) % UART_RX_BUFFER_MASK;
+	}
 }/* uart_available */
 
 
@@ -587,8 +591,30 @@ void uart_flush(void)
         UART_RxHead = UART_RxTail;
 }/* uart_flush */
 
-#endif // functions for uasrt/usart0 mcus
 
+/*************************************************************************
+Function: uart_get_rx_buff()
+Purpose:  Gets remaining buffer available for receive buffer
+Input:    None
+Returns:  Uart head pointer - UART tail pointer
+**************************************************************************/
+extern uint8_t uart_get_rx_buff(void)
+{
+	return (UART_RxHead - UART_RxTail);
+}
+
+/*************************************************************************
+Function: uart_get_tx_buff()
+Purpose:  Gets remaining buffer available for transmit buffer
+Input:    None
+Returns:  Uart head pointer - UART tail pointer
+**************************************************************************/
+extern uint8_t uart_get_tx_buff(void)
+{
+	return (UART_TxHead - UART_TxTail);
+}
+
+#endif // functions for uasrt/usart0 mcus
 
 /*
  * these functions are only for ATmegas with two USART

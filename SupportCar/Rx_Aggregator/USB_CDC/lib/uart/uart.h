@@ -109,7 +109,7 @@ Date        Description
 
 /** Size of the circular receive buffer, must be power of 2 */
 #ifndef UART_RX_BUFFER_SIZE
-#define UART_RX_BUFFER_SIZE 32
+#define UART_RX_BUFFER_SIZE 128
 #endif
 /** Size of the circular transmit buffer, must be power of 2 */
 #ifndef UART_TX_BUFFER_SIZE
@@ -224,6 +224,12 @@ extern int uart_available(void);
  *  @return  none
  */
 extern void uart_flush(void);
+
+/* Extension by Matt (authorised by Ben)
+Gets the buffer values from the UART buffers. Useful for troubleshooting
+	returns: UART head and Tail values
+															*/
+extern uint8_t uart_get_rx_buff(void);
 
 
 /** @brief  Initialize USART1 (only available on selected ATmegas) @see uart_init */

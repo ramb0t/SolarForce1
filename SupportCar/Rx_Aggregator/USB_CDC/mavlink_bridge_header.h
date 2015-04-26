@@ -50,7 +50,6 @@
 
 
 #include "mavlink_types.h"
-#include "VirtualSerial.h"
 
 /* Struct that stores the communication settings of this system.
    you can also define / alter these settings elsewhere, as long
@@ -82,7 +81,6 @@ static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const char *c
 		//{
 			for(int i=0;i < length;i++){
 			uart_putc(ch[i]);
-			fputs(ch[i],&USBSerialStream);
 		//	}
 		}
     }

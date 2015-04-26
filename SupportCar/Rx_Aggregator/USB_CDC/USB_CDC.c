@@ -195,20 +195,23 @@ int main(void)
 	while (1)
 	{
 		fputs("new loop", &USBSerialStream);
-		/*
+		
+		//send local sensors should be sent roughly once every 15 MAVLink Packets
 		if(++msg_counter > 15)
 		{
+			adc_read();
 			msg_counter = 0;
-		}*/
-		/*test adc*/
+		}
 		char buffer[50];
-		adc_read();
-		if (myFlags.ADC_read_complete == 1)
+		
+		if (myFlags.ADC_read_complete == 1)//if an Irradiance sensor data packet is ready to be sent
 		{
-			_delay_ms(123);
-			testBlink(quick_blink);
-			fputs("Voltage Reading in counts = ", &USBSerialStream);
-			itoa(voltage,buffer,10);
+			_delay_ms(123);    //debug or necessary?
+			//testBlink(quick_blink);
+			//debug!			fputs("Voltage Reading in counts = ", &USBSerialStream);
+			
+			itoa(voltage,buffer,10); //USB is really fast, so sending in ASCII is a minimal overhead.
+									 //not constrained to fixed-length frames
 			fputs(">>13,", &USBSerialStream);
 			fputs(buffer, &USBSerialStream);
 			fputs("<<", &USBSerialStream);
@@ -216,8 +219,8 @@ int main(void)
 			//proper code will send the string ">>13,ADC<<"
 			myFlags.ADC_read_complete = 0;//clear the flag
 		}
-		fputs("Voltage Reading in mV = ",&USBSerialStream);
-		fputs(buffer1,&USBSerialStream);
+		//fputs("Voltage Reading in mV = ",&USBSerialStream);
+		//fputs(buffer1,&USBSerialStream);
 		
 		
 		//MAV_msg_Unpack();

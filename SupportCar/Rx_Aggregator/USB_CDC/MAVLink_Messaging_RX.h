@@ -34,7 +34,7 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <string.h>
-//#include "../lib/uart/uart.h"					//UART library
+#include "../lib/uart/uart.h"					//UART library
 
 #include "mavlink_bridge_header.h"  //UART & convenience headers
 
@@ -66,6 +66,7 @@ volatile uint16_t hb_lost = 0;			//counts cycles since last heartbeat
 volatile GlobalVars	rxData;
 
 char MAV_Rx_buff[16];
+char MAV_Rx_buff_H[16];
 
 //------------Function Prototypes------------------------//
 
@@ -75,10 +76,6 @@ char MAV_Rx_buff[16];
 		int custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
 		int system_status = MAV_STATE_ACTIVE;
 
-void CAN_readData(void);
 void MAV_msg_Unpack();
-void MAV_uart_send(uint8_t [],uint8_t);
-void GPS_readData(void);
-
 
 #endif /* MAVLINK_MESSAGING_H_ */
