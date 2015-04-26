@@ -244,35 +244,35 @@ int main(void)
 		
 		CAN_sendMessage (&anglez);
 		
-		//CANMessage test1;
+		CANMessage test1;
 	
-		//test1. id = 0x0004;
-		//test1. rtr = 0 ;
-		//test1. length = 2 ;
-		//test1. data [ 0 ] = 0x02;//MPU6050_ReadGyro(0)>>8;
-		//test1. data [ 1 ] = 0x04;//MPU6050_ReadGyro(0);
+		test1. id = 0x0004;
+		test1. rtr = 0 ;
+		test1. length = 2 ;
+		test1. data [ 0 ] = 0x02;//MPU6050_ReadGyro(0)>>8;
+		test1. data [ 1 ] = 0x04;//MPU6050_ReadGyro(0);
 		PORTC &= ~ (1<< PORTC3);
-		//CAN_sendMessage (&test1);
+		CAN_sendMessage (&test1);
 		PORTC |= (1<< PORTC3);
 		_delay_ms(200);
 		
-		//int16_t tempx = MPU6050_ReadGyro(0);
+		int16_t tempx = MPU6050_ReadGyro(0);
 	
-		//CANMessage test;
+		CANMessage test;
 	
-		//test. id = 0x0002;
-		//test. rtr = 0 ;
-		//test. length = 2 ;
-		//test. data [ 0 ] = tempx>>8;
-		//test. data [ 1 ] = tempx;
+		test. id = 0x0002;
+		test. rtr = 0 ;
+		test. length = 2 ;
+		test. data [ 0 ] = tempx>>8;
+		test. data [ 1 ] = tempx;
 		PORTC &= ~ (1<< PORTC3);
-		//CAN_sendMessage (&test);
+		CAN_sendMessage (&test);
 		PORTC |= (1<< PORTC3);
 		
-				_delay_ms(500);
+		_delay_ms(500);
 	
-		//int16_t temp;
-		//temp = (int16_t) MPU6050_ReadGyro(0);
+		int16_t temp;
+		temp = (int16_t) MPU6050_ReadGyro(0);
 	
 
     }
