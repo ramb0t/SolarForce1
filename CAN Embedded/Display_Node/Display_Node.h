@@ -41,6 +41,8 @@
 #include "Timer0.h"
 // Timer1
 #include "Timer1.h"
+// ADC Functions
+#include "ADC.h"
 
 // Pin Defines
 #include "pinDefines.h"
@@ -79,7 +81,7 @@ extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have pa
 
 extern	volatile uint8_t 	flag;
 // External vars for the display values we are interested in
-extern 			uint16_t 	gSpeed;
+extern 			uint8_t 	gSpeed;
 extern			uint8_t		gBMS_State;
 extern			uint8_t		gBMS_Flags;
 extern			uint8_t		gBMS_Faults;
@@ -89,6 +91,7 @@ extern 			uint8_t		gBMS_soc;
 extern			uint16_t	gBMS_PackVoltage;
 extern			int16_t		gBMS_PackCurrent;
 extern			int8_t		gBMS_Temp;
+extern 			int16_t		AVR_Temp;
 
 
 // Function Prototypes

@@ -84,6 +84,8 @@ int main(void)
     	if(gMilliSecTick - int_mS > 9){
 			// If an LCD update is needed, then do it!
 			if(flagTimerUpdateLCD == TRUE && flagUpdateLCD == TRUE){
+				// get the temp
+				AVR_Temp = ADC_getTemp();
 				// Call the update function
 				LED_ON(LED_1);
 				GFX_LCD_DrawMain();
@@ -130,7 +132,7 @@ uint8_t CAN_Decode(CANMessage *message){
 	case CANID_SPEED:
 		// We found a speed message!
 		// get the speed value;
-		gSpeed = (message->data[0]<<8)|(message->data[1]);
+		gSpeed = (message->data[0]);
 
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;

@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.06" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.003125" altunitdist="mic" altunit="mm"/>
+<grid distance="0.5" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.000003125" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -2459,6 +2459,8 @@ GPS MODULE</text>
 <rectangle x1="50.13" y1="38.91" x2="51.99" y2="38.97" layer="1"/>
 <rectangle x1="50.31" y1="38.97" x2="51.87" y2="39.03" layer="1"/>
 <rectangle x1="50.49" y1="39.03" x2="51.63" y2="39.09" layer="1"/>
+<dimension x1="-1" y1="80" x2="-1" y2="64" x3="-4" y3="72" textsize="1.778" layer="48"/>
+<dimension x1="0" y1="80" x2="0" y2="27.5" x3="-6.5" y3="53.75" textsize="1.778" layer="48"/>
 </plain>
 <libraries>
 <library name="pinhead">

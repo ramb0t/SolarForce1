@@ -1,6 +1,6 @@
 
 #include "GFX_LCD.h"
-#include "../lib/CAN/CAN_defs.h"
+//#include "../lib/CAN/CAN_defs.h"
 
 #define DEBUG
 
@@ -169,6 +169,15 @@ void drawMain(){
 	}
 	// Finally draw the power
 	u8g_DrawStr(&u8g, 0, 32, string);
+
+	// Lets show the temp?
+	// Draw Temp
+	itoa(AVR_Temp, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"CPUTmp:");
+	strcat(string,buf);
+	strcat(string,"'C");
+	u8g_DrawStr(&u8g, 0, 42, string);
 
 	// Change the font
 	u8g_SetFont(&u8g, u8g_font_5x8);
