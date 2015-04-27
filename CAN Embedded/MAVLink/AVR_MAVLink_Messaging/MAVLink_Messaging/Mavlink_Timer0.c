@@ -25,6 +25,7 @@ ISR(TIMER0_OVF_vect)
 		{
 			old_mS_MPPT = ms_Counter;		//set the previous value back to let counter run
 			reqMPPTs_flag = TRUE;
+			updateGPS_flag = TRUE;
 		}
 	
 }

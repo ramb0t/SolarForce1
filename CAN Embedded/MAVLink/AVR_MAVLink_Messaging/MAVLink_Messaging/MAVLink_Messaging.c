@@ -85,7 +85,16 @@ int main (void)
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 		
-
+	if (reqMPPTs_flag == TRUE)			//MPPTs must be requested to send data if 1s has passed (flag set)
+	{
+		CANMessage mppt_request;		//object of MPPT request CAN msg
+		mppt_request.id = CANID_MPPTRQ1;
+		mppt_request.length = 0;
+		mppt_request.rtr = 1;
+		CAN_sendMessage(&mppt_request);
+		reqMPPTs_flag = FALSE;
+	}
+	
 	if (DEBUG)
 	{
 		//_delay_ms(500);
@@ -104,11 +113,11 @@ int main (void)
 	if (updateMAV_flag == TRUE)
 	{
 		rungps++;
-		if (rungps > 2)
-		{
-			updateGPS_flag = TRUE;
+		//if (rungps > 2)
+		//{
+		//updateGPS_flag = TRUE;
 			rungps = 0;
-		}
+		//}
 		
 		MAV_HB_send();					//send MAVLink heartbeat	
 		MAV_msg_pack();					//selectively send MAVLink packets
@@ -127,16 +136,7 @@ int main (void)
 		}
 		
 		
-		if (reqMPPTs_flag == TRUE)			//MPPTs must be requested to send data if 1s has passed (flag set)
-		{
-			CANMessage mppt_request;		//object of MPPT request CAN msg
-			mppt_request.id = CANID_MPPTRQ1;
-			mppt_request.length = 0;
-			mppt_request.rtr = 1;
-			CAN_sendMessage(&mppt_request);			
-			reqMPPTs_flag = FALSE;
-		}
-		
+	
 
 	if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
 	{
@@ -149,7 +149,7 @@ int main (void)
 
 	}
 	//----------------/new code-------------//
-	
+
 		
 		
 	}
@@ -365,9 +365,7 @@ void MAV_msg_pack()
 			acceloUpdated=0;
 			gyroUpdated=0;
 			}
-//TESTING	mavlink_msg_accelo_gyro_pack(100,200,&msg,CANBusInput.data[3],CANBusInput.data[4]);
-			//MAV_uart_send(buf,len);
-			
+	
 			
 			
 			/*-----------------------------------------------------------------------
@@ -415,38 +413,41 @@ void MAV_msg_pack()
 			
 //TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			//MAV_uart_send(buf,len);
-			//if (mppt1Updated==1)
-			//{
-				//mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,MPPT1_Message.data[0],MPPT1_Message.data[1],MPPT1_Message.data[2],MPPT1_Message.data[3]);
+			if (mppt1Updated==1)
+			{
+				mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,CANData.Vin1,CANData.Iin1,CANData.Vout1,CANData.Tamb1,CANData.mppt_flags1);
 				////MPPT1_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-				//mppt1Updated=0;
-			//}
+				mppt1Updated=0;
+			}
 //
 			//
 ////TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			////MAV_uart_send(buf,len);
-			//if (mppt2Updated==1)
-			//{
+			if (mppt2Updated==1)
+			{
+				mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,CANData.Vin2,CANData.Iin2,CANData.Vout2,CANData.Tamb2,CANData.mppt_flags2);
 			//mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,MPPT2_Message.data[0],MPPT2_Message.data[1],MPPT2_Message.data[2],MPPT2_Message.data[3]);
 			////MPPT2_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			//mppt2Updated=0;
-			//}
+			mppt2Updated=0;
+			}
 ////TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			////MAV_uart_send(buf,len);
-			//if (mppt3Updated==1)
-			//{
+			if (mppt3Updated==1)
+			{
+			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,CANData.Vin3,CANData.Iin3,CANData.Vout3,CANData.Tamb3,CANData.mppt_flags3);
 			//mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,MPPT3_Message.data[0],MPPT3_Message.data[1],MPPT3_Message.data[2],MPPT3_Message.data[3]);
 			////MPPT3_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			//mppt3Updated=0;
-			//}
+			mppt3Updated=0;
+			}
 ////TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
 			////MAV_uart_send(buf,len);
-			//if (mppt4Updated==1)
-			//{
+			if (mppt4Updated==1)
+			{
+			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,CANData.Vin4,CANData.Iin4,CANData.Vout4,CANData.Tamb4,CANData.mppt_flags4);
 			//mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,MPPT4_Message.data[0],MPPT4_Message.data[1],MPPT4_Message.data[2],MPPT4_Message.data[3]);
 			////MPPT4_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
-			//mppt4Updated=0;
-			//}
+			mppt4Updated=0;
+			}
 			//
 			/*-----------------------------------------------------------------------
 			NAME: Heartbeat
@@ -462,52 +463,7 @@ void MAV_msg_pack()
 			
 			//mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
 
-			//uart_puts("\n<<<<END OF MESSAGE>>>>\n");
-			
-			//-----FOR TESTING ONLY, LOOPBACK RECEIVE FUNCTION
-			//uart_puts("\n<<<<RX MESSAGE>>>>\n");
-			 
-			//mavlink_message_t msg2 PROGMEM;
-			//int chan = 0;
-			//mavlink_status_t* mav_status;
-			//
-			 //while(uart_available()>0)
-			 //{
-				//uint8_t byte = uart_getc();
-				//while( !(UCSR0A & (1<<UDRE0)) )
-				//{
-					//
-						//byte = uart_getc() ;
-						//if (mavlink_parse_char(chan, byte, &msg2,mav_status))
-						//{
-							//uart_puts("ID: ");
-							//uart_putc(msg2.msgid);
-							//uart_puts("\nSeq:");
-							//uart_putc(msg2.seq);
-							//uart_puts("\nCompo: " );
-							//uart_putc(msg2.compid);
-							//uart_puts("\nsys: ");
-							//uart_putc(msg.sysid);
-						//}
-					//
-				//}
-			//}
-				
-			
-			//mavlink_motor_driver_t* MotorDriver;
-			//mavlink_message_type_t* msgRx;
-			//
-			//msgRx = MAV_Rx_buff;
-			//mavlink_msg_motor_driver_decode(&msgRx, MotorDriver);
-			//
-			//itoa(MotorDriver->controller_temp,buf,10);					//read ASCII-converted byte into buffer
-			//uart_puts("\nTemperature:");
-			//uart_puts(buf);
-			//
-			//itoa(MotorDriver->speed,buf,10);
-			//uart_puts("\nSpeed:");
-			//uart_puts(buf);
-			
+	
 					LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
 		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
 	

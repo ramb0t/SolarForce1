@@ -45,6 +45,8 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 
 //---------------CAN ID defines-----//
 
+#define UART_RX_BUFFER		128
+
 #define MOTOR_DRIVER_CANID	0x420
 #define HALL_EFFECT_CANID	0x420
 

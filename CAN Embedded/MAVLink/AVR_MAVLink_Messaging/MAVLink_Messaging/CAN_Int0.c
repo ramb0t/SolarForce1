@@ -117,7 +117,7 @@ uint8_t CAN_Decode(CANMessage *message)
 					
 				case	CANID_BMS2:
 				{
-					utoa(message->data[3],buff,10);		//fault flags
+					//utoa(message->data[3],buff,10);		//fault flags
 					//BMS_Message.data[0] = message->data[3];
 					
 					//uart_puts(buff);
@@ -251,6 +251,8 @@ uint8_t CAN_Decode(CANMessage *message)
 					CANData.minRes = message->data[2];
 					CANData.minResID = message->data[3];
 					CANData.maxRes = message->data[4];
+					bms8Updated=1;
+					return CAN_MSG_DECODED;
 				}
 				
 				case	CANID_GYRO_GYRO:
@@ -378,6 +380,7 @@ uint8_t CAN_Decode(CANMessage *message)
 				mppt4Updated=1;
 				return CAN_MSG_DECODED;
 				}
+				default: return CAN_NOT_DECODED;					//else if data not decoded return error
 			}
-				return CAN_NOT_DECODED;					//else if data not decoded return error
+				
 }

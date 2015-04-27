@@ -36,6 +36,8 @@
 #define TX_ENABLE			(1<<TXEN0)
 #define TX_DISABLE			(0<<TXEN0)
 
+#define UART_RX_BUFFER_SIZE	128				//custom buffer size
+
 
 //------------Library and AVR Includes--------------------//
 

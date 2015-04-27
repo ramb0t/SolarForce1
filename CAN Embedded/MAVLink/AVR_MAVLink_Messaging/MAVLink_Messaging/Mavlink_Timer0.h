@@ -26,6 +26,7 @@
 
 //---------------Variables---------------//
 extern volatile uint8_t		updateMAV_flag;		//flag to know whether MAVLink packet to be sent
+extern volatile uint8_t		updateGPS_flag;
 extern volatile uint16_t 	gMilliSecTick;
 extern volatile uint16_t	ms_Counter;
 extern volatile uint16_t	old_mS;

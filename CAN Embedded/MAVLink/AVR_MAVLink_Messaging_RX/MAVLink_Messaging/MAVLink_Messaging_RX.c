@@ -232,6 +232,9 @@ void MAV_msg_Unpack()
 								uart_puts_p(PSTR(","));
 								uart_putc(bms.current);
 								uart_puts_p(PSTR(","));
+								uart_putc(bms.chargeLimit);								
+								uart_puts_p(PSTR(","));
+								uart_putc(bms.current);
 								uart_puts_p(PSTR("<<"));	
 								break;				
 							}break;
