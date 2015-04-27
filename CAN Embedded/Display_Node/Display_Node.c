@@ -53,14 +53,7 @@ int main(void)
 
 	// Loop for all the time ever!!! (Hopefully...)
     while(1) {
-    	// If the int pin is held low then we wont have an ISR!
-    	// Disable the interrupts and process all outstanding buffer calls
-    	//cli();
-    	//while(~CHECKBIT(PINB,PB0))
-    	//{
-    	//	CAN_fillBuffer();
-    	//}
-    	//sei();
+
 
     	// Check if there are any messages in the buffer, loop on more messages
     	while(flag == CAN_MSGAVAIL){
@@ -73,7 +66,7 @@ int main(void)
 				}
 			// no valid message, reset the CAN Buffer flag ?
 			//TODO: There might be a logic fail here that leads to an overflow... must check..
-			}else if(flag == CAN_FAIL){
+			}else if(flag == CAN_FAIL){ // Backup Plan?
 				flag = CAN_NOMSG;
 			}
 			// Improve buffer performance?
@@ -102,8 +95,21 @@ int main(void)
     	}
 
     	if(gMilliSecTick - heartbeat_mS > HEATBEAT_MS){ // shoot off a heartbeat message
+        	// If the int pin is held low then we wont have an ISR!
+        	// Disable the interrupts and process all outstanding buffer calls
+        	cli();
+        	if(~CHECKBIT(PINB,PB0))
+        	{
+        		LED_ON(LED_2);
+        		CAN_fillBuffer();
+        		LED_OFF(LED_2);
+        	}
+        	sei();
+
     		heartbeat_mS = gMilliSecTick;
     		CAN_sendMessage(&heartbeat_Msg);
+
+
     	}
 
 
@@ -288,12 +294,12 @@ ISR(PCINT2_vect){
 		btn_int_mS = gMilliSecTick;
 
 		// otherwise check how long it has been (30mS debounce)
-	}else if ((gMilliSecTick - btn_int_mS > 30) && btn_press_flag){
+	}else if ((gMilliSecTick - btn_int_mS > 50) && btn_press_flag){
 
 		// it has been 30mS, reset the flag
 		btn_press_flag = FALSE;
 		// check if the button is still pressed:
-		if(!CHECKBIT(BTN_PIN,BTN_3) || !CHECKBIT(BTN_PIN,BTN_PORT)){
+		if(!CHECKBIT(BTN_PIN,BTN_3)){ // Screen Change
 			if (Screen == SCREEN_MAIN ){
 				Screen = SCREEN_SPD;
 			}else if(Screen == SCREEN_SPD){
@@ -303,6 +309,8 @@ ISR(PCINT2_vect){
 			}
 			// tell the lcd it needs to updagte
 			flagUpdateLCD = TRUE;
+		}else if(!CHECKBIT(BTN_PIN,BTN_4)){ // Backlight Change
+			LCD_BackLight = LCD_BackLight + 64;
 		}
 	}
 
