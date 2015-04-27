@@ -85,15 +85,15 @@ int main (void)
 	while(1) {
 		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
 		
-	if (reqMPPTs_flag == TRUE)			//MPPTs must be requested to send data if 1s has passed (flag set)
-	{
-		CANMessage mppt_request;		//object of MPPT request CAN msg
-		mppt_request.id = CANID_MPPTRQ1;
-		mppt_request.length = 0;
-		mppt_request.rtr = 1;
-		CAN_sendMessage(&mppt_request);
-		reqMPPTs_flag = FALSE;
-	}
+	//if (reqMPPTs_flag == TRUE)			//MPPTs must be requested to send data if 1s has passed (flag set)
+	//{
+		//CANMessage mppt_request;		//object of MPPT request CAN msg
+		//mppt_request.id = CANID_MPPTRQ1;
+		//mppt_request.length = 0;
+		//mppt_request.rtr = 1;
+		//CAN_sendMessage(&mppt_request);
+		//reqMPPTs_flag = FALSE;
+	//}
 	
 	if (DEBUG)
 	{
@@ -113,13 +113,13 @@ int main (void)
 	if (updateMAV_flag == TRUE)
 	{
 		rungps++;
-		//if (rungps > 2)
-		//{
-		//updateGPS_flag = TRUE;
+		if (rungps > 2)
+		{
+		updateGPS_flag = TRUE;
 			rungps = 0;
-		//}
+		}
 		
-		MAV_HB_send();					//send MAVLink heartbeat	
+		//MAV_HB_send();					//send MAVLink heartbeat	
 		MAV_msg_pack();					//selectively send MAVLink packets
 		updateMAV_flag = FALSE;
 	}
@@ -134,11 +134,9 @@ int main (void)
 			uart_puts(gps_string);
 			gps_needs_sending = FALSE;
 		}
-		
-		
 	
-
-	if (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
+if(flag == CAN_MSGAVAIL){
+	while (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
 	{
 		if (CAN_Decode(&Input_data)==CAN_MSG_DECODED)	//if a new message has been decoded
 		{
@@ -147,6 +145,7 @@ int main (void)
 			flag = CAN_NOMSG;
 		}
 
+	}
 	}
 	//----------------/new code-------------//
 
@@ -267,7 +266,7 @@ void ParseGPS ()
 
 void MAV_msg_pack()
 {
-	uart_flush();
+	//uart_flush();
 	LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
 	////---------------MAVLink Setup---------------------------//
 	///*MAVLINK asks to set all system statuses as integers. For human readibility ENUMS are used in the appropriate headers
@@ -338,8 +337,11 @@ void MAV_msg_pack()
 								
 			*/
 			//uart_flush();
-			if (bms1Updated==1)
+			if (bms1Updated==1||bms2Updated==1||bms3Updated==1||bms4Updated==1||bms5Updated==1||bms6Updated==1||bms7Updated==1||bms8Updated==1)
 			{
+				
+							
+			
 			mavlink_msg_bms_data_send(MAVLINK_COMM_0,CANData.BMSData_warnings,CANData.maxVoltage,CANData.maxVoltageID,
 			CANData.minVoltage,CANData.minVoltageID,CANData.packVoltage,CANData.current,CANData.chargeLimit,
 			CANData.dischargeLimit,CANData.batteryEnergyIn,CANData.batteryEnergyOut,CANData.SOC,CANData.DOD,
@@ -348,6 +350,14 @@ void MAV_msg_pack()
 			CANData.maxRes,CANData.maxResID,MAV_STATE_ACTIVE);
 			
 			bms1Updated=0;
+			bms2Updated=0;
+			bms3Updated=0;
+			bms4Updated=0;
+			bms5Updated=0;
+			bms6Updated=0;
+			bms7Updated=0;
+			bms8Updated=0;
+			
 			}
 			/*-----------------------------------------------------------------------
 			NAME: Accelerometer/Gyroscope Data
@@ -358,7 +368,7 @@ void MAV_msg_pack()
 								4 = int8_t acceleration (m.s^-2)			-127 to 127 m.s^-2		
 								5 = int8_t incline (degrees)				-127 to 127 (0-100 @ 10 counts per degree)
 			//TESTING																	*/
-			if (acceloUpdated==1||gyroUpdated==1)
+			if (DEBUG/*acceloUpdated==1||gyroUpdated==1*/)
 			{
 			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0,CANData.gyro_x,CANData.gyro_y,CANData.gyro_z,CANData.accel_x,CANData.accel_y,CANData.accel_z);
 			//mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
