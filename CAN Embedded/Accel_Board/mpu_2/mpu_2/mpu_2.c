@@ -8,6 +8,7 @@
 #define F_CPU 16000000UL
 #define UART_BAUD_RATE 57600
 #define addr 0x68
+//#define Dev24C02 0xA2 //new
 
 #define LED1_ON	PORTC &= ~(1<<PORTC2);
 #define LED2_ON	PORTC &= ~(1<<PORTC3);
@@ -28,7 +29,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "I2C.h"
+#include "I2C.h" //old one
+//#include "i2cmaster.h" //new one
 #include "../lib/CAN/CAN.h"
 #include "../lib/CAN/CAN_defs.h"
 #include "../lib/mcp2515/mcp2515.h"
@@ -62,7 +64,7 @@ int16_t MPU6050_ReadAccel(int axis)//x = 0; y = 1; z = 2
 {
 	char reg = axis * 2 + 59;
 	char AFS_SEL = TWIM_ReadRegister(28);
-	float factor = 1<<AFS_SEL;	
+	float factor = 1<<AFS_SEL;
 	factor = 16384/factor;
 	int16_t val = 0;
 	float float_val = 0;
@@ -91,7 +93,7 @@ int16_t MPU6050_ReadGyro(int axis)//x = 0; y = 1; z = 2
 	
 	char reg = axis * 2 + 67;
 	char FS_SEL = TWIM_ReadRegister(27);
-	float factor = 1<<FS_SEL;		
+	float factor = 1<<FS_SEL;
 	factor = 131/factor;
 	int16_t val = 0;
 	float float_val = 0;
@@ -143,21 +145,30 @@ float MPU6050_CalcAngle(int axis)//x = 0; y = 1; z = 2
 
 int main(void)
 {
+	unsigned char ret;
+	
 	DDRC |= (1 << PORTC2); //output
 	DDRC |= (1 << PORTC3); //output
 	
 	SPI_Init(); // setup SPI
 	CAN_Init(CAN_125KBPS_16MHZ);
 	
+	//i2c_init(); 
 	
-	TWIM_Init(12);
-	TWIM_WriteRegister(107,0); //disable sleep mode
+	//TWIM_Init(12);
+	//TWIM_WriteRegister(107,0); //disable sleep mode
 
 	sei();
-		
-    while(1)
+	
+	
+	ret = TWIM_Start(addr, TWIM_WRITE);
+
+	
+		while(1)
     {
         //TODO:: Please write your application code 
+		
+		
 		
 		//*****************************************
 		//Send angle
@@ -251,9 +262,9 @@ int main(void)
 		test1. length = 2 ;
 		test1. data [ 0 ] = 0x02;//MPU6050_ReadGyro(0)>>8;
 		test1. data [ 1 ] = 0x04;//MPU6050_ReadGyro(0);
-		PORTC &= ~ (1<< PORTC3);
+		//PORTC &= ~ (1<< PORTC3);
 		CAN_sendMessage (&test1);
-		PORTC |= (1<< PORTC3);
+		//PORTC |= (1<< PORTC3);
 		_delay_ms(200);
 		
 		int16_t tempx = MPU6050_ReadGyro(0);
@@ -265,9 +276,9 @@ int main(void)
 		test. length = 2 ;
 		test. data [ 0 ] = tempx>>8;
 		test. data [ 1 ] = tempx;
-		PORTC &= ~ (1<< PORTC3);
+		//PORTC &= ~ (1<< PORTC3);
 		CAN_sendMessage (&test);
-		PORTC |= (1<< PORTC3);
+		//PORTC |= (1<< PORTC3);
 		
 		_delay_ms(500);
 	
@@ -276,4 +287,7 @@ int main(void)
 	
 
     }
+	}
+		
+    
 }

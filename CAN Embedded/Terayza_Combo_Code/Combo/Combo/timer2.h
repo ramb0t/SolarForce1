@@ -17,6 +17,7 @@
 #include "../lib/uart/uart.h"
 
 extern volatile uint16_t count2;
+extern volatile uint8_t hSpeed;
 
 // timebase on timer2 serves a 0.5ms tick
 // for 16MHz System and Prescaler 64

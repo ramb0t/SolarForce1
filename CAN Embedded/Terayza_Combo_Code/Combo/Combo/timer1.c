@@ -13,6 +13,7 @@ ISR(TIMER1_OVF_vect)
 	if(totalCount < 50000)
 	{
 		motorSpeed = 0x00;
+		motorRPM = 0x00;
 		TCNT1 = 0;
 	}
 	

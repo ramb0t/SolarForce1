@@ -15,6 +15,12 @@ ISR(TIMER2_OVF_vect)
 	TCNT2 = TIMEBASE_RELOAD2; //reload timer
 	//timer will be reloaded to the highest value(overflow value) - 0.5ms
 	count2++;
+	
+	if(count2 > 400)
+	{
+		hSpeed = 0x00;
+		hSpeed = 0x00;
+	}
 }
 
 //timer2 setup
