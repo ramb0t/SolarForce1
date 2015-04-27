@@ -294,7 +294,7 @@ ISR(PCINT2_vect){
 		btn_int_mS = gMilliSecTick;
 
 		// otherwise check how long it has been (30mS debounce)
-	}else if ((gMilliSecTick - btn_int_mS > 50) && btn_press_flag){
+	}else if ((gMilliSecTick - btn_int_mS > 40) && btn_press_flag){
 
 		// it has been 30mS, reset the flag
 		btn_press_flag = FALSE;

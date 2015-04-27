@@ -133,68 +133,80 @@ void drawSpd(){
 	//u8g_DrawFrame(&u8g,0,0,64,32);
 
 	// Draw the Speed
-	utoa(gSpeed, buf, 10);
+	utoa(gSpeed_MTSpd, buf, 10);
 	u8g_DrawStr(&u8g, 3, 4, buf);
 
 	// Change the font
 	u8g_SetFont(&u8g, u8g_font_5x8);
 	u8g_SetFontPosTop(&u8g);
 
+	// Title:
+	u8g_DrawStr(&u8g, 67, 1, "Speed Node:");
+
+	// Draw AVGSpd
+	utoa(gSpeed, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"AVGSPD:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 67, 10, string);
+
 	// Draw HESSPD
 	utoa(gSpeed_HESSpd, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"HESSPD:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 67, 1, string);
+	u8g_DrawStr(&u8g, 67, 19, string);
 
 	// Draw HESRPM
 	utoa(gSpeed_HESRPM, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"HESRPM:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 67, 10, string);
+	u8g_DrawStr(&u8g, 67, 28, string);
 
 	// Draw MTSPD
 	utoa(gSpeed_MTSpd, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"MTSPD:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 67, 19, string);
+	u8g_DrawStr(&u8g, 67, 37, string);
 
 	// Draw MTRPM
 	utoa(gSpeed_MTRPM, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"MTRPM:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 67, 28, string);
+	u8g_DrawStr(&u8g, 67, 46, string);
 
 	// Draw MTSPD
 	utoa(gSpeed_status, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"status:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 67, 37, string);
+	u8g_DrawStr(&u8g, 67, 55, string);
 
-	// Draw AngleTHE
+	u8g_DrawStr(&u8g, 0, 35, "Gyro:");
+
+	// Draw AngleTHE  ROLL
 	ltoa(gGyro_AngleTHE, buf, 10);
 	memset(string, 0, sizeof string);
-	strcat(string,"T:");
+	strcat(string,"Roll:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 35, string);
+	u8g_DrawStr(&u8g, 0, 44, string);
 
 	// Draw AngleSI
 	ltoa(gGyro_AngleSI, buf, 10);
 	memset(string, 0, sizeof string);
-	strcat(string,"S:");
-	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 44, string);
-
-	// Draw AnglePHI
-	ltoa(gGyro_AnglePHI, buf, 10);
-	memset(string, 0, sizeof string);
-	strcat(string,"P:");
+	strcat(string,"Pitch:");
 	strcat(string,buf);
 	u8g_DrawStr(&u8g, 0, 53, string);
+
+	// Draw AnglePHI
+	//ltoa(gGyro_AnglePHI, buf, 10);
+	//memset(string, 0, sizeof string);
+	//strcat(string,"P:");
+	//strcat(string,buf);
+	//u8g_DrawStr(&u8g, 0, 53, string);
 
 }
 
@@ -216,7 +228,7 @@ void drawMain(){
 	//u8g_DrawFrame(&u8g,0,0,64,32);
 
 	// Draw the Speed
-	utoa(gSpeed, buf, 10);
+	utoa(gSpeed_MTSpd, buf, 10);
 	u8g_DrawStr(&u8g, 3, 4, buf);
 
 	// Change the font
@@ -371,40 +383,42 @@ void drawMPPT(){
 	u8g_SetFont(&u8g, u8g_font_5x8);
 	u8g_SetFontPosTop(&u8g);
 
+	u8g_DrawStr(&u8g, 0, 1, "MPPT1 Data:");
+
 	// Draw MPPT1 Status
 	utoa(gCANVars.MPPT1_Status, buf, 2);
 	memset(string, 0, sizeof string);
 	strcat(string,"1S:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 1, string);
+	u8g_DrawStr(&u8g, 0, 10, string);
 
 	// Draw MPPT1 Vin
 	utoa(gCANVars.MPPT1_Vin, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"1Vin:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 10, string);
+	u8g_DrawStr(&u8g, 0, 19, string);
 
 	// Draw MPPT1 Iin
 	utoa(gCANVars.MPPT1_Iin, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"1Iin:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 19, string);
+	u8g_DrawStr(&u8g, 0, 28, string);
 
 	// Draw MPPT1 Vout
 	utoa(gCANVars.MPPT1_Vout, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"1Vout:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 28, string);
+	u8g_DrawStr(&u8g, 0, 36, string);
 
 	// Draw MPPT1 Tamb
 	utoa(gCANVars.MPPT1_Tamb, buf, 10);
 	memset(string, 0, sizeof string);
 	strcat(string,"1Tamb:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 37, string);
+	u8g_DrawStr(&u8g, 0, 47, string);
 
 } // end drawMPPt
 
