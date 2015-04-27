@@ -161,6 +161,39 @@ static FILE USBSerialStream;
 	{
 		
 	}
+	
+	void sendDelim()
+	{
+		fputc(',',&USBSerialStream);
+	}
+	
+	void sendEnd()
+	{
+		fputs("<<",&USBSerialStream);
+	}
+	
+	void sendStart(const char* human_readable_id)
+	{
+		fputs(human_readable_id,&USBSerialStream);
+		fputs(">>",&USBSerialStream);
+	}
+	
+	/*void sendNumber(uint8_t val)
+	{
+		utoa(val,MAV_Rx_buff,10);
+		fputs(MAV_Rx_buff,&USBSerialStream);
+	}*/
+	
+	#define end_msg 1
+	#define normal_msg 2
+	
+	void sendNumber(uint32_t val, uint8_t code)
+	{	
+		utoa(val,MAV_Rx_buff,10);
+		fputs(MAV_Rx_buff,&USBSerialStream);
+		if (code == end_msg) sendEnd();
+		if (code==normal_msg) sendDelim();
+	}
 
 	static volatile FLAGS myFlags;
 
@@ -216,7 +249,9 @@ int main(void)
 			
 			itoa(voltage,buffer,10); //USB is really fast, so sending in ASCII is a minimal overhead.
 									 //not constrained to fixed-length frames
-			fputs(">>13,", &USBSerialStream);
+			fputs(">>", &USBSerialStream);
+			fputc(13,&USBSerialStream);
+			fputc(',',&USBSerialStream);
 			fputs(buffer, &USBSerialStream);
 			fputs("<<", &USBSerialStream);
 			
@@ -449,129 +484,109 @@ void MAV_msg_Unpack()
 							//uart1_flush();
 							mavlink_speed_halleffect_t spdhe;					//instantiate object MD
 							mavlink_msg_speed_halleffect_decode(&msg,&spdhe);	//encode message
-							fputs("MD>>",&USBSerialStream);					//delimiter & ID
-							
+							sendStart("MD");
 							fputc(HESPD_TXID,&USBSerialStream);
-							fputs(",",&USBSerialStream);
-							utoa(spdhe.avg_speed,MAV_Rx_buff,10);
-							fputs(MAV_Rx_buff,&USBSerialStream);						//avg. speed
-							fputs(",",&USBSerialStream);						//delim
-							utoa(spdhe.hes_speed,MAV_Rx_buff,10);
-							fputs(MAV_Rx_buff,&USBSerialStream);			//used as status flags
-							fputs(",",&USBSerialStream);	
-							utoa(spdhe.hes_RPM,MAV_Rx_buff,10);
-							fputs(MAV_Rx_buff,&USBSerialStream);	
-							fputs(",",&USBSerialStream);	
-							utoa(spdhe.motor_speed,MAV_Rx_buff,10);
-							fputs(MAV_Rx_buff,&USBSerialStream);
-							fputs(",", &USBSerialStream);	
-							utoa(spdhe.motor_RPM,MAV_Rx_buff,10);
-							fputs(MAV_Rx_buff,&USBSerialStream);
-							fputs(",",&USBSerialStream);	
-							utoa(spdhe.flags,MAV_Rx_buff,10);
-							fputs(MAV_Rx_buff,&USBSerialStream);
-							fputs("<<",&USBSerialStream);
+							sendDelim();
+							sendNumber(spdhe.avg_speed,normal_msg);
+							sendNumber(spdhe.hes_speed,normal_msg);		
+							sendNumber(spdhe.hes_RPM,normal_msg);
+							sendNumber(spdhe.motor_speed, normal_msg);
+							sendNumber(spdhe.motor_RPM,normal_msg);
+							sendNumber(spdhe.flags, end_msg);
 														
 							break;//now check for next ID
 							}break;
 							
 						////now check for next ID
-							//case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
-							//{
-								//hb_lost=0;
+							case MAVLINK_MSG_ID_BMS_DATA:					//is it BMS data?
+							{
+								mavlink_bms_data_t bms_object;
+								mavlink_msg_bms_data_decode(&msg,&bms_object);
+								fputs("MD>>",&USBSerialStream);
+								
+								hb_lost=0;
 								//uart1_flush();
-								//mavlink_bms_data_t bms;
-								//mavlink_msg_bms_data_decode(&msg,&bms);	//decode BMS data packet
-								//fputs(PSTR("BMS>>"));					//delim and ID
-								//fputc(BMS_TXID);	
-								//fputs(PSTR(","));
+								
+								sendStart("BMS");
+								fputc(BMS_TXID, &USBSerialStream);
+								sendDelim();
 								////--------------BMS data  begin-----------//
-								//fputc(bms.fault_condition);
-								//fputs(PSTR(","));
-								//fputc(bms.source_current);
-								//fputs(PSTR(","));
-								//fputc(bms.load_current);
-								//fputs(PSTR(","));
-								//fputc(bms.bat_fan_status);
-								//fputs(PSTR(","));
-								//fputc(bms.LLIM_state);
-								//fputs(PSTR(","));
-								//fputc(bms.HLIM_state);
-								//fputs(PSTR(","));
-								//fputc(bms.state_of_chg);
-								//fputs(PSTR(","));
-								//fputc(bms.pack_voltage);
-								//fputs(PSTR(","));
-								//for (int i=0;i<3;i++)
-								//{
-									//fputc(bms.cell_voltages[i]);	
-									//fputs(PSTR(","));	
-								//}
-								//for (int i=0;i<3;i++)
-								//{
-									//fputc(bms.cell_temps[i]);
-									//fputs(PSTR(","));
-								//}
-								//fputc(bms.system_status);
-								//fputs(PSTR("<<"));	
-								//break;				
-							//}break;
-							//
-							//case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
-							//{
-								//hb_lost=0;
+								sendNumber(bms_object.current, normal_msg);
+								sendNumber(bms_object.batteryEnergyIn,normal_msg); ///< battery energy in
+								sendNumber(bms_object.batteryEnergyOut,normal_msg); ///< battery energy out
+								sendNumber(bms_object.packVoltage,normal_msg); ///< pack voltage of battery
+								sendNumber(bms_object.current,normal_msg); ///< current of battery
+								sendNumber(bms_object.currentLimit,normal_msg); ///< current of battery
+								sendNumber(bms_object.dischargeLimit,normal_msg); ///< dischargeLimit of battery
+								sendNumber(bms_object.DOD,normal_msg); ///< discharge depth
+								sendNumber(bms_object.capacity,normal_msg); ///< battery capacity
+								sendNumber(bms_object.packResistance,normal_msg); ///< packResistance
+								sendNumber(bms_object.fault_flags,normal_msg); ///< bits of the faults from the BMS
+								sendNumber(bms_object.maxVoltage,normal_msg); ///< max voltage of a cell
+								sendNumber(bms_object.maxVoltageID,normal_msg); ///< ID of the cell with maxVoltage
+								sendNumber(bms_object.minVoltage,normal_msg); ///< min voltage of a cell
+								sendNumber(bms_object.minVoltageID,normal_msg); ///< ID of the cell with minVoltage
+								sendNumber(bms_object.SOC,normal_msg); ///< state of charge
+								sendNumber(bms_object.SOH,normal_msg); ///< state of charge
+								sendNumber(bms_object.minTempID,normal_msg); ///< minimum temp ID
+								sendNumber(bms_object.minTemp,normal_msg); ///< minimum temperature
+								sendNumber(bms_object.temperature,normal_msg); ///< temperature
+								sendNumber(bms_object.maxTemp,normal_msg); ///< max temperature
+								sendNumber(bms_object.maxTempID,normal_msg); ///< maximum temperature ID
+								sendNumber(bms_object.minRes,normal_msg); ///< minimum resistance
+								sendNumber(bms_object.minResID,normal_msg); ///< minimum resistance ID
+								sendNumber(bms_object.maxRes,normal_msg); ///< max resistance
+								sendNumber(bms_object.maxResID,end_msg); ///< maximum resistance ID
+								
+								break;				
+							}break;
+							
+							case MAVLINK_MSG_ID_ACCELO_GYRO:				//is it accelorometer data?
+							{
+								hb_lost=0;
 								//uart1_flush();
-								//mavlink_accelo_gyro_t ac;
-								//mavlink_msg_accelo_gyro_decode(&msg,&ac);
-								//fputs(PSTR("AC>>"));
-								//fputc(AC_TXID);		
-								//fputc(ac.acceleration);
-								//fputs(PSTR(","));
-								//fputc(ac.incline);
-								//fputs(PSTR("<<"));
-								//break;
-							//}break;
-							//
-							//case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
-							//{
-								//hb_lost=0;
+								mavlink_accelo_gyro_t gyro;
+								mavlink_msg_accelo_gyro_decode(&msg,&gyro);
+								sendStart("GY");
+								sendNumber(gyro.accel_x, normal_msg);
+								sendNumber(gyro.accel_y, normal_msg);
+								sendNumber(gyro.accel_z, normal_msg);
+								sendNumber(gyro.gyro_x, normal_msg);
+								sendNumber(gyro.gyro_y, normal_msg);
+								sendNumber(gyro.gyro_z, end_msg);
+								break;
+							}break;
+							
+							case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
+							{
+								hb_lost=0;
 								//uart1_flush();
-								//mavlink_mppt1_data_t m1;
-								//mavlink_msg_mppt1_data_decode(&msg,&m1);
-								//fputs(PSTR("M1>>"));
-								//fputc(MPPT1_TXID);
-								//fputs(PSTR(","));		
-								//fputc(m1.voltage_in);
-								//fputs(PSTR(","));
-								//fputc(m1.current_in);
-								//fputs(PSTR(","));
-								//fputc(m1.overtemp);
-								//fputs(PSTR(","));
-								//fputc(m1.undervolt);
-								//fputs(PSTR("<<"));
-								//break;
-							//}break;
-							//
-							//case MAVLINK_MSG_ID_MPPT2_DATA:				//is it MPPT1 data?
-							//{
-								//hb_lost=0;
+								mavlink_mppt1_data_t m1;
+								mavlink_msg_mppt1_data_decode(&msg,&m1);
+								sendStart("M1");
+								sendNumber(m1.current_in, normal_msg);
+								sendNumber(m1.voltage_in, normal_msg);
+								sendNumber(m1.voltage_out, normal_msg);
+								sendNumber(m1.ambient_temp, normal_msg);
+								sendNumber(m1.status,end_msg);
+								break;
+							}break;
+							
+							case MAVLINK_MSG_ID_MPPT2_DATA:				//is it MPPT1 data?
+							{
+								hb_lost=0;
 								//uart1_flush();
-								//mavlink_mppt2_data_t m2;
-								//mavlink_msg_mppt1_data_decode(&msg,&m2);
-								//fputs(PSTR("M2>>"));
-								//fputc(MPPT2_TXID);
-								//fputs(PSTR(","));
-								//fputc(m2.voltage_in);
-								//fputs(PSTR(","));
-								//fputc(m2.current_in);
-								//fputs(PSTR(","));
-								//fputc(m2.overtemp);
-								//fputs(PSTR(","));
-								//fputc(m2.undervolt);
-								//fputs(PSTR("<<"));
-								//break;
-							//}break;
-							//
+								mavlink_mppt2_data_t m2;
+								mavlink_msg_mppt2_data_decode(&msg,&m2);
+								sendStart("M1");
+								sendNumber(m2.current_in, normal_msg);
+								sendNumber(m2.voltage_in, normal_msg);
+								sendNumber(m2.voltage_out, normal_msg);
+								sendNumber(m2.ambient_temp, normal_msg);
+								sendNumber(m2.status,end_msg);
+								break;
+							}break;
+							
 							//case MAVLINK_MSG_ID_MPPT3_DATA:				//is it MPPT1 data?
 							//{
 								//hb_lost=0;
