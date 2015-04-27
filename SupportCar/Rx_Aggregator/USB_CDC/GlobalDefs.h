@@ -14,7 +14,7 @@ typedef struct
 	//------------BMS DATA----------------//
 	//BMS Data Flags
 	uint8_t		BMSData_warnings[7];		//Warnings and flags
-	//BMS voltages & IDs			BIT
+	//BMS voltages & IDs				BYTE
 	uint8_t		maxVoltage;			//4
 	uint8_t		maxVoltageID;		//5
 	uint8_t		minVoltage;			//2

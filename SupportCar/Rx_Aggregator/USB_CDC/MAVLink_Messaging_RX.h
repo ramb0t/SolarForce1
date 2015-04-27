@@ -48,7 +48,7 @@ mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan);
 #define MOTOR_DRIVER_CANID	0x420
 #define HALL_EFFECT_CANID	0x420
 
-#define HESPD_TXID			420
+#define HESPD_TXID			8
 
 #define BMS_TXID			1
 #define AC_TXID				2

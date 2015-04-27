@@ -18,10 +18,10 @@ namespace iKlwa_Telemetry_System
         private TelemetryDatabase d;
         private TelemetryCommsManager comms = new TelemetryCommsManager();
         private ReaderWriterLock protection = new ReaderWriterLock();
-        private enum SENSORS :int{HALL_EFFECT = 0xA4, MOTOR_DRIVER = 0xA5,
-                                  BMS, GYRO = 2, MPPT1 = 3,
+        private enum SENSORS :int{SPEED = 8,
+                                  BMS = 1, GYRO = 2, MPPT1 = 3,
                                   MPPT2 = 4, MPPT3 = 5, MPPT4 = 6,GPS = 7,
-                                  SOLAR_CELL, ANEMOMETER}
+                                  SOLAR_CELL = 13, ANEMOMETER = 9}
         private ReportScreen output;
         private bool safe_to_close = true;
         private int unreadErrorCount = 0;
@@ -34,6 +34,8 @@ namespace iKlwa_Telemetry_System
                                   Support = 5, RF = 6}
         private TABS selected_tab = TABS.Summary;//keeps track of which tab is selected
         private const string NO_SENSORS_MSG = "No sensors found...";
+
+        private const string speed_node = "Speed Node";
 
         public UserInterface()
         {
@@ -67,7 +69,7 @@ namespace iKlwa_Telemetry_System
             }
             else
             {
-
+                errorNotificationUpdate("something weird happened :/");
             }
         }
 
@@ -260,6 +262,25 @@ namespace iKlwa_Telemetry_System
             line_item.Line.Width = 1;
             gp.Title.Text = gp.YAxis.Title.Text + " vs Time";
             gp.XAxis.Title.Text = "Time";
+            gp.XAxis.Type = AxisType.Date;
+            gp.XAxis.Scale.Format = "HH:mm";
+            gp.XAxis.Scale.MajorUnit = DateUnit.Hour;
+            gp.XAxis.Scale.MinorUnit = DateUnit.Minute;
+
+            XElement last = results.Descendants(TelemetryDatabase.TIME_TAG).Last();
+            XElement first = results.Descendants(TelemetryDatabase.TIME_TAG).First();
+            DateTime min = new DateTime(),
+                     max = new DateTime();
+            
+            min = min.AddMinutes(Convert.ToInt16(last.Value.Split('h')[1], 10));
+            min = min.AddHours(Convert.ToInt16(last.Value.Split('h')[0], 10));
+
+            max = max.AddMinutes(Convert.ToInt16(first.Value.Split('h')[1], 10));
+            max = max.AddHours(Convert.ToInt16(first.Value.Split('h')[0], 10));
+
+            gp.XAxis.Scale.Min = min.ToOADate();
+            gp.XAxis.Scale.Max = max.ToOADate();
+
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
             zedGraphControl1.Refresh();
@@ -348,21 +369,27 @@ namespace iKlwa_Telemetry_System
                                 safe_to_close = false;
                                 switch (packet.ID)//determine sensor based on packet ID
                                 {
-                                    case (int)SENSORS.MOTOR_DRIVER:
+                                    /*case (int)SENSORS.MOTOR_DRIVER:
                                         {
                                             string str = packet.PAYLOAD.ElementAt(0).ToString();
                                             str = str.Substring(0, 1);
                                             d.addDataCapture("Motor Driver", now(),
                                                              "Speed", (int)Convert.ToChar(str));
                                         }
-                                        break;
-                                    case (int)SENSORS.HALL_EFFECT:
+                                        break;*/
+                                    case (int)SENSORS.SPEED:
                                         {
-                                            string str = packet.PAYLOAD.ElementAt(0).ToString();
-                                            str = str.Substring(0, 1);
-                                            d.addDataCapture("Hall Effect Sensor", now(),
-                                                             "Speed", (int)Convert.ToChar(str));
-
+                                            string str = packet.PAYLOAD.ElementAt(0);
+                                            d.addDataCapture(speed_node, now(),
+                                                             "Average Speed", Convert.ToInt16(str,10));
+                                            str = packet.PAYLOAD.ElementAt(1);
+                                            d.addDataCapture(speed_node, now(), "Hall Effect Speed", Convert.ToInt16(str, 10));
+                                            str = packet.PAYLOAD.ElementAt(2);
+                                            d.addDataCapture(speed_node, now(), "Hall Effect RPM", Convert.ToInt16(str, 10));
+                                            str = packet.PAYLOAD.ElementAt(3);
+                                            d.addDataCapture(speed_node, now(), "Motor Driver Speed", Convert.ToInt16(str, 10));
+                                            str = packet.PAYLOAD.ElementAt(4);
+                                            d.addDataCapture(speed_node, now(), "Motor Driver RPM", Convert.ToInt16(str, 10));
                                         } 
                                         break;
 
