@@ -17,6 +17,7 @@
 #include "../lib/uart/uart.h"
 
 extern volatile uint8_t motorSpeed;
+extern volatile uint16_t motorRPM;
 extern volatile uint16_t totalCount;
 extern volatile uint8_t numCount1;
 

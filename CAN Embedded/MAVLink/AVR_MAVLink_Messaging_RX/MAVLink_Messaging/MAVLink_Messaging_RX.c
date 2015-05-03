@@ -232,7 +232,7 @@ void MAV_msg_Unpack()
 								uart_puts_p(PSTR(","));
 								uart_putc(bms.current);
 								uart_puts_p(PSTR(","));
-								uart_putc(bms.chargeLimit);								
+								uart_putc(bms.dischargeLimit);								
 								uart_puts_p(PSTR(","));
 								uart_putc(bms.current);
 								uart_puts_p(PSTR("<<"));	
@@ -247,15 +247,23 @@ void MAV_msg_Unpack()
 								mavlink_msg_accelo_gyro_decode(&msg,&ac);
 								uart_puts_p(PSTR("AC>>"));
 								uart_putc(AC_TXID);
-								uart_putc(ac.accel_x);
+								uart_puts(ac.accel_x);
 								uart_puts_p(PSTR(","));
-								uart_putc(ac.accel_y);
+								uart_puts(ac.accel_y);
+								uart_puts_p(PSTR(","));
+								uart_puts(ac.accel_z);
+								uart_puts_p(PSTR(","));
+								uart_puts(ac.gyro_x);
+								uart_puts_p(PSTR(","));
+								uart_puts(ac.gyro_y);
+								uart_puts_p(PSTR(","));
+								uart_puts(ac.gyro_z);
 								uart_puts_p(PSTR("<<"));
 								break;
 							}break;
 							//
-							//case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
-							//{
+							case MAVLINK_MSG_ID_MPPT1_DATA:				//is it MPPT1 data?
+							{
 								//hb_lost=0;
 								//uart_flush();
 								//mavlink_mppt1_data_t m1;
@@ -271,8 +279,8 @@ void MAV_msg_Unpack()
 								//uart_puts_p(PSTR(","));
 								//uart_putc(m1.undervolt);
 								//uart_puts_p(PSTR("<<"));
-								//break;
-							//}break;
+								break;
+							}break;
 							//
 							//case MAVLINK_MSG_ID_MPPT2_DATA:				//is it MPPT1 data?
 							//{

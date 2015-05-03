@@ -11,17 +11,7 @@
 
 #include "Combo.h"
 
-volatile uint16_t count2 = 0;
-volatile uint8_t hSpeed = 0;
-volatile uint16_t hRPM = 0;
-volatile uint16_t count0 = 0;
-volatile uint8_t motorSpeed = 0;
-volatile uint16_t motorRPM = 0;
-volatile uint8_t numCount1;
-volatile uint16_t totalCount;
-volatile uint16_t avgCount;
-volatile uint8_t avgSpeed;
-volatile uint8_t status;
+
 
 void send()
 {
@@ -42,8 +32,8 @@ void send()
 	speed. data [ 2 ] = hRPM>>8;
 	speed. data [ 3 ] = hRPM;
 	speed. data [ 4 ] = motorSpeed;
-	speed. data [ 5 ] = 0x08;//motorRPM>>8;
-	speed. data [ 6 ] = 0x22;//motorRPM;
+	speed. data [ 5 ] = motorRPM>>8;
+	speed. data [ 6 ] = motorRPM;
 	speed. data [ 7 ] = status;
 	
 	CAN_sendMessage (&speed);
@@ -300,9 +290,9 @@ void motorCalcs()
 	totalCount = 0;
 	numCount1 = 0;
 	
-	motorSpeed = 40250/avgCount;
+	motorSpeed = (40250)/avgCount;
 	
-	motorRPM = 416666/avgCount; //value should be 41666.6667
+	motorRPM = (416666)/avgCount; //value should be 41666.6667
 }
 
 //*****************************************
@@ -322,12 +312,9 @@ ISR(INT0_vect)
 	count2 = 0;
 	TCNT2 = TIMEBASE_RELOAD2; //reload timer
 	
-	//place in circum depending on where its mounted on wheel
-	//24.5cm diameter on my bike, therefore circum = 0.76969m
-	//90000* circum = 69272.11801
-	hSpeed = (69272)/Capt2;
+	hSpeed = (1449000)/Capt2;
 	
-	hRPM = 15000000/Capt2;
+	hRPM = (15000000)/Capt2;
 }
 
 //*****************************************
