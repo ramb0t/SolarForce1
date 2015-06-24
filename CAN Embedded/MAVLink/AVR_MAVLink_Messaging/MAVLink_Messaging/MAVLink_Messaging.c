@@ -5,10 +5,15 @@
  *  Author: Matt
  */ 
 
+/*
+MAIN MAVLINK MESSAGING ROUTINES
+PURPOSE:	Manage all aggregation, receiving from CAN and sending via Tx to follow car
+*/
+
 #include "MAVLink_Messaging.h"
 #include "GlobalDefs.h"
 
-#define DEBUG	0
+#define DEBUG	0			//set to 1 to enable debug outputs in terminal
 
 
 int main (void)
@@ -22,23 +27,15 @@ int main (void)
 	UART_DDR &=~_BV(GPS_UART_DATA_IN);	//input
 	UART_DDR &=~_BV(TELEMETRY_UART_IN);	//input
 	
-	//DDRB |= _BV(DDB5);
+	/* Setup PCB diagnostic LEDs*/
 	
 	LED_DIAG_DDR |= (1<<LED_DIAG_GRN)|(1<<LED_DIAG_ORG); //setup diagnostic LEDs
-	
-	
 	CANINT_DDR |= (1<<CANINT_LED);		//CAN interrupt LED
 			
-	/*----------CAN PORT INPUTS-----------------
-		Initialise SPI and CAN libraries
-		Name	CANPin	ArduinoPin		Port
-		------------------------------------
-		CS/SS	PIN8	DigPin10		PB2
-		MISO	PIN7	DigPin12		PB4
-		MOSI	PIN6	DigPin11		PB3
-		SCK		PIN5	DigPin13		PB5
-		INT		PIN4	N/A					*/
-		
+		/* 
+		-------CAN IC AND INTERFACE INITIALIZATIONS-------
+		PURPOSE: Initialise SPI interface for CAN chips
+				 Setup CAN interface for communications	*/		
 		SPI_Init();
 		
 		if(CAN_Init(CAN_125KBPS_16MHZ) !=CAN_OK)
@@ -64,36 +61,43 @@ int main (void)
 		uart_init( UART_BAUD_SELECT_DOUBLE_SPEED(UART_BAUD_RATE,F_CPU) ); 
 		
 		sei();	//interrupts ON
+		
+		/*---------MAVLink System Constants--------------------
+		*Component and system IDs
+		*Part of MAVLink protocol
+		*Not implemented in functions
+		*Only implemented if multiple stations to be used		
+		*Keep constant!			*/
 	
-	//TODO: Get interrupt-based heartbeats and GPS data integrated with CAN
-	
-				mavlink_system.sysid = 100; // System ID, 1-255
-				mavlink_system.compid = 200; // Component/Subsystem ID, 1-255
+		mavlink_system.sysid = 100; // System ID, 1-255
+		mavlink_system.compid = 200; // Component/Subsystem ID, 1-255
 	
 	/*---------GPS Pointer Init --------------------
 		Sets the Parsing pointer to the start of the GPS string					*/
 	
 	p_start = gps_string;
 	uint8_t rungps=0;
+	
 	/*---------CANData Global Struct INIT--------------------
-		Sets the Parsing pointer to the start of the GPS string					*/
+		Allows the data from CAN components to be written to the global struct					*/
 	volatile GlobalVars CANData;
 	
 	
 //---------------Operational Loop---------------------//
 	
 	while(1) {
-		//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); --CAUSES BREAKAGE
-		
-	//if (reqMPPTs_flag == TRUE)			//MPPTs must be requested to send data if 1s has passed (flag set)
-	//{
-		//CANMessage mppt_request;		//object of MPPT request CAN msg
-		//mppt_request.id = CANID_MPPTRQ1;
-		//mppt_request.length = 0;
-		//mppt_request.rtr = 1;
-		//CAN_sendMessage(&mppt_request);
-		//reqMPPTs_flag = FALSE;
-	//}
+	
+	/* ------uncomment this for MPPT polling; currently breaks GPS------------		
+	if (reqMPPTs_flag == TRUE)			//MPPTs must be requested to send data if 1s has passed (flag set)
+	{
+		CANMessage mppt_request;		//object of MPPT request CAN msg
+		mppt_request.id = CANID_MPPTRQ1;
+		mppt_request.length = 0;
+		mppt_request.rtr = 1;
+		CAN_sendMessage(&mppt_request);
+		reqMPPTs_flag = FALSE;
+	}
+	*/
 	
 	if (DEBUG)
 	{
@@ -105,38 +109,36 @@ int main (void)
 		LED_DIAG_PORT |= (1<<LED_DIAG_GRN);
 	}	
 	
-	//----------------new code---------------//
-
-	//this goes true every 500ms
-	
 
 	if (updateMAV_flag == TRUE)
 	{
 		rungps++;
-		if (rungps > 2)
+		if (rungps > 2)						//this loop goes true every 500ms
 		{
-		updateGPS_flag = TRUE;
+		updateGPS_flag = TRUE;				//sends GPS data every 1s
 			rungps = 0;
 		}
 		
-		//MAV_HB_send();					//send MAVLink heartbeat	
-		MAV_msg_pack();					//selectively send MAVLink packets
-		updateMAV_flag = FALSE;
+		//MAV_HB_send();					//send MAVLink heartbeat (disabled at the moment)	
+		MAV_msg_pack();						//selectively send MAVLink packets
+		updateMAV_flag = FALSE;				//done sending, so no need to have flag set to send
 	}
 		if (updateGPS_flag == TRUE)
 		{
 			GPS_readData();					//store GPS data to global fields
-			updateGPS_flag = FALSE;			//GPS has been		
+			updateGPS_flag = FALSE;			//GPS has been sent, flag can be disabled		
 		}
 
 		if (gps_needs_sending==TRUE)		//GPS parsed and ready to send
 		{
-			uart_puts(gps_string);
+			uart_puts("GPS>>7,");
+			uart_puts(gps_string);			
+			uart_puts("<<");
 			gps_needs_sending = FALSE;
 		}
 	
-if(flag == CAN_MSGAVAIL){
-	while (CAN_getMessage_Buffer(&Input_data)==CAN_OK)
+if(flag == CAN_MSGAVAIL){					//if a new CAN message is available
+	while (CAN_getMessage_Buffer(&Input_data)==CAN_OK)	//while the buffer receiving is OK
 	{
 		if (CAN_Decode(&Input_data)==CAN_MSG_DECODED)	//if a new message has been decoded
 		{
@@ -147,9 +149,7 @@ if(flag == CAN_MSGAVAIL){
 
 	}
 	}
-	//----------------/new code-------------//
 
-		
 		
 	}
 	return 0;
@@ -233,7 +233,7 @@ void GPS_readData()
 }//GPS get
 
 
-
+/*This parsing method works, sporadically ?!*/
 void ParseGPS () 
 {	
 			int i=0;
@@ -263,7 +263,13 @@ void ParseGPS ()
 
 }
 
-
+/*
+MAVLINK MESSAGE PACKAGING ROUTINE
+PURPOSE:		Packages the CAN data that has been received, into the correct MAVLink structs
+				Frames each component's data and packages it for Tx
+INPUT:			None, reads mavlink message "msg" and breaks that into the required variables
+OUTPUT:			Framed and packetized MAVLink packet with the necessary data. 
+*/
 void MAV_msg_pack()
 {
 	//uart_flush();
@@ -283,7 +289,8 @@ void MAV_msg_pack()
 			// Initialize the required buffers
 			// Set correct buffer lengths
 
-			mavlink_message_t msg;
+			mavlink_message_t msg;					//stores incoming message in this object
+			
 			uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 			uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 			char buff[10];
@@ -314,9 +321,6 @@ void MAV_msg_pack()
 				speedMDUpdated = 0; speedHEUpdated = 0;
 			}
 			
-			
-			//uart_puts("RX");
-			//uart_puts(MAV_Rx_buff);
 			/*-----------------------------------------------------------------------
 			NAME: BMS Data
 			DESCRIPTION: All data originating from the BMS, including error flags
@@ -367,11 +371,10 @@ void MAV_msg_pack()
 			...........................................................................
 								4 = int8_t acceleration (m.s^-2)			-127 to 127 m.s^-2		
 								5 = int8_t incline (degrees)				-127 to 127 (0-100 @ 10 counts per degree)
-			//TESTING																	*/
-			if (DEBUG/*acceloUpdated==1||gyroUpdated==1*/)
+																				*/
+			if (acceloUpdated==1||gyroUpdated==1)
 			{
 			mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0,CANData.gyro_x,CANData.gyro_y,CANData.gyro_z,CANData.accel_x,CANData.accel_y,CANData.accel_z);
-			//mavlink_msg_accelo_gyro_send(MAVLINK_COMM_0, /*CANBusInput.data[0]*/2,11);
 			acceloUpdated=0;
 			gyroUpdated=0;
 			}
@@ -420,75 +423,60 @@ void MAV_msg_pack()
 								6 =		uint8_t overtemp?					0=no 1=yes
 								7 =		uint8_t undervolt?					0=no 1=yes
 			//TESTING																		*/
-			
-//TESTING	mavlink_msg_mppt1_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			//MAV_uart_send(buf,len);
+
 			if (mppt1Updated==1)
 			{
 				mavlink_msg_mppt1_data_send(MAVLINK_COMM_0,CANData.Vin1,CANData.Iin1,CANData.Vout1,CANData.Tamb1,CANData.mppt_flags1);
 				////MPPT1_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
 				mppt1Updated=0;
 			}
-//
-			//
-////TESTING	mavlink_msg_mppt2_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			////MAV_uart_send(buf,len);
+
+
 			if (mppt2Updated==1)
 			{
 				mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,CANData.Vin2,CANData.Iin2,CANData.Vout2,CANData.Tamb2,CANData.mppt_flags2);
-			//mavlink_msg_mppt2_data_send(MAVLINK_COMM_0,MPPT2_Message.data[0],MPPT2_Message.data[1],MPPT2_Message.data[2],MPPT2_Message.data[3]);
 			////MPPT2_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
 			mppt2Updated=0;
 			}
-////TESTING	mavlink_msg_mppt3_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			////MAV_uart_send(buf,len);
+
+
 			if (mppt3Updated==1)
 			{
 			mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,CANData.Vin3,CANData.Iin3,CANData.Vout3,CANData.Tamb3,CANData.mppt_flags3);
-			//mavlink_msg_mppt3_data_send(MAVLINK_COMM_0,MPPT3_Message.data[0],MPPT3_Message.data[1],MPPT3_Message.data[2],MPPT3_Message.data[3]);
 			////MPPT3_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
 			mppt3Updated=0;
 			}
-////TESTING	mavlink_msg_mppt4_data_pack(100,200,&msg,voltage_in,current_in,overtemp,undervolt);
-			////MAV_uart_send(buf,len);
+
 			if (mppt4Updated==1)
 			{
 			mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,CANData.Vin4,CANData.Iin4,CANData.Vout4,CANData.Tamb4,CANData.mppt_flags4);
-			//mavlink_msg_mppt4_data_send(MAVLINK_COMM_0,MPPT4_Message.data[0],MPPT4_Message.data[1],MPPT4_Message.data[2],MPPT4_Message.data[3]);
 			////MPPT4_Message = (CANMessage){.id=0, .rtr=0, .length=0, .data={}};	//reset MPPT message container
 			mppt4Updated=0;
 			}
-			//
-			/*-----------------------------------------------------------------------
+			
+	
+		LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
+		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
+	
+			}
+			
+			
+void MAV_HB_send()
+{
+		/*
 			NAME: Heartbeat
 			DESCRIPTION: MAVLink heartbeat required to confirm a connection is active
 			.........................................................................
 			Parameters(x4)		Value	Detail								Range/Type
 			...........................................................................
-			Flags are fixed each time, standard to the MAVLink library. Not edited / written to.
-			//TESTING																		*/			
-			
-			//uart_flush();
-			//uart_puts("\n---------MAVLink Heartbeat---------\n");
-			
-			//mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
-
-	
-					LED_DIAG_PORT &= ~(1<<LED_DIAG_ORG);
-		LED_DIAG_PORT &= ~(1<<LED_DIAG_GRN);
-	
-			}
-			
-void MAV_HB_send()
-{
-		//------------MAVLink Function Prototypes------------------------//
-
+			Flags are fixed each time, standard to the MAVLink library. Not edited / written to. */
+		/*These flags may be used with UGC if needed to prove the connection is OK*/
 		uint8_t system_type = MAV_TYPE_GROUND_ROVER;
 		uint8_t autopilot_type = MAV_AUTOPILOT_UDB;
 		uint8_t base_mode = MAV_MODE_FLAG_AUTO_ENABLED;
 		uint8_t custom_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
 		uint8_t system_status = MAV_STATE_ACTIVE;
-	mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
+		mavlink_msg_heartbeat_send(MAVLINK_COMM_0,system_type,autopilot_type,base_mode,custom_mode,system_status);
 }
 
 					

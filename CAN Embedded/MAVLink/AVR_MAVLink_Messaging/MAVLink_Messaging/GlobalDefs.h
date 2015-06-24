@@ -5,6 +5,14 @@
  *  Author: Matt
  */ 
 
+/*
+GLOBAL DEFINITIONS HEADER
+PURPOSE: Provides a structure with all the parameters of each component of the solar EV
+		 The positioning of the variable within the frame is indicated by the byte number
+		 i.e in the BMS message, byte 4 contains the 8 bits indicating the maximum voltage
+		 
+		 For more details see the KVaser app with the file containing the graphical byte allocations
+*/
 
 #ifndef GLOBALDEFS_H_
 #define GLOBALDEFS_H_
@@ -14,7 +22,7 @@ typedef struct
 	//------------BMS DATA----------------//
 	//BMS Data Flags
 	uint8_t		BMSData_warnings[7];		//Warnings and flags
-	//BMS voltages & IDs			BIT
+	//BMS voltages & IDs			BYTE
 	uint8_t		maxVoltage;			//4
 	uint8_t		maxVoltageID;		//5
 	uint8_t		minVoltage;			//2

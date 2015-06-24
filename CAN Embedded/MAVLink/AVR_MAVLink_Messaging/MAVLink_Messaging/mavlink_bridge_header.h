@@ -2,7 +2,8 @@
  * mavlink_bridge_header.h
  *
  * Created: 2015/04/13 08:52:48 PM
- *  Author: Modified from the below source
+ *  Author: Matt de Neef
+			Modified from the below source
  */ 
 
 /****************************************************************************
@@ -75,7 +76,7 @@ int uart;
 static inline void mavlink_send_uart_bytes(mavlink_channel_t chan, const char *ch, int length)
 {
 
-    if (chan == MAVLINK_COMM_0)
+    if (chan == MAVLINK_COMM_0)				//send data over MAVLink virtual channel 0
     {
 		//while( !(UCSR0A & (1<<UDRE0)) )
 		//{

@@ -25,11 +25,11 @@
 #include "../lib/SPI/AVR_SPI.h"
 
 #include "../lib/CAN/CAN_defs.h"
-// Timer0
+// Timer0 stuffs
 #include "Mavlink_Timer0.h"
-
+//Global struct with definitions for CAN component variables
 #include "GlobalDefs.h"
-
+//main H file for MAVLink data sending
 #include "MAVLink_Messaging.h"
 
 //define returned CAN data
@@ -37,7 +37,7 @@
 #define CAN_NOT_DECODED 0
 
 //---------------CAN IDs-----------------//
-
+//MOVED TO SEPARATE CAN DEFINITIONS FILE
 
 //#define SPEED_HE_CANID		0x0420
 
@@ -62,11 +62,11 @@
 //#define MPPT4_CANID			0x0774
 
 //---------------Variables---------------//
-volatile CANMessage Input_data;
-extern volatile uint8_t		message_decoded;
+volatile CANMessage Input_data;					//struct to hold CAN input data
+extern volatile uint8_t		message_decoded;	//status flags
 extern volatile	uint8_t		flag;
-volatile char				buff[10];
-volatile GlobalVars	CANData;
+volatile char				buff[10];			//input buffer
+volatile GlobalVars	CANData;					//struct holding all CAN component vars
 
 //flags for if any variables have updated
 volatile	uint8_t		speedHEUpdated;
@@ -91,7 +91,7 @@ volatile	uint8_t		mppt4Updated;
 
 
 //---------------Prototypes---------------//
-uint8_t CAN_Decode(CANMessage *message);
+uint8_t CAN_Decode(CANMessage *message);				//decode prototype
 
 
 #endif /* CAN_INT0_H_ */

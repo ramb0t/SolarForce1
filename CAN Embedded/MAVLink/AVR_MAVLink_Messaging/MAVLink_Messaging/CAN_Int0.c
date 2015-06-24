@@ -9,6 +9,16 @@
 #include "GlobalDefs.h"
 
 
+/*
+	CAN INTERRUPT AGGREGATION ROUTINES
+	PURPOSE: Each time a CAN message is received from the CAN interface ICs, this set of routines fills the CAN Rx buffers and
+			 decodes the CAN message to the relevant data types compatible with the MAVLink message definitions for packaging.
+			 The ISR fills the buffer and the decode function sets flags to indicate which message was received from the CAN interface
+	INPUT:	 Decode function takes received message of type CANMessage (struct)
+	OUTPUT:	 Appropriate MAVLink packaged struct based on which message was received
+			 
+*/
+
 //CAN_Init(CAN_125KBPS_16MHZ); // Setup CAN Bus with our desired speed
 
 ISR(INT0_vect)
@@ -34,13 +44,14 @@ ISR(INT0_vect)
 uint8_t CAN_Decode(CANMessage *message)
 {
 	
-	speedHEUpdated=0;
-	speedMDUpdated=0;
+	//reset status of all flags
+	speedHEUpdated=0;			//Hall Effect/Motor driver flags				
+	speedMDUpdated=0;			//as above
 	acceloUpdated=0;
 	gyroUpdated=0;
 
-	bms1Updated=0;
-	bms2Updated=0;
+	bms1Updated=0;				//BMS sends 8 different messages (see BMS documentation)
+	bms2Updated=0;	
 	bms3Updated=0;
 	bms4Updated=0;
 	bms5Updated=0;
@@ -48,13 +59,17 @@ uint8_t CAN_Decode(CANMessage *message)
 	bms7Updated=0;
 	bms8Updated=0;
 
-	mppt1Updated=0;
+	mppt1Updated=0;				//4 MPPT structs
 	mppt2Updated=0;
 	mppt3Updated=0;
 	mppt4Updated=0;
 	
+	/*
+	MESSAGE ID SWITCHER
+	PURPOSE: Uses the CAN ID of each CAN component to package the CAN Message into a message struct which is used to populate the MAVLink packets
+	*/
 	
-	switch (message->id)
+	switch (message->id)		
 				{
 					/*Speed	Data is aggregated across the Hall Effect and Motor Driver nodes
 					Data as follows 
@@ -255,6 +270,21 @@ uint8_t CAN_Decode(CANMessage *message)
 					return CAN_MSG_DECODED;
 				}
 				
+				/*
+				CAN Message from Gyro has 2 parts
+				ID Name		ID (Hex)		Function
+				------------------------------------------
+				GYRO_GYRO	0x7A2			MPU6050 Gyroscope outputs
+				GYRO_ACCEL	0x7A3			MPU6050 Accelerometer outputs
+				
+				Gyro Cartesian Co-ordinates
+				Name of variable	Data bytes
+				-----------------------------------------
+				Gyro X				data[0][1]
+				Gyro Y				data[2][3]
+				Gyro Z				data[4][5]
+				*/
+				
 				case	CANID_GYRO_GYRO:
 				{	
 					CANData.gyro_x = (message->data[0]<<8)|(message->data[1]);
@@ -263,6 +293,14 @@ uint8_t CAN_Decode(CANMessage *message)
 					gyroUpdated=1;
 					return CAN_MSG_DECODED;
 				}
+				
+				/*Accelerometer Cartesian Co-ordinates
+				Name of variable	Data bytes
+				-----------------------------------------
+				Accelerometer X				data[0][1]
+				Accelerometer Y				data[2][3]
+				Accelerometer Z				data[4][5]
+				*/
 				
 				case	CANID_GYRO_ACCEL:
 				{
@@ -273,6 +311,14 @@ uint8_t CAN_Decode(CANMessage *message)
 					acceloUpdated=1;
 					return CAN_MSG_DECODED;
 				}
+				
+				/*
+				MPPT Data Collection
+				All 4 MPPTs contain the same variables, differentiation is by ID
+				Name of variable	Data bytes
+				-----------------------------------------
+				See KVaser app for byte allocations, they span bytes.
+				*/
 				
 				case	CANID_MPPT1:
 				{	
