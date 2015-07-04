@@ -393,7 +393,7 @@ void drawMPPT(){
 	u8g_DrawStr(&u8g, 0, 0, "MPPT1:");
 
 	// Draw MPPT1 Status
-	utoa(gCANVars.MPPT1_Status, buf, 2);
+	utoa(gCANVars.MPPT1_Status>>4, buf, 2);
 	memset(string, 0, sizeof string);
 	strcat(string,"Stat:");
 	strcat(string,buf);
@@ -435,7 +435,7 @@ void drawMPPT(){
 	u8g_DrawStr(&u8g, 64, 0, "MPPT2:");
 
 	// Draw MPPT2 Status
-	utoa(gCANVars.MPPT2_Status, buf, 2);
+	utoa(gCANVars.MPPT2_Status>>4, buf, 2);
 	memset(string, 0, sizeof string);
 	strcat(string,"Stat:");
 	strcat(string,buf);
@@ -482,7 +482,7 @@ void drawMPPT(){
 	u8g_DrawStr(&u8g, 0, 32, "MPPT3:");
 
 	// Draw MPPT3 Status
-	utoa(gCANVars.MPPT3_Status, buf, 2);
+	utoa(gCANVars.MPPT3_Status>>4, buf, 2);
 	memset(string, 0, sizeof string);
 	strcat(string,"Stat:");
 	strcat(string,buf);
@@ -524,7 +524,7 @@ void drawMPPT(){
 	u8g_DrawStr(&u8g, 64, 32, "MPPT4:");
 
 	// Draw MPPT4 Status
-	utoa(gCANVars.MPPT4_Status, buf, 2);
+	utoa(gCANVars.MPPT4_Status>>4, buf, 2);
 	memset(string, 0, sizeof string);
 	strcat(string,"Stat:");
 	strcat(string,buf);

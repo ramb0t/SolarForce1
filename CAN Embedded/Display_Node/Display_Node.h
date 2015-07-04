@@ -61,6 +61,13 @@
 #define CAN_NODECODE	0
 #define CAN_MSG_DECODED	1
 
+// Constant Defines for Calcs
+/*********************************************/
+#define MPPT_VIN_MUL	150.49
+#define MPPT_VOUT_MUL	208.79
+#define MPPT_IIN_MUL	8.72
+uint32_t tempVar;
+
 
 // Structure Definitions
 /*********************************************/

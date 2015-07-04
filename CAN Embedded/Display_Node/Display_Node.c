@@ -228,7 +228,7 @@ uint8_t CAN_Decode(CANMessage *message){
 	break; //CANID_GYRO_ANGLEPHI
 
 	case CANID_MPPT1:
-		gCANVars.MPPT1_Status = message->data[0]&0xFC ; // Mask off status bits
+		gCANVars.MPPT1_Status = message->data[0]&0xF0 ; // Mask off status bits
 		gCANVars.MPPT1_Vin    = ((message->data[0]&0x03)<<8)|(message->data[1]); // Get Vin
 		gCANVars.MPPT1_Iin    = ((message->data[2]&0x03)<<8)|(message->data[3]); // Get Iin
 		gCANVars.MPPT1_Vout   = ((message->data[4]&0x03)<<8)|(message->data[5]); // Get Vout
@@ -236,10 +236,37 @@ uint8_t CAN_Decode(CANMessage *message){
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;
 
+		// Do conversions for units?
+		// Vin >> 150.49 mV / bit
+		// Vout >> 208.79 mV / bit
+		// Iin >> 8.72 mA / bit
+
+		// we should maybe do this conversion when we fetch the data and the store in the structure?
+		// Also, we prob want to do this as floating point, or keep as mV and do conversion when we display?
+
+		//Vin
+		tempVar = gCANVars.MPPT1_Vin; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_VIN_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT1_Vin = tempVar; // Store back in the original variable?
+
+		//Vout
+		tempVar = gCANVars.MPPT1_Vout; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_VOUT_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT1_Vout = tempVar; // Store back in the original variable?
+
+		//Iin
+		tempVar = gCANVars.MPPT1_Iin; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_IIN_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT1_Iin = tempVar; // Store back in the original variable?
+
+
 	break; //CANID_MPPT1
 
 	case CANID_MPPT2:
-		gCANVars.MPPT2_Status = message->data[0]&0xFC ; // Mask off status bits
+		gCANVars.MPPT2_Status = message->data[0]&0xF0 ; // Mask off status bits
 		gCANVars.MPPT2_Vin    = ((message->data[0]&0x03)<<8)|(message->data[1]); // Get Vin
 		gCANVars.MPPT2_Iin    = ((message->data[2]&0x03)<<8)|(message->data[3]); // Get Iin
 		gCANVars.MPPT2_Vout   = ((message->data[4]&0x03)<<8)|(message->data[5]); // Get Vout
@@ -247,10 +274,28 @@ uint8_t CAN_Decode(CANMessage *message){
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;
 
+		//Vin
+		tempVar = gCANVars.MPPT2_Vin; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_VIN_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT2_Vin = tempVar; // Store back in the original variable?
+
+		//Vout
+		tempVar = gCANVars.MPPT2_Vout; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_VOUT_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT2_Vout = tempVar; // Store back in the original variable?
+
+		//Iin
+		tempVar = gCANVars.MPPT2_Iin; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_IIN_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT2_Iin = tempVar; // Store back in the original variable?
+
 	break; //CANID_MPPT2
 
 	case CANID_MPPT3:
-		gCANVars.MPPT3_Status = message->data[0]&0xFC ; // Mask off status bits
+		gCANVars.MPPT3_Status = message->data[0]&0xF0 ; // Mask off status bits
 		gCANVars.MPPT3_Vin    = ((message->data[0]&0x03)<<8)|(message->data[1]); // Get Vin
 		gCANVars.MPPT3_Iin    = ((message->data[2]&0x03)<<8)|(message->data[3]); // Get Iin
 		gCANVars.MPPT3_Vout   = ((message->data[4]&0x03)<<8)|(message->data[5]); // Get Vout
@@ -258,10 +303,28 @@ uint8_t CAN_Decode(CANMessage *message){
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;
 
+
+		//Vin
+		tempVar = gCANVars.MPPT3_Vin; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_VIN_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT3_Vin = tempVar; // Store back in the original variable?
+
+		//Vout
+		tempVar = gCANVars.MPPT3_Vout; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_VOUT_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT3_Vout = tempVar; // Store back in the original variable?
+
+		//Iin
+		tempVar = gCANVars.MPPT3_Iin; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_IIN_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT3_Iin = tempVar; // Store back in the original variable?
 	break; //CANID_MPPT3
 
 	case CANID_MPPT4:
-		gCANVars.MPPT4_Status = message->data[0]&0xFC ; // Mask off status bits
+		gCANVars.MPPT4_Status = message->data[0]&0xF0 ; // Mask off status bits
 		gCANVars.MPPT4_Vin    = ((message->data[0]&0x03)<<8)|(message->data[1]); // Get Vin
 		gCANVars.MPPT4_Iin    = ((message->data[2]&0x03)<<8)|(message->data[3]); // Get Iin
 		gCANVars.MPPT4_Vout   = ((message->data[4]&0x03)<<8)|(message->data[5]); // Get Vout
@@ -269,6 +332,24 @@ uint8_t CAN_Decode(CANMessage *message){
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;
 
+
+		//Vin
+		tempVar = gCANVars.MPPT4_Vin; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_VIN_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT4_Vin = tempVar; // Store back in the original variable?
+
+		//Vout
+		tempVar = gCANVars.MPPT4_Vout; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_VOUT_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT4_Vout = tempVar; // Store back in the original variable?
+
+		//Iin
+		tempVar = gCANVars.MPPT4_Iin; // put in 32 bit holder to prevent overflows?
+		tempVar = tempVar * MPPT_IIN_MUL; // convert to mV
+		tempVar = tempVar / 1000; // convert to V?
+		gCANVars.MPPT4_Iin = tempVar; // Store back in the original variable?
 	break; //CANID_MPPT4
 
 	default:
