@@ -24,12 +24,14 @@
 #define TIMEBASE_HITS_PER_1MS ( F_CPU/TIMEBASE_PRESCALE/1000 ) //number of timer counts per 1mS
 #define TIMEBASE_RELOAD ((uint8_t)(0xff-TIMEBASE_HITS_PER_1MS+1)) // value to reload timer with
 
-#define LCD_REFRESH_RATE	240			// refresh rate in mS
+#define LCD_REFRESH_RATE	240			// refresh rate in mS for LCD
+#define MPPT_REFRESH_RATE 	1000		// refresh rate in mS for MPPT
 // Variables:
 /*****************************************************************************/
 		volatile uint16_t 	gMilliSecTick;
-		volatile uint16_t	old_mS;
+		volatile uint16_t	old_mS_LCD, old_mS_MPPT;
 		volatile uint8_t	flagTimerUpdateLCD;
+		volatile uint8_t	flagTimerReqMPPT;
 
 // Function Prototypes:
 /*****************************************************************************/

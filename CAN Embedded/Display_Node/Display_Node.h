@@ -73,6 +73,7 @@
 
 		volatile uint8_t	flagUpdateLCD;		// sets if an update is needed.
 extern  volatile uint8_t    flagTimerUpdateLCD; // allow the timer to determine update rate
+extern 	volatile uint8_t	flagTimerRegMPPT;	// Time to req new data from MPPT's
 extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have passed
 		volatile uint16_t	int_mS;				// Keep track of when the last interupt was
 		volatile uint16_t	btn_int_mS;			// used for btn debounce isr stuff
@@ -80,6 +81,7 @@ extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have pa
 				 uint16_t	heartbeat_mS;		// Keep track of when to send the next heartbeat
 #define 	HEATBEAT_MS		1111                // arb to keep things interesting
 				 CANMessage heartbeat_Msg;
+				 CANMessage reqMPPT1_Msg;
 
 extern	volatile uint8_t 	flag;
 

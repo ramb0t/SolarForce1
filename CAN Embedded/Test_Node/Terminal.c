@@ -42,7 +42,7 @@ void Terminal_read(volatile uint8_t* state){
 		if(index >= TERMINAL_MAX_INPUT_LENGTH){
 			// Error!
 			uart_puts("\n");
-			uart_puts("Input Too Long!");
+			uart_puts(PSTR("Input Too Long!"));
 			*state = TERMINAL_RUN;
 			return;
 		}
@@ -76,7 +76,7 @@ void Terminal_read(volatile uint8_t* state){
 				// Go to listen submenu
 				*state = TERMINAL_LISTENSUB;
 				uart_puts("\n");
-				uart_puts("Entering Listen Submenu\n");
+				uart_puts(PSTR("Entering Listen Submenu\n"));
 				Terminal_showListenMenu();
 				uart_puts("\n");
 				return;
@@ -86,7 +86,7 @@ void Terminal_read(volatile uint8_t* state){
 				// Go to send submenu
 				*state = TERMINAL_SENDSUB;
 				uart_puts("\n");
-				uart_puts("Entering Send Submenu\n");
+				uart_puts(PSTR("Entering Send Submenu\n"));
 				Terminal_showSendMenu();
 				uart_puts("\n");
 				return;
@@ -96,7 +96,7 @@ void Terminal_read(volatile uint8_t* state){
 			default:
 				// Unknown Command
 				uart_puts("\n");
-				uart_puts("Unknown command!\n");
+				uart_puts(PSTR("Unknown command!\n"));
 				Terminal_showMenu();
 				uart_puts("\n");
 				return;
@@ -111,7 +111,7 @@ void Terminal_read(volatile uint8_t* state){
 				// Go to Normal Listen Mode
 				*state = TERMINAL_LISTEN;
 				uart_puts("\n");
-				uart_puts("Entering Listen Mode\n");
+				uart_puts(PSTR("Entering Listen Mode\n"));
 				uart_puts("Type 'c' to exit\n");
 				uart_puts("\n");
 				return;
@@ -121,8 +121,8 @@ void Terminal_read(volatile uint8_t* state){
 				// Go to RAW Listen Mode
 				*state = TERMINAL_LISTENRAW;
 				uart_puts("\n");
-				uart_puts("Entering Listen Mode RAW\n");
-				uart_puts("Type 'c' to exit\n");
+				uart_puts(PSTR("Entering Listen Mode RAW\n"));
+				uart_puts(PSTR("Type 'c' to exit\n"));
 				uart_puts("\n");
 				return;
 				break;
@@ -131,8 +131,8 @@ void Terminal_read(volatile uint8_t* state){
 				// Go to RAW Listen Mode
 				*state = TERMINAL_LISTENMPPT;
 				uart_puts("\n");
-				uart_puts("Entering Listen Mode MPPT\n");
-				uart_puts("Type 'c' to exit\n");
+				uart_puts(PSTR("Entering Listen Mode MPPT\n"));
+				uart_puts(PSTR("Type 'c' to exit\n"));
 				uart_puts("\n");
 				return;
 				break;
@@ -141,7 +141,7 @@ void Terminal_read(volatile uint8_t* state){
 				// Go Back To Main Menu
 				*state = TERMINAL_RUN;
 				uart_puts("\n");
-				uart_puts("Back to Main Menu..\n");
+				uart_puts(PSTR("Back to Main Menu..\n"));
 				uart_puts("\n");
 				Terminal_showMenu();
 				return;
@@ -150,7 +150,7 @@ void Terminal_read(volatile uint8_t* state){
 			default:
 				// Unknown Command
 				uart_puts("\n");
-				uart_puts("Unknown command!\n");
+				uart_puts(PSTR("Unknown command!\n"));
 				Terminal_showListenMenu();
 				uart_puts("\n");
 				return;
@@ -166,8 +166,8 @@ void Terminal_read(volatile uint8_t* state){
 				// Send Random Data
 				*state = TERMINAL_SENDRANDOM;
 				uart_puts("\n");
-				uart_puts("Sending Random CAN Messages \n");
-				uart_puts("Type 'c' to exit\n");
+				uart_puts(PSTR("Sending Random CAN Messages \n"));
+				uart_puts(PSTR("Type 'c' to exit\n"));
 				uart_puts("\n");
 				return;
 				break;
@@ -176,7 +176,7 @@ void Terminal_read(volatile uint8_t* state){
 				// Send BMS Data
 				*state = TERMINAL_SENDBMS;
 				uart_puts("\n");
-				uart_puts("Sending BMS CAN Messages \n");
+				uart_puts(PSTR("Sending BMS CAN Messages \n"));
 				uart_puts("\n");
 				return;
 				break;
@@ -185,8 +185,8 @@ void Terminal_read(volatile uint8_t* state){
 				// loop BMS Data
 				*state |= TERMINAL_LOOPBMS;
 				uart_puts("\n");
-				uart_puts("Looping BMS CAN Messages \n");
-				uart_puts("Type 'c' to exit\n");
+				uart_puts(PSTR("Looping BMS CAN Messages \n"));
+				uart_puts(PSTR("Type 'c' to exit\n"));
 				uart_puts("\n");
 				return;
 				break;
@@ -195,8 +195,8 @@ void Terminal_read(volatile uint8_t* state){
 				// loop Speed Data
 				*state |= TERMINAL_LOOPSPEED;
 				uart_puts("\n");
-				uart_puts("Looping Speed CAN Messages \n");
-				uart_puts("Type 'c' to exit\n");
+				uart_puts(PSTR("Looping Speed CAN Messages \n"));
+				uart_puts(PSTR("Type 'c' to exit\n"));
 				uart_puts("\n");
 				return;
 				break;
@@ -205,17 +205,28 @@ void Terminal_read(volatile uint8_t* state){
 				// loop Gyro Data
 				*state |= TERMINAL_LOOPGYRO;
 				uart_puts("\n");
-				uart_puts("Looping Gyro CAN Messages \n");
-				uart_puts("Type 'c' to exit\n");
+				uart_puts(PSTR("Looping Gyro CAN Messages \n"));
+				uart_puts(PSTR("Type 'c' to exit\n"));
 				uart_puts("\n");
 				return;
 				break;
+
+				// See listen and reply rather!!
+//			case TERMINAL_cLOOPMPPT:
+//				// loop MPPT Data
+//				*state |= TERMINAL_LOOPMPPT;
+//				uart_puts("\n");
+//				uart_puts(PSTR("Looping MPPT CAN Messages \n"));
+//				uart_puts(PSTR("Type 'c' to exit\n"));
+//				uart_puts("\n");
+//				return;
+//				break;
 
 			case TERMINAL_cBACK:
 				// Go Back To Main Menu
 				*state = TERMINAL_RUN;
 				uart_puts("\n");
-				uart_puts("Back to Main Menu..\n");
+				uart_puts(PSTR("Back to Main Menu..\n"));
 				uart_puts("\n");
 				Terminal_showMenu();
 				return;
@@ -224,7 +235,7 @@ void Terminal_read(volatile uint8_t* state){
 			default:
 				// Unknown Command
 				uart_puts("\n");
-				uart_puts("Unknown command!\n");
+				uart_puts(PSTR("Unknown command!\n"));
 				Terminal_showSendMenu();
 				uart_puts("\n");
 				return;
@@ -236,10 +247,10 @@ void Terminal_read(volatile uint8_t* state){
 			// error? No state found ?
 			*state = TERMINAL_INIT; // reboot!
 			uart_puts("\n");
-			uart_puts("Unknown state! Program Crash? :((((\n");
+			uart_puts(PSTR("Unknown state! Program Crash? :((((\n"));
 			utoa(*state,input,16);
 			uart_puts(input);
-			uart_puts("\nAttempting reboot \n");
+			uart_puts(PSTR("\nAttempting reboot \n"));
 			uart_puts("\n");
 			return;
 			break;
@@ -249,13 +260,13 @@ void Terminal_read(volatile uint8_t* state){
 	if(strcasecmp(input, TERMINAL_sCANCEL) == 0){ // Cancel
 		*state = TERMINAL_RUN;
 		uart_puts("\n");
-		uart_puts("Cancelled\n");
+		uart_puts(PSTR("Cancelled\n"));
 		uart_puts("\n");
 		Terminal_showMenu();
 		return;
 	}else{
 		uart_puts("\n");
-		uart_puts("Sorry I did not understand that, please try again\n");
+		uart_puts(PSTR("Sorry I did not understand that, please try again\n"));
 		uart_puts("\n");
 	}
 
@@ -345,13 +356,13 @@ Returns:  None
 **************************************************************************/
 static void Terminal_showMenu(void){
 	uart_puts("\n");
-	uart_puts("-------------------------------------\n");
-	uart_puts("Main Menu:\n");
-	uart_puts("1: Listen Menu\n");
-	uart_puts("2: Send Menu\n");
-	uart_puts("-------------------------------------\n");
+	uart_puts(PSTR("-------------------------------------\n"));
+	uart_puts(PSTR("Main Menu:\n"));
+	uart_puts(PSTR("1: Listen Menu\n"));
+	uart_puts(PSTR("2: Send Menu\n"));
+	uart_puts(PSTR("-------------------------------------\n"));
 	uart_puts("\n");
-	uart_puts("Type 'help' to show this menu again\n");
+	uart_puts(PSTR("Type 'help' to show this menu again\n"));
 
 }
 
@@ -363,14 +374,14 @@ Returns:  None
 **************************************************************************/
 static void Terminal_showListenMenu(void){
 	uart_puts("\n");
-	uart_puts("-------------------------------------\n");
-	uart_puts("Listen Menu:\n");
-	uart_puts("1: Listen All CAN data Readable\n");
-	uart_puts("2: Listen All CAN data Raw\n");
-	uart_puts("3: Listen for Specified CAN ID \n");
-	uart_puts("4: Listen and Reply MPPT \n");
-	uart_puts("0: Go Back to Main Menu \n");
-	uart_puts("-------------------------------------\n");
+	uart_puts(PSTR("-------------------------------------\n"));
+	uart_puts(PSTR("Listen Menu:\n"));
+	uart_puts(PSTR("1: Listen All CAN data Readable\n"));
+	uart_puts(PSTR("2: Listen All CAN data Raw\n"));
+	uart_puts(PSTR("3: Listen for Specified CAN ID \n"));
+	uart_puts(PSTR("4: Listen and Reply MPPT \n"));
+	uart_puts(PSTR("0: Go Back to Main Menu \n"));
+	uart_puts(PSTR("-------------------------------------\n"));
 	uart_puts("\n");
 	//uart_puts("Type 'help' to show this menu again\n");
 
@@ -384,16 +395,17 @@ Returns:  None
 **************************************************************************/
 static void Terminal_showSendMenu(void){
 	uart_puts("\n");
-	uart_puts("-------------------------------------\n");
-	uart_puts("Send Menu:\n");
+	uart_puts(PSTR("-------------------------------------\n"));
+	uart_puts(PSTR("Send Menu:\n"));
 	//uart_puts("1: Send Single CAN Message\n");
 	//uart_puts("2: Loop Single CAN Message\n");
-	uart_puts("3: Send Random CAN Messages\n");
-	uart_puts("4: Send BMS CAN Messages\n");
-	uart_puts("5: Loop BMS CAN Messages\n");
-	uart_puts("6: Loop Speed CAN Messages\n");
-	uart_puts("0: Go Back to Main Menu \n");
-	uart_puts("-------------------------------------\n");
+	uart_puts(PSTR("3: Send Random CAN Messages\n"));
+	uart_puts(PSTR("4: Send BMS CAN Messages\n"));
+	uart_puts(PSTR("5: Loop BMS CAN Messages\n"));
+	uart_puts(PSTR("6: Loop Speed CAN Messages\n"));
+	//uart_puts(PSTR("7: Loop MPPT x4 CAN Messages\n"));
+	uart_puts(PSTR("0: Go Back to Main Menu \n"));
+	uart_puts(PSTR("-------------------------------------\n"));
 	uart_puts("\n");
 	//uart_puts("Type 'help' to show this menu again\n");
 

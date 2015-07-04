@@ -14,6 +14,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <util/delay.h>
+#include <avr/pgmspace.h>
 
 // Project Specific
 #include "../lib/uart/uart.h"
@@ -38,6 +39,7 @@
 #define TERMINAL_SENDRANDOM				0x42
 #define TERMINAL_SENDBMS				0x43
 #define TERMINAL_LOOPBMS				0x44
+#define TERMINAL_LOOPMPPT				0x45
 #define TERMINAL_LOOPSPEED				0x48
 #define TERMINAL_LOOPGYRO				0x49
 
@@ -62,6 +64,7 @@
 #define TERMINAL_cLOOPBMS				5
 #define TERMINAL_cLOOPSPEED				6
 #define TERMINAL_cLOOPGYRO				7
+#define TERMINAL_cLOOPMPPT				8
 
 #define TERMINAL_s1						"1"
 #define TERMINAL_s2						"2"

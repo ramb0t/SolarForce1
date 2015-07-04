@@ -17,9 +17,16 @@ ISR(TIMER0_OVF_vect)
 
 	gMilliSecTick++;
 
-	if((gMilliSecTick - old_mS) > LCD_REFRESH_RATE){ // Time for an LCD refresh
-		old_mS = gMilliSecTick;
+	// Check for LCD refresh time?
+	if((gMilliSecTick - old_mS_LCD) > LCD_REFRESH_RATE){ // Time for an LCD refresh
+		old_mS_LCD = gMilliSecTick;
 		flagTimerUpdateLCD = TRUE;
+	}
+
+	// Check for MPPT req time?
+	if((gMilliSecTick - old_mS_MPPT) > MPPT_REFRESH_RATE){ // Time for a MPPT req
+		old_mS_MPPT = gMilliSecTick;
+		flagTimerReqMPPT = TRUE;
 	}
 
 }
@@ -33,8 +40,10 @@ void Timer0_init(void)
 	TIFR0  |= (1<<TOV0);  // clear overflow int.
 	TIMSK0 |= (1<<TOIE0); // enable overflow-interrupt
 
+	// Init variables
 	gMilliSecTick = 0;
-	old_mS = 0;
+	old_mS_LCD = 0;
+	old_mS_MPPT = 0;
 }
 
 

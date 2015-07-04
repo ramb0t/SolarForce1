@@ -47,6 +47,7 @@ int main(void)
 	// Create a new message
 	CANMessage message;
 	heartbeat_Msg = (CANMessage) {.id=0x0888,.rtr=0,.length=5,.data={'A','L','I','V','E'}};
+	reqMPPT1_Msg = (CANMessage) {.id=0x0711,.rtr=1,.length=0,.data={}};
 
 	// Enable Interrupts
 	sei();
@@ -91,6 +92,12 @@ int main(void)
 				// reset the flag
 				flagUpdateLCD = FALSE;
 				flagTimerUpdateLCD = FALSE; // Sneaky!
+			}
+			// If time to req MPPT data then do it!
+			if(flagTimerReqMPPT == TRUE){
+				CAN_sendMessage(&reqMPPT1_Msg);
+				// finally reset flag
+				flagTimerReqMPPT = FALSE;
 			}
     	}
 
