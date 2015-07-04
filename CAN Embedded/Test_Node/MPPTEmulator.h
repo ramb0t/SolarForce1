@@ -16,6 +16,8 @@ CANMessage MPPT1;
 CANMessage MPPT2;
 CANMessage MPPT3;
 CANMessage MPPT4;
+uint16_t vin, vout, iin;
+uint8_t temp;
 
 
 

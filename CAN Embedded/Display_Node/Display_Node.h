@@ -81,7 +81,7 @@ extern 	volatile uint16_t	gMilliSecTick;      // Keeps track how many mS Have pa
 				 uint16_t	heartbeat_mS;		// Keep track of when to send the next heartbeat
 #define 	HEATBEAT_MS		1111                // arb to keep things interesting
 				 CANMessage heartbeat_Msg;
-				 CANMessage reqMPPT1_Msg;
+				 CANMessage reqMPPT1_Msg, reqMPPT2_Msg, reqMPPT3_Msg, reqMPPT4_Msg;
 
 extern	volatile uint8_t 	flag;
 

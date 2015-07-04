@@ -372,7 +372,8 @@ void drawMPPT(){
 	// Draw a Frame
 	//u8g_DrawHLine(&u8g, 0,30,65);
 	//u8g_DrawHLine(&u8g, 0,31,65);
-	u8g_DrawVLine(&u8g, 65,0,64);
+	u8g_DrawVLine(&u8g, 63,0,64);
+	u8g_DrawHLine(&u8g, 0,31,128);
 	//u8g_DrawFrame(&u8g,0,0,64,32);
 
 	// Draw the Speed
@@ -380,45 +381,184 @@ void drawMPPT(){
 //	u8g_DrawStr(&u8g, 3, 4, buf);
 
 	// Change the font
-	u8g_SetFont(&u8g, u8g_font_5x8);
+	u8g_SetFont(&u8g, u8g_font_5x7r);
 	u8g_SetFontPosTop(&u8g);
 
-	u8g_DrawStr(&u8g, 0, 1, "MPPT1 Data:");
+
+	// MPPT1 !!
+	//
+	//
+
+
+	u8g_DrawStr(&u8g, 0, 0, "MPPT1:");
 
 	// Draw MPPT1 Status
 	utoa(gCANVars.MPPT1_Status, buf, 2);
 	memset(string, 0, sizeof string);
-	strcat(string,"1S:");
+	strcat(string,"Stat:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 10, string);
+	u8g_DrawStr(&u8g, 0, 8, string);
 
 	// Draw MPPT1 Vin
 	utoa(gCANVars.MPPT1_Vin, buf, 10);
 	memset(string, 0, sizeof string);
-	strcat(string,"1Vin:");
+	strcat(string,"Vi:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 19, string);
-
-	// Draw MPPT1 Iin
-	utoa(gCANVars.MPPT1_Iin, buf, 10);
-	memset(string, 0, sizeof string);
-	strcat(string,"1Iin:");
-	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 28, string);
+	u8g_DrawStr(&u8g, 0, 15, string);
 
 	// Draw MPPT1 Vout
 	utoa(gCANVars.MPPT1_Vout, buf, 10);
 	memset(string, 0, sizeof string);
-	strcat(string,"1Vout:");
+	strcat(string,"Vo:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 36, string);
+	u8g_DrawStr(&u8g, 31, 15, string);
+
+
+	// Draw MPPT1 Iin
+	utoa(gCANVars.MPPT1_Iin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"I:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 23, string);
 
 	// Draw MPPT1 Tamb
 	utoa(gCANVars.MPPT1_Tamb, buf, 10);
 	memset(string, 0, sizeof string);
-	strcat(string,"1Tamb:");
+	strcat(string,"Tmp:");
 	strcat(string,buf);
-	u8g_DrawStr(&u8g, 0, 47, string);
+	u8g_DrawStr(&u8g, 31, 23, string);
+
+	// MPPT2 !!
+	//
+	//
+
+	u8g_DrawStr(&u8g, 64, 0, "MPPT2:");
+
+	// Draw MPPT2 Status
+	utoa(gCANVars.MPPT2_Status, buf, 2);
+	memset(string, 0, sizeof string);
+	strcat(string,"Stat:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64, 8, string);
+
+	// Draw MPPT2 Vin
+	utoa(gCANVars.MPPT2_Vin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Vi:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64, 15, string);
+
+	// Draw MPPT2 Vout
+	utoa(gCANVars.MPPT2_Vout, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Vo:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64+31, 15, string);
+
+
+	// Draw MPPT2 Iin
+	utoa(gCANVars.MPPT2_Iin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"I:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64, 23, string);
+
+	// Draw MPPT2 Tamb
+	utoa(gCANVars.MPPT2_Tamb, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Tmp:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64+31, 23, string);
+
+
+
+
+
+	// MPPT3 !!
+	//
+	//
+
+
+	u8g_DrawStr(&u8g, 0, 32, "MPPT3:");
+
+	// Draw MPPT3 Status
+	utoa(gCANVars.MPPT3_Status, buf, 2);
+	memset(string, 0, sizeof string);
+	strcat(string,"Stat:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 32+8, string);
+
+	// Draw MPPT3 Vin
+	utoa(gCANVars.MPPT3_Vin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Vi:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 32+15, string);
+
+	// Draw MPPT3 Vout
+	utoa(gCANVars.MPPT3_Vout, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Vo:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 31, 32+15, string);
+
+
+	// Draw MPPT3 Iin
+	utoa(gCANVars.MPPT3_Iin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"I:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 0, 32+23, string);
+
+	// Draw MPPT3 Tamb
+	utoa(gCANVars.MPPT3_Tamb, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Tmp:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 31, 32+23, string);
+
+	// MPPT4 !!
+	//
+	//
+
+	u8g_DrawStr(&u8g, 64, 32, "MPPT4:");
+
+	// Draw MPPT4 Status
+	utoa(gCANVars.MPPT4_Status, buf, 2);
+	memset(string, 0, sizeof string);
+	strcat(string,"Stat:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64, 32+8, string);
+
+	// Draw MPPT4 Vin
+	utoa(gCANVars.MPPT4_Vin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Vi:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64, 32+15, string);
+
+	// Draw MPPT4 Vout
+	utoa(gCANVars.MPPT4_Vout, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Vo:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64+31, 32+15, string);
+
+
+	// Draw MPPT4 Iin
+	utoa(gCANVars.MPPT4_Iin, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"I:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64, 32+23, string);
+
+	// Draw MPPT4 Tamb
+	utoa(gCANVars.MPPT4_Tamb, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"Tmp:");
+	strcat(string,buf);
+	u8g_DrawStr(&u8g, 64+31, 32+23, string);
+
 
 } // end drawMPPt
 

@@ -22,7 +22,8 @@ int main(void)
 	CAN_setupPCINT0();			 // Setup CAN Message buffer using PCINT ISR
 
 	// Init LCD
-	Screen = SCREEN_MAIN;
+	//Screen = SCREEN_MAIN;
+	Screen = SCREEN_MPPT;
 	LCD_SELECT();				// Enable the sck line of LCD to bypass ST7920 bug
 	u8g_setup();				// Call u8glib setup for the LCD
 	LCD_UNSELECT();				// Disable sck of LCD to prevent crap being displayed when
@@ -48,6 +49,9 @@ int main(void)
 	CANMessage message;
 	heartbeat_Msg = (CANMessage) {.id=0x0888,.rtr=0,.length=5,.data={'A','L','I','V','E'}};
 	reqMPPT1_Msg = (CANMessage) {.id=0x0711,.rtr=1,.length=0,.data={}};
+	reqMPPT2_Msg = (CANMessage) {.id=0x0712,.rtr=1,.length=0,.data={}};
+	reqMPPT3_Msg = (CANMessage) {.id=0x0713,.rtr=1,.length=0,.data={}};
+	reqMPPT4_Msg = (CANMessage) {.id=0x0714,.rtr=1,.length=0,.data={}};
 
 	// Enable Interrupts
 	sei();
@@ -96,6 +100,9 @@ int main(void)
 			// If time to req MPPT data then do it!
 			if(flagTimerReqMPPT == TRUE){
 				CAN_sendMessage(&reqMPPT1_Msg);
+				CAN_sendMessage(&reqMPPT2_Msg);
+				CAN_sendMessage(&reqMPPT3_Msg);
+				CAN_sendMessage(&reqMPPT4_Msg);
 				// finally reset flag
 				flagTimerReqMPPT = FALSE;
 			}
