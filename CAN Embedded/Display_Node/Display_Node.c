@@ -35,6 +35,9 @@ int main(void)
 	LCD_BackLight = 64;		// Set the default backlight value
 	Timer1_PWM_On();			// Turn backlight on
 
+	// Init the throttle PWM output?
+	Timer2_init();
+
 	// Init Timer0 for mS Counter
 	Timer0_init();
 
@@ -140,9 +143,9 @@ void 	IOInit(void){
 	LED_OFF(LED_2);
 
 	// Btn inputs
-	BTN_DDR &= ~((1<<BTN_1)|(1<<BTN_2)|(1<<BTN_3)|(1<<BTN_4));
+	BTN_DDR &= ~((1<<BTN_1)|(1<<BTN_3)|(1<<BTN_4));
 	// Btn Pullups
-	BTN_PORT |= (1<<BTN_1)|(1<<BTN_2)|(1<<BTN_3)|(1<<BTN_4);
+	BTN_PORT |= (1<<BTN_1)|(1<<BTN_3)|(1<<BTN_4);
 
 
 }

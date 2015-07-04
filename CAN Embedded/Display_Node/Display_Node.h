@@ -41,6 +41,8 @@
 #include "Timer0.h"
 // Timer1
 #include "Timer1.h"
+// Timer2
+#include "Timer2.h"
 // ADC Functions
 #include "ADC.h"
 
