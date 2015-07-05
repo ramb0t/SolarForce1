@@ -22,8 +22,8 @@ int main(void)
 	CAN_setupPCINT0();			 // Setup CAN Message buffer using PCINT ISR
 
 	// Init LCD
-	//Screen = SCREEN_MAIN;
-	Screen = SCREEN_MPPT;
+	Screen = SCREEN_MAIN;
+	//Screen = SCREEN_MPPT;
 	LCD_SELECT();				// Enable the sck line of LCD to bypass ST7920 bug
 	u8g_setup();				// Call u8glib setup for the LCD
 	LCD_UNSELECT();				// Disable sck of LCD to prevent crap being displayed when
@@ -110,10 +110,10 @@ int main(void)
 				flagTimerReqMPPT = FALSE;
 
 				// hack
-				ADC_start(0);
-				gCANVars.MPPT1_Vin = ADC;
+				//ADC_start(0);
+				//gCANVars.MPPT1_Vin = ADC;
 				//gCANVars.MPPT1_Vin |= ADCH<<8;
-				flagUpdateLCD = TRUE;
+				//flagUpdateLCD = TRUE;
 			}
     	}
 
@@ -197,6 +197,7 @@ uint8_t CAN_Decode(CANMessage *message){
 
 	case CANID_BMS3:
 		gBMS_PackVoltage = (message->data[0]<<8)|(message->data[1]);
+		gBMS_MaxVTG 	 = message->data[4];
 
 		// let the caller know we found something!
 		decode_result = CAN_MSG_DECODED;

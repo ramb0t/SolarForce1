@@ -352,10 +352,15 @@ void drawMain(){
 
 
 	// write BMS volt Label
-	//u8g_DrawStr(&u8g, 66, 21, "BMS Volts:");
-	//utoa(gBMS_PackVoltage, buf, 10);
-	//strcat(buf,"V");
-	//u8g_DrawStr(&u8g, 66, 31, buf);
+
+	utoa(gBMS_MaxVTG, buf, 10);
+	memset(string, 0, sizeof string);
+	strcat(string,"MaxCell:");
+	strcat(string,buf);
+	strcat(string,"V");
+	u8g_DrawStr(&u8g, 0, 50, string);
+
+
 
 }
 

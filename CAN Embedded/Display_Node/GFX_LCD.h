@@ -53,6 +53,7 @@ uint8_t		gBMS_LevelFaults;
 uint8_t		gBMS_Warnings;
 uint8_t 	gBMS_soc;
 uint16_t 	gBMS_PackVoltage;
+uint8_t		gBMS_MaxVTG;
 int16_t 	gBMS_PackCurrent;
 int8_t		gBMS_Temp;
 int32_t		gGyro_AngleTHE;

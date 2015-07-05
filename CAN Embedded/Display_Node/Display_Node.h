@@ -109,6 +109,7 @@ extern			uint8_t		gBMS_LevelFaults;
 extern			uint8_t		gBMS_Warnings;
 extern 			uint8_t		gBMS_soc;
 extern			uint16_t	gBMS_PackVoltage;
+extern			uint8_t		gBMS_MaxVTG;
 extern			int16_t		gBMS_PackCurrent;
 extern			int8_t		gBMS_Temp;
 extern			int32_t		gGyro_AngleTHE;

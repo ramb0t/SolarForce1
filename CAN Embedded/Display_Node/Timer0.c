@@ -26,7 +26,7 @@ ISR(TIMER0_OVF_vect)
 	// Check for MPPT req time?
 	if((gMilliSecTick - old_mS_MPPT) > MPPT_REFRESH_RATE){ // Time for a MPPT req
 		old_mS_MPPT = gMilliSecTick;
-		flagTimerReqMPPT = TRUE;
+		//flagTimerReqMPPT = TRUE;
 	}
 
 	// Check for ADC refresh time?
