@@ -29,6 +29,19 @@ ISR(TIMER0_OVF_vect)
 		flagTimerReqMPPT = TRUE;
 	}
 
+	// Check for ADC refresh time?
+	if((gMilliSecTick - old_mS_ADC) > ADC_THR_REFRESH_RATE){ // Time for an ADC refresh
+		old_mS_ADC = gMilliSecTick;
+		// create temp var.
+		//uint8_t tempADC = 0;
+		// get a result
+		//tempADC = ADC_start(CRUISE_ADC_THR_MUX);
+		ADC_start(CRUISE_ADC_THR_MUX);
+		// write it as a pwm output?
+		Timer2_Set_PWM_Cruise(ADC_start(CRUISE_ADC_THR_MUX)>>2);
+
+	}
+
 }
 
 // Init the Timer0
@@ -44,6 +57,7 @@ void Timer0_init(void)
 	gMilliSecTick = 0;
 	old_mS_LCD = 0;
 	old_mS_MPPT = 0;
+	old_mS_ADC = 0;
 }
 
 

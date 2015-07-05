@@ -34,8 +34,14 @@
 #define BTN_3			PD4
 #define BTN_4			PD5
 
-#define CRUIDE_PWM_DDR	DDRD
+#define CRUISE_PWM_DDR	DDRD
 #define CRUISE_PWM 		PD3  //Use Timer2 -> OSC2B Pin for PWM for motor control?
+
+#define CRUISE_ADC_DDR	DDRC
+#define CRUISE_ADC_PORT	PORTC
+#define CRUISE_ADC_PIN	PINC
+#define CRUISE_ADC_THR 	PC0	 //Throttle on PC0 / ADC0 ?
+#define CRUISE_ADC_THR_MUX	0
 
 
 

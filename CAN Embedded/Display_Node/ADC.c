@@ -8,8 +8,9 @@
 #include "ADC.h"
 
 uint16_t ADC_start(uint8_t pin){
-	ADMUX = 0; // clear ADMUX first!!
-	SETBITMASK(ADMUX, pin);  //default AREF pin as reference, pin as the selected pin
+	ADMUX = 0x40; // clear ADMUX first!!
+	//SETBITMASK(ADMUX, pin);  //default AREF pin as reference, pin as the selected pin
+	ADMUX |= pin;
 	SETBITMASK(ADCSRA, (1<<ADEN)|(1<<ADSC)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)); // Turn ADC on, Start Conversion,  clk/128 scale = 125khz ADC clock
 
 	// ok ADC started, now wait for result

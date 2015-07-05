@@ -108,6 +108,12 @@ int main(void)
 				CAN_sendMessage(&reqMPPT4_Msg);
 				// finally reset flag
 				flagTimerReqMPPT = FALSE;
+
+				// hack
+				ADC_start(0);
+				gCANVars.MPPT1_Vin = ADC;
+				//gCANVars.MPPT1_Vin |= ADCH<<8;
+				flagUpdateLCD = TRUE;
 			}
     	}
 
@@ -146,6 +152,12 @@ void 	IOInit(void){
 	BTN_DDR &= ~((1<<BTN_1)|(1<<BTN_3)|(1<<BTN_4));
 	// Btn Pullups
 	BTN_PORT |= (1<<BTN_1)|(1<<BTN_3)|(1<<BTN_4);
+
+	// Throttle ADC Stuff..
+	// Make input
+	CRUISE_ADC_DDR &= ~(1<<CRUISE_ADC_THR);
+	// no pullup
+	CRUISE_ADC_PORT &= ~(1<<CRUISE_ADC_THR);
 
 
 }

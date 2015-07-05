@@ -19,7 +19,7 @@ void Timer2_init(void) {
 	TCCR2A |= (1 << COM2B1); /* PWM output on OC1B */
 
 	// Pin Setup
-	CRUIDE_PWM_DDR |= (1 << CRUISE_PWM);
+	CRUISE_PWM_DDR |= (1 << CRUISE_PWM);
 }
 
 void Timer2_PWM_Off(void){
