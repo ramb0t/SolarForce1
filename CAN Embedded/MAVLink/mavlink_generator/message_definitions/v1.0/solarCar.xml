@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <mavlink>
-    <version>2</version>
+    <version>3</version>
     <enums>
           <enum name="MAV_AUTOPILOT">
                <description>Micro air vehicle / autopilot classes. This identifies the individual model.</description>
