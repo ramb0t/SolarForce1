@@ -90,7 +90,7 @@
 
 u8g_t u8g;
 
-void u8g_setup(void)
+void GFX_LCD_u8g_setup(void)
 {  
   /*
     Test Envionment 1, ATMEGA and DOGM132 
@@ -213,7 +213,7 @@ int main(void)
 {
 	GFX_SELECT();
   sys_init();
-  u8g_setup();
+  GFX_LCD_u8g_setup();
 
   for(;;)
   {  
