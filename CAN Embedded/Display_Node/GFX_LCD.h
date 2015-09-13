@@ -99,7 +99,7 @@ extern	volatile uint16_t	int_mS;
 
 // Function Prototypes
 /*********************************************/
-void u8g_setup();
+void GFX_LCD_u8g_setup();
 void u8g_prepare();
 void GFX_LCD_Draw(CANMessage*);
 void GFX_LCD_DrawMain(void);

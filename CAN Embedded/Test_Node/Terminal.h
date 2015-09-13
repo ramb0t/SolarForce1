@@ -86,9 +86,9 @@ void Terminal_init(void);
 void Terminal_read(volatile uint8_t* state);
 void Terminal_run(volatile uint8_t* state);
 
-static void Terminal_showMenu(void);
-static void Terminal_showListenMenu(void);
-static void Terminal_showSendMenu(void);
+//static void Terminal_showMenu(void);
+//static void Terminal_showListenMenu(void);
+//static void Terminal_showSendMenu(void);
 
 
 #endif /* TERMINAL_H_ */

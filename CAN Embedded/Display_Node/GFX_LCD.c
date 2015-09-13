@@ -9,7 +9,7 @@ u8g_t u8g;
 extern volatile uint8_t CAN_Rx_Head;
 extern volatile uint8_t CAN_Rx_Tail;
 
-void u8g_setup(void)
+void GFX_LCD_u8g_setup(void)
 {
 	// Init CS pin
 	GFX_CS_DDR |= (1<<GFX_CS_BIT);

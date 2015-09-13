@@ -20,8 +20,8 @@
 
 #define LED_DDR			DDRD
 #define LED_PORT		PORTD
-#define LED_1			PD0
-#define LED_2			PD1
+#define LED_RF			PD0
+#define LED_B			PD1
 #define LED_ON(led)		LED_PORT |= (1<<led)
 #define LED_OFF(led)	LED_PORT &= ~(1<<led)
 #define LED_FLIP(led)	LED_PORT ^= (1<<led)

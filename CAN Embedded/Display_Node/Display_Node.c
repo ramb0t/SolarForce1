@@ -25,7 +25,7 @@ int main(void)
 	Screen = SCREEN_MAIN;
 	//Screen = SCREEN_MPPT;
 	LCD_SELECT();				// Enable the sck line of LCD to bypass ST7920 bug
-	u8g_setup();				// Call u8glib setup for the LCD
+	GFX_LCD_u8g_setup();				// Call u8glib setup for the LCD
 	LCD_UNSELECT();				// Disable sck of LCD to prevent crap being displayed when
 								// Talking to other things on SPI
 	flagUpdateLCD = TRUE; 		// Signal that an update is needed;
@@ -93,9 +93,9 @@ int main(void)
 				// get the temp
 				//AVR_Temp = ADC_getTemp();
 				// Call the update function
-				LED_ON(LED_1);
+				LED_ON(LED_RF);
 				GFX_LCD_DrawMain();
-				LED_OFF(LED_1);
+				LED_OFF(LED_RF);
 				// reset the flag
 				flagUpdateLCD = FALSE;
 				flagTimerUpdateLCD = FALSE; // Sneaky!
@@ -123,9 +123,9 @@ int main(void)
         	cli();
         	if(~CHECKBIT(PINB,PB0))
         	{
-        		LED_ON(LED_2);
+        		LED_ON(LED_B);
         		CAN_fillBuffer();
-        		LED_OFF(LED_2);
+        		LED_OFF(LED_B);
         	}
         	sei();
 
@@ -144,9 +144,9 @@ int main(void)
 // Sets up the IO...
 void 	IOInit(void){
 	// LEDs Outputs
-	LED_DDR |= (1<<LED_1)|(1<<LED_2);
-	LED_ON(LED_1);
-	LED_OFF(LED_2);
+	LED_DDR |= (1<<LED_RF)|(1<<LED_B);
+	LED_ON(LED_RF);
+	LED_OFF(LED_B);
 
 	// Btn inputs
 	BTN_DDR &= ~((1<<BTN_1)|(1<<BTN_3)|(1<<BTN_4));
@@ -390,10 +390,10 @@ void setupPCINT2(void){
 // CAN Interrupt ISR!
 ISR(PCINT0_vect){
 
-	LED_ON(LED_2);
+	LED_ON(LED_B);
 	CAN_fillBuffer();
 	int_mS = gMilliSecTick;
-	LED_OFF(LED_2);
+	LED_OFF(LED_B);
 
 }
 
