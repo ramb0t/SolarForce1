@@ -235,7 +235,7 @@ uint8_t CAN_Decode(CANMessage *message){
 
 	break; //CANID_GYRO_ANGLESI
 
-	case CANID_GYRO_ANGLEPHI:
+	case CANID_IMU_GYRO:
 		gGyro_AnglePHI = (message->data[4]<<24)|(message->data[5]<<16)|(message->data[6]<<8)|(message->data[7]);
 
 		// let the caller know we found something!

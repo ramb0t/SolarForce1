@@ -9,10 +9,10 @@
 
 void GyroEmu_init(void){
 	// Init the message
-	GyroMsg_Angle = (CANMessage){.id=CANID_GYRO_ANGLEPHI,.rtr=0,.length=8,.data={
+	GyroMsg_Angle = (CANMessage){.id=CANID_IMU_GYRO,.rtr=0,.length=8,.data={
 				0,0,0,0,0,0,0,0
 		}};
-	GyroMsg_Gyro = (CANMessage){.id=CANID_GYRO_GYRO,.rtr=0,.length=8,.data={
+	GyroMsg_Gyro = (CANMessage){.id=CANID_IMU_EULER,.rtr=0,.length=8,.data={
 				0,0,0,0,0,0,0,0
 		}};
 	GyroMsg_Accel = (CANMessage){.id=CANID_GYRO_ACCEL,.rtr=0,.length=8,.data={
